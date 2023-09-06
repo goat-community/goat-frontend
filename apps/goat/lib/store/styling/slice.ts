@@ -1,7 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchLayerData } from "@/lib/store/styling/actions";
-import type { AnyLayer } from 'react-map-gl'
+import type { AnyLayer } from "react-map-gl";
 
 interface IViewState {
   latitude: number;
@@ -28,12 +28,16 @@ interface IMarker {
   iconName: string;
 }
 
-export type TLayer = AnyLayer & { sources: {
-  composite: {
-    url: string
-    type: string
-  }
-} } |  null
+export type TLayer =
+  | (AnyLayer & {
+      sources: {
+        composite: {
+          url: string;
+          type: string;
+        };
+      };
+    })
+  | null;
 
 export interface IStylingState {
   initialViewState: IViewState;
@@ -131,10 +135,10 @@ const stylingSlice = createSlice({
       state,
       action: PayloadAction<{ key: string; val: string }>,
     ) => {
-      const mapLayer = state.mapLayer as TLayer
-      
+      const mapLayer = state.mapLayer as TLayer;
+
       if (mapLayer) {
-        mapLayer.paint = mapLayer.paint ?? {}
+        mapLayer.paint = mapLayer.paint ?? {};
         mapLayer.paint[action.payload.key] = action.payload.val;
       }
     },
@@ -142,27 +146,38 @@ const stylingSlice = createSlice({
       state,
       action: PayloadAction<{ key: string; val: number }>,
     ) => {
-      const mapLayer = state.mapLayer as TLayer
+      const mapLayer = state.mapLayer as TLayer;
 
       if (mapLayer) {
-        mapLayer.paint = mapLayer.paint ?? {}
+        mapLayer.paint = mapLayer.paint ?? {};
         mapLayer.paint[action.payload.key] = action.payload.val;
       }
     },
     setLayerFillOutLineColor: (state, action: PayloadAction<string>) => {
-      const mapLayer = state.mapLayer as TLayer
+      const mapLayer = state.mapLayer as TLayer;
 
       if (mapLayer?.paint) {
         mapLayer.paint["fill-outline-color"] = action.payload;
       }
     },
     deleteLayerFillOutLineColor: (state) => {
-      const mapLayer = state.mapLayer as TLayer
+      const mapLayer = state.mapLayer as TLayer;
 
       if (mapLayer?.paint) {
         if ("fill-outline-color" in mapLayer.paint) {
           delete mapLayer.paint["fill-outline-color"];
         }
+      }
+    },
+    setLayerSymbolSize: (
+      state,
+      action: PayloadAction<{ val: number }>,
+    ) => {
+      const mapLayer = state.mapLayer as TLayer;
+
+      if (mapLayer) {
+        mapLayer.layout = mapLayer.layout ?? {};
+        mapLayer.layout['icon-size'] = action.payload.val;
       }
     },
     // setLayerIconImage: (state, action: PayloadAction<string>) => {
@@ -194,6 +209,7 @@ export const {
   saveStyles,
   setLayerLineWidth,
   deleteLayerFillOutLineColor,
+  setLayerSymbolSize,
 } = stylingSlice.actions;
 
 export const stylingReducer = stylingSlice.reducer;
