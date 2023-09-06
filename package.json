@@ -1,0 +1,50 @@
+{
+  "name": "p4b-client-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "clean": "turbo run clean && rimraf node_modules lint lint-results",
+    "build": "turbo run build",
+    "post-install": "turbo run post-install",
+    "dev": "turbo run dev --parallel",
+    "start": "turbo run start --parallel",
+    "generate": "turbo run generate",
+    "prepare": "cd ../../ && husky install ./app/client/.husky",
+    "goat": "dotenv -- turbo run dev --filter=goat",
+    "storybook": "turbo run dev --filter=storybook",
+    "build-storybook": "turbo run build --filter=storybook",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "lint:report": "turbo run lint:report",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.26.2",
+    "@commitlint/cli": "^17.6.1",
+    "@commitlint/config-conventional": "^17.6.1",
+    "@deploysentinel/playwright": "^0.3.4",
+    "@playwright/test": "^1.33.0",
+    "commitizen": "^4.3.0",
+    "dotenv-cli": "7.2.1",
+    "husky": "^8.0.3",
+    "install": "^0.13.0",
+    "rimraf": "^5.0.1",
+    "syncpack": "^9.8.6",
+    "tsx": "^3.12.7",
+    "turbo": "latest",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "packageManager": "pnpm@8.1.1",
+  "dependencies": {
+    "@types/memoizee": "^0.4.8"
+  }
+}
