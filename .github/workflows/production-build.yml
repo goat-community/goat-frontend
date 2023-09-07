@@ -23,6 +23,6 @@ jobs:
           cwd: ${{ github.workspace }}
 
       - name: 🏗️ Monorepo build
-        uses: goat-community/.github/.github/actions/nextjs-turborepo-pnpm-cache-build
+        uses: ./.github/actions/pnpm-cache-build
         with:
           cwd: ${{ github.workspace }}
