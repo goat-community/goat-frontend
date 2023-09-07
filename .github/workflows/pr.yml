@@ -25,6 +25,16 @@ concurrency:
 
 
 jobs:
+
+  pr-base:
+    name: pr-base
+    uses: "goat-community/.github/.github/workflows/reusable-pr-base.yml@main"
+    permissions:
+      contents: none
+      issues: read
+      pull-requests: write
+    secrets: inherit
+
   typecheck:
     name: typecheck
     uses: ./.github/workflows/check-types.yml
@@ -35,7 +45,6 @@ jobs:
     uses: ./.github/workflows/lint.yml
     secrets: inherit
   
-  # todo: test run
 
   build:
     name:  build
@@ -48,12 +57,6 @@ jobs:
     uses: ./.github/workflows/nextjs-bundle-analysis.yml
     secrets: inherit
   
-  release-docker-build:
-    name: docker-build
-    needs: [build, analyze]
-    uses: ./.github/workflows/release.yml
-    secrets: inherit
-
   required:
     needs: [lint, typecheck, build]
     if: always()
