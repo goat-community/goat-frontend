@@ -46,6 +46,7 @@ export interface IStylingState {
   activeBasemapIndex: number[];
   markers: IMarker[];
   mapLayer: unknown;
+  changeIcon: null | ((src: string) => void);
 }
 
 const initialState: IStylingState = {
@@ -100,12 +101,16 @@ const initialState: IStylingState = {
   markers: [],
   //todo need get layer from db
   mapLayer: null as TLayer,
+  changeIcon: null
 };
 
 const stylingSlice = createSlice({
   name: "styling",
   initialState,
   reducers: {
+    setIcon: (state, action: PayloadAction<(src: string) => void>) => {
+      state.changeIcon = action.payload
+    },
     setTabValue: (state, action: PayloadAction<number>) => {
       state.tabValue = action.payload;
     },
@@ -180,6 +185,13 @@ const stylingSlice = createSlice({
         mapLayer.layout['icon-size'] = action.payload.val;
       }
     },
+    setIconFillColor: (state, action: PayloadAction<string>) => {
+      const mapLayer = state.mapLayer as TLayer;
+
+      if (mapLayer?.paint) {
+        mapLayer.paint["icon-color"] = action.payload;
+      }
+    }
     // setLayerIconImage: (state, action: PayloadAction<string>) => {
     //   state.mapLayer.layers[0].layout["icon-image"] = action.payload;
     // },
@@ -201,6 +213,8 @@ const stylingSlice = createSlice({
 });
 
 export const {
+  setIconFillColor,
+  setIcon,
   setTabValue,
   setActiveBasemapIndex,
   addMarker,

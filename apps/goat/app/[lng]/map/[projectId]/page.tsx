@@ -21,25 +21,25 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Map, { MapProvider, Layer, Source } from "react-map-gl";
 import type { CSSObject } from "tss-react";
 import Layers from "@/components/map/Layers";
-
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Fullscren } from "@/components/map/controls/Fullscreen";
 import Geocoder from "@/components/map/controls/Geocoder";
 import { useSelector } from "react-redux";
 import type { IStore } from "@/types/store";
-import { setActiveBasemapIndex } from "@/lib/store/styling/slice";
+import { setActiveBasemapIndex, setIcon } from "@/lib/store/styling/slice";
 import MapStyle from "@/components/map/panels/mapStyle/MapStyle";
 import { fetchLayerData } from "@/lib/store/styling/actions";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { selectMapLayer } from '@/lib/store/styling/selectors'
+import { selectMapLayer } from "@/lib/store/styling/selectors";
 
 const sidebarWidth = 48;
 const toolbarHeight = 52;
 
 export default function MapPage({ params: { projectId } }) {
-  const { basemaps, activeBasemapIndex, initialViewState } =
-  useSelector((state: IStore) => state.styling);
-  const mapLayer = useSelector(selectMapLayer)
+  const { basemaps, activeBasemapIndex, initialViewState } = useSelector(
+    (state: IStore) => state.styling,
+  );
+  const mapLayer = useSelector(selectMapLayer);
 
   const [activeLeft, setActiveLeft] = useState<MapSidebarItem | undefined>(
     undefined,
@@ -272,6 +272,40 @@ export default function MapPage({ params: { projectId } }) {
             mapStyle={basemaps[activeBasemapIndex[0]].url}
             attributionControl={false}
             mapboxAccessToken={MAPBOX_TOKEN}
+            onLoad={(e) => {
+              const changeIcon = (src: string) => {
+                const map = e.target
+
+                const newImage = new Image();
+                newImage.crossOrigin = "Anonymous";
+                newImage.src = src;
+  
+                const xhr = new XMLHttpRequest();
+  
+                xhr.open('GET',  src, true)
+                xhr.onreadystatechange = () => {
+                  if(xhr.readyState === 4 && xhr.status === 200) {
+  
+                    newImage.src = `data:image/svg+xml,${encodeURIComponent(xhr.responseText)}`
+  
+                  }
+                }
+  
+                xhr.send()
+  
+                newImage.onload = () => {
+                  if (map.hasImage("dentist-15")) {
+                    map.removeImage('dentist-15');
+                    map.addImage("dentist-15", newImage, {sdf: true});
+                  }
+                }
+              }
+             
+
+
+              dispatch(setIcon(changeIcon))
+              
+            }}
           >
             {mapLayer ? (
               <Source
@@ -279,10 +313,7 @@ export default function MapPage({ params: { projectId } }) {
                 type="vector"
                 url={mapLayer.sources.composite.url}
               >
-                <Layer
-                  {...mapLayer}
-                  source-layer={mapLayer["source-layer"]}
-                />
+                <Layer {...mapLayer} source-layer={mapLayer["source-layer"]} />
               </Source>
             ) : null}
             {/* todo check */}
