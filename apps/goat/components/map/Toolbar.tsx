@@ -7,6 +7,7 @@ import Divider from "@mui/material/Divider";
 
 import { GOATLogoIconOnlyGreen } from "@p4b/ui/assets/svg/GOATLogoIconOnlyGreen";
 import { Text } from "@p4b/ui/components/theme";
+import Link from "next/link";
 
 export type MapToolbarProps = {
   projectTitle: string;
@@ -20,19 +21,46 @@ export function MapToolbar(props: MapToolbarProps) {
   const { tags, projectTitle, lastSaved } = props;
 
   return (
-    <AppBar className={cx(classes.root)} sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}>
-      <Toolbar variant="dense" sx={{ minHeight: props.height, height: props.height }}>
-        <GOATLogoIconOnlyGreen className={classes.logo} />
-        <Stack direction="row" alignItems="center" className={classes.infoStack}>
+    <AppBar
+      className={cx(classes.root)}
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}
+    >
+      <Toolbar
+        variant="dense"
+        sx={{ minHeight: props.height, height: props.height }}
+      >
+        <Link href="/home">
+          <GOATLogoIconOnlyGreen className={classes.logo} />
+        </Link>
+        <Stack
+          direction="row"
+          alignItems="center"
+          className={classes.infoStack}
+        >
           <Text typo="section heading" className={classes.infoItem}>
             {projectTitle}
           </Text>
-          <Divider orientation="vertical" flexItem className={classes.infoItem} />
-          <Text typo="body 2" color="secondary" className={cx(classes.infoItem, classes.lastSaved)}>
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.infoItem}
+          />
+          <Text
+            typo="body 2"
+            color="secondary"
+            className={cx(classes.infoItem, classes.lastSaved)}
+          >
             Last saved: {lastSaved}
           </Text>
           {tags &&
-            tags.map((tag) => <Chip variant="outlined" label={tag} key={tag} className={classes.infoItem} />)}
+            tags.map((tag) => (
+              <Chip
+                variant="outlined"
+                label={tag}
+                key={tag}
+                className={classes.infoItem}
+              />
+            ))}
         </Stack>
         <Box sx={{ flexGrow: 1 }} />
         <UserInfoMenu />
@@ -66,7 +94,9 @@ const useStyles = (props: MapToolbarProps) =>
       marginRight: theme.spacing(2),
     },
     icon: {
-      borderRight: `1px solid ${theme.colors.palette[theme.isDarkModeEnabled ? "light" : "dark"].light}14`,
+      borderRight: `1px solid ${
+        theme.colors.palette[theme.isDarkModeEnabled ? "light" : "dark"].light
+      }14`,
       padding: "4px",
       paddingRight: theme.spacing(4),
       marginRight: theme.spacing(4),

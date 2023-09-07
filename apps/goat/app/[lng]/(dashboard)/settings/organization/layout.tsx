@@ -14,10 +14,6 @@ const tabsData = [
     child: "Teams",
     name: "Teams",
   },
-  {
-    child: "Settings",
-    name: "Settings",
-  },
 ];
 
 const Organization = () => {
