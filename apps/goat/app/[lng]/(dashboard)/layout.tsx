@@ -1,8 +1,6 @@
 "use client";
 
 import { DashboardSidebar } from "@/app/[lng]/(dashboard)/DashboardSidebar";
-import { TranslationSwitcher } from "@/app/[lng]/components/TranslationSwitcher";
-// import { useTranslation } from "@/app/i18/client";
 import { makeStyles } from "@/lib/theme";
 import { signOut } from "next-auth/react";
 import { useState, useRef } from "react";
@@ -53,10 +51,6 @@ const DashboardLayout = ({ children, params: { lng } }: DashboardLayoutProps) =>
   );
 
   const items = [
-    {
-      link: "",
-      icon: () => <TranslationSwitcher lng={lng} />,
-    },
     {
       link: "https://google.com",
       icon: () => (
