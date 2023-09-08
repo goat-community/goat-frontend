@@ -1,15 +1,17 @@
 import { Meta, ColorPalette, ColorItem } from "@storybook/blocks";
 import { Fragment } from "react";
 import { useDarkMode } from "storybook-dark-mode";
-
-import { StoryProvider, useTheme, Text, Checkbox } from "../theme";
+import { useTheme } from '@mui/material/styles';
+import { ThemeProvider } from "../../theme/ThemeProvider";
 
 <Meta
   decorators={[
     (Story) => (
-      <StoryProvider dark={useDarkMode()}>
+      <ThemeProvider
+        settings={{ themeColor: "primary", contentWidth: "boxed", mode: useDarkMode() ? "dark" : "light" }}
+      >
         <Story />
-      </StoryProvider>
+      </ThemeProvider>
     ),
   ]}
 />
@@ -40,58 +42,38 @@ By utilizing both a dark and light color, it is possible to switch between two m
 one where dark elements are displayed on light surfaces for a light mode, and another where
 light elements are shown on dark surfaces by inverting the colors for a dark mode.
 
-<ColorPalette>
-  <ColorItem
-    title="Focus"
-    subtitle="Green"
-    colors={{ Green: useTheme().colors.palette.focus.main }}
-  />
-
-  <ColorItem
-    title="Dark"
-    subtitle="DarkBlue"
-    colors={{ DarkBlue: useTheme().colors.palette.dark.main }}
-  />
-  <ColorItem
-    title="Light"
-    subtitle="Whisper White"
-    colors={{ WhisperWhite: useTheme().colors.palette.light.main  }}
-  />
-</ColorPalette>
-
 #### Colors palette
 
 For functional applications, the color palette can be extended to include shade ranging from light to dark.
 
+
 <ColorPalette>
   <ColorItem
-    title="Focus"
-    subtitle="Green Tones"
-    colors={{ Main: useTheme().colors.palette.focus.main,
-              Light: useTheme().colors.palette.focus.light,
-              Variant1: useTheme().colors.palette.focus.light2
+    title="Primary"
+    subtitle="Some of the greens"
+    colors={{ Main: useTheme().palette.primary.main,
+              Light: useTheme().palette.primary.light,
+              Dark: useTheme().palette.primary.dark,
             }}
   />
-  <ColorItem
-    title="Dark"
-    subtitle="Blue Tones"
-    colors={{ Main: useTheme().colors.palette.dark.main,
-              Light: useTheme().colors.palette.dark.light,
-              Variant1: useTheme().colors.palette.dark.greyVariant1,
-              Variant2: useTheme().colors.palette.dark.greyVariant2,
-              Variant3: useTheme().colors.palette.dark.greyVariant3,
-              Variant4: useTheme().colors.palette.dark.greyVariant4,
-            }}
+  <ColorItem 
+    title="theme.color.primary" 
+    subtitle="Coral" 
+    colors={{ WildWatermelon: '#FF4785' }} 
+  />
+  <ColorItem 
+    title="theme.color.secondary" 
+    subtitle="Ocean" 
+    colors={{ DodgerBlue: '#1EA7FD' }} 
   />
   <ColorItem
-    title="Light"
-    subtitle="White Tones"
-    colors={{ Main: useTheme().colors.palette.light.main,
-              Light: useTheme().colors.palette.light.light,
-              Variant1: useTheme().colors.palette.light.greyVariant1,
-              Variant2: useTheme().colors.palette.light.greyVariant2,
-              Variant3: useTheme().colors.palette.light.greyVariant3,
-              Variant4: useTheme().colors.palette.light.greyVariant4,
-            }}
+    title="theme.color.positive"
+    subtitle="Green"
+    colors={{
+      Apple: 'rgba(102,191,60,1)',
+      Apple80: 'rgba(102,191,60,.8)',
+      Apple60: 'rgba(102,191,60,.6)',
+      Apple30: 'rgba(102,191,60,.3)',
+    }}
   />
 </ColorPalette>

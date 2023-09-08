@@ -1,12 +1,13 @@
 import { create } from "@storybook/theming";
 
-export const lightTheme = create({
+export const darkTheme = create({
   base: "dark",
-  appBg: "#283648",
-  appContentBg: "#283648",
-  barBg: "#283648",
+  appBg: "#18202B",
+  appContentBg: "#18202B",
+  barBg: "#18202B",
   colorSecondary: "#2BB381",
   textColor: "#ffffff",
+  textInverseColor: "#18202B",
   brandImage: "https://plan4better.de/images/logo-light.png",
   brandTitle: "Plan4Better UI",
   brandUrl: "https://plan4better.de",
@@ -14,14 +15,14 @@ export const lightTheme = create({
   fontCode: "monospace",
 });
 
-export const darkTheme = create({
+export const lightTheme = create({
   base: "light",
-  appBg: "#f1f0eb",
-  appContentBg: "#f1f0eb",
-  barBg: "#f1f0eb",
+  appBg: "#F4F5FA",
+  appContentBg: "#F4F5FA",
+  barBg: "#F4F5FA",
   colorSecondary: "#2BB381",
   textColor: "#283648",
-  textInverseColor: "#f1f0eb",
+  textInverseColor: "#F4F5FA",
   brandImage: "https://plan4better.de/images/logo.png",
   brandTitle: "Plan4Better UI",
   brandUrl: "https://plan4better.de",

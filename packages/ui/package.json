@@ -40,6 +40,7 @@
     "react-swipeable-views": "^0.14.0",
     "react-swipeable-views-utils": "^0.14.0",
     "run-exclusive": "^2.2.18",
+    "storybook-dark-mode": "^3.0.0",
     "tsafe": "^1.6.0",
     "tss-react": "^4.8.3",
     "uuid": "^9.0.0"
