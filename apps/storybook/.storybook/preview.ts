@@ -1,11 +1,9 @@
 import type { Preview } from "@storybook/react";
 import React from "react";
 
-import { themes } from "@storybook/theming";
 import { DocsContainer } from "@storybook/addon-docs";
 import { useDarkMode } from "storybook-dark-mode";
 import { darkTheme, lightTheme } from "./theme";
-// import { darkTheme, lightTheme } from "./theme";
 
 const preview: Preview = {
   parameters: {

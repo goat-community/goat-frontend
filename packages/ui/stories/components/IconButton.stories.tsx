@@ -1,18 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import ThemeProvider from "../../theme/ThemeProvider";
-import Button from "@mui/material/Button";
 import { useDarkMode } from "storybook-dark-mode";
 import { Icon, ICON_NAME } from "../../components/Icon";
+import { IconButton } from "@mui/material";
 
-const meta: Meta<typeof Button> = {
-  component: Button,
+const meta: Meta<typeof IconButton> = {
+  component: IconButton,
   tags: ["autodocs"],
   argTypes: {
-    variant: {
-      options: ["text", "contained", "outlined"],
-      control: { type: "select" },
-    },
     color: {
       options: [
         "primary",
@@ -25,23 +21,12 @@ const meta: Meta<typeof Button> = {
       ],
       control: { type: "select" },
     },
-    startIcon: {
-      options: ICON_NAME,
-      control: { type: "select" },
-    },
-    endIcon: {
-      options: ICON_NAME,
-      control: { type: "select" },
-    },
     disabled: {
       control: { type: "boolean" },
     },
     size: {
       options: ["small", "medium", "large"],
       control: { type: "select" },
-    },
-    fullWidth: {
-      control: { type: "boolean" },
     },
   },
   decorators: [
@@ -60,31 +45,21 @@ const meta: Meta<typeof Button> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Button>;
+type Story = StoryObj<typeof IconButton>;
 
 export const Default: Story = {
   args: {
-    children: "Button",
     color: "primary",
-    variant: "contained",
     size: "medium",
   },
   render: (args) => {
-    const { startIcon, endIcon, ...rest } = args;
+    const { ...rest } = args;
     return (
-      <Button
-        startIcon={
-          startIcon ? (
-            <Icon iconName={startIcon as ICON_NAME} fontSize="inherit" />
-          ) : undefined
-        }
-        endIcon={
-          endIcon ? (
-            <Icon iconName={endIcon as ICON_NAME} fontSize="inherit" />
-          ) : undefined
-        }
+      <IconButton
         {...rest}
-      />
+      >
+        <Icon iconName={ICON_NAME.LAYERS} fontSize="inherit" />
+      </IconButton>
     );
   },
   parameters: {
