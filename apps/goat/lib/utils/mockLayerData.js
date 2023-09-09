@@ -9,21 +9,13 @@ export const stylesObj = {
     },
     id: "cljxz3bl1003v01qy7k5m0apj",
     type: "symbol",
-    paint: {},
+    paint: {
+      'icon-color': '#316940',
+    },
     source: "composite",
     "source-layer": "poi",
     layout: {
-      "icon-image": [
-        "match",
-        ["get", "category"],
-        ["dentist"],
-        "dentist-15",
-        ["bakery"],
-        "bakery-11",
-        ["nursery"],
-        "hospital-15",
-        "",
-      ],
+      "icon-image": "dentist-15",
     },
   },
   aoi: {
