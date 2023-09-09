@@ -37,7 +37,7 @@ jobs:
 
   typecheck:
     name: typecheck
-    uses: ./.github/workflows/check-types.yml
+    uses: ./.github/workflows/typecheck.yml
     secrets: inherit
 
   lint:
