@@ -3,7 +3,6 @@ import type { PageProps } from "keycloakify/login/pages/PageProps";
 
 import { TextField } from "@p4b/ui/components/Inputs/TextField";
 
-import { makeStyles, Text } from "../../theme";
 import { Button } from "@mui/material";
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";

@@ -2,7 +2,6 @@
 import Fallback, { type PageProps } from "keycloakify/login";
 import { lazy, Suspense } from "react";
 
-import { makeStyles } from "../theme";
 import { useI18n } from "./i18n";
 import type { KcContext } from "./kcContext";
 
@@ -32,8 +31,6 @@ export default function KcApp(props: { kcContext: KcContext }) {
 
   const i18n = useI18n({ kcContext });
 
-  const { classes } = useStyles();
-
   if (i18n === null) {
     return null;
   }
@@ -41,9 +38,7 @@ export default function KcApp(props: { kcContext: KcContext }) {
     i18n,
     Template,
     doUseDefaultCss: false,
-    classes: {
-      kcHtmlClass: classes.kcHtmlClass,
-    },
+    classes: {},
   };
 
   return (
@@ -57,11 +52,15 @@ export default function KcApp(props: { kcContext: KcContext }) {
           case "update-email.ftl":
             return <UpdateEmail kcContext={kcContext} {...pageProps} />;
           case "idp-review-user-profile.ftl":
-            return <IdpReviewUserProfile kcContext={kcContext} {...pageProps} />;
+            return (
+              <IdpReviewUserProfile kcContext={kcContext} {...pageProps} />
+            );
           case "select-authenticator.ftl":
             return <SelectAuthenticator kcContext={kcContext} {...pageProps} />;
           case "webauthn-authenticate.ftl":
-            return <WebauthnAuthenticate kcContext={kcContext} {...pageProps} />;
+            return (
+              <WebauthnAuthenticate kcContext={kcContext} {...pageProps} />
+            );
           case "login.ftl":
             return <Login kcContext={kcContext} {...pageProps} />;
           case "login-verify-email.ftl":
@@ -89,43 +88,9 @@ export default function KcApp(props: { kcContext: KcContext }) {
           case "error.ftl":
             return <Error kcContext={kcContext} {...pageProps} />;
           default:
-            return (
-              <Fallback
-                kcContext={kcContext}
-                i18n={i18n}
-                Template={Template}
-                doUseDefaultCss={pageProps.doUseDefaultCss}
-              />
-            );
+            return <Fallback kcContext={kcContext} {...pageProps} />;
         }
       })()}
     </Suspense>
   );
 }
-
-const useStyles = makeStyles({ name: { KcApp } })((theme) => ({
-  kcHtmlClass: {
-    "& body": {
-      fontFamily: theme.typography.fontFamily,
-    },
-    background: `${theme.colors.useCases.surfaces.background}`,
-    "& a": {
-      color: `${theme.colors.useCases.typography.textFocus}`,
-    },
-    "& #kc-current-locale-link": {
-      color: `${theme.colors.palette.light.greyVariant3}`,
-    },
-    "& label": {
-      fontSize: 14,
-      color: theme.colors.palette.light.greyVariant3,
-      fontWeight: "normal",
-    },
-    "& #kc-page-title": {
-      ...theme.typography.variants["page heading"].style,
-      color: theme.colors.palette.dark.main,
-    },
-    "& #kc-header-wrapper": {
-      visibility: "hidden",
-    },
-  },
-}));

@@ -5,9 +5,6 @@ import { createRoot } from "react-dom/client";
 import { kcContext as kcLoginThemeContext } from "./login/kcContext";
 
 const KcLoginThemeApp = lazy(() => import("./login/KcApp"));
-// const { PageStory } = createPageStoryLogin({
-//   pageId: "login.ftl",
-// });
 const { PageStory } = createPageStoryLogin({
   pageId: "login-reset-password.ftl",
 });

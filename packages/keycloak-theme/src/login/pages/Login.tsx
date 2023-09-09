@@ -1,9 +1,3 @@
-/* eslint-disable react/jsx-curly-brace-presence */
-
-/* eslint-disable react/jsx-no-undef */
-
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-// ejected using 'npx eject-keycloak-page'
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Link from "@mui/material/Link";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
@@ -11,17 +5,29 @@ import { useConstCallback } from "keycloakify/tools/useConstCallback";
 import { useStateRef } from "powerhooks/useStateRef";
 import { useState, type FormEventHandler } from "react";
 
-import { Checkbox } from "@p4b/ui/components/Checkbox";
-import { TextField } from "@p4b/ui/components/Inputs";
-
-import { makeStyles, Text, Button } from "../../theme";
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";
 
-export default function Login(props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>) {
-  const { kcContext, i18n, doUseDefaultCss, Template, classes: classes_props } = props;
+export default function Login(
+  props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>,
+) {
+  const {
+    kcContext,
+    i18n,
+    doUseDefaultCss,
+    Template,
+    classes: classes_props,
+  } = props;
 
-  const { social, realm, url, usernameEditDisabled, login, auth, registrationDisabled } = kcContext;
+  const {
+    social,
+    realm,
+    url,
+    usernameEditDisabled,
+    login,
+    auth,
+    registrationDisabled,
+  } = kcContext;
 
   const { msg, msgStr } = i18n;
 
@@ -36,12 +42,12 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
 
     //NOTE: Even if we login with email Keycloak expect username and password in
     //the POST request.
-    formElement.querySelector("input[name='email']")?.setAttribute("name", "username");
+    formElement
+      .querySelector("input[name='email']")
+      ?.setAttribute("name", "username");
 
     formElement.submit();
   });
-
-  const { classes } = useStyles();
 
   const usernameInputRef = useStateRef<HTMLInputElement>(null);
   const passwordInputRef = useStateRef<HTMLInputElement>(null);
@@ -62,13 +68,18 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
           <div className={classes.linkToRegisterWrapper}>
             <Text typo="body 2" color="secondary">
               {msg("noAccount")!}
-              <Link href={url.registrationUrl} className={classes.registerLink} underline="hover">
+              <Link
+                href={url.registrationUrl}
+                className={classes.registerLink}
+                underline="hover"
+              >
                 {msg("doRegister")}
               </Link>
             </Text>
           </div>
         )
-      }>
+      }
+    >
       <div className={classes.root}>
         {realm.password && social.providers !== undefined && (
           <>
@@ -81,7 +92,7 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                 ))}
               </ul>
             </div>
-            <LoginDivider className={classes.divider} i18n={i18n} />
+            {/* <LoginDivider className={classes.divider} i18n={i18n} /> */}
           </>
         )}
         <div>
@@ -159,7 +170,8 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                   className={classes.buttonSubmit}
                   name="login"
                   type="submit"
-                  disabled={isLoginButtonDisabled}>
+                  disabled={isLoginButtonDisabled}
+                >
                   {msgStr("continue")}
                 </Button>
               </div>
@@ -171,93 +183,93 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
   );
 }
 
-const useStyles = makeStyles({ name: { Login } })((theme) => ({
-  root: {
-    "& .MuiTextField-root": {
-      width: "100%",
-      marginTop: theme.spacing(5),
-    },
-  },
-  rememberMeForgotPasswordWrapper: {
-    display: "flex",
-    marginTop: theme.spacing(4),
-  },
-  forgotPassword: {
-    flex: 1,
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  buttonsWrapper: {
-    marginTop: theme.spacing(4),
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  buttonSubmit: {
-    width: "100%",
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(0),
-  },
-  linkToRegisterWrapper: {
-    marginTop: theme.spacing(5),
-    textAlign: "center",
-    "& > *": {
-      display: "inline-block",
-    },
-  },
-  registerLink: {
-    paddingLeft: theme.spacing(2),
-  },
-  divider: {
-    ...theme.spacing.topBottom("margin", 5),
-  },
-  providers: {
-    listStyleType: "none",
-    padding: 0,
-  },
-}));
+// const useStyles = makeStyles({ name: { Login } })((theme) => ({
+//   root: {
+//     "& .MuiTextField-root": {
+//       width: "100%",
+//       marginTop: theme.spacing(5),
+//     },
+//   },
+//   rememberMeForgotPasswordWrapper: {
+//     display: "flex",
+//     marginTop: theme.spacing(4),
+//   },
+//   forgotPassword: {
+//     flex: 1,
+//     display: "flex",
+//     justifyContent: "flex-end",
+//     alignItems: "center",
+//   },
+//   buttonsWrapper: {
+//     marginTop: theme.spacing(4),
+//     display: "flex",
+//     justifyContent: "flex-end",
+//   },
+//   buttonSubmit: {
+//     width: "100%",
+//     marginTop: theme.spacing(2),
+//     marginLeft: theme.spacing(0),
+//   },
+//   linkToRegisterWrapper: {
+//     marginTop: theme.spacing(5),
+//     textAlign: "center",
+//     "& > *": {
+//       display: "inline-block",
+//     },
+//   },
+//   registerLink: {
+//     paddingLeft: theme.spacing(2),
+//   },
+//   divider: {
+//     ...theme.spacing.topBottom("margin", 5),
+//   },
+//   providers: {
+//     listStyleType: "none",
+//     padding: 0,
+//   },
+// }));
 
-const { LoginDivider } = (() => {
-  type Props = {
-    className?: string;
-    i18n: I18n;
-  };
+// const { LoginDivider } = (() => {
+//   type Props = {
+//     className?: string;
+//     i18n: I18n;
+//   };
 
-  function LoginDivider(props: Props) {
-    const { className, i18n } = props;
+//   function LoginDivider(props: Props) {
+//     const { className, i18n } = props;
 
-    const { msg } = i18n;
+//     const { msg } = i18n;
 
-    const { classes, cx } = useStyles();
+//     const { classes, cx } = useStyles();
 
-    const separator = <div role="separator" className={classes.separator} />;
+//     const separator = <div role="separator" className={classes.separator} />;
 
-    return (
-      <div className={cx(classes.root, className)}>
-        {separator}
-        <Text typo="body 2" color="secondary" className={classes.text}>
-          {msg("or")}
-        </Text>
-        {separator}
-      </div>
-    );
-  }
+//     return (
+//       <div className={cx(classes.root, className)}>
+//         {separator}
+//         <Text typo="body 2" color="secondary" className={classes.text}>
+//           {msg("or")}
+//         </Text>
+//         {separator}
+//       </div>
+//     );
+//   }
 
-  const useStyles = makeStyles({ name: { LoginDivider } })((theme) => ({
-    root: {
-      display: "flex",
-      alignItems: "center",
-    },
-    separator: {
-      height: 1,
-      backgroundColor: theme.colors.useCases.typography.textSecondary,
-      flex: 1,
-    },
-    text: {
-      ...theme.spacing.rightLeft("margin", 2),
-      paddingBottom: 2,
-    },
-  }));
+//   const useStyles = makeStyles({ name: { LoginDivider } })((theme) => ({
+//     root: {
+//       display: "flex",
+//       alignItems: "center",
+//     },
+//     separator: {
+//       height: 1,
+//       backgroundColor: theme.colors.useCases.typography.textSecondary,
+//       flex: 1,
+//     },
+//     text: {
+//       ...theme.spacing.rightLeft("margin", 2),
+//       paddingBottom: 2,
+//     },
+//   }));
 
-  return { LoginDivider };
-})();
+//   return { LoginDivider };
+// })();

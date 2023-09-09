@@ -6,7 +6,6 @@ import { useRef, useState } from "react";
 // @ts-ignore
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { makeStyles, Button, Text } from "../../theme";
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";
 import { UserProfileFormFields } from "./shared/UserProfileFormFields";
@@ -17,16 +16,27 @@ interface Steps {
 
 const steps: Steps = {
   1: ["firstName", "lastName", "country", "profession", "domain"],
-  2: ["email", "username", "password", "password-confirm", "terms_and_conditions", "subscribe_to_newsletter"],
+  2: [
+    "email",
+    "username",
+    "password",
+    "password-confirm",
+    "terms_and_conditions",
+    "subscribe_to_newsletter",
+  ],
   3: [""], // verify email (last step). This step is not used in this form even though it's shown in the stepper
 };
 
 export default function RegisterUserProfile(
-  props: PageProps<Extract<KcContext, { pageId: "register-user-profile.ftl" }>, I18n>
+  props: PageProps<
+    Extract<KcContext, { pageId: "register-user-profile.ftl" }>,
+    I18n
+  >,
 ) {
   const isDarkModeEnabled = false;
   const { kcContext, i18n, doUseDefaultCss, Template } = props;
-  const { url, messagesPerField, recaptchaRequired, recaptchaSiteKey } = kcContext;
+  const { url, messagesPerField, recaptchaRequired, recaptchaSiteKey } =
+    kcContext;
   const { msg, msgStr } = i18n;
   const [activeStep, setActiveStep] = useState(0);
   const [isFormSubmittable, setIsFormSubmittable] = useState(false);
@@ -61,14 +71,23 @@ export default function RegisterUserProfile(
         <div className={classes.linkToSignInWrapper}>
           <Text typo="body 2" color="secondary">
             {msg("alreadyHaveAccount")}
-            <Link href={url.loginUrl} className={classes.linkToSignIn} underline="hover">
+            <Link
+              href={url.loginUrl}
+              className={classes.linkToSignIn}
+              underline="hover"
+            >
               {msg("doLogIn")}
             </Link>
           </Text>
         </div>
       }
-      headerNode={msg("doRegister")}>
-      <form className={classes.root} action={url.registrationAction} method="post">
+      headerNode={msg("doRegister")}
+    >
+      <form
+        className={classes.root}
+        action={url.registrationAction}
+        method="post"
+      >
         <UserProfileFormFields
           kcContext={kcContext}
           onIsFormSubmittableValueChange={setIsFormSubmittable}
@@ -100,9 +119,12 @@ export default function RegisterUserProfile(
             const button = (
               <Button
                 className={classes.buttonSubmit}
-                disabled={!isFormSubmittable || (recaptchaRequired && !isCaptchaValid)}
+                disabled={
+                  !isFormSubmittable || (recaptchaRequired && !isCaptchaValid)
+                }
                 type="submit"
-                tabIndex={getIncrementedTabIndex()}>
+                tabIndex={getIncrementedTabIndex()}
+              >
                 {msgStr("getStarted")}
               </Button>
             );
@@ -125,7 +147,11 @@ export default function RegisterUserProfile(
         </Button>
       )}
       {activeStep == 1 && (
-        <Button className={classes.buttonNextBack} onClick={handleBack} variant="secondary">
+        <Button
+          className={classes.buttonNextBack}
+          onClick={handleBack}
+          variant="secondary"
+        >
           {msgStr("back")}
         </Button>
       )}
@@ -133,44 +159,44 @@ export default function RegisterUserProfile(
   );
 }
 
-const useStyles = makeStyles<{ activeStep: number }>({ name: { RegisterUserProfile } })(
-  (theme, { activeStep }) => ({
-    root: {
-      "& .MuiTextField-root": {
-        width: "100%",
-        marginTop: theme.spacing(5),
-      },
-    },
-    linkToSignInWrapper: {
+const useStyles = makeStyles<{ activeStep: number }>({
+  name: { RegisterUserProfile },
+})((theme, { activeStep }) => ({
+  root: {
+    "& .MuiTextField-root": {
+      width: "100%",
       marginTop: theme.spacing(5),
-      textAlign: "center",
-      "& > *": {
-        display: "inline-block",
-      },
     },
-    linkToSignIn: {
-      paddingLeft: theme.spacing(2),
+  },
+  linkToSignInWrapper: {
+    marginTop: theme.spacing(5),
+    textAlign: "center",
+    "& > *": {
+      display: "inline-block",
     },
-    buttonsWrapper: {
-      marginTop: theme.spacing(2),
-      display: "flex",
-      justifyContent: "flex-end",
-      "& span": {
-        width: "100%",
-      },
-    },
-    buttonNextBack: {
-      marginTop: theme.spacing(3),
+  },
+  linkToSignIn: {
+    paddingLeft: theme.spacing(2),
+  },
+  buttonsWrapper: {
+    marginTop: theme.spacing(2),
+    display: "flex",
+    justifyContent: "flex-end",
+    "& span": {
       width: "100%",
     },
-    buttonSubmit: {
-      marginTop: theme.spacing(2),
-      marginLeft: theme.spacing(0),
-      width: "100%",
-    },
-    recaptcha: {
-      marginTop: theme.spacing(2),
-      display: activeStep == 1 ? "block" : "none",
-    },
-  })
-);
+  },
+  buttonNextBack: {
+    marginTop: theme.spacing(3),
+    width: "100%",
+  },
+  buttonSubmit: {
+    marginTop: theme.spacing(2),
+    marginLeft: theme.spacing(0),
+    width: "100%",
+  },
+  recaptcha: {
+    marginTop: theme.spacing(2),
+    display: activeStep == 1 ? "block" : "none",
+  },
+}));

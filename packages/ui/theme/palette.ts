@@ -8,7 +8,6 @@ const DefaultPalette = (mode: PaletteMode, themeColor: ThemeColor) => {
   const darkColor = '231, 227, 252'
   const mainColor = mode === 'light' ? lightColor : darkColor
 
-  console.log('themeColor', themeColor)
   const primaryGradient = () => {
     if (themeColor === 'primary') {
       return '#C6A7FE'

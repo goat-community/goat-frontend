@@ -17,7 +17,6 @@ interface Props {
   disablePortal?: boolean;
 }
 
-//TODO: Convert to tss-react
 const Popper = styled(MuiPopper, {
   shouldForwardProp: (prop) => prop !== "arrow",
 })(({ theme }) => ({

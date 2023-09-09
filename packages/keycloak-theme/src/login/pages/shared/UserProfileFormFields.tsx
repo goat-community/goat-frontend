@@ -10,7 +10,6 @@ import { Checkbox } from "@p4b/ui/components/Checkbox";
 import type { AttributeOptions } from "@p4b/ui/components/Inputs";
 import { TextField } from "@p4b/ui/components/Inputs";
 
-import { Text, makeStyles } from "../../../theme";
 import { regExpStrToEmailDomains } from "../../emailDomainAcceptListHelper";
 import type { I18n } from "../../i18n";
 import { getCountries } from "../../i18n";
@@ -138,38 +137,6 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.currentLanguageTag]);
 
-  // // Steps
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [isStep1Valid, setIsStep1Valid] = useState(false);
-
-  // const handleStep1Validation = () => {
-  //   if (activeStep === 0) {
-  //     const fieldStates: boolean[] = [];
-  //     steps[1].forEach((attributeName: string) => {
-  //       const attribute = kcContext.profile.attributes.find(
-  //         ({ name }: { name: string }) => name === attributeName
-  //       );
-  //       const value = fieldStateByAttributeName[attributeName]?.value;
-  //       if (!fieldStateByAttributeName.hasOwnProperty(attributeName)) {
-  //         fieldStates.push(true);
-  //         return;
-  //       }
-  //       const isRequired = attribute?.required;
-  //       const displayableErrors = fieldStateByAttributeName[attributeName].displayableErrors;
-
-  //       if ((isRequired && value === "") || displayableErrors.length > 0) {
-  //         fieldStates.push(false);
-  //       } else {
-  //         fieldStates.push(true);
-  //       }
-  //     });
-  //     if (fieldStates.every((state) => state === true)) {
-  //       setIsStep1Valid(true);
-  //     } else {
-  //       setIsStep1Valid(false);
-  //     }
-  //   }
-  // };
 
   return (
     <>
@@ -416,18 +383,18 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
   );
 }
 
-const useStyles = makeStyles({ name: { UserProfileFormFields } })((theme) => ({
-  acceptTermsWrapper: {
-    display: "flex",
-    marginTop: theme.spacing(2),
-  },
-  subscribeToNewsletterWrapper: {
-    display: "flex",
-    marginTop: theme.spacing(0),
-  },
-  // We use show/hide to avoid the "jumping" effect when the component is mounted/unmounted
-  show: {},
-  hide: {
-    display: "none",
-  },
-}));
+// const useStyles = makeStyles({ name: { UserProfileFormFields } })((theme) => ({
+//   acceptTermsWrapper: {
+//     display: "flex",
+//     marginTop: theme.spacing(2),
+//   },
+//   subscribeToNewsletterWrapper: {
+//     display: "flex",
+//     marginTop: theme.spacing(0),
+//   },
+//   // We use show/hide to avoid the "jumping" effect when the component is mounted/unmounted
+//   show: {},
+//   hide: {
+//     display: "none",
+//   },
+// }));
