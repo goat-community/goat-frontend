@@ -13,6 +13,8 @@
 name: "Client - PR"
 
 on:
+  pull_request:
+    branches: [main]
   pull_request_target:
     branches: [main]
   merge_group:
@@ -37,7 +39,7 @@ jobs:
 
   typecheck:
     name: typecheck
-    uses: ./.github/workflows/check-types.yml
+    uses: ./.github/workflows/typecheck.yml
     secrets: inherit
 
   lint:
