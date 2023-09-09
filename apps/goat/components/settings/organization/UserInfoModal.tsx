@@ -23,7 +23,6 @@ const UserInfoModal = (props: UserInfoModal) => {
     {
       id: string;
       extension: string;
-      studyarea: string;
       maxPlaces: number;
       checked: boolean;
       placesLeft: number;
@@ -32,7 +31,6 @@ const UserInfoModal = (props: UserInfoModal) => {
     {
       id: "1",
       extension: "Active mobility",
-      studyarea: "Greater Munich",
       maxPlaces: 3,
       placesLeft: 1,
       // available: "1 of 3 seats available",
@@ -41,23 +39,27 @@ const UserInfoModal = (props: UserInfoModal) => {
     {
       id: "2",
       extension: "Motorised mobility",
-      studyarea: "Greater Munich",
       maxPlaces: 3,
       placesLeft: 0,
       checked: false,
     },
     {
       id: "3",
-      extension: "Active mobility",
-      studyarea: "Berlin",
+      extension: "Healthcare POIs",
       maxPlaces: 3,
       placesLeft: 2,
       checked: false,
     },
     {
       id: "4",
-      extension: "Active mobility",
-      studyarea: "London",
+      extension: "Transport POIs",
+      maxPlaces: 3,
+      placesLeft: 3,
+      checked: false,
+    },
+    {
+      id: "5",
+      extension: "Live traffic data",
       maxPlaces: 3,
       placesLeft: 3,
       checked: false,
@@ -186,7 +188,7 @@ const UserInfoModal = (props: UserInfoModal) => {
                   disabled={!extension.placesLeft && !extension.checked}
                 />
                 <Text typo="body 1">
-                  {extension.extension} - {extension.studyarea}
+                  {extension.extension}
                 </Text>
                 <Text typo="caption" color="secondary">
                   {extension.placesLeft} of {extension.maxPlaces} seats available

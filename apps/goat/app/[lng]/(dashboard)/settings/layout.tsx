@@ -31,7 +31,7 @@ const Settings = (props: SettingsLayoutProps) => {
                 <Text
                   typo="body 2"
                   className={
-                    pathname === "/settings/organization" ? classes.selectedSidebarText : classes.SidebarText
+                    pathname.endsWith("/settings/organization") ? classes.selectedSidebarText : classes.SidebarText
                   }>
                   Organization
                 </Text>
@@ -43,23 +43,23 @@ const Settings = (props: SettingsLayoutProps) => {
                 <Text
                   typo="body 2"
                   className={
-                    pathname === "/settings/subscription" ? classes.selectedSidebarText : classes.SidebarText
+                    pathname.endsWith("/settings/subscription") ? classes.selectedSidebarText : classes.SidebarText
                   }>
                   Subscription
                 </Text>
               </span>
             </Link>
             <Divider width="100%" color="main" className={classes.hr} />
-            <Link href="/settings/privacy-preference" className={classes.link}>
+            <Link href="/settings/settings" className={classes.link}>
               <span>
                 <Text
                   typo="body 2"
                   className={
-                    pathname === "/settings/privacy-preference"
+                    pathname.endsWith("/settings/settings")
                       ? classes.selectedSidebarText
                       : classes.SidebarText
                   }>
-                  Privacy preferences
+                  Settings
                 </Text>
               </span>
             </Link>
@@ -86,8 +86,9 @@ const useStyles = makeStyles({ name: { Settings } })((theme) => ({
     // padding: theme.spacing(1) theme.spacing(4),
     padding: `${theme.spacing(1)}px ${theme.spacing(4)}px`,
     cursor: "pointer",
+    transition: "all .3s ease",
     "&:hover": {
-      backgroundColor: theme.colors.palette[theme.isDarkModeEnabled ? "dark" : "light"].greyVariant1 + "50",
+      backgroundColor: theme.colors.palette[theme.isDarkModeEnabled ? "dark" : "light"].greyVariant2 + "30",
     },
   },
   selectedSidebarText: {
