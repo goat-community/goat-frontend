@@ -58,7 +58,7 @@ export default function Info(
           </Link>
         ) : actionUri !== undefined ? (
           <Link underline="hover" href={actionUri}>
-            <Button>{msg("proceedWithAction")}</Button>
+            <Button fullWidth>{msg("proceedWithAction")}</Button>
           </Link>
         ) : (
           client.baseUrl !== undefined && (

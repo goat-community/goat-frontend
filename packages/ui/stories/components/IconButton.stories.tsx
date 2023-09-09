@@ -33,8 +33,6 @@ const meta: Meta<typeof IconButton> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -55,9 +53,7 @@ export const Default: Story = {
   render: (args) => {
     const { ...rest } = args;
     return (
-      <IconButton
-        {...rest}
-      >
+      <IconButton {...rest}>
         <Icon iconName={ICON_NAME.LAYERS} fontSize="inherit" />
       </IconButton>
     );

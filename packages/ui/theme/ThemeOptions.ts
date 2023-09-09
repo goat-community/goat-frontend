@@ -11,7 +11,7 @@ import type { Settings } from "./types";
 
 const themeOptions = (settings: Settings): ThemeOptions => {
   // ** Vars
-  const { mode, themeColor } = settings;
+  const { mode, themeColor = "primary" } = settings;
 
   const themeConfig = {
     palette: palette(mode, themeColor),

@@ -23,6 +23,5 @@ declare module '@mui/material/styles' {
 
   export type Settings = {
     mode: PaletteMode
-    themeColor: ThemeColor
-    contentWidth: ContentWidth
+    themeColor?: ThemeColor
   }

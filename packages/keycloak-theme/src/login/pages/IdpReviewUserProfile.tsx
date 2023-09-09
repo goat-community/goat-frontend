@@ -2,9 +2,9 @@ import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { useState } from "react";
 
 import { Button } from "@mui/material";
-import type { I18n } from "../i18n";
-import type { KcContext } from "../kcContext";
-import { UserProfileFormFields } from "./shared/UserProfileFormFields";
+import type { I18n } from "../login/i18n";
+import type { KcContext } from "../login/kcContext";
+// import { UserProfileFormFields } from "./shared/UserProfileFormFields";
 
 export default function IdpReviewUserProfile(
   props: PageProps<
@@ -35,15 +35,16 @@ export default function IdpReviewUserProfile(
         action={url.loginAction}
         method="post"
       >
-        <UserProfileFormFields
+        {/* <UserProfileFormFields
           kcContext={kcContext}
           onIsFormSubmittableValueChange={setIsFomSubmittable}
           i18n={i18n}
           getIncrementedTabIndex={getIncrementedTabIndex}
-        />
+        /> */}
 
         <Button
           type="submit"
+          fullWidth
           disabled={!isFomSubmittable}
           tabIndex={getIncrementedTabIndex()}
         >

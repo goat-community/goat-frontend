@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useEffect } from "react";
+import { ReactNode } from "react";
 
 // ** MUI Imports
 import CssBaseline from "@mui/material/CssBaseline";

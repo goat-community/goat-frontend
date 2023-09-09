@@ -2,8 +2,8 @@ import { useGetClassName } from "keycloakify/login/lib/useGetClassName";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { clsx } from "keycloakify/tools/clsx";
 
-import type { I18n } from "../i18n";
-import type { KcContext } from "../kcContext";
+import type { I18n } from "../login/i18n";
+import type { KcContext } from "../login/kcContext";
 
 export default function LoginIdpLinkConfirm(
   props: PageProps<Extract<KcContext, { pageId: "login-idp-link-confirm.ftl" }>, I18n>

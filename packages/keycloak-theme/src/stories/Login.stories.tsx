@@ -56,7 +56,7 @@ export const WithEmailAsUsername: StoryFn<typeof PageStory> = () => (
 export const WithPresetUsername: StoryFn<typeof PageStory> = () => (
   <PageStory
     kcContext={{
-      login: { username: "max.mustermann@mail.com" },
+      login: { username: "info@plan4better.de" },
     }}
   />
 );
@@ -64,7 +64,7 @@ export const WithPresetUsername: StoryFn<typeof PageStory> = () => (
 export const WithImmutablePresetUsername: StoryFn<typeof PageStory> = () => (
   <PageStory
     kcContext={{
-      login: { username: "max.mustermann@mail.com" },
+      login: { username: "info@plan4better.de" },
       usernameEditDisabled: true,
     }}
   />

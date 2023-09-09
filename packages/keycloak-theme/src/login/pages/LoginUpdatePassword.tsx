@@ -1,25 +1,41 @@
 import FormControlLabel from "@mui/material/FormControlLabel";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
 
-import { Checkbox } from "@p4b/ui/components/Checkbox";
-import { TextField } from "@p4b/ui/components/Inputs/TextField";
-
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
 export default function LoginUpdatePassword(
-  props: PageProps<Extract<KcContext, { pageId: "login-update-password.ftl" }>, I18n>
+  props: PageProps<
+    Extract<KcContext, { pageId: "login-update-password.ftl" }>,
+    I18n
+  >,
 ) {
+  const theme = useTheme();
   const { kcContext, i18n, doUseDefaultCss, Template } = props;
 
   const { msg, msgStr } = i18n;
 
   const { url, isAppInitiatedAction, username } = kcContext;
-  const { classes } = useStyles();
-  console.log("classes", classes);
   return (
-    <Template {...{ kcContext, i18n, doUseDefaultCss }} headerNode={msg("updatePasswordTitle")}>
-      <form id="kc-passwd-update-form" action={url.loginAction} method="post" className={classes.root}>
+    <Template
+      {...{ kcContext, i18n, doUseDefaultCss }}
+      headerNode={msg("updatePasswordTitle")}
+    >
+      <Box
+        component="form"
+        id="kc-passwd-update-form"
+        action={url.loginAction}
+        method="post"
+      >
         <div style={{ display: "none" }}>
           <TextField
             type="text"
@@ -32,84 +48,94 @@ export default function LoginUpdatePassword(
         </div>
 
         <div style={{ display: "none" }}>
-          <TextField type="password" id="password" name="password" autoComplete="current-password" />
+          <TextField
+            type="password"
+            id="password"
+            name="password"
+            autoComplete="current-password"
+          />
+        </div>
+        <Stack spacing={theme.spacing(2)}>
+          <TextField
+            type="password"
+            id="password-new"
+            name="password-new"
+            aria-label="password-new"
+            tabIndex={1}
+            label={msg("passwordNew")}
+            autoComplete="new-password"
+          />
+
+          <TextField
+            type="password"
+            id="password-confirm"
+            name="password-confirm"
+            aria-label="password-confirm"
+            tabIndex={2}
+            label={msg("passwordConfirm")}
+            autoComplete="new-password"
+          />
+        </Stack>
+
+        <div id="kc-form-options">
+          {isAppInitiatedAction && (
+            <Box
+              sx={{
+                mt: theme.spacing(1),
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                justifyContent: "space-between",
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    tabIndex={3}
+                    id="logout-sessions"
+                    name="logout-sessions"
+                    defaultChecked={true}
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2">
+                    {msgStr("logoutOtherSessions")}
+                  </Typography>
+                }
+              />
+            </Box>
+          )}
         </div>
 
-        <TextField
-          type="password"
-          id="password-new"
-          name="password-new"
-          inputProps_aria-label="password-new"
-          inputProps_tabIndex={1}
-          label={msg("passwordNew")}
-          autoComplete="new-password"
-        />
-
-        <TextField
-          type="password"
-          id="password-confirm"
-          name="password-confirm"
-          inputProps_aria-label="password-confirm"
-          inputProps_tabIndex={2}
-          label={msg("passwordConfirm")}
-          autoComplete="new-password"
-        />
-
-        <div>
-          <div id="kc-form-options">
-            <div>
-              {isAppInitiatedAction && (
-                <FormControlLabel
-                  className={classes.logoutCheckbox}
-                  control={
-                    <Checkbox
-                      tabIndex={3}
-                      id="logout-sessions"
-                      name="logout-sessions"
-                      defaultChecked={true}
-                      color="primary"
-                    />
-                  }
-                  label={<Text typo="body 2">{msgStr("logoutOtherSessions")}</Text>}
-                />
-              )}
-            </div>
-          </div>
-
-          <div id="kc-form-buttons">
-            {isAppInitiatedAction ? (
-              <>
-                <Button variant="primary" className={classes.buttonSubmit} type="submit">
-                  {msgStr("doSubmit")}
-                </Button>
-                <Button variant="secondary" name="cancel-aia" className={classes.buttonSubmit} type="submit">
-                  {msgStr("doCancel")}
-                </Button>
-              </>
-            ) : (
-              <Button variant="primary" className={classes.buttonSubmit} type="submit">
+        <Box
+          sx={{
+            mt: theme.spacing(4),
+          }}
+          id="kc-form-buttons"
+        >
+          {isAppInitiatedAction ? (
+            <>
+              <Button
+                fullWidth
+                type="submit"
+                sx={{
+                  mb: theme.spacing(1),
+                }}
+              >
                 {msgStr("doSubmit")}
               </Button>
-            )}
-          </div>
-        </div>
-      </form>
+              <Button fullWidth variant="text" name="cancel-aia" type="submit">
+                {msgStr("doCancel")}
+              </Button>
+            </>
+          ) : (
+            <Button fullWidth type="submit">
+              {msgStr("doSubmit")}
+            </Button>
+          )}
+        </Box>
+      </Box>
     </Template>
   );
 }
-
-const useStyles = makeStyles({ name: { LoginUpdatePassword } })((theme) => ({
-  root: {
-    "& .MuiTextField-root": {
-      width: "100%",
-      marginTop: theme.spacing(5),
-    },
-  },
-  logoutCheckbox: {
-    marginTop: theme.spacing(2),
-  },
-  buttonSubmit: {
-    width: "100%",
-    marginTop: theme.spacing(4),
-  },
-}));

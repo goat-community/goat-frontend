@@ -402,9 +402,6 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.0
         version: 18.2.7
-      eslint:
-        specifier: ^8.40.0
-        version: 8.47.0
       eslint-config-p4b:
         specifier: workspace:*
         version: link:../eslint-config-p4b
@@ -417,6 +414,9 @@ importers:
       storybook:
         specifier: ^7.4.0
         version: 7.4.0
+      storybook-dark-mode:
+        specifier: ^3.0.0
+        version: 3.0.0(@types/react-dom@18.2.7)(@types/react@18.2.18)(react-dom@18.2.0)(react@18.2.0)
 
   packages/prettier-config:
     devDependencies:
@@ -455,6 +455,9 @@ importers:
         specifier: ^11.11.0
         version: 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.18)(react@18.2.0)
       '@fortawesome/fontawesome-svg-core':
+        specifier: ^6.4.2
+        version: 6.4.2
+      '@fortawesome/free-brands-svg-icons':
         specifier: ^6.4.2
         version: 6.4.2
       '@fortawesome/free-solid-svg-icons':
@@ -3115,6 +3118,14 @@ packages:
 
   /@fortawesome/fontawesome-svg-core@6.4.2:
     resolution: {integrity: sha512-gjYDSKv3TrM2sLTOKBc5rH9ckje8Wrwgx1CxAPbN5N3Fm4prfi7NsJVWd1jklp7i5uSCVwhZS5qlhMXqLrpAIg==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 6.4.2
+    dev: false
+
+  /@fortawesome/free-brands-svg-icons@6.4.2:
+    resolution: {integrity: sha512-LKOwJX0I7+mR/cvvf6qIiqcERbdnY+24zgpUSouySml+5w8B4BJOx8EhDR/FTKAu06W12fmUIcv6lzPSwYKGGg==}
     engines: {node: '>=6'}
     requiresBuild: true
     dependencies:
