@@ -41,7 +41,7 @@ export default function LoginPassword(
         action={url.loginAction}
         method="post"
       >
-        <Stack spacing={theme.spacing(1)}>
+        <Stack spacing={theme.spacing(2)}>
           <TextField
             fullWidth
             tabIndex={2}
@@ -69,7 +69,7 @@ export default function LoginPassword(
           fullWidth
           type="submit"
           sx={{
-            mt: theme.spacing(4),
+            mt: theme.spacing(8),
           }}
         >
           {msgStr("doLogIn")}

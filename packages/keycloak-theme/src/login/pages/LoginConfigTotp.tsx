@@ -43,7 +43,7 @@ export default function LoginConfigTotp(
       <>
         <Stack
           direction="column"
-          spacing={theme.spacing(2)}
+          spacing={theme.spacing(4)}
           sx={{
             display: "flex",
             alignItems: "center",
@@ -118,7 +118,7 @@ export default function LoginConfigTotp(
           id="kc-totp-settings-form"
           method="post"
         >
-          <Stack spacing={theme.spacing(2)}>
+          <Stack spacing={theme.spacing(4)}>
             <TextField
               required
               type="text"
@@ -159,22 +159,28 @@ export default function LoginConfigTotp(
           </Stack>
           <Box
             sx={{
-              mt: theme.spacing(4),
+              mt: theme.spacing(8),
             }}
           >
             {isAppInitiatedAction ? (
               <>
-                <input
-                  type="submit"
+                <Button
+                  sx={{
+                    mb: theme.spacing(2),
+                  }}
                   id="saveTOTPBtn"
-                  value={msgStr("doSubmit")}
+                  fullWidth
+                  type="submit"
+                  defaultValue={msgStr("doSubmit")}
                 />
+
                 <Button
                   fullWidth
                   type="submit"
                   id="cancelTOTPBtn"
                   name="cancel-aia"
                   value="true"
+                  variant="text"
                 >
                   {msg("doCancel")}
                 </Button>

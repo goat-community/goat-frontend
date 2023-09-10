@@ -1,4 +1,11 @@
-import { Box, Link, MenuItem, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Link,
+  MenuItem,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { Stepper, Step, StepLabel } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import type { Attribute } from "keycloakify/login/kcContext/KcContext";
@@ -7,7 +14,6 @@ import { useMemo, useEffect, Fragment } from "react";
 
 import { Checkbox } from "@p4b/ui/components/Checkbox";
 
-import { regExpStrToEmailDomains } from "../../emailDomainAcceptListHelper";
 import type { I18n } from "../../i18n";
 import { getCountries } from "../../i18n";
 
@@ -30,6 +36,7 @@ export type AttributeOption = string | { value: string; label: string };
 export type AttributeOptions = AttributeOption[];
 
 export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
+  const theme = useTheme();
   const {
     kcContext,
     onIsFormSubmittableValueChange,
@@ -157,7 +164,12 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
   return (
     <>
       {activeStep !== undefined && steps !== undefined && (
-        <Stepper activeStep={activeStep}>
+        <Stepper
+          activeStep={activeStep}
+          sx={{
+            mb: theme.spacing(8),
+          }}
+        >
           {Object.keys(steps).map((label) => (
             <Step sx={{ paddingRight: 0 }} key={label}>
               <StepLabel> </StepLabel>
@@ -189,6 +201,10 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
         return (
           <Fragment key={i}>
             <TextField
+              sx={{
+                mb: theme.spacing(2),
+              }}
+              fullWidth
               type={(() => {
                 switch (attribute.name) {
                   case "password-confirm":
@@ -220,7 +236,7 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
                   name: attribute.name,
                 });
               }}
-              inputProps_aria-label={attribute.name}
+              aria-label={attribute.name}
               tabIndex={
                 attribute.name === "username" ? -1 : getIncrementedTabIndex()
               }
@@ -318,8 +334,6 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
               //                               pattern :
               //                               undefined;
               //               })()}
-              // // prettier-ignore
-              inputProps_aria-invalid={fieldStateByAttributeName[attribute.name].displayableErrors.length !== 0}
             >
               {attribute.name in attributeOptions &&
                 attributeOptions[attribute.name] !== undefined &&
@@ -346,81 +360,63 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
       })}
       {/* Terms and Conditions */}
       {termsAndConditions && (activeStep == 1 || activeStep === undefined) && (
-        <div
-          style={{
-            display: "flex",
-            marginTop: "8px",
-          }}
-        >
-          <div className="checkbox">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  id="terms_and_conditions"
-                  name="terms_and_conditions"
-                  tabIndex={3}
-                  color="primary"
-                  onChange={handleTermsAndConditionChange}
-                />
-              }
-              label={
-                <Box
-                  sx={{
-                    display: "flex",
-                  }}
-                >
-                  <Typography variant="body2">
-                    {msg("accept")}
-                    <Link
-                      sx={{
-                        marginLeft: "2px",
-                      }}
-                      href="https://plan4better.de/en/privacy/"
-                      target="_blank"
-                    >
-                      {msg("terms")}
-                    </Link>
-                  </Typography>
-                </Box>
-              }
+        <FormControlLabel
+          control={
+            <Checkbox
+              id="terms_and_conditions"
+              name="terms_and_conditions"
+              tabIndex={3}
+              color="primary"
+              onChange={handleTermsAndConditionChange}
             />
-          </div>
-        </div>
+          }
+          label={
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              <Typography variant="body2">
+                {msg("accept")}
+                <Link
+                  sx={{
+                    marginLeft: "2px",
+                  }}
+                  href="https://plan4better.de/en/privacy/"
+                  target="_blank"
+                >
+                  {msg("terms")}
+                </Link>
+              </Typography>
+            </Box>
+          }
+        />
       )}
       {/* Subscribe To Newsletter */}
       {subscribeToNewsletter &&
         (activeStep == 1 || activeStep === undefined) && (
-          <div
-            style={{
-              display: "flex",
-              marginTop: "8px",
-            }}
-          >
-            <div className="checkbox">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id="subscribe_to_newsletter"
-                    name="subscribe_to_newsletter"
-                    tabIndex={3}
-                    color="primary"
-                    onChange={handleSubscribeToNewsletterChange}
-                  />
-                }
-                label={
-                  <Box
-                    sx={{
-                      display: "flex",
-                    }}
-                  >
-                    <Typography variant="body2">
-                      {msg("subscribeToNewsletter")}
-                    </Typography>
-                  </Box>
-                }
+          <FormControlLabel
+            control={
+              <Checkbox
+                id="subscribe_to_newsletter"
+                name="subscribe_to_newsletter"
+                tabIndex={3}
+                color="primary"
+                onChange={handleSubscribeToNewsletterChange}
               />
-            </div>
-          </div>
+            }
+            label={
+              <Box
+                sx={{
+                  display: "flex",
+                }}
+              >
+                <Typography variant="body2">
+                  {msg("subscribeToNewsletter")}
+                </Typography>
+              </Box>
+            }
+          />
         )}
     </>
   );

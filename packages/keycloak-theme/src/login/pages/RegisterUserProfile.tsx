@@ -1,7 +1,7 @@
-import { Tooltip } from "@mui/material";
+import { Box, Button, Tooltip, Typography, useTheme } from "@mui/material";
 import Link from "@mui/material/Link";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import ReCAPTCHA from "react-google-recaptcha";
@@ -33,7 +33,7 @@ export default function RegisterUserProfile(
     I18n
   >,
 ) {
-  const isDarkModeEnabled = false;
+  const theme = useTheme();
   const { kcContext, i18n, doUseDefaultCss, Template } = props;
   const { url, messagesPerField, recaptchaRequired, recaptchaSiteKey } =
     kcContext;
@@ -42,10 +42,15 @@ export default function RegisterUserProfile(
   const [isFormSubmittable, setIsFormSubmittable] = useState(false);
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const captchaRef = useRef(null);
-
-  const { classes } = useStyles({
-    activeStep,
-  });
+  // rerender recaptcha when theme.palette.mode changes
+  // workaround as captcha component doesn't rerender automatically
+  const [recaptchaKey, setRecaptchaKey] = useState(0);
+  useEffect(() => {
+    setTimeout(() => {
+      setRecaptchaKey((prev) => prev + 1);
+      console.log(theme.palette.mode);
+    }, 100);
+  }, [theme.palette.mode]);
 
   const getIncrementedTabIndex = (() => {
     let counter = 1;
@@ -68,26 +73,16 @@ export default function RegisterUserProfile(
       displayRequiredFields={false}
       i18n={i18n}
       infoNode={
-        <div className={classes.linkToSignInWrapper}>
-          <Text typo="body 2" color="secondary">
+        <div>
+          <Typography variant="body2">
             {msg("alreadyHaveAccount")}
-            <Link
-              href={url.loginUrl}
-              className={classes.linkToSignIn}
-              underline="hover"
-            >
-              {msg("doLogIn")}
-            </Link>
-          </Text>
+            <Link href={url.loginUrl}>{msg("doLogIn")}</Link>
+          </Typography>
         </div>
       }
       headerNode={msg("doRegister")}
     >
-      <form
-        className={classes.root}
-        action={url.registrationAction}
-        method="post"
-      >
+      <Box component="form" action={url.registrationAction} method="post">
         <UserProfileFormFields
           kcContext={kcContext}
           onIsFormSubmittableValueChange={setIsFormSubmittable}
@@ -98,27 +93,32 @@ export default function RegisterUserProfile(
         />
 
         {recaptchaRequired && (
-          <div>
-            <div>
-              <ReCAPTCHA
-                id="recaptcha"
-                hl={i18n.currentLanguageTag}
-                theme={isDarkModeEnabled ? "dark" : "light"}
-                className={classes.recaptcha}
-                sitekey={recaptchaSiteKey}
-                onChange={() => setIsCaptchaValid(true)}
-                onExpired={() => setIsCaptchaValid(false)}
-                onErrored={() => setIsCaptchaValid(false)}
-                ref={captchaRef}
-              />
-            </div>
-          </div>
+          <ReCAPTCHA
+            key={recaptchaKey}
+            style={{
+              marginTop: theme.spacing(4),
+            }}
+            id="recaptcha"
+            hl={i18n.currentLanguageTag}
+            theme={theme.palette.mode == "dark" ? "dark" : "light"}
+            sx={{
+              mt: theme.spacing(4),
+            }}
+            sitekey={recaptchaSiteKey}
+            onChange={() => setIsCaptchaValid(true)}
+            onExpired={() => setIsCaptchaValid(false)}
+            onErrored={() => setIsCaptchaValid(false)}
+            ref={captchaRef}
+          />
         )}
-        <div className={classes.buttonsWrapper}>
+        <div>
           {(() => {
             const button = (
               <Button
-                className={classes.buttonSubmit}
+                sx={{
+                  mt: theme.spacing(4),
+                }}
+                fullWidth
                 disabled={
                   !isFormSubmittable || (recaptchaRequired && !isCaptchaValid)
                 }
@@ -140,17 +140,26 @@ export default function RegisterUserProfile(
             ) : null;
           })()}
         </div>
-      </form>
+      </Box>
       {activeStep == 0 && (
-        <Button className={classes.buttonNextBack} onClick={handleNext}>
+        <Button
+          fullWidth
+          sx={{
+            mt: theme.spacing(4),
+          }}
+          onClick={handleNext}
+        >
           {msgStr("next")}
         </Button>
       )}
       {activeStep == 1 && (
         <Button
-          className={classes.buttonNextBack}
+          sx={{
+            mt: theme.spacing(2),
+          }}
+          fullWidth
           onClick={handleBack}
-          variant="secondary"
+          variant="text"
         >
           {msgStr("back")}
         </Button>
@@ -159,44 +168,44 @@ export default function RegisterUserProfile(
   );
 }
 
-const useStyles = makeStyles<{ activeStep: number }>({
-  name: { RegisterUserProfile },
-})((theme, { activeStep }) => ({
-  root: {
-    "& .MuiTextField-root": {
-      width: "100%",
-      marginTop: theme.spacing(5),
-    },
-  },
-  linkToSignInWrapper: {
-    marginTop: theme.spacing(5),
-    textAlign: "center",
-    "& > *": {
-      display: "inline-block",
-    },
-  },
-  linkToSignIn: {
-    paddingLeft: theme.spacing(2),
-  },
-  buttonsWrapper: {
-    marginTop: theme.spacing(2),
-    display: "flex",
-    justifyContent: "flex-end",
-    "& span": {
-      width: "100%",
-    },
-  },
-  buttonNextBack: {
-    marginTop: theme.spacing(3),
-    width: "100%",
-  },
-  buttonSubmit: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(0),
-    width: "100%",
-  },
-  recaptcha: {
-    marginTop: theme.spacing(2),
-    display: activeStep == 1 ? "block" : "none",
-  },
-}));
+// const useStyles = makeStyles<{ activeStep: number }>({
+//   name: { RegisterUserProfile },
+// })((theme, { activeStep }) => ({
+//   root: {
+//     "& .MuiTextField-root": {
+//       width: "100%",
+//       marginTop: theme.spacing(5),
+//     },
+//   },
+//   linkToSignInWrapper: {
+//     marginTop: theme.spacing(5),
+//     textAlign: "center",
+//     "& > *": {
+//       display: "inline-block",
+//     },
+//   },
+//   linkToSignIn: {
+//     paddingLeft: theme.spacing(2),
+//   },
+//   buttonsWrapper: {
+//     marginTop: theme.spacing(2),
+//     display: "flex",
+//     justifyContent: "flex-end",
+//     "& span": {
+//       width: "100%",
+//     },
+//   },
+//   buttonNextBack: {
+//     marginTop: theme.spacing(3),
+//     width: "100%",
+//   },
+//   buttonSubmit: {
+//     marginTop: theme.spacing(2),
+//     marginLeft: theme.spacing(0),
+//     width: "100%",
+//   },
+//   recaptcha: {
+//     marginTop: theme.spacing(2),
+//     display: activeStep == 1 ? "block" : "none",
+//   },
+// }));

@@ -24,7 +24,7 @@ export default function LogoutConfirm(
       <Typography variant="body1">{msg("logoutConfirmHeader")}</Typography>
       <Box
         sx={{
-          mt: theme.spacing(2),
+          mt: theme.spacing(4),
         }}
         component="form"
         action={url.logoutConfirmAction}
@@ -43,7 +43,7 @@ export default function LogoutConfirm(
         {!logoutConfirm.skipLink && client.baseUrl && (
           <Typography
             sx={{
-              mt: theme.spacing(2),
+              mt: theme.spacing(4),
             }}
           >
             <Link underline="hover" href={client.baseUrl}>

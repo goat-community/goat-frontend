@@ -28,7 +28,7 @@ export default function LoginIdpLinkConfirm(
         action={url.loginAction}
         method="post"
       >
-        <Stack spacing={theme.spacing(2)}>
+        <Stack spacing={theme.spacing(4)}>
           <Button
             fullWidth
             type="submit"

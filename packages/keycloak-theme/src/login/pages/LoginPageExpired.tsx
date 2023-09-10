@@ -23,7 +23,7 @@ export default function LoginPageExpired(
       displayMessage={false}
       headerNode={msg("pageExpiredTitle")}
     >
-      <Stack id="instruction1" spacing={theme.spacing(1)}>
+      <Stack id="instruction1" spacing={theme.spacing(2)}>
         <Typography variant="body1">
           {msg("pageExpiredMsg1")}{": "}
           <Link id="loginRestartLink" href={url.loginRestartFlowUrl}>

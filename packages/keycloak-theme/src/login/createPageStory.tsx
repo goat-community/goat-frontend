@@ -26,7 +26,7 @@ export function createPageStory<PageId extends KcContext["pageId"]>(params: {
       url.search = params.toString();
       window.history.replaceState(null, "", url.toString());
       setTimeout(() => {
-        setKey(key + 1);
+        setKey((prev) => prev + 1);
       }, 100);
     }, [dark]);
     return <KcApp key={key} kcContext={kcContext} />;

@@ -1,10 +1,10 @@
 import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { useState } from "react";
 
-import { Button } from "@mui/material";
-import type { I18n } from "../login/i18n";
-import type { KcContext } from "../login/kcContext";
-// import { UserProfileFormFields } from "./shared/UserProfileFormFields";
+import { Box, Button, useTheme } from "@mui/material";
+import type { I18n } from "../i18n";
+import type { KcContext } from "../kcContext";
+import { UserProfileFormFields } from "./shared/UserProfileFormFields";
 
 export default function IdpReviewUserProfile(
   props: PageProps<
@@ -12,6 +12,7 @@ export default function IdpReviewUserProfile(
     I18n
   >,
 ) {
+  const theme = useTheme();
   const { kcContext, i18n, doUseDefaultCss, Template } = props;
 
   const { msg, msgStr } = i18n;
@@ -30,19 +31,23 @@ export default function IdpReviewUserProfile(
       {...{ kcContext, i18n, doUseDefaultCss }}
       headerNode={msg("loginIdpReviewProfileTitle")}
     >
-      <form
+      <Box
+        component="form"
         id="kc-idp-review-profile-form"
         action={url.loginAction}
         method="post"
       >
-        {/* <UserProfileFormFields
+        <UserProfileFormFields
           kcContext={kcContext}
           onIsFormSubmittableValueChange={setIsFomSubmittable}
           i18n={i18n}
           getIncrementedTabIndex={getIncrementedTabIndex}
-        /> */}
+        />
 
         <Button
+          sx={{
+            mt: theme.spacing(4),
+          }}
           type="submit"
           fullWidth
           disabled={!isFomSubmittable}
@@ -50,7 +55,7 @@ export default function IdpReviewUserProfile(
         >
           {msgStr("doSubmit")}
         </Button>
-      </form>
+      </Box>
     </Template>
   );
 }

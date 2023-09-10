@@ -36,7 +36,7 @@ export default function LoginVerifyEmail(
       <Stepper
         activeStep={2}
         sx={{
-          mb: theme.spacing(2),
+          mb: theme.spacing(4),
         }}
       >
         {[1, 2, 3].map((label) => (
@@ -50,7 +50,7 @@ export default function LoginVerifyEmail(
 
       <Box
         sx={{
-          mt: theme.spacing(4),
+          mt: theme.spacing(8),
         }}
       >
         {(() => {

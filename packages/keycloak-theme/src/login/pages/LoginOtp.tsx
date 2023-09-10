@@ -69,7 +69,7 @@ export default function LoginOtp(
 
         <Box
           sx={{
-            mt: theme.spacing(4),
+            mt: theme.spacing(8),
           }}
         >
           <Button fullWidth name="login" id="kc-login" type="submit">

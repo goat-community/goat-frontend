@@ -40,7 +40,7 @@ const Card = (theme: Theme) => {
     MuiCardContent: {
       styleOverrides: {
         root: {
-          padding: theme.spacing(8),
+          padding: theme.spacing(6),
           "& + .MuiCardContent-root": {
             paddingTop: 0,
           },

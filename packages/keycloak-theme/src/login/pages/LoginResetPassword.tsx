@@ -27,7 +27,7 @@ export default function LoginResetPassword(
       <Typography
         variant="body1"
         sx={{
-          mb: theme.spacing(3),
+          mb: theme.spacing(6),
         }}
       >
         {msg("emailForgotInstruction")}
@@ -56,14 +56,14 @@ export default function LoginResetPassword(
         />
         <Box
           sx={{
-            mt: theme.spacing(4),
+            mt: theme.spacing(8),
           }}
         >
           <Button
             fullWidth
             type="submit"
             sx={{
-              mb: theme.spacing(2),
+              mb: theme.spacing(4),
             }}
           >
             {msgStr("doSubmit")}

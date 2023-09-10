@@ -41,7 +41,7 @@ export default function Login(
     social,
     realm,
     url,
-    usernameEditDisabled,
+    usernameHidden,
     login,
     auth,
     registrationDisabled,
@@ -86,7 +86,7 @@ export default function Login(
         realm.password &&
         realm.registrationAllowed &&
         !registrationDisabled && (
-          <Stack direction="column" spacing={theme.spacing(2)}>
+          <Stack direction="column" spacing={theme.spacing(4)}>
             <Stack
               direction="row"
               spacing={1}
@@ -188,10 +188,10 @@ export default function Login(
           action={url.loginAction}
           method="post"
         >
-          <Stack spacing={theme.spacing(2)}>
+          <Stack spacing={theme.spacing(4)}>
             <TextField
               fullWidth
-              disabled={usernameEditDisabled}
+              disabled={usernameHidden}
               defaultValue={login.username ?? ""}
               id="username"
               name="username"
@@ -240,14 +240,14 @@ export default function Login(
           </Stack>
           <Box
             sx={{
-              mt: theme.spacing(1),
+              mt: theme.spacing(2),
               display: "flex",
               alignItems: "center",
               flexWrap: "wrap",
               justifyContent: "space-between",
             }}
           >
-            {realm.rememberMe && !usernameEditDisabled && (
+            {realm.rememberMe && !usernameHidden && (
               <FormControlLabel
                 control={
                   <Checkbox
@@ -275,7 +275,7 @@ export default function Login(
 
           <Box
             sx={{
-              mt: theme.spacing(4),
+              mt: theme.spacing(8),
             }}
           >
             <input

@@ -9,27 +9,12 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 
-import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
+// import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
 import type { I18n } from "./i18n";
 import type { KcContext } from "./kcContext";
 import type { TemplateProps } from "keycloakify/login/TemplateProps";
 
 export default function Template(props: TemplateProps<KcContext, I18n>) {
-  const { children } = props;
-  const urlParams = new URLSearchParams(window.location.search);
-  const theme = urlParams.get("theme") || "light";
-  return (
-    <ThemeProvider
-      settings={{
-        mode: theme === "dark" ? "dark" : "light",
-      }}
-    >
-      <Layout {...props}>{children}</Layout>
-    </ThemeProvider>
-  );
-}
-
-function Layout(props: TemplateProps<KcContext, I18n>) {
   const theme = useTheme();
   const {
     displayInfo = false,

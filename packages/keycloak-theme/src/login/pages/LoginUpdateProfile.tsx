@@ -29,7 +29,7 @@ export default function LoginUpdateProfile(
         action={url.loginAction}
         method="post"
       >
-        <Stack spacing={theme.spacing(2)}>
+        <Stack spacing={theme.spacing(4)}>
           {user.editUsernameAllowed && (
             <TextField
               error={messagesPerField.existsError("username")}
@@ -92,7 +92,7 @@ export default function LoginUpdateProfile(
         <Box
           id="kc-form-buttons"
           sx={{
-            mt: theme.spacing(4),
+            mt: theme.spacing(8),
           }}
         >
           {isAppInitiatedAction ? (
@@ -101,7 +101,7 @@ export default function LoginUpdateProfile(
                 fullWidth
                 type="submit"
                 sx={{
-                  mb: theme.spacing(1),
+                  mb: theme.spacing(2),
                 }}
               >
                 {msgStr("doSubmit")}

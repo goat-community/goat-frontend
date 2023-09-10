@@ -61,7 +61,7 @@ export default function LoginUsername(
         realm.password &&
         realm.registrationAllowed &&
         !registrationDisabled && (
-          <Stack direction="column" spacing={theme.spacing(2)}>
+          <Stack direction="column" spacing={theme.spacing(4)}>
             <Stack
               direction="row"
               spacing={1}
@@ -194,7 +194,7 @@ export default function LoginUsername(
 
           <Box
             sx={{
-              mt: theme.spacing(1),
+              mt: theme.spacing(2),
               display: "flex",
               alignItems: "center",
               flexWrap: "wrap",
@@ -222,7 +222,7 @@ export default function LoginUsername(
           <Box
             id="kc-form-buttons"
             sx={{
-              mt: theme.spacing(2),
+              mt: theme.spacing(4),
             }}
           >
             <Button

@@ -20,7 +20,7 @@ export default function Error(
       headerNode={msg("errorTitle")}
     >
       {client !== undefined && client.baseUrl !== undefined && (
-        <Stack spacing={theme.spacing(2)}>
+        <Stack spacing={theme.spacing(4)}>
           <Typography variant="body1">{message.summary}</Typography>
           <Link id="backToApplication" href={client.baseUrl}>
             {msg("backToApplication")}

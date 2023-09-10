@@ -55,7 +55,7 @@ export default function LoginUpdatePassword(
             autoComplete="current-password"
           />
         </div>
-        <Stack spacing={theme.spacing(2)}>
+        <Stack spacing={theme.spacing(4)}>
           <TextField
             type="password"
             id="password-new"
@@ -81,7 +81,7 @@ export default function LoginUpdatePassword(
           {isAppInitiatedAction && (
             <Box
               sx={{
-                mt: theme.spacing(1),
+                mt: theme.spacing(2),
                 display: "flex",
                 alignItems: "center",
                 flexWrap: "wrap",
@@ -110,7 +110,7 @@ export default function LoginUpdatePassword(
 
         <Box
           sx={{
-            mt: theme.spacing(4),
+            mt: theme.spacing(8),
           }}
           id="kc-form-buttons"
         >
@@ -120,7 +120,7 @@ export default function LoginUpdatePassword(
                 fullWidth
                 type="submit"
                 sx={{
-                  mb: theme.spacing(1),
+                  mb: theme.spacing(2),
                 }}
               >
                 {msgStr("doSubmit")}

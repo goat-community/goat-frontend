@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 
 import { useI18n } from "./i18n";
 import type { KcContext } from "./kcContext";
+import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
 
 const Template = lazy(() => import("./Template"));
 const RegisterUserProfile = lazy(() => import("./pages/RegisterUserProfile"));
@@ -28,6 +29,8 @@ const Info = lazy(() => import("./pages/Info"));
 const Error = lazy(() => import("./pages/Error"));
 
 export default function KcApp(props: { kcContext: KcContext }) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const theme = urlParams.get("theme") || "light";
   const { kcContext } = props;
   const i18n = useI18n({ kcContext });
 
@@ -43,54 +46,72 @@ export default function KcApp(props: { kcContext: KcContext }) {
 
   return (
     <Suspense>
-      {(() => {
-        switch (kcContext.pageId) {
-          case "register-user-profile.ftl":
-            return <RegisterUserProfile kcContext={kcContext} {...pageProps} />;
-          case "update-user-profile.ftl":
-            return <UpdateUserProfile kcContext={kcContext} {...pageProps} />;
-          case "update-email.ftl":
-            return <UpdateEmail kcContext={kcContext} {...pageProps} />;
-          case "idp-review-user-profile.ftl":
-            return (
-              <IdpReviewUserProfile kcContext={kcContext} {...pageProps} />
-            );
-          case "select-authenticator.ftl":
-            return <SelectAuthenticator kcContext={kcContext} {...pageProps} />;
-          case "login.ftl":
-            return <Login kcContext={kcContext} {...pageProps} />;
-          case "login-verify-email.ftl":
-            return <LoginVerifyEmail kcContext={kcContext} {...pageProps} />;
-          case "login-config-totp.ftl":
-            return <LoginConfigTotp kcContext={kcContext} {...pageProps} />;
-          case "login-idp-link-confirm.ftl":
-            return <LoginIdpLinkConfirm kcContext={kcContext} {...pageProps} />;
-          case "login-idp-link-email.ftl":
-            return <LoginIdpLinkEmail kcContext={kcContext} {...pageProps} />;
-          case "login-update-profile.ftl":
-            return <LoginUpdateProfile kcContext={kcContext} {...pageProps} />;
-          case "login-password.ftl":
-            return <LoginPassword kcContext={kcContext} {...pageProps} />;
-          case "login-username.ftl":
-            return <LoginUsername kcContext={kcContext} {...pageProps} />;
-          case "login-otp.ftl":
-            return <LoginOtp kcContext={kcContext} {...pageProps} />;
-          case "login-reset-password.ftl":
-            return <LoginResetPassword kcContext={kcContext} {...pageProps} />;
-          case "login-update-password.ftl":
-            return <LoginUpdatePassword kcContext={kcContext} {...pageProps} />;
-          case "login-page-expired.ftl":
-            return <LoginPageExpired kcContext={kcContext} {...pageProps} />;
-          case "logout-confirm.ftl":
-            return <LogoutConfirm kcContext={kcContext} {...pageProps} />;
-          case "info.ftl":
-            return <Info kcContext={kcContext} {...pageProps} />;
-          case "error.ftl":
-            return <Error kcContext={kcContext} {...pageProps} />;
-          default:
-            return <Fallback kcContext={kcContext} {...pageProps} />;
-        }
-      })()}
+      <ThemeProvider
+        settings={{
+          mode: theme === "dark" ? "dark" : "light",
+        }}
+      >
+        {(() => {
+          switch (kcContext.pageId) {
+            case "register-user-profile.ftl":
+              return (
+                <RegisterUserProfile kcContext={kcContext} {...pageProps} />
+              );
+            case "update-user-profile.ftl":
+              return <UpdateUserProfile kcContext={kcContext} {...pageProps} />;
+            case "update-email.ftl":
+              return <UpdateEmail kcContext={kcContext} {...pageProps} />;
+            case "idp-review-user-profile.ftl":
+              return (
+                <IdpReviewUserProfile kcContext={kcContext} {...pageProps} />
+              );
+            case "select-authenticator.ftl":
+              return (
+                <SelectAuthenticator kcContext={kcContext} {...pageProps} />
+              );
+            case "login.ftl":
+              return <Login kcContext={kcContext} {...pageProps} />;
+            case "login-verify-email.ftl":
+              return <LoginVerifyEmail kcContext={kcContext} {...pageProps} />;
+            case "login-config-totp.ftl":
+              return <LoginConfigTotp kcContext={kcContext} {...pageProps} />;
+            case "login-idp-link-confirm.ftl":
+              return (
+                <LoginIdpLinkConfirm kcContext={kcContext} {...pageProps} />
+              );
+            case "login-idp-link-email.ftl":
+              return <LoginIdpLinkEmail kcContext={kcContext} {...pageProps} />;
+            case "login-update-profile.ftl":
+              return (
+                <LoginUpdateProfile kcContext={kcContext} {...pageProps} />
+              );
+            case "login-password.ftl":
+              return <LoginPassword kcContext={kcContext} {...pageProps} />;
+            case "login-username.ftl":
+              return <LoginUsername kcContext={kcContext} {...pageProps} />;
+            case "login-otp.ftl":
+              return <LoginOtp kcContext={kcContext} {...pageProps} />;
+            case "login-reset-password.ftl":
+              return (
+                <LoginResetPassword kcContext={kcContext} {...pageProps} />
+              );
+            case "login-update-password.ftl":
+              return (
+                <LoginUpdatePassword kcContext={kcContext} {...pageProps} />
+              );
+            case "login-page-expired.ftl":
+              return <LoginPageExpired kcContext={kcContext} {...pageProps} />;
+            case "logout-confirm.ftl":
+              return <LogoutConfirm kcContext={kcContext} {...pageProps} />;
+            case "info.ftl":
+              return <Info kcContext={kcContext} {...pageProps} />;
+            case "error.ftl":
+              return <Error kcContext={kcContext} {...pageProps} />;
+            default:
+              return <Fallback kcContext={kcContext} {...pageProps} />;
+          }
+        })()}
+      </ThemeProvider>
     </Suspense>
   );
 }
