@@ -7,7 +7,7 @@ const pageId = "login-update-password.ftl";
 const { PageStory } = createPageStory({ pageId });
 
 export default {
-  title: "Pages/Auth/LoginUpdatePassword",
+  title: "Pages/Auth/Login Update Password",
   component: PageStory,
 } as Meta<typeof PageStory>;
 

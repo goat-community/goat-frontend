@@ -2,10 +2,15 @@ import type { PageProps } from "keycloakify/login/pages/PageProps";
 
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";
+import { Link, Stack, Typography, useTheme } from "@mui/material";
 
 export default function LoginPageExpired(
-  props: PageProps<Extract<KcContext, { pageId: "login-page-expired.ftl" }>, I18n>
+  props: PageProps<
+    Extract<KcContext, { pageId: "login-page-expired.ftl" }>,
+    I18n
+  >,
 ) {
+  const theme = useTheme();
   const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
 
   const { url } = kcContext;
@@ -16,19 +21,23 @@ export default function LoginPageExpired(
     <Template
       {...{ kcContext, i18n, doUseDefaultCss, classes }}
       displayMessage={false}
-      headerNode={msg("pageExpiredTitle")}>
-      <p id="instruction1" className="instruction">
-        {msg("pageExpiredMsg1")}
-        <a id="loginRestartLink" href={url.loginRestartFlowUrl}>
-          {msg("doClickHere")}
-        </a>{" "}
-        .<br />
-        {msg("pageExpiredMsg2")}{" "}
-        <a id="loginContinueLink" href={url.loginAction}>
-          {msg("doClickHere")}
-        </a>{" "}
-        .
-      </p>
+      headerNode={msg("pageExpiredTitle")}
+    >
+      <Stack id="instruction1" spacing={theme.spacing(1)}>
+        <Typography variant="body1">
+          {msg("pageExpiredMsg1")}{": "}
+          <Link id="loginRestartLink" href={url.loginRestartFlowUrl}>
+            {msg("doClickHere")}
+          </Link>
+        </Typography>
+
+        <Typography variant="body1">
+          {msg("pageExpiredMsg2")}{": "}
+          <Link id="loginContinueLink" href={url.loginAction}>
+            {msg("doClickHere")}
+          </Link>
+        </Typography>
+      </Stack>
     </Template>
   );
 }

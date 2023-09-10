@@ -25,7 +25,7 @@ export default function LoginResetPassword(
       headerNode={msg("emailForgotTitle")}
     >
       <Typography
-        variant="body2"
+        variant="body1"
         sx={{
           mb: theme.spacing(3),
         }}

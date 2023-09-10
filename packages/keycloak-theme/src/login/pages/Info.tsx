@@ -1,6 +1,5 @@
 import { Button, Link, Typography } from "@mui/material";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
-import { assert } from "keycloakify/tools/assert";
 
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";
@@ -11,8 +10,6 @@ export default function Info(
   const { kcContext, i18n, doUseDefaultCss, Template } = props;
 
   const { msgStr, msg } = i18n;
-
-  assert(kcContext.message !== undefined);
 
   const {
     messageHeader,
@@ -32,14 +29,14 @@ export default function Info(
         messageHeader !== undefined ? (
           <>{messageHeader}</>
         ) : (
-          <>{message.summary}</>
+          <>{message?.summary || ""}</>
         )
       }
     >
       <div id="kc-info-message">
         <Typography variant="body1">
           <p>
-            {message.summary}
+            {message?.summary || ""}
 
             {requiredActions !== undefined && (
               <b>

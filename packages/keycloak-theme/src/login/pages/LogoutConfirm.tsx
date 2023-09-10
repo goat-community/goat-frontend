@@ -1,19 +1,15 @@
-import { useGetClassName } from "keycloakify/login/lib/useGetClassName";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
-import { clsx } from "keycloakify/tools/clsx";
 
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";
+import { Box, Button, Link, Typography, useTheme } from "@mui/material";
 
 export default function LogoutConfirm(
-  props: PageProps<Extract<KcContext, { pageId: "logout-confirm.ftl" }>, I18n>
+  props: PageProps<Extract<KcContext, { pageId: "logout-confirm.ftl" }>, I18n>,
 ) {
-  const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
+  const theme = useTheme();
 
-  const { getClassName } = useGetClassName({
-    doUseDefaultCss,
-    classes,
-  });
+  const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
 
   const { url, client, logoutConfirm } = kcContext;
 
@@ -23,40 +19,39 @@ export default function LogoutConfirm(
     <Template
       {...{ kcContext, i18n, doUseDefaultCss, classes }}
       displayMessage={false}
-      headerNode={msg("logoutConfirmTitle")}>
-      <div id="kc-logout-confirm" className="content-area">
-        <p className="instruction">{msg("logoutConfirmHeader")}</p>
-        <form className="form-actions" action={url.logoutConfirmAction} method="POST">
-          <input type="hidden" name="session_code" value={logoutConfirm.code} />
-          <div className={getClassName("kcFormGroupClass")}>
-            <div id="kc-form-options">
-              <div className={getClassName("kcFormOptionsWrapperClass")} />
-            </div>
-            <div id="kc-form-buttons" className={getClassName("kcFormGroupClass")}>
-              <input
-                tabIndex={4}
-                className={clsx(
-                  getClassName("kcButtonClass"),
-                  getClassName("kcButtonPrimaryClass"),
-                  getClassName("kcButtonBlockClass"),
-                  getClassName("kcButtonLargeClass")
-                )}
-                name="confirmLogout"
-                id="kc-logout"
-                type="submit"
-                value={msgStr("doLogout")}
-              />
-            </div>
-          </div>
-        </form>
-        <div id="kc-info-message">
-          {!logoutConfirm.skipLink && client.baseUrl && (
-            <p>
-              <a href={client.baseUrl} dangerouslySetInnerHTML={{ __html: msgStr("backToApplication") }} />
-            </p>
-          )}
-        </div>
-      </div>
+      headerNode={msg("logoutConfirmTitle")}
+    >
+      <Typography variant="body1">{msg("logoutConfirmHeader")}</Typography>
+      <Box
+        sx={{
+          mt: theme.spacing(2),
+        }}
+        component="form"
+        action={url.logoutConfirmAction}
+        method="POST"
+      >
+        <input type="hidden" name="session_code" value={logoutConfirm.code} />
+        <Button
+          fullWidth
+          tabIndex={4}
+          name="confirmLogout"
+          id="kc-logout"
+          type="submit"
+        >
+          {msgStr("doLogout")}
+        </Button>
+        {!logoutConfirm.skipLink && client.baseUrl && (
+          <Typography
+            sx={{
+              mt: theme.spacing(2),
+            }}
+          >
+            <Link underline="hover" href={client.baseUrl}>
+              {msg("backToApplication")}
+            </Link>
+          </Typography>
+        )}
+      </Box>
     </Template>
   );
 }

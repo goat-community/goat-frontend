@@ -14,6 +14,8 @@ const SelectAuthenticator = lazy(() => import("./pages/SelectAuthenticator"));
 const Login = lazy(() => import("./pages/Login"));
 const LoginVerifyEmail = lazy(() => import("./pages/LoginVerifyEmail"));
 const LoginConfigTotp = lazy(() => import("./pages/LoginConfigTotp"));
+const LoginIdpLinkConfirm = lazy(() => import("./pages/LoginIdpLinkConfirm"));
+const LoginIdpLinkEmail = lazy(() => import("./pages/LoginIdpLinkEmail"));
 const LoginUpdateProfile = lazy(() => import("./pages/LoginUpdateProfile"));
 const LoginOtp = lazy(() => import("./pages/LoginOtp"));
 const LoginPassword = lazy(() => import("./pages/LoginPassword"));
@@ -36,7 +38,7 @@ export default function KcApp(props: { kcContext: KcContext }) {
     i18n,
     Template,
     doUseDefaultCss: false,
-    classes: {}
+    classes: {},
   };
 
   return (
@@ -61,6 +63,10 @@ export default function KcApp(props: { kcContext: KcContext }) {
             return <LoginVerifyEmail kcContext={kcContext} {...pageProps} />;
           case "login-config-totp.ftl":
             return <LoginConfigTotp kcContext={kcContext} {...pageProps} />;
+          case "login-idp-link-confirm.ftl":
+            return <LoginIdpLinkConfirm kcContext={kcContext} {...pageProps} />;
+          case "login-idp-link-email.ftl":
+            return <LoginIdpLinkEmail kcContext={kcContext} {...pageProps} />;
           case "login-update-profile.ftl":
             return <LoginUpdateProfile kcContext={kcContext} {...pageProps} />;
           case "login-password.ftl":

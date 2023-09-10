@@ -180,128 +180,125 @@ export default function Login(
         )
       }
     >
-      <div>
-        <div>
-          {realm.password && (
-            <Box
-              component="form"
-              onSubmit={onSubmit}
-              action={url.loginAction}
-              method="post"
-            >
-              <Stack spacing={theme.spacing(2)}>
-                <TextField
-                  fullWidth
-                  disabled={usernameEditDisabled}
-                  defaultValue={login.username ?? ""}
-                  id="username"
-                  name="username"
-                  ref={usernameInputRef}
-                  tabIndex={1}
-                  spellCheck={false}
-                  label={
-                    !realm.loginWithEmailAllowed
-                      ? msg("username")
-                      : !realm.registrationEmailAsUsername
-                      ? msg("usernameOrEmail")
-                      : msg("email")
+      {realm.password && (
+        <Box
+          id="kc-form-login"
+          component="form"
+          onSubmit={onSubmit}
+          action={url.loginAction}
+          method="post"
+        >
+          <Stack spacing={theme.spacing(2)}>
+            <TextField
+              fullWidth
+              disabled={usernameEditDisabled}
+              defaultValue={login.username ?? ""}
+              id="username"
+              name="username"
+              ref={usernameInputRef}
+              tabIndex={1}
+              spellCheck={false}
+              label={
+                !realm.loginWithEmailAllowed
+                  ? msg("username")
+                  : !realm.registrationEmailAsUsername
+                  ? msg("usernameOrEmail")
+                  : msg("email")
+              }
+              autoComplete="off"
+            />
+            <FormControl fullWidth>
+              <InputLabel htmlFor="password">{msg("password")}</InputLabel>
+              <OutlinedInput
+                label={msg("password")}
+                defaultValue=""
+                ref={passwordInputRef}
+                id="password"
+                name="password"
+                tabIndex={2}
+                type={showPassword ? "text" : "password"}
+                autoComplete="off"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword(!showPassword)}
+                      onMouseDown={handleMouseEvents}
+                      onMouseUp={handleMouseEvents}
+                      aria-label="toggle password visibility"
+                    >
+                      {showPassword ? (
+                        <Icon iconName={ICON_NAME.EYE_SLASH} />
+                      ) : (
+                        <Icon iconName={ICON_NAME.EYE} />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+          </Stack>
+          <Box
+            sx={{
+              mt: theme.spacing(1),
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
+            {realm.rememberMe && !usernameEditDisabled && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    tabIndex={3}
+                    defaultChecked={!!login.rememberMe}
+                    id="rememberMe"
+                    name="rememberMe"
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2">{msg("rememberMe")}</Typography>
+                }
+              />
+            )}
+
+            {realm.resetPasswordAllowed && (
+              <Typography variant="body2">
+                <Link href={url.loginResetCredentialsUrl} underline="hover">
+                  {msg("doForgotPassword")}
+                </Link>
+              </Typography>
+            )}
+          </Box>
+
+          <Box
+            sx={{
+              mt: theme.spacing(4),
+            }}
+          >
+            <input
+              type="hidden"
+              name="credentialId"
+              {...(auth?.selectedCredential !== undefined
+                ? {
+                    value: auth.selectedCredential,
                   }
-                  autoComplete="off"
-                />
-                <FormControl fullWidth>
-                  <InputLabel htmlFor="password">{msg("password")}</InputLabel>
-                  <OutlinedInput
-                    label={msg("password")}
-                    defaultValue=""
-                    ref={passwordInputRef}
-                    id="password"
-                    name="password"
-                    tabIndex={2}
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="off"
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          edge="end"
-                          onClick={() => setShowPassword(!showPassword)}
-                          onMouseDown={handleMouseEvents}
-                          onMouseUp={handleMouseEvents}
-                          aria-label="toggle password visibility"
-                        >
-                          {showPassword ? (
-                            <Icon iconName={ICON_NAME.EYE_SLASH} />
-                          ) : (
-                            <Icon iconName={ICON_NAME.EYE} />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </Stack>
-              <Box
-                sx={{
-                  mt: theme.spacing(1),
-                  mb: theme.spacing(2),
-                  display: "flex",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  justifyContent: "space-between",
-                }}
-              >
-                {realm.rememberMe && !usernameEditDisabled && (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        tabIndex={3}
-                        defaultChecked={!!login.rememberMe}
-                        name="rememberMe"
-                        color="primary"
-                      />
-                    }
-                    label={
-                      <Typography variant="body2">
-                        {msg("rememberMe")}
-                      </Typography>
-                    }
-                  />
-                )}
-
-                {realm.resetPasswordAllowed && (
-                  <Link href={url.loginResetCredentialsUrl} underline="hover">
-                    {msg("doForgotPassword")}
-                  </Link>
-                )}
-              </Box>
-
-              <Box
-                sx={{
-                  mb: theme.spacing(2),
-                }}
-              >
-                <input
-                  type="hidden"
-                  name="credentialId"
-                  {...(auth?.selectedCredential !== undefined
-                    ? {
-                        value: auth.selectedCredential,
-                      }
-                    : {})}
-                />
-                <Button
-                  fullWidth
-                  ref={submitButtonRef}
-                  name="login"
-                  type="submit"
-                  disabled={isLoginButtonDisabled}
-                >
-                  {msgStr("continue")}
-                </Button>
-              </Box>
-            </Box>
-          )}
-        </div>
-      </div>
+                : {})}
+            />
+            <Button
+              fullWidth
+              ref={submitButtonRef}
+              name="login"
+              type="submit"
+              disabled={isLoginButtonDisabled}
+            >
+              {msgStr("continue")}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Template>
   );
 }
