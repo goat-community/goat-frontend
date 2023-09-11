@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // ** React Imports
-import { ReactNode } from "react";
+import type { ReactNode} from "react";
+import { useMemo } from "react";
 
 // ** MUI Imports
 import CssBaseline from "@mui/material/CssBaseline";
@@ -31,27 +33,27 @@ interface Props {
   children: ReactNode;
 }
 
-
 const ThemeProvider = (props: Props) => {
   // ** Props
   const { settings, children } = props;
 
-  // ** Merged ThemeOptions of Core and User
-  const coreThemeConfig = themeOptions(settings);
+  const theme = useMemo(() => {
+    // ** Merged ThemeOptions of Core and User
+    const coreThemeConfig = themeOptions(settings);
+    // ** Pass ThemeOptions to CreateTheme Function to create partial theme without component overrides
+    let theme = createTheme(coreThemeConfig);
+    // ** Continue theme creation and pass merged component overrides to CreateTheme function
+    theme = createTheme(theme, {
+      components: { ...overrides(theme) },
+      typography: { ...typography(theme) },
+    });
 
-  // ** Pass ThemeOptions to CreateTheme Function to create partial theme without component overrides
-  let theme = createTheme(coreThemeConfig);
-
-  // ** Continue theme creation and pass merged component overrides to CreateTheme function
-  theme = createTheme(theme, {
-    components: { ...overrides(theme) },
-    typography: { ...typography(theme) },
-  });
-
-  // ** Set responsive font sizes to true
-  if (themeConfig.responsiveFontSizes) {
-    theme = responsiveFontSizes(theme);
-  }
+    // ** Set responsive font sizes to true
+    if (themeConfig.responsiveFontSizes) {
+      theme = responsiveFontSizes(theme);
+    }
+    return theme;
+  }, [settings]);
 
   return (
     <MuiThemeProvider theme={theme}>

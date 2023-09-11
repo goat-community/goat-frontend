@@ -202,7 +202,8 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
           <Fragment key={i}>
             <TextField
               sx={{
-                mb: theme.spacing(2),
+                mb: theme.spacing(4),
+                display: isVisible ? "block" : "none",
               }}
               fullWidth
               type={(() => {
@@ -217,7 +218,6 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
               id={attribute.name}
               name={attribute.name}
               defaultValue={value}
-              // className={isVisible ? classes.show : classes.hide}
               aria-invalid={displayableErrors.length !== 0}
               disabled={attribute.readOnly}
               autoComplete={attribute.autocomplete}
@@ -242,7 +242,6 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
               }
               onChange={(event) => {
                 const { value } = event.target;
-                console.log("onValueBeingTypedChange", value);
                 if (attribute.name === "username")
                   // don't validate username while typing
                   return;
@@ -261,13 +260,8 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
               }}
               autoFocus={i === 0}
               spellCheck={false}
-              label={
-                <>
-                  {advancedMsg(attribute.displayName ?? "")}
-                  &nbsp;
-                  {!areAllFieldsRequired && attribute.required && "*"}
-                </>
-              }
+              required={!areAllFieldsRequired && attribute.required}
+              label={advancedMsg(attribute.displayName ?? "")}
               helperText={(() => {
                 const displayableErrors = fieldStateByAttributeName[
                   attribute.name
@@ -313,27 +307,8 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
 
                 return undefined;
               })()}
-              // prettier-ignore
-              // questionMarkHelperText={(() => {
-              //                   const { pattern } = attribute.validators.pattern ?? {};
-
-              //                   // prettier-ignore
-              //                   return pattern === undefined ?
-              //                       undefined :
-              //                       attribute.name === "email" ?
-              //                           (() => {
-
-              //                               try {
-              //                                   return regExpStrToEmailDomains(pattern).join(", ");
-              //                               } catch {
-              //                                   return pattern;
-              //                               }
-
-              //                           })() :
-              //                           fieldStateByAttributeName[attribute.name].displayableErrors.length === 0 ?
-              //                               pattern :
-              //                               undefined;
-              //               })()}
+              select={attribute.name in attributeOptions}
+              error={displayableErrors.length !== 0}
             >
               {attribute.name in attributeOptions &&
                 attributeOptions[attribute.name] !== undefined &&
@@ -396,6 +371,9 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
       {subscribeToNewsletter &&
         (activeStep == 1 || activeStep === undefined) && (
           <FormControlLabel
+            sx={{
+              mb: theme.spacing(2),
+            }}
             control={
               <Checkbox
                 id="subscribe_to_newsletter"
@@ -421,19 +399,3 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
     </>
   );
 }
-
-// const useStyles = makeStyles({ name: { UserProfileFormFields } })((theme) => ({
-//   acceptTermsWrapper: {
-//     display: "flex",
-//     marginTop: theme.spacing(2),
-//   },
-//   subscribeToNewsletterWrapper: {
-//     display: "flex",
-//     marginTop: theme.spacing(0),
-//   },
-//   // We use show/hide to avoid the "jumping" effect when the component is mounted/unmounted
-//   show: {},
-//   hide: {
-//     display: "none",
-//   },
-// }));

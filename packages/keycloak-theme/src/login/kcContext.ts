@@ -1,4 +1,5 @@
 import { createGetKcContext } from "keycloakify/login";
+import { createContext } from "react";
 
 //NOTE: In most of the cases you do not need to overload the KcContext, you can
 // just call createGetKcContext(...) without type arguments.
@@ -109,3 +110,6 @@ export const { kcContext } = getKcContext({
 });
 
 export type KcContext = NonNullable<ReturnType<typeof getKcContext>["kcContext"]>;
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export const ColorModeContext = createContext({ toggleColorMode: () => {} });

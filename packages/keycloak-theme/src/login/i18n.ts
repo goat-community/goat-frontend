@@ -54,6 +54,8 @@ export const { useI18n } = createUseI18n({
       "Scan the QR Code below using your preferred authenticator app and then enter the provided one-time code below.",
     scanQrCode: "Scan QR Code",
     loginToptConfigureManually: "Use the following configuration settings and code to manually configure your authenticator app.",
+    changeLanguage: "Change language",
+    changeTheme: "Change theme color"
   },
   de: {
     alphanumericalCharsOnly: "Nur alphanumerische Zeichen",
@@ -102,6 +104,8 @@ export const { useI18n } = createUseI18n({
       "Scannen Sie den QR-Code unten mit Ihrer bevorzugten Authenticator-App und geben Sie dann den bereitgestellten Einmalcode ein.",
     scanQrCode: "QR-Code scannen",
     loginToptConfigureManually: "Verwenden Sie die folgenden Konfigurationseinstellungen und den Code, um Ihre Authenticator-App manuell zu konfigurieren.",
+    changeLanguage: "Sprache ändern",
+    changeTheme: "Themenfarbe ändern"
   },
 });
 

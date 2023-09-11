@@ -1,6 +1,6 @@
 // ** MUI Theme Provider
 import { deepmerge } from "@mui/utils";
-import { ThemeOptions } from "@mui/material";
+import type { ThemeOptions } from "@mui/material";
 
 // ** Theme Override Imports
 import palette from "./palette";

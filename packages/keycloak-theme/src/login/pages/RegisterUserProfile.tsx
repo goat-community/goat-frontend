@@ -1,4 +1,11 @@
-import { Box, Button, Tooltip, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import Link from "@mui/material/Link";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { useEffect, useRef, useState } from "react";
@@ -42,16 +49,6 @@ export default function RegisterUserProfile(
   const [isFormSubmittable, setIsFormSubmittable] = useState(false);
   const [isCaptchaValid, setIsCaptchaValid] = useState(false);
   const captchaRef = useRef(null);
-  // rerender recaptcha when theme.palette.mode changes
-  // workaround as captcha component doesn't rerender automatically
-  const [recaptchaKey, setRecaptchaKey] = useState(0);
-  useEffect(() => {
-    setTimeout(() => {
-      setRecaptchaKey((prev) => prev + 1);
-      console.log(theme.palette.mode);
-    }, 100);
-  }, [theme.palette.mode]);
-
   const getIncrementedTabIndex = (() => {
     let counter = 1;
     return () => counter++;
@@ -73,12 +70,17 @@ export default function RegisterUserProfile(
       displayRequiredFields={false}
       i18n={i18n}
       infoNode={
-        <div>
+        <Stack
+          spacing={theme.spacing(4)}
+          sx={{
+            textAlign: "center",
+          }}
+        >
           <Typography variant="body2">
-            {msg("alreadyHaveAccount")}
+            {msg("alreadyHaveAccount")}{" "}
             <Link href={url.loginUrl}>{msg("doLogIn")}</Link>
           </Typography>
-        </div>
+        </Stack>
       }
       headerNode={msg("doRegister")}
     >
@@ -94,13 +96,12 @@ export default function RegisterUserProfile(
 
         {recaptchaRequired && (
           <ReCAPTCHA
-            key={recaptchaKey}
-            style={{
-              marginTop: theme.spacing(4),
-            }}
             id="recaptcha"
             hl={i18n.currentLanguageTag}
             theme={theme.palette.mode == "dark" ? "dark" : "light"}
+            style={{
+              display: activeStep == 1 ? "block" : "none",
+            }}
             sx={{
               mt: theme.spacing(4),
             }}
@@ -167,45 +168,3 @@ export default function RegisterUserProfile(
     </Template>
   );
 }
-
-// const useStyles = makeStyles<{ activeStep: number }>({
-//   name: { RegisterUserProfile },
-// })((theme, { activeStep }) => ({
-//   root: {
-//     "& .MuiTextField-root": {
-//       width: "100%",
-//       marginTop: theme.spacing(5),
-//     },
-//   },
-//   linkToSignInWrapper: {
-//     marginTop: theme.spacing(5),
-//     textAlign: "center",
-//     "& > *": {
-//       display: "inline-block",
-//     },
-//   },
-//   linkToSignIn: {
-//     paddingLeft: theme.spacing(2),
-//   },
-//   buttonsWrapper: {
-//     marginTop: theme.spacing(2),
-//     display: "flex",
-//     justifyContent: "flex-end",
-//     "& span": {
-//       width: "100%",
-//     },
-//   },
-//   buttonNextBack: {
-//     marginTop: theme.spacing(3),
-//     width: "100%",
-//   },
-//   buttonSubmit: {
-//     marginTop: theme.spacing(2),
-//     marginLeft: theme.spacing(0),
-//     width: "100%",
-//   },
-//   recaptcha: {
-//     marginTop: theme.spacing(2),
-//     display: activeStep == 1 ? "block" : "none",
-//   },
-// }));

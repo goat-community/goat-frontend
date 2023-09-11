@@ -8,30 +8,31 @@ import {
   useTheme,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-
-// import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
+import DarkModeSwitch from "@p4b/ui/components/DarkModeSwitch";
+import LanguageDropdown from "@p4b/ui/components/LanguageDropdown";
 import type { I18n } from "./i18n";
-import type { KcContext } from "./kcContext";
+import { ColorModeContext, type KcContext } from "./kcContext";
 import type { TemplateProps } from "keycloakify/login/TemplateProps";
-
+import { useContext } from "react";
 export default function Template(props: TemplateProps<KcContext, I18n>) {
   const theme = useTheme();
+  const colorMode = useContext(ColorModeContext);
   const {
     displayInfo = false,
     displayMessage = true,
-    displayRequiredFields = false,
-    displayWide = false,
-    showAnotherWayIfPresent = true,
     headerNode,
-    showUsernameNode = null,
     infoNode = null,
     kcContext,
     i18n,
-    doUseDefaultCss,
-    classes,
     children,
   } = props;
-  const { realm, locale, auth, url, message, isAppInitiatedAction } = kcContext;
+  const { realm, locale, message, isAppInitiatedAction } = kcContext;
+  const {
+    msgStr,
+    changeLocale,
+    labelBySupportedLanguageTag,
+    currentLanguageTag,
+  } = i18n;
   return (
     <div>
       <Box
@@ -140,6 +141,47 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                     </Stack>
                   )}
                 </CardContent>
+                {["register-user-profile.ftl", "login.ftl"].includes(
+                  kcContext.pageId,
+                ) && (
+                  <Stack
+                    justifyContent="flex-end"
+                    direction="row"
+                    spacing={theme.spacing(2)}
+                    sx={{
+                      pb: theme.spacing(2),
+                      px: theme.spacing(4),
+                    }}
+                  >
+                    {realm.internationalizationEnabled &&
+                      locale &&
+                      locale.supported.length > 1 && (
+                        <LanguageDropdown
+                          toolTipProps={{
+                            title: msgStr("changeLanguage"),
+                            placement: "top",
+                          }}
+                          languages={labelBySupportedLanguageTag}
+                          selected={currentLanguageTag}
+                          onLanguageChange={changeLocale}
+                        />
+                      )}
+                    <DarkModeSwitch
+                      sx={{
+                        ml: theme.spacing(2),
+                      }}
+                      size="small"
+                      onClick={() => {
+                        colorMode.toggleColorMode();
+                      }}
+                      toolTipProps={{
+                        title: msgStr("changeTheme"),
+                        placement: "top",
+                      }}
+                      isDarkModeEnabled={theme.palette.mode === "dark"}
+                    />
+                  </Stack>
+                )}
               </Card>
             </Box>
           </Grid>
