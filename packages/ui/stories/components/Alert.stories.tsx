@@ -17,8 +17,6 @@ const meta: Meta<typeof Alert> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >

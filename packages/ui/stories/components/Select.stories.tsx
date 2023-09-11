@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import ThemeProvider from "../../theme/ThemeProvider";
@@ -14,17 +14,11 @@ const meta: Meta<typeof Select> = {
       options: ["small", "medium"],
       control: { type: "select" },
     },
-    // variant: {
-    //   options: ["outlined", "filled", "standard"],
-    //   control: { type: "select" },
-    // },
   },
   decorators: [
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -40,12 +34,13 @@ type Story = StoryObj<typeof Select>;
 export const Default: Story = {
   args: {variant: "outlined", label: "Outlined", size: "medium"  },
   render: (args) => {
-    const [age, setAge] = React.useState("");
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [age, setAge] = useState("");
 
     const handleChange = (event: SelectChangeEvent) => {
       setAge(event.target.value as string);
     };
-    const { variant, label, size, ...rest } = args;
+    const { label, size } = args;
     return (
       <FormControl fullWidth size={size}>
         <InputLabel id="demo-simple-select-label">{label}</InputLabel>

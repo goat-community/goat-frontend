@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
+import { useState } from "react";
 
 import ThemeProvider from "../../theme/ThemeProvider";
 import { useDarkMode } from "storybook-dark-mode";
@@ -20,8 +20,6 @@ const meta: Meta<typeof Dialog> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -36,8 +34,9 @@ type Story = StoryObj<typeof Dialog>;
 
 export const Default: Story = {
   args: {},
-  render: (args) => {
-    const [open, setOpen] = React.useState(false);
+  render: () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
       setOpen(true);
@@ -58,7 +57,7 @@ export const Default: Story = {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Attention"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">Attention</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               Are you sure you want to remove the user.

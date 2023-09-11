@@ -20,8 +20,6 @@ const meta: Meta<typeof Paper> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -37,7 +35,7 @@ type Story = StoryObj<typeof Paper>;
 export const Default: Story = {
   args: { elevation: 2, variant: "elevation" },
   render: (args) => {
-    const { elevation, variant, ...rest } = args;
+    const { elevation, variant } = args;
     return (
       <Box
         sx={{

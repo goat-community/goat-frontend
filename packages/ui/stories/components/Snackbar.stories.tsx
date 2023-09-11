@@ -1,25 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import ThemeProvider from "../../theme/ThemeProvider";
 import { useDarkMode } from "storybook-dark-mode";
-import { Snackbar, Button, Alert } from "@mui/material";
+import { Snackbar, Button } from "@mui/material";
 
 const meta: Meta<typeof Snackbar> = {
   component: Snackbar,
   tags: ["autodocs"],
   argTypes: {
-    severity: {
-      options: ["error", "warning", "info", "success"],
-      control: { type: "select" },
+    anchorOrigin: {
+      control: "object"
     },
   },
   decorators: [
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -34,21 +31,21 @@ type Story = StoryObj<typeof Snackbar>;
 
 export const Default: Story = {
   args: {
-    children: "This is an error alert — check it out!",
-    severity: "error",
+    anchorOrigin: {
+      vertical: "top",
+      horizontal: "center",
+    },
   },
   render: (args) => {
-    const { severity, children, ...rest } = args;
-    const [open, setOpen] = React.useState(false);
+    const { anchorOrigin } = args;
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [open, setOpen] = useState(false);
 
     const handleClick = () => {
       setOpen(true);
     };
 
-    const handleClose = (
-      _?: React.SyntheticEvent | Event,
-      reason?: string,
-    ) => {
+    const handleClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
       if (reason === "clickaway") {
         return;
       }
@@ -61,15 +58,13 @@ export const Default: Story = {
         <Button variant="outlined" onClick={handleClick}>
           Open success snackbar
         </Button>
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-          <Alert
-            onClose={handleClose}
-            severity={severity}
-            sx={{ width: "100%" }}
-          >
-            {children}
-          </Alert>
-        </Snackbar>
+        <Snackbar
+          open={open}
+          anchorOrigin={anchorOrigin}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={`This is snackbar message on the ${anchorOrigin?.vertical}-${anchorOrigin?.horizontal}`}
+        />
       </div>
     );
   },

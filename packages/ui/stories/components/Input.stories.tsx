@@ -21,8 +21,6 @@ const meta: Meta<typeof TextField> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -38,7 +36,7 @@ type Story = StoryObj<typeof TextField>;
 export const Default: Story = {
   args: { variant: "outlined", label: "Outlined", size: "medium" },
   render: (args) => {
-    const { variant, label, size, ...rest } = args;
+    const { variant, label, size } = args;
     return <TextField variant={variant} size={size} label={label}/>;
   },
   parameters: {

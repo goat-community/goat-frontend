@@ -12,8 +12,6 @@ const meta: Meta<typeof Card> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -30,8 +28,7 @@ export const Default: Story = {
   args: {
     children: "Card",
   },
-  render: (args) => {
-    const { children, ...rest } = args;
+  render: () => {
     return (
       <Card sx={{ width: "280px" }}>
         <CardMedia

@@ -26,26 +26,11 @@ const meta: Meta<typeof Typography> = {
       ],
       control: { type: "select" },
     },
-    component: {
-      options: [
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "p",
-        "span",
-      ],
-      control: { type: "select" },
-    }
   },
   decorators: [
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -61,16 +46,11 @@ type Story = StoryObj<typeof Typography>;
 export const Default: Story = {
   args: {
     children: "This is an error alert — check it out!",
-    component: "h2",
-    variant: "h1"
+    variant: "h1",
   },
   render: (args) => {
-    const { children, variant, component, ...rest } = args;
-    return (
-      <Typography variant={variant} component={component}>
-        {children}
-      </Typography>
-    );
+    const { children, variant } = args;
+    return <Typography variant={variant}>{children}</Typography>;
   },
   parameters: {
     design: {

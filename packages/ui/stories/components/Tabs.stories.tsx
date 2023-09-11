@@ -17,8 +17,6 @@ const meta: Meta<typeof Tabs> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -62,8 +60,9 @@ export const Default: Story = {
     wrapped: false,
   },
   render: (args) => {
-    const { wrapped, children, ...rest } = args;
-    const [value, setValue] = React.useState(0);
+    const { wrapped } = args;
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [value, setValue] = useState(0);
 
     const handleChange = (_: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);

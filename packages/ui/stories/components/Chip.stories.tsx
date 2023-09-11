@@ -21,8 +21,6 @@ const meta: Meta<typeof Chip> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -41,7 +39,7 @@ export const Default: Story = {
     variant: "filled"
   },
   render: (args) => {
-    const { label, variant, ...rest } = args;
+    const { label, variant } = args;
     return <Chip label={label} variant={variant}/>;
   },
   parameters: {
@@ -63,7 +61,7 @@ export const WithIcon: Story = {
     variant: "outlined"
   },
   render: (args) => {
-    const { label, variant, ...rest } = args;
+    const { label, variant } = args;
     return <Chip label={label} variant={variant}/>;
   },
   parameters: {

@@ -9,16 +9,14 @@ const meta: Meta<typeof Divider> = {
   tags: ["autodocs"],
   argTypes: {
     variant: {
-      options: ['fullWidth', 'inset', 'middle'],
-      control: { type: "select" }
-    }
+      options: ["fullWidth", "inset", "middle"],
+      control: { type: "select" },
+    },
   },
   decorators: [
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -32,10 +30,10 @@ export default meta;
 type Story = StoryObj<typeof Divider>;
 
 export const Default: Story = {
-  args: {variant: "fullWidth"},
+  args: { variant: "fullWidth" },
   render: (args) => {
-    const { variant, ...rest } = args;
-    return <Divider variant={variant}/>;
+    const { variant } = args;
+    return <Divider variant={variant} />;
   },
   parameters: {
     design: {

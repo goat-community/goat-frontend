@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import ThemeProvider from "../../theme/ThemeProvider";
@@ -10,17 +10,11 @@ const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,
   tags: ["autodocs"],
   argTypes: {
-    // severity: {
-    //   options: ["error", "warning", "info", "success"],
-    //   control: { type: "select" },
-    // },
   },
   decorators: [
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -35,10 +29,9 @@ type Story = StoryObj<typeof ToggleButton>;
 
 export const Default: Story = {
   args: {},
-  render: (args) => {
-    const { ...rest } = args;
-
-    const [alignment, setAlignment] = React.useState<string | null>("left");
+  render: () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [alignment, setAlignment] = useState<string | null>("left");
 
     const handleAlignment = (
       _: React.MouseEvent<HTMLElement>,
@@ -55,16 +48,16 @@ export const Default: Story = {
         aria-label="text alignment"
       >
         <ToggleButton value="left" aria-label="left aligned">
-          <Icon iconName={ICON_NAME.EMAIL}></Icon>
+          <Icon iconName={ICON_NAME.EMAIL} />
         </ToggleButton>
         <ToggleButton value="center" aria-label="centered">
-          <Icon iconName={ICON_NAME.CHART}></Icon>
+          <Icon iconName={ICON_NAME.CHART} />
         </ToggleButton>
         <ToggleButton value="right" aria-label="right aligned">
-          <Icon iconName={ICON_NAME.FILTER}></Icon>
+          <Icon iconName={ICON_NAME.FILTER} />
         </ToggleButton>
         <ToggleButton value="justify" aria-label="justified" disabled>
-          <Icon iconName={ICON_NAME.STEPUP}></Icon>
+          <Icon iconName={ICON_NAME.STEPUP} />
         </ToggleButton>
       </ToggleButtonGroup>
     );

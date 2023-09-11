@@ -1,19 +1,38 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
 import ThemeProvider from "../../theme/ThemeProvider";
-import { Tooltip } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import { useDarkMode } from "storybook-dark-mode";
 
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
   tags: ["autodocs"],
-  argTypes: {},
+  argTypes: {
+    arrow: {
+      control: { type: "boolean" },
+    },
+    placement: {
+      options: [
+        "top-start",
+        "top",
+        "top-end",
+        "right-start",
+        "right",
+        "right-end",
+        "bottom-start",
+        "bottom",
+        "bottom-end",
+        "left-start",
+        "left",
+        "left-end",
+      ],
+      control: { type: "select" },
+    },
+  },
   decorators: [
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -28,12 +47,16 @@ type Story = StoryObj<typeof Tooltip>;
 
 export const Default: Story = {
   args: {
-    children: "Tooltip",
-    title: "Tooltip"
+    title: "Tooltip",
+    arrow: false,
+    placement: "top",
   },
   render: (args) => {
-    const { children, title, ...rest } = args;
-    return <Tooltip title={title}>{children}</Tooltip>;
+    return (
+      <Tooltip {...args}>
+        <Button>Hover me</Button>
+      </Tooltip>
+    );
   },
   parameters: {
     design: {

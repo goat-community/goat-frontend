@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import ThemeProvider from "../../theme/ThemeProvider";
 import { useDarkMode } from "storybook-dark-mode";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -23,8 +23,6 @@ const meta: Meta<typeof DatePicker> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -43,7 +41,7 @@ export const Default: Story = {
     disabled: false,
   },
   render: (args) => {
-    const { defaultValue, disabled, ...rest } = args;
+    const { defaultValue, disabled } = args;
     return (
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DemoContainer components={["DatePicker"]}>

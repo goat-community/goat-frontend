@@ -19,8 +19,6 @@ const meta: Meta<typeof Switch> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >
@@ -39,7 +37,7 @@ export const Default: Story = {
     disabled: false
   },
   render: (args) => {
-    const { defaultChecked, disabled, ...rest } = args;
+    const { defaultChecked, disabled } = args;
     return <Switch  defaultChecked={defaultChecked} disabled={disabled}/>;
   },
   parameters: {
