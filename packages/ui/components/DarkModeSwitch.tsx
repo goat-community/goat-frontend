@@ -15,7 +15,7 @@ export type DarkModeSwitchProps = {
 } & IconButtonProps;
 
 export default function DarkModeSwitch(props: DarkModeSwitchProps) {
-  const { sx, isDarkModeEnabled, toolTipProps, _children, ...rest } = props;
+  const { sx, isDarkModeEnabled, toolTipProps, children: _children, ...rest } = props;
 
   return (
     <Tooltip
