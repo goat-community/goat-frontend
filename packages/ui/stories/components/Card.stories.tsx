@@ -3,7 +3,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import ThemeProvider from "../../theme/ThemeProvider";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
 import { useDarkMode } from "storybook-dark-mode";
-import { Icon, ICON_NAME } from "../../components/Icon";
 
 const meta: Meta<typeof Card> = {
   component: Card,
