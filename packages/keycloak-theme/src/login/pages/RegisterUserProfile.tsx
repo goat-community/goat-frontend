@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import Link from "@mui/material/Link";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import ReCAPTCHA from "react-google-recaptcha";
