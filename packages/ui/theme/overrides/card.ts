@@ -10,6 +10,7 @@ const Card = (theme: Theme) => {
             marginTop: theme.spacing(-1),
             marginRight: theme.spacing(-3),
           },
+          borderRadius: "4px",
         },
       },
     },
