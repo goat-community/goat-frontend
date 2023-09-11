@@ -1,3 +1,5 @@
-export default {
-    spacing: (factor: number) => `${0.25 * factor}rem`
-  }
+const spacing = {
+  spacing: (factor: number) => `${0.25 * factor}rem`,
+};
+
+export default spacing;

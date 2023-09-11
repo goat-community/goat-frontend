@@ -7,7 +7,7 @@ const pageId = "idp-review-user-profile.ftl";
 const { PageStory } = createPageStory({ pageId });
 
 export default {
-  title: "Pages/Auth/IdpReviewUserProfile",
+  title: "Pages/Auth/Idp Review User Profile",
   component: PageStory,
 } as Meta<typeof PageStory>;
 

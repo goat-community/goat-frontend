@@ -1,12 +1,8 @@
 import { retrieveParamFromUrl, addParamToUrl, updateSearchBarUrl } from "powerhooks/tools/urlSearchParams";
 import { capitalize } from "tsafe/capitalize";
 
-import { kcContext } from "./kcContext";
-
-export const { foo, addFooToQueryParams } = (() => {
-  const queryParamName = "foo";
-
-  type Type = { foo: number };
+export const { theme, addThemeToQueryParams } = (() => {
+  const queryParamName = "theme";
 
   const value = (() => {
     const unparsedValue = read({ queryParamName });
@@ -15,10 +11,10 @@ export const { foo, addFooToQueryParams } = (() => {
       return undefined;
     }
 
-    return JSON.parse(unparsedValue) as Type;
+    return unparsedValue;
   })();
 
-  function addToUrlQueryParams(params: { url: string; value: Type }): string {
+  function addToUrlQueryParams(params: { url: string; value: string }): string {
     const { url, value } = params;
 
     return addParamToUrl({
@@ -36,44 +32,12 @@ export const { foo, addFooToQueryParams } = (() => {
   return out;
 })();
 
-export const { bar, addBarToQueryParams } = (() => {
-  const queryParamName = "bar";
-
-  type Type = string;
-
-  const value = (() => {
-    const unparsedValue = read({ queryParamName });
-
-    if (unparsedValue === undefined) {
-      return undefined;
-    }
-
-    return JSON.parse(unparsedValue) as Type;
-  })();
-
-  function addToUrlQueryParams(params: { url: string; value: Type }): string {
-    const { url, value } = params;
-
-    return addParamToUrl({
-      url,
-      name: queryParamName,
-      value: JSON.stringify(value),
-    }).newUrl;
-  }
-
-  const out = {
-    [queryParamName]: value,
-    [`add${capitalize(queryParamName)}ToQueryParams` as const]: addToUrlQueryParams,
-  } as const;
-
-  return out;
-})();
 
 function read(params: { queryParamName: string }): string | undefined {
-  if (kcContext === undefined) {
-    //NOTE: We do something only if we are really in Keycloak
-    return undefined;
-  }
+  // if (kcContext === undefined) {
+  //   //NOTE: We do something only if we are really in Keycloak
+  //   return undefined;
+  // }
 
   const { queryParamName } = params;
 
@@ -97,11 +61,7 @@ function read(params: { queryParamName: string }): string | undefined {
   }
 
   //Reading from local storage
-  const serializedValue = localStorage.getItem(queryParamName);
-
-  if (serializedValue === null) {
-    throw new Error(`Missing ${queryParamName} in URL when redirecting to login page`);
-  }
+  const serializedValue = localStorage.getItem(queryParamName) ?? undefined;
 
   return serializedValue;
 }

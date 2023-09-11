@@ -16,6 +16,7 @@ export const { useI18n } = createUseI18n({
     noAccount: "New user?",
     alreadyHaveAccount: "Already have an account?",
     or: "Or",
+    then: "Then",
     next: "Next",
     back: "Back",
     goBack: "Go back",
@@ -49,6 +50,12 @@ export const { useI18n } = createUseI18n({
     proceedWithAction: "Click here to proceed",
     emailForgotInstruction:
       "Simply enter the email address associated with your account below, and we’ll email you a link to reset your password",
+    loginTotpScanBarcode:
+      "Scan the QR Code below using your preferred authenticator app and then enter the provided one-time code below.",
+    scanQrCode: "Scan QR Code",
+    loginToptConfigureManually: "Use the following configuration settings and code to manually configure your authenticator app.",
+    changeLanguage: "Change language",
+    changeTheme: "Change theme color"
   },
   de: {
     alphanumericalCharsOnly: "Nur alphanumerische Zeichen",
@@ -59,6 +66,7 @@ export const { useI18n } = createUseI18n({
     alreadyHaveAccount: "Haben Sie bereits ein Konto?",
     noAccount: "Neuer Benutzer?",
     or: "Oder",
+    then: "Dann",
     next: "Weiter",
     back: "Zurück",
     goBack: "Zurück",
@@ -92,16 +100,24 @@ export const { useI18n } = createUseI18n({
     proceedWithAction: "Klicken Sie hier, um fortzufahren",
     emailForgotInstruction:
       "Geben Sie einfach die E-Mail-Adresse ein, die mit Ihrem Konto verbunden ist, und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts zu.",
+    loginTotpScanBarcode:
+      "Scannen Sie den QR-Code unten mit Ihrer bevorzugten Authenticator-App und geben Sie dann den bereitgestellten Einmalcode ein.",
+    scanQrCode: "QR-Code scannen",
+    loginToptConfigureManually: "Verwenden Sie die folgenden Konfigurationseinstellungen und den Code, um Ihre Authenticator-App manuell zu konfigurieren.",
+    changeLanguage: "Sprache ändern",
+    changeTheme: "Themenfarbe ändern"
   },
 });
 
 export const getCountries = (locale: string) => {
-  return Object.entries(countries.getNames(locale, { select: "official" })).map((entry) => {
-    return {
-      value: entry[0],
-      label: entry[1],
-    };
-  });
+  return Object.entries(countries.getNames(locale, { select: "official" })).map(
+    (entry) => {
+      return {
+        value: entry[0],
+        label: entry[1],
+      };
+    },
+  );
 };
 
 export type I18n = NonNullable<ReturnType<typeof useI18n>>;

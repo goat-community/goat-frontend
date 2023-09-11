@@ -1,4 +1,4 @@
-import { Theme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 
 import MuiAvatar from "./avatar";
 import Button from "./button";
@@ -16,7 +16,7 @@ import MuiSnackbar from './snackbar'
 import MuiSwitches from './switches'
 import MuiTypography from './typography'
 import MuiDateTimePicker from './dateTimePicker'
-
+import Link from "./link";
 const Overrides = (theme: Theme) => {
   return {
     ...MuiAvatar(theme),
@@ -35,6 +35,7 @@ const Overrides = (theme: Theme) => {
     ...MuiSwitches(theme),
     ...MuiTypography(theme),
     ...MuiDateTimePicker(theme),
+    ...Link(),
   };
 };
 

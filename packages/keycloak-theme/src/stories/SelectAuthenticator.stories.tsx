@@ -2,12 +2,12 @@ import type { StoryFn, Meta } from "@storybook/react";
 
 import { createPageStory } from "../login/createPageStory";
 
-const pageId = "register-user-profile.ftl";
+const pageId = "select-authenticator.ftl";
 
 const { PageStory } = createPageStory({ pageId });
 
 export default {
-  title: "Pages/Auth/Register User Profile",
+  title: "Pages/Auth/Select Authenticator",
   component: PageStory,
 } as Meta<typeof PageStory>;
 

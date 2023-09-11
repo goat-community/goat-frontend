@@ -1,4 +1,4 @@
-import { Theme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 
 const Card = (theme: Theme) => {
   return {
@@ -41,12 +41,12 @@ const Card = (theme: Theme) => {
     MuiCardContent: {
       styleOverrides: {
         root: {
-          padding: theme.spacing(5),
+          padding: theme.spacing(6),
           "& + .MuiCardContent-root": {
             paddingTop: 0,
           },
           "&:last-of-type": {
-            paddingBottom: theme.spacing(5),
+            paddingBottom: theme.spacing(8),
           },
           "& + .MuiCardActions-root": {
             paddingTop: 0,

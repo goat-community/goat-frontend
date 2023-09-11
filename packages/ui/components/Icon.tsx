@@ -41,12 +41,29 @@ import {
   faLocationDot,
   faCross,
   faCircle,
+  faUsers,
+  faLanguage,
 } from "@fortawesome/free-solid-svg-icons";
+import {
+  faGoogle,
+  faFacebook,
+  faMicrosoft,
+  faInstagram,
+  faXTwitter,
+  faLinkedin,
+  faStackOverflow,
+  faGithub,
+  faGitlab,
+  faBitbucket,
+  faPaypal,
+} from "@fortawesome/free-brands-svg-icons";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SvgIcon } from "@mui/material";
 import type { SvgIconProps } from "@mui/material";
 
 export enum ICON_NAME {
+  // Solid icons
   LAYERS = "layers",
   LEGEND = "legend",
   CHART = "chart",
@@ -87,9 +104,25 @@ export enum ICON_NAME {
   LOCATION = "location",
   CROSS = "cross",
   CIRCLE = "circle",
+  USERS = "users",
+  LANGUAGE = "language",
+
+  // Brand icons
+  GOOGLE = "google",
+  MICROSOFT = "microsoft",
+  FACEBOOK = "facebook",
+  GITHUB = "github",
+  GITLAB = "gitlab",
+  STACKOVERFLOW = "stackoverflow",
+  TWITTER = "twitter",
+  LINKEDIN = "linkedin",
+  INSTAGRAM = "instagram",
+  BITBUCKET = "bitbucket",
+  PAYPAL = "paypal",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
+  // Solid icons
   [ICON_NAME.LAYERS]: faLayerGroup,
   [ICON_NAME.LEGEND]: faList,
   [ICON_NAME.CHART]: faChartSimple,
@@ -130,6 +163,37 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.LOCATION]: faLocationDot,
   [ICON_NAME.CROSS]: faCross,
   [ICON_NAME.CIRCLE]: faCircle,
+  [ICON_NAME.USERS]: faUsers,
+  [ICON_NAME.LANGUAGE]: faLanguage,
+  // Brand icons
+  [ICON_NAME.GOOGLE]: faGoogle,
+  [ICON_NAME.MICROSOFT]: faMicrosoft,
+  [ICON_NAME.FACEBOOK]: faFacebook,
+  [ICON_NAME.GITHUB]: faGithub,
+  [ICON_NAME.GITLAB]: faGitlab,
+  [ICON_NAME.STACKOVERFLOW]: faStackOverflow,
+  [ICON_NAME.TWITTER]: faXTwitter,
+  [ICON_NAME.LINKEDIN]: faLinkedin,
+  [ICON_NAME.INSTAGRAM]: faInstagram,
+  [ICON_NAME.BITBUCKET]: faBitbucket,
+  [ICON_NAME.PAYPAL]: faPaypal,
+};
+
+interface BrandColors {
+  [key: string]: string;
+}
+export const brandColors: BrandColors = {
+  [ICON_NAME.GOOGLE]: "#4285F4",
+  [ICON_NAME.MICROSOFT]: "#00A4EE",
+  [ICON_NAME.FACEBOOK]: "#3B5998",
+  [ICON_NAME.GITHUB]: "#333333",
+  [ICON_NAME.GITLAB]: "#FCA121",
+  [ICON_NAME.STACKOVERFLOW]: "#FE7A15",
+  [ICON_NAME.TWITTER]: "#1DA1F2",
+  [ICON_NAME.LINKEDIN]: "#0077B5",
+  [ICON_NAME.INSTAGRAM]: "#E1306C",
+  [ICON_NAME.BITBUCKET]: "#0052CC",
+  [ICON_NAME.PAYPAL]: "#0079C1",
 };
 
 library.add(...Object.values(nameToIcon));

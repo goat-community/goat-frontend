@@ -7,7 +7,7 @@ const pageId = "login-reset-password.ftl";
 const { PageStory } = createPageStory({ pageId });
 
 export default {
-  title: "Pages/Auth/LoginResetPassword",
+  title: "Pages/Auth/Login Reset Password",
   component: PageStory,
 } as Meta<typeof PageStory>;
 

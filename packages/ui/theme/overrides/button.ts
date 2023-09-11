@@ -1,14 +1,23 @@
-import { Theme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 
 const Button = (theme: Theme) => {
   return {
     MuiButton: {
+      defaultProps: {
+        variant: "contained",
+      },
       styleOverrides: {
         root: {
           borderRadius: 50,
           lineHeight: 1.71,
           letterSpacing: "0.3px",
           padding: `${theme.spacing(1.875, 3)}`,
+          '&.MuiButton-containedPrimary:not(:disabled)': {
+            backgroundColor: theme.palette.primary.main,
+            '&:hover': {
+              backgroundColor: theme.palette.primary.dark,
+            },
+          },
         },
         contained: {
           boxShadow: theme.shadows[3],

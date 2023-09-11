@@ -48,8 +48,6 @@ const meta: Meta<typeof Button> = {
     (Story) => (
       <ThemeProvider
         settings={{
-          themeColor: "primary",
-          contentWidth: "boxed",
           mode: useDarkMode() ? "dark" : "light",
         }}
       >

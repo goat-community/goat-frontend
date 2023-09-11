@@ -1,27 +1,51 @@
-/* eslint-disable react/jsx-curly-brace-presence */
-
-/* eslint-disable react/jsx-no-undef */
-
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-// ejected using 'npx eject-keycloak-page'
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Link from "@mui/material/Link";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { useConstCallback } from "keycloakify/tools/useConstCallback";
 import { useStateRef } from "powerhooks/useStateRef";
+import type { MouseEvent } from "react";
 import { useState, type FormEventHandler } from "react";
-
-import { Checkbox } from "@p4b/ui/components/Checkbox";
-import { TextField } from "@p4b/ui/components/Inputs";
-
-import { makeStyles, Text, Button } from "../../theme";
+import { Icon, brandColors, ICON_NAME } from "@p4b/ui/components/Icon";
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
-export default function Login(props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>) {
-  const { kcContext, i18n, doUseDefaultCss, Template, classes: classes_props } = props;
+export default function Login(
+  props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>,
+) {
+  const theme = useTheme();
+  const {
+    kcContext,
+    i18n,
+    doUseDefaultCss,
+    Template,
+    classes: classes_props,
+  } = props;
 
-  const { social, realm, url, usernameEditDisabled, login, auth, registrationDisabled } = kcContext;
+  const {
+    social,
+    realm,
+    url,
+    usernameHidden,
+    login,
+    auth,
+    registrationDisabled,
+  } = kcContext;
 
   const { msg, msgStr } = i18n;
 
@@ -36,17 +60,20 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
 
     //NOTE: Even if we login with email Keycloak expect username and password in
     //the POST request.
-    formElement.querySelector("input[name='email']")?.setAttribute("name", "username");
+    formElement
+      .querySelector("input[name='email']")
+      ?.setAttribute("name", "username");
 
     formElement.submit();
   });
 
-  const { classes } = useStyles();
-
   const usernameInputRef = useStateRef<HTMLInputElement>(null);
   const passwordInputRef = useStateRef<HTMLInputElement>(null);
   const submitButtonRef = useStateRef<HTMLButtonElement>(null);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const handleMouseEvents = (event: MouseEvent) => {
+    event.preventDefault();
+  };
   return (
     <Template
       {...{ kcContext, i18n, doUseDefaultCss }}
@@ -59,205 +86,219 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
         realm.password &&
         realm.registrationAllowed &&
         !registrationDisabled && (
-          <div className={classes.linkToRegisterWrapper}>
-            <Text typo="body 2" color="secondary">
-              {msg("noAccount")!}
-              <Link href={url.registrationUrl} className={classes.registerLink} underline="hover">
-                {msg("doRegister")}
-              </Link>
-            </Text>
-          </div>
+          <Stack direction="column" spacing={theme.spacing(4)}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
+              <Typography variant="body2">{msg("noAccount")}</Typography>
+              <Typography variant="body2">
+                <Link href={url.registrationUrl}>{msg("doRegister")}</Link>
+              </Typography>
+            </Stack>
+            {realm.password && social.providers !== undefined && (
+              <>
+                <Divider sx={{ my: 5 }}>{msg("or")}</Divider>
+
+                <Stack
+                  direction={social.providers.length > 3 ? "row" : "column"}
+                  spacing={2}
+                  sx={{
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                  }}
+                >
+                  {social.providers.map((p) =>
+                    social.providers && social.providers.length > 3 ? (
+                      <Tooltip
+                        key={p.providerId}
+                        title={`Log in with ${p.displayName}`}
+                        arrow
+                        placement="top"
+                      >
+                        <IconButton href={p.loginUrl} component="a">
+                          <Icon
+                            htmlColor={
+                              p.providerId in brandColors
+                                ? brandColors[p.providerId]
+                                : "inherit"
+                            }
+                            iconName={
+                              p.providerId.toUpperCase() in ICON_NAME
+                                ? (p.providerId as ICON_NAME)
+                                : ICON_NAME.ORGANIZATION
+                            }
+                            fontSize="inherit"
+                          />
+                        </IconButton>
+                      </Tooltip>
+                    ) : (
+                      <Button
+                        key={p.providerId}
+                        href={p.loginUrl}
+                        component="a"
+                        variant="outlined"
+                        fullWidth
+                        sx={{
+                          "& .MuiButton-startIcon": {
+                            position: "absolute",
+                            left: "2rem",
+                          },
+                          textTransform: "none",
+                        }}
+                        startIcon={
+                          <Icon
+                            htmlColor={
+                              p.providerId in brandColors
+                                ? brandColors[p.providerId]
+                                : "inherit"
+                            }
+                            iconName={
+                              p.providerId.toUpperCase() in ICON_NAME
+                                ? (p.providerId as ICON_NAME)
+                                : ICON_NAME.USERS
+                            }
+                            fontSize="inherit"
+                          />
+                        }
+                      >
+                        Log in with {p.displayName}
+                      </Button>
+                    ),
+                  )}
+                </Stack>
+              </>
+            )}
+          </Stack>
         )
-      }>
-      <div className={classes.root}>
-        {realm.password && social.providers !== undefined && (
-          <>
-            <div>
-              <ul className={classes.providers}>
-                {social.providers.map((p) => (
-                  <li key={p.providerId}>
-                    <Button href={p.loginUrl}>{p.displayName}</Button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <LoginDivider className={classes.divider} i18n={i18n} />
-          </>
-        )}
-        <div>
-          {realm.password && (
-            <form onSubmit={onSubmit} action={url.loginAction} method="post">
-              <div>
-                <TextField
-                  disabled={usernameEditDisabled}
-                  defaultValue={login.username ?? ""}
-                  id="username"
-                  name="username"
-                  inputProps_ref={usernameInputRef}
-                  inputProps_aria-label="username"
-                  inputProps_tabIndex={1}
-                  inputProps_spellCheck={false}
-                  label={
-                    !realm.loginWithEmailAllowed
-                      ? msg("username")
-                      : !realm.registrationEmailAsUsername
-                      ? msg("usernameOrEmail")
-                      : msg("email")
+      }
+    >
+      {realm.password && (
+        <Box
+          id="kc-form-login"
+          component="form"
+          onSubmit={onSubmit}
+          action={url.loginAction}
+          method="post"
+        >
+          <Stack spacing={theme.spacing(4)}>
+            <TextField
+              fullWidth
+              disabled={usernameHidden}
+              defaultValue={login.username ?? ""}
+              id="username"
+              name="username"
+              ref={usernameInputRef}
+              tabIndex={1}
+              spellCheck={false}
+              label={
+                !realm.loginWithEmailAllowed
+                  ? msg("username")
+                  : !realm.registrationEmailAsUsername
+                  ? msg("usernameOrEmail")
+                  : msg("email")
+              }
+              autoComplete="off"
+            />
+            <FormControl fullWidth>
+              <InputLabel htmlFor="password">{msg("password")}</InputLabel>
+              <OutlinedInput
+                label={msg("password")}
+                defaultValue=""
+                ref={passwordInputRef}
+                id="password"
+                name="password"
+                tabIndex={2}
+                type={showPassword ? "text" : "password"}
+                autoComplete="off"
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      edge="end"
+                      onClick={() => setShowPassword(!showPassword)}
+                      onMouseDown={handleMouseEvents}
+                      onMouseUp={handleMouseEvents}
+                      aria-label="toggle password visibility"
+                    >
+                      {showPassword ? (
+                        <Icon iconName={ICON_NAME.EYE_SLASH} />
+                      ) : (
+                        <Icon iconName={ICON_NAME.EYE} />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+          </Stack>
+          <Box
+            sx={{
+              mt: theme.spacing(2),
+              display: "flex",
+              alignItems: "center",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
+            {realm.rememberMe && !usernameHidden && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    tabIndex={3}
+                    defaultChecked={!!login.rememberMe}
+                    id="rememberMe"
+                    name="rememberMe"
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2">{msg("rememberMe")}</Typography>
+                }
+              />
+            )}
+
+            {realm.resetPasswordAllowed && (
+              <Typography variant="body2">
+                <Link href={url.loginResetCredentialsUrl} underline="hover">
+                  {msg("doForgotPassword")}
+                </Link>
+              </Typography>
+            )}
+          </Box>
+
+          <Box
+            sx={{
+              mt: theme.spacing(8),
+            }}
+          >
+            <input
+              type="hidden"
+              name="credentialId"
+              {...(auth?.selectedCredential !== undefined
+                ? {
+                    value: auth.selectedCredential,
                   }
-                  autoComplete="off"
-                />
-              </div>
-              <div>
-                <TextField
-                  type="password"
-                  defaultValue={""}
-                  id="password"
-                  name="password"
-                  inputProps_ref={passwordInputRef}
-                  inputProps_aria-label="password"
-                  inputProps_tabIndex={2}
-                  label={msg("password")}
-                  autoComplete="off"
-                />
-              </div>
-              <div className={classes.rememberMeForgotPasswordWrapper}>
-                <div>
-                  {realm.rememberMe && !usernameEditDisabled && (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          tabIndex={3}
-                          defaultChecked={!!login.rememberMe}
-                          name="rememberMe"
-                          color="primary"
-                        />
-                      }
-                      label={<Text typo="body 2">{msg("rememberMe")!}</Text>}
-                    />
-                  )}
-                </div>
-                <div className={classes.forgotPassword}>
-                  {realm.resetPasswordAllowed && (
-                    <Link href={url.loginResetCredentialsUrl} underline="hover">
-                      {msg("doForgotPassword")}
-                    </Link>
-                  )}
-                </div>
-              </div>
-              <div className={classes.buttonsWrapper}>
-                <input
-                  type="hidden"
-                  name="credentialId"
-                  {...(auth?.selectedCredential !== undefined
-                    ? {
-                        value: auth.selectedCredential,
-                      }
-                    : {})}
-                />
-                <Button
-                  ref={submitButtonRef}
-                  className={classes.buttonSubmit}
-                  name="login"
-                  type="submit"
-                  disabled={isLoginButtonDisabled}>
-                  {msgStr("continue")}
-                </Button>
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
+                : {})}
+            />
+            <Button
+              fullWidth
+              ref={submitButtonRef}
+              name="login"
+              type="submit"
+              disabled={isLoginButtonDisabled}
+            >
+              {msgStr("continue")}
+            </Button>
+          </Box>
+        </Box>
+      )}
     </Template>
   );
 }
-
-const useStyles = makeStyles({ name: { Login } })((theme) => ({
-  root: {
-    "& .MuiTextField-root": {
-      width: "100%",
-      marginTop: theme.spacing(5),
-    },
-  },
-  rememberMeForgotPasswordWrapper: {
-    display: "flex",
-    marginTop: theme.spacing(4),
-  },
-  forgotPassword: {
-    flex: 1,
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  buttonsWrapper: {
-    marginTop: theme.spacing(4),
-    display: "flex",
-    justifyContent: "flex-end",
-  },
-  buttonSubmit: {
-    width: "100%",
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(0),
-  },
-  linkToRegisterWrapper: {
-    marginTop: theme.spacing(5),
-    textAlign: "center",
-    "& > *": {
-      display: "inline-block",
-    },
-  },
-  registerLink: {
-    paddingLeft: theme.spacing(2),
-  },
-  divider: {
-    ...theme.spacing.topBottom("margin", 5),
-  },
-  providers: {
-    listStyleType: "none",
-    padding: 0,
-  },
-}));
-
-const { LoginDivider } = (() => {
-  type Props = {
-    className?: string;
-    i18n: I18n;
-  };
-
-  function LoginDivider(props: Props) {
-    const { className, i18n } = props;
-
-    const { msg } = i18n;
-
-    const { classes, cx } = useStyles();
-
-    const separator = <div role="separator" className={classes.separator} />;
-
-    return (
-      <div className={cx(classes.root, className)}>
-        {separator}
-        <Text typo="body 2" color="secondary" className={classes.text}>
-          {msg("or")}
-        </Text>
-        {separator}
-      </div>
-    );
-  }
-
-  const useStyles = makeStyles({ name: { LoginDivider } })((theme) => ({
-    root: {
-      display: "flex",
-      alignItems: "center",
-    },
-    separator: {
-      height: 1,
-      backgroundColor: theme.colors.useCases.typography.textSecondary,
-      flex: 1,
-    },
-    text: {
-      ...theme.spacing.rightLeft("margin", 2),
-      paddingBottom: 2,
-    },
-  }));
-
-  return { LoginDivider };
-})();

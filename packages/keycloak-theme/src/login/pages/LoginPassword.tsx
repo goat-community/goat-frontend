@@ -1,22 +1,17 @@
-import { useGetClassName } from "keycloakify/login/lib/useGetClassName";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
-import { clsx } from "keycloakify/tools/clsx";
 import { useConstCallback } from "keycloakify/tools/useConstCallback";
 import { useState } from "react";
 import type { FormEventHandler } from "react";
 
 import type { I18n } from "../i18n";
 import type { KcContext } from "../kcContext";
+import { Box, Button, Link, Stack, TextField, useTheme } from "@mui/material";
 
 export default function LoginPassword(
-  props: PageProps<Extract<KcContext, { pageId: "login-password.ftl" }>, I18n>
+  props: PageProps<Extract<KcContext, { pageId: "login-password.ftl" }>, I18n>,
 ) {
+  const theme = useTheme();
   const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
-
-  const { getClassName } = useGetClassName({
-    doUseDefaultCss,
-    classes,
-  });
 
   const { realm, url, login } = kcContext;
 
@@ -35,57 +30,51 @@ export default function LoginPassword(
   });
 
   return (
-    <Template {...{ kcContext, i18n, doUseDefaultCss, classes }} headerNode={msg("doLogIn")}>
-      <div id="kc-form">
-        <div id="kc-form-wrapper">
-          <form id="kc-form-login" onSubmit={onSubmit} action={url.loginAction} method="post">
-            <div className={getClassName("kcFormGroupClass")}>
-              <hr />
-              <label htmlFor="password" className={getClassName("kcLabelClass")}>
-                {msg("password")}
-              </label>
-              <input
-                tabIndex={2}
-                id="password"
-                className={getClassName("kcInputClass")}
-                name="password"
-                type="password"
-                autoFocus={true}
-                autoComplete="on"
-                defaultValue={login.password ?? ""}
-              />
-            </div>
-            <div className={clsx(getClassName("kcFormGroupClass"), getClassName("kcFormSettingClass"))}>
-              <div id="kc-form-options" />
-              <div className={getClassName("kcFormOptionsWrapperClass")}>
-                {realm.resetPasswordAllowed && (
-                  <span>
-                    <a tabIndex={5} href={url.loginResetCredentialsUrl}>
-                      {msg("doForgotPassword")}
-                    </a>
-                  </span>
-                )}
-              </div>
-            </div>
-            <div id="kc-form-buttons" className={getClassName("kcFormGroupClass")}>
-              <input
-                tabIndex={4}
-                className={clsx(
-                  getClassName("kcButtonClass"),
-                  getClassName("kcButtonPrimaryClass"),
-                  getClassName("kcButtonBlockClass"),
-                  getClassName("kcButtonLargeClass")
-                )}
-                name="login"
-                id="kc-login"
-                type="submit"
-                value={msgStr("doLogIn")}
-                disabled={isLoginButtonDisabled}
-              />
-            </div>
-          </form>
-        </div>
-      </div>
+    <Template
+      {...{ kcContext, i18n, doUseDefaultCss, classes }}
+      headerNode={msg("doLogIn")}
+    >
+      <Box
+        component="form"
+        id="kc-form-login"
+        onSubmit={onSubmit}
+        action={url.loginAction}
+        method="post"
+      >
+        <Stack spacing={theme.spacing(2)}>
+          <TextField
+            fullWidth
+            tabIndex={2}
+            id="password"
+            name="password"
+            type="password"
+            autoFocus={true}
+            autoComplete="on"
+            defaultValue={login.password ?? ""}
+            label={msg("password")}
+          />
+
+          {realm.resetPasswordAllowed && (
+            <Link href={url.loginResetCredentialsUrl}>
+              {msg("doForgotPassword")}
+            </Link>
+          )}
+        </Stack>
+
+        <Button
+          tabIndex={4}
+          name="login"
+          id="kc-login"
+          disabled={isLoginButtonDisabled}
+          fullWidth
+          type="submit"
+          sx={{
+            mt: theme.spacing(8),
+          }}
+        >
+          {msgStr("doLogIn")}
+        </Button>
+      </Box>
     </Template>
   );
 }

@@ -8,7 +8,7 @@ import { ThemeProvider } from "../../theme/ThemeProvider";
   decorators={[
     (Story) => (
       <ThemeProvider
-        settings={{ themeColor: "primary", contentWidth: "boxed", mode: useDarkMode() ? "dark" : "light" }}
+        settings={{ mode: useDarkMode() ? "dark" : "light" }}
       >
         <Story />
       </ThemeProvider>

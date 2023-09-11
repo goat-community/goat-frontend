@@ -1,17 +1,19 @@
-import { Box, Link } from "@mui/material";
+import {
+  Box,
+  Link,
+  MenuItem,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { Stepper, Step, StepLabel } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import type { Attribute } from "keycloakify/login/kcContext/KcContext";
 import { useFormValidation } from "keycloakify/login/lib/useFormValidation";
 import { useMemo, useEffect, Fragment } from "react";
-import { capitalize } from "tsafe/capitalize";
 
 import { Checkbox } from "@p4b/ui/components/Checkbox";
-import type { AttributeOptions } from "@p4b/ui/components/Inputs";
-import { TextField } from "@p4b/ui/components/Inputs";
 
-import { Text, makeStyles } from "../../../theme";
-import { regExpStrToEmailDomains } from "../../emailDomainAcceptListHelper";
 import type { I18n } from "../../i18n";
 import { getCountries } from "../../i18n";
 
@@ -30,9 +32,19 @@ export type UserProfileFormFieldsProps = {
   getIncrementedTabIndex: () => number;
 };
 
+export type AttributeOption = string | { value: string; label: string };
+export type AttributeOptions = AttributeOption[];
+
 export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
-  const { kcContext, onIsFormSubmittableValueChange, i18n, activeStep, steps, getIncrementedTabIndex } =
-    props;
+  const theme = useTheme();
+  const {
+    kcContext,
+    onIsFormSubmittableValueChange,
+    i18n,
+    activeStep,
+    steps,
+    getIncrementedTabIndex,
+  } = props;
 
   const { advancedMsg } = i18n;
 
@@ -46,7 +58,6 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
   });
   const { msg, advancedMsgStr } = i18n;
 
-  const { classes } = useStyles();
   const attributesWithPasswordOrdered = useMemo(() => {
     if (steps === undefined) {
       return attributesWithPassword;
@@ -54,7 +65,9 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
     const attributesWithPasswordOrdered: Attribute[] = [];
     for (const step of Object.values(steps)) {
       for (const attributeName of step) {
-        const attribute = attributesWithPassword.find(({ name }) => name === attributeName);
+        const attribute = attributesWithPassword.find(
+          ({ name }) => name === attributeName,
+        );
         if (attribute !== undefined) {
           attributesWithPasswordOrdered.push(attribute);
         }
@@ -69,17 +82,22 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
 
   const areAllFieldsRequired = useMemo(
     () => attributesWithPasswordOrdered.every(({ required }) => required),
-    [attributesWithPasswordOrdered]
+    [attributesWithPasswordOrdered],
   );
 
   // Terms and conditions checkbox
   const termsAndConditions = attributesWithPasswordOrdered.find(
-    ({ name }) => name === "terms_and_conditions"
+    ({ name }) => name === "terms_and_conditions",
   );
   if (termsAndConditions !== undefined) {
-    attributesWithPasswordOrdered.splice(attributesWithPasswordOrdered.indexOf(termsAndConditions), 1);
+    attributesWithPasswordOrdered.splice(
+      attributesWithPasswordOrdered.indexOf(termsAndConditions),
+      1,
+    );
   }
-  const handleTermsAndConditionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTermsAndConditionChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     let newValue = "";
     if (event.target.checked) {
       newValue = Date.now().toString();
@@ -93,12 +111,17 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
 
   // Subscribe to newsletter checkbox
   const subscribeToNewsletter = attributesWithPasswordOrdered.find(
-    ({ name }) => name === "subscribe_to_newsletter"
+    ({ name }) => name === "subscribe_to_newsletter",
   );
   if (subscribeToNewsletter !== undefined) {
-    attributesWithPasswordOrdered.splice(attributesWithPasswordOrdered.indexOf(subscribeToNewsletter), 1);
+    attributesWithPasswordOrdered.splice(
+      attributesWithPasswordOrdered.indexOf(subscribeToNewsletter),
+      1,
+    );
   }
-  const handleSubscribeToNewsletterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSubscribeToNewsletterChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     let newValue = "";
     if (event.target.checked) {
       newValue = Date.now().toString();
@@ -138,43 +161,15 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.currentLanguageTag]);
 
-  // // Steps
-  // // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [isStep1Valid, setIsStep1Valid] = useState(false);
-
-  // const handleStep1Validation = () => {
-  //   if (activeStep === 0) {
-  //     const fieldStates: boolean[] = [];
-  //     steps[1].forEach((attributeName: string) => {
-  //       const attribute = kcContext.profile.attributes.find(
-  //         ({ name }: { name: string }) => name === attributeName
-  //       );
-  //       const value = fieldStateByAttributeName[attributeName]?.value;
-  //       if (!fieldStateByAttributeName.hasOwnProperty(attributeName)) {
-  //         fieldStates.push(true);
-  //         return;
-  //       }
-  //       const isRequired = attribute?.required;
-  //       const displayableErrors = fieldStateByAttributeName[attributeName].displayableErrors;
-
-  //       if ((isRequired && value === "") || displayableErrors.length > 0) {
-  //         fieldStates.push(false);
-  //       } else {
-  //         fieldStates.push(true);
-  //       }
-  //     });
-  //     if (fieldStates.every((state) => state === true)) {
-  //       setIsStep1Valid(true);
-  //     } else {
-  //       setIsStep1Valid(false);
-  //     }
-  //   }
-  // };
-
   return (
     <>
       {activeStep !== undefined && steps !== undefined && (
-        <Stepper activeStep={activeStep}>
+        <Stepper
+          activeStep={activeStep}
+          sx={{
+            mb: theme.spacing(8),
+          }}
+        >
           {Object.keys(steps).map((label) => (
             <Step sx={{ paddingRight: 0 }} key={label}>
               <StepLabel> </StepLabel>
@@ -184,7 +179,8 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
       )}
 
       {attributesWithPasswordOrdered.map((attribute, i) => {
-        const { value, displayableErrors } = fieldStateByAttributeName[attribute.name];
+        const { value, displayableErrors } =
+          fieldStateByAttributeName[attribute.name];
 
         // find which step is attribute.name
         let isVisible = false;
@@ -195,13 +191,21 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
           attribute.name !== "username"
         ) {
           isVisible = true;
-        } else if ((activeStep === undefined || steps === undefined) && attribute.name !== "username") {
+        } else if (
+          (activeStep === undefined || steps === undefined) &&
+          attribute.name !== "username"
+        ) {
           isVisible = true;
         }
 
         return (
           <Fragment key={i}>
             <TextField
+              sx={{
+                mb: theme.spacing(4),
+                display: isVisible ? "block" : "none",
+              }}
+              fullWidth
               type={(() => {
                 switch (attribute.name) {
                   case "password-confirm":
@@ -211,11 +215,9 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
                     return "text";
                 }
               })()}
-              // show or hide if attribute.name is in steps
               id={attribute.name}
               name={attribute.name}
               defaultValue={value}
-              className={isVisible ? classes.show : classes.hide}
               aria-invalid={displayableErrors.length !== 0}
               disabled={attribute.readOnly}
               autoComplete={attribute.autocomplete}
@@ -234,17 +236,12 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
                   name: attribute.name,
                 });
               }}
-              options={(() => {
-                // check if attribute.name is in attributeOptions
-                if (attribute.name in attributeOptions) {
-                  return attributeOptions[attribute.name];
-                }
-                return undefined;
-              })()}
-              inputProps_aria-label={attribute.name}
-              inputProps_tabIndex={attribute.name === "username" ? -1 : getIncrementedTabIndex()}
-              onValueBeingTypedChange={({ value }) => {
-                console.log("onValueBeingTypedChange", value);
+              aria-label={attribute.name}
+              tabIndex={
+                attribute.name === "username" ? -1 : getIncrementedTabIndex()
+              }
+              onChange={(event) => {
+                const { value } = event.target;
                 if (attribute.name === "username")
                   // don't validate username while typing
                   return;
@@ -261,27 +258,18 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
                   newValue: value,
                 });
               }}
-              inputProps_autoFocus={i === 0}
-              inputProps_spellCheck={false}
-              transformValueBeingTyped={(() => {
-                switch (attribute.name) {
-                  case "firstName":
-                  case "lastName":
-                    return capitalize;
-                  default:
-                    return undefined;
-                }
-              })()}
-              label={
-                <>
-                  {advancedMsg(attribute.displayName ?? "")}
-                  &nbsp;
-                  {!areAllFieldsRequired && attribute.required && "*"}
-                </>
-              }
+              autoFocus={i === 0}
+              spellCheck={false}
+              required={!areAllFieldsRequired && attribute.required}
+              label={advancedMsg(attribute.displayName ?? "")}
               helperText={(() => {
-                const displayableErrors = fieldStateByAttributeName[attribute.name].displayableErrors.filter(
-                  ({ validatorName }) => !(validatorName === "pattern" && attribute.name === "email")
+                const displayableErrors = fieldStateByAttributeName[
+                  attribute.name
+                ].displayableErrors.filter(
+                  ({ validatorName }) =>
+                    !(
+                      validatorName === "pattern" && attribute.name === "email"
+                    ),
                 );
 
                 if (displayableErrors.length !== 0) {
@@ -289,145 +277,115 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
                     <span key={i}>{errorMessage}&nbsp;</span>
                   ));
                 }
-
                 switch (attribute.name) {
-                  case "email":
-                    return msg("allowedEmailDomains");
                   case "password": {
-                    // prettier-ignore
                     const { min } = attribute.validators.length ?? {};
                     if (min === undefined) {
                       break;
                     }
-
-                    // prettier-ignore
                     return msg("minimumLength", `${parseInt(min)}`);
                   }
                 }
-
                 {
-                  // prettier-ignore
                   const { pattern } = attribute.validators;
-
                   if (pattern !== undefined) {
                     const { "error-message": errorMessageKey } = pattern;
-
-                    // prettier-ignore
-                    return errorMessageKey !== undefined ?
-                                            advancedMsg(errorMessageKey) :
-                                            msg("mustRespectPattern");
+                    if (errorMessageKey !== undefined) {
+                      return advancedMsg(errorMessageKey);
+                    }
                   }
                 }
-
                 return undefined;
               })()}
-              // prettier-ignore
-              questionMarkHelperText={(() => {
-                                const { pattern } = attribute.validators.pattern ?? {};
-
-                                // prettier-ignore
-                                return pattern === undefined ?
-                                    undefined :
-                                    attribute.name === "email" ?
-                                        (() => {
-
-                                            try {
-                                                return regExpStrToEmailDomains(pattern).join(", ");
-                                            } catch {
-                                                return pattern;
-                                            }
-
-                                        })() :
-                                        fieldStateByAttributeName[attribute.name].displayableErrors.length === 0 ?
-                                            pattern :
-                                            undefined;
-                            })()}
-              // prettier-ignore
-              inputProps_aria-invalid={fieldStateByAttributeName[attribute.name].displayableErrors.length !== 0}
-            />
+              select={attribute.name in attributeOptions}
+              error={displayableErrors.length !== 0}
+            >
+              {attribute.name in attributeOptions &&
+                attributeOptions[attribute.name] !== undefined &&
+                attributeOptions[attribute.name].map(
+                  (option: string | AttributeOption) => {
+                    if (typeof option === "string") {
+                      return (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      );
+                    } else {
+                      return (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      );
+                    }
+                  },
+                )}
+            </TextField>
           </Fragment>
         );
       })}
       {/* Terms and Conditions */}
       {termsAndConditions && (activeStep == 1 || activeStep === undefined) && (
-        <div className={classes.acceptTermsWrapper}>
-          <div className="checkbox">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  id="terms_and_conditions"
-                  name="terms_and_conditions"
-                  tabIndex={3}
-                  color="primary"
-                  onChange={handleTermsAndConditionChange}
-                />
-              }
-              label={
-                <Box
-                  sx={{
-                    display: "flex",
-                  }}>
-                  <Text typo="body 2" color="secondary">
-                    {msg("accept")}
-                    <Link
-                      sx={{
-                        marginLeft: "2px",
-                      }}
-                      href="https://plan4better.de/en/privacy/"
-                      target="_blank">
-                      {msg("terms")}
-                    </Link>
-                  </Text>
-                </Box>
-              }
+        <FormControlLabel
+          control={
+            <Checkbox
+              id="terms_and_conditions"
+              name="terms_and_conditions"
+              tabIndex={3}
+              color="primary"
+              onChange={handleTermsAndConditionChange}
             />
-          </div>
-        </div>
+          }
+          label={
+            <Box
+              sx={{
+                display: "flex",
+              }}
+            >
+              <Typography variant="body2">
+                {msg("accept")}
+                <Link
+                  sx={{
+                    marginLeft: "2px",
+                  }}
+                  href="https://plan4better.de/en/privacy/"
+                  target="_blank"
+                >
+                  {msg("terms")}
+                </Link>
+              </Typography>
+            </Box>
+          }
+        />
       )}
       {/* Subscribe To Newsletter */}
-      {subscribeToNewsletter && (activeStep == 1 || activeStep === undefined) && (
-        <div className={classes.subscribeToNewsletterWrapper}>
-          <div className="checkbox">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  id="subscribe_to_newsletter"
-                  name="subscribe_to_newsletter"
-                  tabIndex={3}
-                  color="primary"
-                  onChange={handleSubscribeToNewsletterChange}
-                />
-              }
-              label={
-                <Box
-                  sx={{
-                    display: "flex",
-                  }}>
-                  <Text typo="body 2" color="secondary">
-                    {msg("subscribeToNewsletter")}
-                  </Text>
-                </Box>
-              }
-            />
-          </div>
-        </div>
-      )}
+      {subscribeToNewsletter &&
+        (activeStep == 1 || activeStep === undefined) && (
+          <FormControlLabel
+            sx={{
+              mb: theme.spacing(2),
+            }}
+            control={
+              <Checkbox
+                id="subscribe_to_newsletter"
+                name="subscribe_to_newsletter"
+                tabIndex={3}
+                color="primary"
+                onChange={handleSubscribeToNewsletterChange}
+              />
+            }
+            label={
+              <Box
+                sx={{
+                  display: "flex",
+                }}
+              >
+                <Typography variant="body2">
+                  {msg("subscribeToNewsletter")}
+                </Typography>
+              </Box>
+            }
+          />
+        )}
     </>
   );
 }
-
-const useStyles = makeStyles({ name: { UserProfileFormFields } })((theme) => ({
-  acceptTermsWrapper: {
-    display: "flex",
-    marginTop: theme.spacing(2),
-  },
-  subscribeToNewsletterWrapper: {
-    display: "flex",
-    marginTop: theme.spacing(0),
-  },
-  // We use show/hide to avoid the "jumping" effect when the component is mounted/unmounted
-  show: {},
-  hide: {
-    display: "none",
-  },
-}));
