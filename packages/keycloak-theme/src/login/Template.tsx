@@ -141,6 +141,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                     </Stack>
                   )}
                 </CardContent>
+                {/* Language and Theme Toggle Mode */}
                 {["register-user-profile.ftl", "login.ftl"].includes(
                   kcContext.pageId,
                 ) && (

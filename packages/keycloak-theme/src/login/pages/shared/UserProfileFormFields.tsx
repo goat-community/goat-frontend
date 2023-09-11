@@ -277,34 +277,24 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
                     <span key={i}>{errorMessage}&nbsp;</span>
                   ));
                 }
-
                 switch (attribute.name) {
                   case "password": {
-                    // prettier-ignore
                     const { min } = attribute.validators.length ?? {};
                     if (min === undefined) {
                       break;
                     }
-
-                    // prettier-ignore
                     return msg("minimumLength", `${parseInt(min)}`);
                   }
                 }
-
                 {
-                  // prettier-ignore
                   const { pattern } = attribute.validators;
-
                   if (pattern !== undefined) {
                     const { "error-message": errorMessageKey } = pattern;
-
-                    // prettier-ignore
-                    return errorMessageKey !== undefined ?
-                                            advancedMsg(errorMessageKey) :
-                                            msg("mustRespectPattern");
+                    if (errorMessageKey !== undefined) {
+                      return advancedMsg(errorMessageKey);
+                    }
                   }
                 }
-
                 return undefined;
               })()}
               select={attribute.name in attributeOptions}
