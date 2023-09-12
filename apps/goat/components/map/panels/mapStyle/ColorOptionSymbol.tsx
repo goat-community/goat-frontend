@@ -4,7 +4,10 @@ import Box from "@p4b/ui/components/Box";
 import { Divider, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
-import { setIconFillColor, setLayerFillOutLineColor } from "@/lib/store/styling/slice";
+import {
+  setIconFillColor,
+  setLayerFillOutLineColor,
+} from "@/lib/store/styling/slice";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
 
@@ -14,14 +17,13 @@ const ColorOptionSymbol = () => {
   const dispatch = useAppDispatch();
 
   const handleFillColorChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    console.log("value", event.target.value);
     dispatch(setIconFillColor(event.target.value));
   };
 
   const handleStrokeColorChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     dispatch(setLayerFillOutLineColor(event.target.value));
   };

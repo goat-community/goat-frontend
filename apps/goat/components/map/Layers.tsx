@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Source, Layer as MapLayer } from "react-map-gl";
 import type { XYZ_Layer } from "@/types/map/layer";
 import { useSelector } from "react-redux";
@@ -21,6 +21,31 @@ const Layers = (props: LayersProps) => {
   );
 
   const { layers, addLayer } = props;
+
+  const getQuery = useCallback(() => {
+    if (Object.keys(filters).length) {
+      if (Object.keys(filters).length === 1) {
+        return filters[Object.keys(filters)[0]];
+      } else {
+        if (logicalOperator === "match_all_expressions") {
+          return and_operator(Object.keys(filters).map((key) => filters[key]));
+        } else {
+          return or_operator(Object.keys(filters).map((key) => filters[key]));
+        }
+      }
+    }
+  }, [filters, logicalOperator]);
+
+  const clusterLayer: LayerProps = {
+    id: "clusters",
+    type: "circle",
+    source: "composite",
+    "source-layer": "default",
+    paint: {
+      "circle-color": "#51bbd6",
+      "circle-radius": 5,
+    },
+  };
 
   useEffect(() => {
     const filterJson = getQuery();
@@ -55,32 +80,7 @@ const Layers = (props: LayersProps) => {
         },
       ]);
     }
-  }, [filters]);
-
-  function getQuery() {
-    if (Object.keys(filters).length) {
-      if (Object.keys(filters).length === 1) {
-        return filters[Object.keys(filters)[0]];
-      } else {
-        if (logicalOperator === "match_all_expressions") {
-          return and_operator(Object.keys(filters).map((key) => filters[key]));
-        } else {
-          return or_operator(Object.keys(filters).map((key) => filters[key]));
-        }
-      }
-    }
-  }
-
-  const clusterLayer: LayerProps = {
-    id: "clusters",
-    type: "circle",
-    source: "composite",
-    "source-layer": "default",
-    paint: {
-      "circle-color": "#51bbd6",
-      "circle-radius": 5,
-    },
-  };
+  }, [addLayer, filters, getQuery, logicalOperator, sampleLayerID]);
 
   return (
     <>

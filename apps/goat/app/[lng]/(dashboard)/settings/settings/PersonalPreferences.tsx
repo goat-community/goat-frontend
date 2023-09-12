@@ -3,7 +3,6 @@
 import React from "react";
 import { makeStyles } from "@/lib/theme";
 import { Box } from "@mui/material";
-import { Text } from "@p4b/ui/components/theme";
 import { v4 } from "uuid";
 import { SelectField } from "@p4b/ui/components/Inputs";
 import type { Option } from "@p4b/types/atomicComponents";
@@ -11,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import { useRouter, usePathname } from "next/navigation";
 import { Card } from "@p4b/ui/components/Surfaces";
 import { Typography, Divider, Switch } from "@mui/material";
-import { useTheme } from "@/lib/theme";
 
 function removeNrOfElementsFromArray(pathname: string, len: number) {
   const parts = pathname.split("/");
@@ -27,7 +25,6 @@ const PersonalPreferences = () => {
   const { i18n } = useTranslation("home");
   const router = useRouter();
   const pathname = usePathname();
-  const theme = useTheme();
 
   const options: Option[] = [
     {
@@ -40,7 +37,7 @@ const PersonalPreferences = () => {
     },
   ];
 
-  const changeLanguage = (locale) => {
+  const changeLanguage = (locale: string) => {
     i18n.changeLanguage(locale);
     const pathnameWithoutLocale = removeNrOfElementsFromArray(pathname, 2);
     router.push(`/${locale}/${pathnameWithoutLocale}`);
