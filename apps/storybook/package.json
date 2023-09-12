@@ -5,7 +5,8 @@
   "scripts": {
     "clean": "rimraf ./.next ./out ./coverage ./tsconfig.tsbuildinfo ./node_modules",
     "dev": "storybook dev -p 6006",
-    "typecheck": "tsc --project ./tsconfig.json --pretty --noEmit"
+    "typecheck": "tsc --project ./tsconfig.json --pretty --noEmit",
+    "build": "storybook build"
   },
   "dependencies": {
     "@p4b/keycloak-theme": "*",

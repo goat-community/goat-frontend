@@ -20,3 +20,4 @@ export const WithAnotherMessage: StoryFn<typeof PageStory> = () => (
     }}
   />
 );
+

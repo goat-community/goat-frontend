@@ -22,7 +22,7 @@ jobs:
           enable-corepack: true
           cwd: ${{ github.workspace }}
 
-      - name: 🏗️ Monorepo build
+      - name: 🏗️ GOAT build
         uses: ./.github/actions/pnpm-cache-build
         with:
           cwd: ${{ github.workspace }}

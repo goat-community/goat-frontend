@@ -20,13 +20,15 @@ on:
   merge_group:
   workflow_dispatch:
 
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-
 jobs:
+  file-changes:
+    name: file-changes
+    uses: ./.github/workflows/checks.yml
+    secrets: inherit
 
   pr-base:
     name: pr-base
@@ -46,21 +48,26 @@ jobs:
     name: lint
     uses: ./.github/workflows/lint.yml
     secrets: inherit
-  
 
-  build:
-    name:  build
+  build-goat:
+    name: build
+    if: ${{ needs.file-changes.outputs.client-goat == 'true' || needs.file-changes.outputs.storybook == 'true' }}
     uses: ./.github/workflows/production-build.yml
     secrets: inherit
 
-  analyze:
-    name: analyze
-    needs: build
+  analyze-goat:
+    name: analyze-goat
+    needs: build-goat
     uses: ./.github/workflows/nextjs-bundle-analysis.yml
     secrets: inherit
-  
+
+  build-keycloak:
+    name: build-keycloak
+    if: ${{ needs.file-changes.outputs.keycloak-theme == 'true' }}
+    uses: ./.github/workflows/keycloak-build.yml
+
   required:
-    needs: [lint, typecheck, build]
+    needs: [lint, typecheck, build-goat, analyze-goat, build-keycloak]
     if: always()
     runs-on: ubuntu-latest
     steps:

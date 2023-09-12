@@ -2,7 +2,6 @@ name: "Release"
 
 on:
   push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -10,8 +9,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  release-docker:
-    name: release
+  file-changes:
+    name: file-changes
+    uses: ./.github/workflows/checks.yml
+    secrets: inherit
+
+  release-docker-goat:
+    name: release-docker-goat
+    if: ${{ needs.file-changes.outputs.client-goat == 'true' }}
     uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
     permissions:
       contents: read
@@ -27,3 +32,32 @@ jobs:
       file: ${{ github.workspace }}/apps/goat/Dockerfile
       image-names: |
         goatcommunity/goat-frontend
+
+  release-docker-storybook:
+    name: release-docker-storybook
+    if: ${{ needs.file-changes.outputs.storybook == 'true' }}
+    uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
+    with:
+      dockerhub-enable: true
+      ghcr-enable: false
+      push: ${{ github.event_name != 'pull_request' }}
+      file: ${{ github.workspace }}/apps/storybook/Dockerfile
+      image-names: |
+        goatcommunity/goat-storybook
+
+
+  release-keycloak-theme:
+    name: release-keycloak-theme
+    if: ${{ needs.file-changes.outputs.keycloak-theme == 'true' }}
+    uses: ./.github/workflows/keycloak-build.yml
+    secrets: inherit
+    with:
+      keycloak-theme-artifact-id: "p4b-keyclok-theme-${{ needs.file-changes.outputs.sha-short}}"
+      push: true
