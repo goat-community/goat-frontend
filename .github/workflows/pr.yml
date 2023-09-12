@@ -51,6 +51,7 @@ jobs:
 
   build-goat:
     name: build
+    needs: file-changes
     if: ${{ needs.file-changes.outputs.client-goat == 'true' || needs.file-changes.outputs.storybook == 'true' }}
     uses: ./.github/workflows/production-build.yml
     secrets: inherit
@@ -63,6 +64,7 @@ jobs:
 
   build-keycloak:
     name: build-keycloak
+    needs: file-changes
     if: ${{ needs.file-changes.outputs.keycloak-theme == 'true' }}
     uses: ./.github/workflows/keycloak-build.yml
 

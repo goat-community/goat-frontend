@@ -27,6 +27,11 @@ jobs:
     permissions:
       pull-requests: read
       contents: read
+    outputs:
+      client-goat: ${{ steps.changes.outputs.client-goat }}
+      keycloak-theme: ${{ steps.changes.outputs.keycloak-theme }}
+      storybook: ${{ steps.changes.outputs.storybook }}
+      sha-short: ${{ steps.sha-short.outputs.sha-short }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@v4
@@ -69,8 +74,5 @@ jobs:
         id: sha-short
         run: echo "sha-short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-    outputs:
-      client-goat: ${{ steps.changes.outputs.client-goat }}
-      keycloak-theme: ${{ steps.changes.outputs.keycloak-theme }}
-      storybook: ${{ steps.changes.outputs.storybook }}
-      sha-short: ${{ steps.sha-short.outputs.sha-short }}
+
+

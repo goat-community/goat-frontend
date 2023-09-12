@@ -16,6 +16,7 @@ jobs:
 
   release-docker-goat:
     name: release-docker-goat
+    needs: file-changes
     if: ${{ needs.file-changes.outputs.client-goat == 'true' }}
     uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
     permissions:
@@ -35,6 +36,7 @@ jobs:
 
   release-docker-storybook:
     name: release-docker-storybook
+    needs: file-changes
     if: ${{ needs.file-changes.outputs.storybook == 'true' }}
     uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
     permissions:
@@ -55,6 +57,8 @@ jobs:
 
   release-keycloak-theme:
     name: release-keycloak-theme
+    needs: file-changes
+    if: ${{ needs.file-changes.outputs.keycloak-theme == 'true' }}
     uses: ./.github/workflows/keycloak-build.yml
     secrets: inherit
     with:
