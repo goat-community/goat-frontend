@@ -1,16 +1,21 @@
-import React, { useState } from "react";
 import BasicAccordion from "@p4b/ui/components/BasicAccordion";
 import { Slider, TextField } from "@mui/material";
 import { makeStyles } from "@/lib/theme";
 import Box from "@p4b/ui/components/Box";
+import { useSelector } from "react-redux";
+import { selectMapLayer } from "@/lib/store/styling/selectors";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
+import { setLayerSymbolSize } from "@/lib/store/styling/slice";
+import React from "react";
 
 const SizeOptionSymbol = () => {
-  const [value, setValue] = useState<number>(20);
+  const mapLayer = useSelector(selectMapLayer);
+  const dispatch = useAppDispatch();
 
   const { classes } = useStyles();
   const handleSliderChange = (_: Event, newValue: number | number[]) => {
     if (typeof newValue === "number") {
-      setValue(newValue);
+      dispatch(setLayerSymbolSize({ val: newValue }));
     }
   };
 
@@ -19,7 +24,7 @@ const SizeOptionSymbol = () => {
   ) => {
     const newValue = parseFloat(event.target.value);
     if (!isNaN(newValue)) {
-      setValue(newValue);
+      dispatch(setLayerSymbolSize({ val: newValue }));
     }
   };
 
@@ -30,16 +35,24 @@ const SizeOptionSymbol = () => {
           <TextField
             type="number"
             size="small"
-            value={value.toString()}
+            value={mapLayer?.layout?.["icon-size"] || 1}
             onChange={handleTextFieldChange}
+            inputProps={{
+              min: 0.5,
+              step: 0.1,
+              max: 5,
+            }}
           />
           <Slider
-            value={value}
+            value={mapLayer?.layout?.["icon-size"] || 1}
             onChange={handleSliderChange}
             aria-label="Small"
             valueLabelDisplay="auto"
             color="primary"
             className={classes.slider}
+            step={0.1}
+            min={0.5}
+            max={5}
           />
         </Box>
       </BasicAccordion>

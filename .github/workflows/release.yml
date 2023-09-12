@@ -12,7 +12,7 @@ concurrency:
 jobs:
   release-docker:
     name: release
-    uses: "goat-community/.github/.github/workflows/reusable-docker-build.yml@main"
+    uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
     permissions:
       contents: read
       packages: write
