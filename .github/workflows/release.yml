@@ -55,7 +55,6 @@ jobs:
 
   release-keycloak-theme:
     name: release-keycloak-theme
-    if: ${{ needs.file-changes.outputs.keycloak-theme == 'true' }}
     uses: ./.github/workflows/keycloak-build.yml
     secrets: inherit
     with:
