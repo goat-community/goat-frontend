@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 📥 Checkout PR
-        uses: ./.github/actions/pr-git-checkout
+        uses: goat-community/.github/.github/actions/pr-git-checkout@main
 
       - name: 🕵️ Detect changes
         uses: dorny/paths-filter@v2
