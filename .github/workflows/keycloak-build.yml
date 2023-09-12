@@ -36,22 +36,22 @@ jobs:
         shell: bash
         run: |
           cd ${{github.workspace}}/packages/keycloak-theme
-          KEYCLOAKIFY_ARTIFACT_ID="${{ github.event.inputs.keycloak-theme-artifact-id }}" KEYCLOAKIFY_GROUP_ID="com.plan4better.auth.keycloak" pnpm run build-keycloak-theme
-          mv build_keycloak/target/*.jar build_keycloak/target/${{github.event.inputs.keycloak-theme-artifact-id}}.jar
+          KEYCLOAKIFY_ARTIFACT_ID="${{ inputs.keycloak-theme-artifact-id }}" KEYCLOAKIFY_GROUP_ID="com.plan4better.auth.keycloak" pnpm run build-keycloak-theme
+          mv build_keycloak/target/*.jar build_keycloak/target/${{inputs.keycloak-theme-artifact-id}}.jar
           
 
-      - uses: aws-actions/configure-aws-credentials@v1
-        name: 📥 Configure AWS credentials
-        if: ${{ github.event.inputs.push }}
+      - name: 📥 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        if: ${{ inputs.push }}
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      - name: 
-        if: ${{ github.event.inputs.push }}
+      - name: 📤 Push to S3
+        if: ${{ inputs.push }}
         shell: bash
         run: |
           cd ${{github.workspace}}/packages/keycloak-theme
-          aws s3 cp build_keycloak/target/${{github.event.inputs.keycloak-theme-artifact-id}}.jar s3://plan4better-assets/other/keycloak/
+          aws s3 cp build_keycloak/target/${{inputs.keycloak-theme-artifact-id}}.jar s3://plan4better-assets/other/keycloak/
         
