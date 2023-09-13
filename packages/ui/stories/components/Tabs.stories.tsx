@@ -62,7 +62,7 @@ export const Default: Story = {
   render: (args) => {
     const { wrapped } = args;
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [value, setValue] = useState(0);
+    const [value, setValue] = React.useState(0);
 
     const handleChange = (_: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);

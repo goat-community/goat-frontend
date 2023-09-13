@@ -1,5 +1,11 @@
-import React from "react";
-import { Tabs } from "@p4b/ui/components/Navigation/Tabs";
+"use client";
+
+import React, { useState } from "react";
+import { Box, Tab } from "@mui/material";
+import { TabList, TabPanel, TabContext } from "@mui/lab";
+import { v4 } from "uuid";
+import { makeStyles } from "@/lib/theme";
+// import { Tabs } from "@p4b/ui/components/Navigation/Tabs";
 
 const tabsData = [
   {
@@ -21,8 +27,12 @@ const tabsData = [
 ];
 
 const Organization = () => {
+  const { classes } = useStyles();
+
   const tabs = tabsData.map(({ child, name }) => {
-    const Component = React.lazy(() => import(`@/app/[lng]/(dashboard)/settings/organization/${child}`));
+    const Component = React.lazy(
+      () => import(`@/app/[lng]/(dashboard)/settings/organization/${child}`),
+    );
 
     return {
       child: <Component />,
@@ -30,7 +40,28 @@ const Organization = () => {
     };
   });
 
-  return <Tabs tabs={tabs} />;
+  const [value, setValue] = useState("1");
+
+  // functions
+  const handleChange = (_: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
+
+  return (
+    
+  );
 };
+
+const useStyles = makeStyles({ name: { Tabs } })((theme) => ({
+  tab: {
+    padding: theme.spacing(2),
+    fontSize: "14px",
+    color: `${theme.colors.palette.light.greyVariant2}cc`,
+  },
+  tabPandel: {
+    padding: "0",
+    paddingTop: theme.spacing(3),
+  },
+}));
 
 export default Organization;

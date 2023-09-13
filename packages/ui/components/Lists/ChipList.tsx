@@ -1,11 +1,9 @@
 "use client";
 
-import { Chip } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 import { forwardRef, memo, useEffect, useRef } from "react";
 import { v4 } from "uuid";
-
 import { makeStyles } from "../../lib/ThemeProvider";
-import { Text } from "../theme";
 
 export type ChipListProps = {
   className?: string;
@@ -61,7 +59,7 @@ export const ChipList = memo(
       <div className={className} ref={containerRef} style={{ overflowX: "auto" }}>
         <div style={{ display: "flex" }} className={classes.chips}>
           {chips.map((chip: string) => (
-            <Chip key={v4()} label={<Text typo="body 3">{chip}</Text>} className={classes.chip} />
+            <Chip key={v4()} label={<Typography variant="body2" color="secondary">{chip}</Typography>} className={classes.chip} />
           ))}
           <Chip label="..." className={classes.chip} />
         </div>

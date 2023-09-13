@@ -4,18 +4,13 @@ import { makeStyles } from "@/lib/theme";
 
 import { TextField, Card, Typography, Button } from "@mui/material";
 
-// import { TextField } from "@p4b/ui/components/Inputs";
-// import { Card } from "@p4b/ui/components/Surfaces";
-// import { Text } from "@p4b/ui/components/theme";
-// import { Button } from "@p4b/ui/components/theme";
-
 const NewsLetterSection = () => {
   const { classes, cx } = useStyles();
 
   return (
     <Card className={classes.card} >
       <div>
-        <Typography variant="body1" className={cx(classes.header, classes.text)}>
+        <Typography variant="h3" className={cx(classes.header, classes.text)}>
           Keep up with GOAT & Plan4Better latest updates, join our Newsletter
         </Typography>
       </div>
