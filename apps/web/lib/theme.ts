@@ -4,6 +4,7 @@ import {
   createThemeProvider,
   defaultGetTypographyDesc,
   defaultPalette,
+  defaultSpacingConfig,
   createDefaultColorUseCases,
 } from "@p4b/ui/lib";
 import { createMakeAndWithStyles } from "@p4b/ui/lib/tss";
@@ -27,6 +28,7 @@ export const { ThemeProvider, useTheme } = createThemeProvider({
   palette: {
     ...defaultPalette,
   },
+  spacingConfig: defaultSpacingConfig,
   createColorUseCases: ({ isDarkModeEnabled, palette }) => ({
     ...createDefaultColorUseCases({ isDarkModeEnabled, palette }),
   }),

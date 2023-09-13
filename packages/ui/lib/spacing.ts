@@ -29,7 +29,6 @@ export const defaultSpacingConfig: SpacingConfig = ({ factorOrExplicitNumberOfPx
 
     return Number.parseFloat(match[1]);
   }
-
   return (
     rootFontSizePx *
     (function callee(factor: number): number {
