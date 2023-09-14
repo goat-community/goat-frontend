@@ -8,6 +8,7 @@ import { and_operator, or_operator } from "@/lib/utils/filtering_cql";
 import type { LayerProps } from "react-map-gl";
 import { v4 } from "uuid";
 import type { Layer } from "@/lib/store/styling/slice";
+import { GET_NON_FILTERED_LAYER } from "@/lib/api/apiConstants";
 
 interface LayersProps {
   layers: XYZ_Layer[];
@@ -66,7 +67,8 @@ const Layers = (props: LayersProps) => {
       addLayer([
         {
           id: "layer1",
-          sourceUrl: `https://geoapi.goat.dev.plan4better.de/collections/${projectId}/tiles/{z}/{x}/{y}`,
+         // sourceUrl: `https://geoapi.goat.dev.plan4better.de/collections/${projectId}/tiles/{z}/{x}/{y}`,
+          sourceUrl: GET_NON_FILTERED_LAYER(sampleLayerID),
           color: "#FF0000",
         },
       ]);
