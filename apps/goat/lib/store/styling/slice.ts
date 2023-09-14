@@ -1,16 +1,16 @@
-import type { PayloadAction } from "@reduxjs/toolkit";
+import type { ActionReducerMapBuilder, PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchLayerData } from "@/lib/store/styling/actions";
+import { fetchLayerData, getCollections } from "@/lib/store/styling/actions";
 import type { AnyLayer } from "react-map-gl";
 
 interface IViewState {
   latitude: number;
   longitude: number;
   zoom: number;
-  min_zoom: number;
-  max_zoom: number;
-  bearing: number;
-  pitch: number;
+  min_zoom?: number;
+  max_zoom?: number;
+  bearing?: number;
+  pitch?: number;
 }
 
 interface IBasemap {
@@ -28,16 +28,14 @@ interface IMarker {
   iconName: string;
 }
 
-export type TLayer =
-  | (AnyLayer & {
-      sources: {
-        composite: {
-          url: string;
-          type: string;
-        };
-      };
-    })
-  | null;
+export interface Collection {
+  id:string;
+  title:string;
+  itemType:string;
+}
+
+export type Layer = AnyLayer & {source: string} | null;
+
 
 export interface IStylingState {
   initialViewState: IViewState;
@@ -45,19 +43,18 @@ export interface IStylingState {
   basemaps: IBasemap[];
   activeBasemapIndex: number[];
   markers: IMarker[];
-  mapLayer: unknown;
+  mapLayer: Layer;
   changeIcon: null | ((src: string) => void);
+  collections:Collection[] | null;
+  layersSource:unknown | null;
+  mapLayers:Layer[] | null;
 }
 
 const initialState: IStylingState = {
   initialViewState: {
-    latitude: 48.13780235991851,
-    longitude: 11.575936741828286,
-    zoom: 11,
-    min_zoom: 0,
-    max_zoom: 20,
-    bearing: 0,
-    pitch: 0,
+    latitude: 49.45477212289379,
+    longitude: 11.8455353,
+    zoom: 6,
   },
   tabValue: 0,
   basemaps: [
@@ -100,8 +97,20 @@ const initialState: IStylingState = {
   activeBasemapIndex: [4],
   markers: [],
   //todo need get layer from db
-  mapLayer: null as TLayer,
-  changeIcon: null
+  mapLayer: {
+    id: "clusters",
+    type: "circle",
+    source: "composite",
+    "source-layer": "default",
+    paint: {
+      "circle-color": "#51bbd6",
+      "circle-radius": 5,
+    },
+  },
+  changeIcon: null,
+  collections: null,
+  layersSource: null,
+  mapLayers: null,
 };
 
 const stylingSlice = createSlice({
@@ -113,6 +122,12 @@ const stylingSlice = createSlice({
     },
     setTabValue: (state, action: PayloadAction<number>) => {
       state.tabValue = action.payload;
+    },
+    setActiveLayer:(state,action:PayloadAction<string | undefined>)=>{
+      const layer = state.mapLayers?.filter((layer)=> layer?.id===action.payload);
+      if(layer?.length){
+        state.mapLayer = layer[0]
+      }
     },
     setActiveBasemapIndex: (state, action: PayloadAction<number[]>) => {
       state.activeBasemapIndex = action.payload;
@@ -140,7 +155,7 @@ const stylingSlice = createSlice({
       state,
       action: PayloadAction<{ key: string; val: string }>,
     ) => {
-      const mapLayer = state.mapLayer as TLayer;
+      const mapLayer = state.mapLayer as Layer;
 
       if (mapLayer) {
         mapLayer.paint = mapLayer.paint ?? {};
@@ -151,7 +166,7 @@ const stylingSlice = createSlice({
       state,
       action: PayloadAction<{ key: string; val: number }>,
     ) => {
-      const mapLayer = state.mapLayer as TLayer;
+      const mapLayer = state.mapLayer as Layer;
 
       if (mapLayer) {
         mapLayer.paint = mapLayer.paint ?? {};
@@ -159,14 +174,14 @@ const stylingSlice = createSlice({
       }
     },
     setLayerFillOutLineColor: (state, action: PayloadAction<string>) => {
-      const mapLayer = state.mapLayer as TLayer;
+      const mapLayer = state.mapLayer as Layer;
 
       if (mapLayer?.paint) {
         mapLayer.paint["fill-outline-color"] = action.payload;
       }
     },
     deleteLayerFillOutLineColor: (state) => {
-      const mapLayer = state.mapLayer as TLayer;
+      const mapLayer = state.mapLayer as Layer;
 
       if (mapLayer?.paint) {
         if ("fill-outline-color" in mapLayer.paint) {
@@ -178,7 +193,7 @@ const stylingSlice = createSlice({
       state,
       action: PayloadAction<{ val: number }>,
     ) => {
-      const mapLayer = state.mapLayer as TLayer;
+      const mapLayer = state.mapLayer as Layer;
 
       if (mapLayer) {
         mapLayer.layout = mapLayer.layout ?? {};
@@ -186,7 +201,7 @@ const stylingSlice = createSlice({
       }
     },
     setIconFillColor: (state, action: PayloadAction<string>) => {
-      const mapLayer = state.mapLayer as TLayer;
+      const mapLayer = state.mapLayer as Layer;
 
       if (mapLayer?.paint) {
         mapLayer.paint["icon-color"] = action.payload;
@@ -199,15 +214,25 @@ const stylingSlice = createSlice({
     //   state.mapLayer.layers[0].layout["icon-size"] = action.payload;
     // },
   },
-  extraReducers: (builder) => {
+  extraReducers: (builder:ActionReducerMapBuilder<IStylingState>) => {
     builder.addCase(fetchLayerData.pending, (state) => {
-      state.mapLayer = null;
+      state.layersSource = null;
     });
     builder.addCase(fetchLayerData.fulfilled, (state, { payload }) => {
-      state.mapLayer = payload;
+      state.layersSource = payload.sources;
+      state.mapLayers= payload.layers;
     });
     builder.addCase(fetchLayerData.rejected, (state) => {
-      state.mapLayer = null;
+      state.layersSource = null;
+    });
+    builder.addCase(getCollections.pending, (state) => {
+      state.collections = null;
+    });
+    builder.addCase(getCollections.fulfilled, (state, { payload }) => {
+      state.collections = payload;
+    });
+    builder.addCase(getCollections.rejected, (state) => {
+      state.collections = null;
     });
   },
 });
@@ -221,6 +246,7 @@ export const {
   setLayerFillColor,
   setLayerFillOutLineColor,
   saveStyles,
+  setActiveLayer,
   setLayerLineWidth,
   deleteLayerFillOutLineColor,
   setLayerSymbolSize,

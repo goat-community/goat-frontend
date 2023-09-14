@@ -7,20 +7,23 @@ import { FILTERING } from "@/lib/api/apiConstants";
 import { and_operator, or_operator } from "@/lib/utils/filtering_cql";
 import type { LayerProps } from "react-map-gl";
 import { v4 } from "uuid";
+import type { Layer } from "@/lib/store/styling/slice";
 
 interface LayersProps {
   layers: XYZ_Layer[];
   addLayer: (newLayer) => void;
+  projectId: string;
+  mapLayer: Layer;
 }
 
 const Layers = (props: LayersProps) => {
-  const sampleLayerID = "user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e";
-
   const { filters, logicalOperator } = useSelector(
     (state: IStore) => state.mapFilters,
   );
 
-  const { layers, addLayer } = props;
+  const { layers, addLayer, projectId, mapLayer } = props;
+
+  const sampleLayerID = projectId;
 
   const getQuery = useCallback(() => {
     if (Object.keys(filters).length) {
@@ -35,17 +38,6 @@ const Layers = (props: LayersProps) => {
       }
     }
   }, [filters, logicalOperator]);
-
-  const clusterLayer: LayerProps = {
-    id: "clusters",
-    type: "circle",
-    source: "composite",
-    "source-layer": "default",
-    paint: {
-      "circle-color": "#51bbd6",
-      "circle-radius": 5,
-    },
-  };
 
   useEffect(() => {
     const filterJson = getQuery();
@@ -74,20 +66,19 @@ const Layers = (props: LayersProps) => {
       addLayer([
         {
           id: "layer1",
-          sourceUrl:
-            "http://127.0.0.1:8080/collections/user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e/tiles/{z}/{x}/{y}",
+          sourceUrl: `https://geoapi.goat.dev.plan4better.de/collections/${projectId}/tiles/{z}/{x}/{y}`,
           color: "#FF0000",
         },
       ]);
     }
-  }, [addLayer, filters, getQuery, logicalOperator, sampleLayerID]);
+  }, [addLayer, filters, getQuery, logicalOperator, sampleLayerID, projectId]);
 
   return (
     <>
       {layers.length
         ? layers.map((layer: XYZ_Layer) => (
             <Source key={v4()} type="vector" tiles={[layer.sourceUrl]}>
-              <MapLayer {...clusterLayer} />
+              <MapLayer {...mapLayer as LayerProps} />
             </Source>
           ))
         : null}

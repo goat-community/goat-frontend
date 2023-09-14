@@ -4,25 +4,24 @@ import { Text } from "@p4b/ui/components/theme";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { makeStyles } from "@/lib/theme";
 import { Card, IconButton, Stack, Typography } from "@mui/material";
-import type { Layer } from "@/lib/store/styling/slice";
-import { setActiveLayer } from "@/lib/store/styling/slice";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
+import { useRouter } from "next/navigation";
+import type { Collection } from "@/lib/store/styling/slice";
 
 interface PanelProps {
   onCollapse?: () => void;
-  layers: Layer[] | null;
+  collections: Collection[] | null;
 }
 
-const LayerPanel = ({ onCollapse, layers }: PanelProps) => {
+const Collections = ({ onCollapse, collections }: PanelProps) => {
   const { classes } = useStyles();
 
-  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   return (
     <Container
       header={
         <>
-          <Text typo="page heading">Layers</Text>
+          <Text typo="page heading">Collections</Text>
           {onCollapse && (
             <IconButton
               onClick={onCollapse}
@@ -40,9 +39,9 @@ const LayerPanel = ({ onCollapse, layers }: PanelProps) => {
       }
       body={
         <>
-          {layers?.map((layer: Layer) => (
+          {collections?.map((collection) => (
             <Card
-              key={layer?.id}
+              key={collection.id}
               sx={{
                 boxShadow:
                   "0px 1px 10px 0px rgba(0, 0, 0, 0.06), 0px 2px 2px 0px rgba(0, 0, 0, 0.07), 0px 1px 2px -1px rgba(0, 0, 0, 0.10)",
@@ -55,7 +54,7 @@ const LayerPanel = ({ onCollapse, layers }: PanelProps) => {
               }}
               variant="outlined"
               className={classes.layerCard}
-              onClick={() => dispatch(setActiveLayer(layer?.id))}
+              onClick={() => router.push(`/map/${collection.id}`)}
             >
               <Stack
                 spacing={1}
@@ -64,7 +63,7 @@ const LayerPanel = ({ onCollapse, layers }: PanelProps) => {
                 justifyContent="space-between"
               >
                 <Typography noWrap variant="body2">
-                  {layer?.source}
+                  {collection.title}
                 </Typography>
                 <Stack direction="row" spacing={1}>
                   <IconButton
@@ -118,4 +117,4 @@ const useStyles = makeStyles()((theme) => ({
   },
 }));
 
-export default LayerPanel;
+export default Collections;

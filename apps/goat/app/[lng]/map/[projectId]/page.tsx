@@ -18,9 +18,8 @@ import { makeStyles } from "@/lib/theme";
 import { Box, Collapse, Stack } from "@mui/material";
 import "mapbox-gl/dist/mapbox-gl.css";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import Map, { MapProvider, Layer, Source } from "react-map-gl";
+import Map, { MapProvider } from "react-map-gl";
 import type { CSSObject } from "tss-react";
-import Layers from "@/components/map/Layers";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Fullscren } from "@/components/map/controls/Fullscreen";
 import Geocoder from "@/components/map/controls/Geocoder";
@@ -28,17 +27,24 @@ import { useSelector } from "react-redux";
 import type { IStore } from "@/types/store";
 import { setActiveBasemapIndex, setIcon } from "@/lib/store/styling/slice";
 import MapStyle from "@/components/map/panels/mapStyle/MapStyle";
-import { fetchLayerData } from "@/lib/store/styling/actions";
+import { fetchLayerData, getCollections } from "@/lib/store/styling/actions";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
+import Collections from "@/components/map/panels/Collections";
+import Layers from "@/components/map/Layers";
 
 const sidebarWidth = 48;
 const toolbarHeight = 52;
 
 export default function MapPage({ params: { projectId } }) {
-  const { basemaps, activeBasemapIndex, initialViewState } = useSelector(
-    (state: IStore) => state.styling,
-  );
+  const {
+    basemaps,
+    activeBasemapIndex,
+    initialViewState,
+    collections,
+    layersSource,
+    mapLayers,
+  } = useSelector((state: IStore) => state.styling);
   const mapLayer = useSelector(selectMapLayer);
 
   const [activeLeft, setActiveLeft] = useState<MapSidebarItem | undefined>(
@@ -49,11 +55,13 @@ export default function MapPage({ params: { projectId } }) {
     undefined,
   );
 
+  const sourceUrl = layersSource?.[projectId]?.tiles[0]?.replace("http", "https")
+
+
   const [layers, setLayers] = useState<XYZ_Layer[] | []>([
     {
-      id: "layer1",
-      sourceUrl:
-        "http://127.0.0.1:8081/collections/user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e/tiles/{z}/{x}/{y}",
+      id: 'layer1',
+      sourceUrl,
       color: "#FF0000",
     },
   ]);
@@ -63,6 +71,7 @@ export default function MapPage({ params: { projectId } }) {
   const dispatch = useAppDispatch();
 
   const { classes, cx } = useStyles({ sidebarWidth, toolbarHeight });
+
 
   const handleCollapse = useCallback(() => {
     setActiveLeft(undefined);
@@ -82,9 +91,16 @@ export default function MapPage({ params: { projectId } }) {
   const leftSidebar: MapSidebarProps = {
     topItems: [
       {
+        icon: ICON_NAME.MAP,
+        name: "Collection",
+        component: (
+          <Collections collections={collections} onCollapse={handleCollapse} />
+        ),
+      },
+      {
         icon: ICON_NAME.LAYERS,
         name: "Layers",
-        component: <LayerPanel onCollapse={handleCollapse} />,
+        component: <LayerPanel layers={mapLayers} onCollapse={handleCollapse} />,
       },
       {
         icon: ICON_NAME.LEGEND,
@@ -150,6 +166,12 @@ export default function MapPage({ params: { projectId } }) {
       dispatch(fetchLayerData(projectId));
     }
   }, [dispatch, projectId]);
+
+  useEffect(() => {
+    dispatch(getCollections());
+  }, [dispatch]);
+
+
 
   return (
     <MapProvider>
@@ -274,50 +296,37 @@ export default function MapPage({ params: { projectId } }) {
             mapboxAccessToken={MAPBOX_TOKEN}
             onLoad={(e) => {
               const changeIcon = (src: string) => {
-                const map = e.target
+                const map = e.target;
 
                 const newImage = new Image();
                 newImage.crossOrigin = "Anonymous";
                 newImage.src = src;
-  
+
                 const xhr = new XMLHttpRequest();
-  
-                xhr.open('GET',  src, true)
+
+                xhr.open("GET", src, true);
                 xhr.onreadystatechange = () => {
-                  if(xhr.readyState === 4 && xhr.status === 200) {
-  
-                    newImage.src = `data:image/svg+xml,${encodeURIComponent(xhr.responseText)}`
-  
+                  if (xhr.readyState === 4 && xhr.status === 200) {
+                    newImage.src = `data:image/svg+xml,${encodeURIComponent(
+                      xhr.responseText,
+                    )}`;
                   }
-                }
-  
-                xhr.send()
-  
+                };
+
+                xhr.send();
+
                 newImage.onload = () => {
                   if (map.hasImage("dentist-15")) {
-                    map.removeImage('dentist-15');
-                    map.addImage("dentist-15", newImage, {sdf: true});
+                    map.removeImage("dentist-15");
+                    map.addImage("dentist-15", newImage, { sdf: true });
                   }
-                }
-              }
-             
+                };
+              };
 
-
-              dispatch(setIcon(changeIcon))
-              
+              dispatch(setIcon(changeIcon));
             }}
           >
-            {mapLayer ? (
-              <Source
-                id={mapLayer.id}
-                type="vector"
-                url={mapLayer.sources.composite.url}
-              >
-                <Layer {...mapLayer} source-layer={mapLayer["source-layer"]} />
-              </Source>
-            ) : null}
-            {/* todo check */}
-            <Layers layers={layers} addLayer={addLayer} />
+            <Layers layers={layers} addLayer={addLayer} projectId={projectId} mapLayer={mapLayer}/>
           </Map>
         </div>
       </div>
