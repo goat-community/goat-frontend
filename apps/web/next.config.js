@@ -1,6 +1,6 @@
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 
 module.exports = withBundleAnalyzer({
   output: "standalone",
@@ -12,7 +12,6 @@ module.exports = withBundleAnalyzer({
     },
   },
   images: {
-    domains: ["assets.plan4better.de"],
-  }
-})
-
+    domains: ["assets.plan4better.de", "source.unsplash.com"],
+  },
+});

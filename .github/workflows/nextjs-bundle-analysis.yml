@@ -89,7 +89,7 @@ jobs:
         id: fc
         with:
           issue-number: ${{ github.event.number }}
-          body-includes: "<!-- __NEXTJS_BUNDLE_@p4b/goat -->"
+          body-includes: "<!-- __NEXTJS_BUNDLE_@p4b/web -->"
 
       - name: 💬 Create Comment
         uses: peter-evans/create-or-update-comment@v1.4.4

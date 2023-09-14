@@ -14,7 +14,7 @@
     "start": "turbo run start --parallel",
     "generate": "turbo run generate",
     "prepare": "cd ../../ && husky install ./app/client/.husky",
-    "goat": "dotenv -- turbo run dev --filter=goat",
+    "web": "dotenv -- turbo run dev --filter=web",
     "storybook": "turbo run dev --filter=storybook",
     "build-storybook": "turbo run build --filter=storybook",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

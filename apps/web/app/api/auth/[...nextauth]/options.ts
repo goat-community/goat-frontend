@@ -107,13 +107,6 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 export const options: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [keycloak],
-  pages: {
-    signIn: "/auth/login",
-    error: "/auth/error",
-  },
-  theme: {
-    colorScheme: "light",
-  },
   callbacks: {
     async session({ session, token }) {
       if (token) {

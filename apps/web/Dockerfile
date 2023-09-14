@@ -8,7 +8,7 @@ WORKDIR /app
 RUN npm install -g turbo
 COPY . .
 COPY .env.docker /app/apps/goat/.env
-RUN turbo prune --scope=@p4b/goat --docker
+RUN turbo prune --scope=@p4b/web --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer

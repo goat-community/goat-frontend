@@ -107,7 +107,7 @@ export enum ICON_NAME {
   CIRCLE = "circle",
   USERS = "users",
   LANGUAGE = "language",
-  FILE = "file"
+  FILE = "file",
 
   // Brand icons
   GOOGLE = "google",

@@ -1,5 +1,5 @@
 import { languages } from "@/app/i18/settings";
-import ThemeRegistry from "@/lib/ThemeRegistry";
+import ThemeRegistry from "@/components/@mui/ThemeRegistry";
 import AuthProvider from "@/lib/providers/AuthProvider";
 import ToastProvider from "@/lib/providers/ToastProvider";
 import StoreProvider from "@/lib/providers/StoreProvider";
@@ -27,11 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
   params: { lng: string };
 }) {
-
-
   return (
     <html lang={lng} dir={dir(lng)}>
-      <body style={{background: '#FAFAFA'}}>
+      <body>
         <StoreProvider>
           <AuthProvider>
             <ToastProvider>
