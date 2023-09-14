@@ -7,6 +7,7 @@ import { FILTERING } from "@/lib/api/apiConstants";
 import { and_operator, or_operator } from "@/lib/utils/filtering_cql";
 import type { LayerProps } from "react-map-gl";
 import { v4 } from "uuid";
+import { GET_NON_FILTERED_LAYER } from "@/lib/api/apiConstants";
 
 interface LayersProps {
   layers: XYZ_Layer[];
@@ -49,8 +50,7 @@ const Layers = (props: LayersProps) => {
       addLayer([
         {
           id: "layer1",
-          sourceUrl:
-            "http://127.0.0.1:8080/collections/user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e/tiles/{z}/{x}/{y}",
+          sourceUrl: GET_NON_FILTERED_LAYER(sampleLayerID),
           color: "#FF0000",
         },
       ]);

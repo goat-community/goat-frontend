@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-
-const url = "http://127.0.0.1:8080";
+import { GET_FEATURE_PROPERTY_KEYS } from "@/lib/api/apiConstants";
 
 export async function GET(request: Request) {
   const layer_id = request.url.slice(request.url.lastIndexOf("/") + 1);
-  console.log(layer_id);
+
   try {
-    const res = await fetch(`${url}/collections/${layer_id}/queryables`);
+    const res = await fetch(GET_FEATURE_PROPERTY_KEYS(layer_id));
 
     const keys = await res.json();
 
