@@ -2,23 +2,36 @@ import BasicAccordion from "@p4b/ui/components/BasicAccordion";
 import { makeStyles } from "@/lib/theme";
 import Box from "@p4b/ui/components/Box";
 import { TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { setLayerFillColor } from "@/lib/store/styling/slice";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const ColorOptionLine = () => {
   const mapLayer = useSelector(selectMapLayer);
 
+  const [lineFillColor, setLineFillColor] = useState<string>(
+    mapLayer?.paint?.["line-color"] || "",
+  );
+
   const { classes } = useStyles();
   const dispatch = useAppDispatch();
 
-  const handleFillColorChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+  const lineFillColorDebounce = useDebounce(lineFillColor, 100);
+
+  const handleLineFillColorChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    dispatch(setLayerFillColor({ key: "line-color", val: event.target.value }));
+    setLineFillColor(event.target.value);
   };
+
+  useEffect(() => {
+    dispatch(
+      setLayerFillColor({ key: "line-color", val: lineFillColorDebounce }),
+    );
+  }, [lineFillColorDebounce, dispatch]);
 
   return (
     <BasicAccordion title="Color" variant="secondary">
@@ -30,8 +43,8 @@ const ColorOptionLine = () => {
               type="color"
               size="small"
               className={classes.inputs}
-              value={mapLayer?.paint?.["line-color"]}
-              onChange={handleFillColorChange}
+              value={lineFillColor}
+              onChange={handleLineFillColorChange}
             />
           </Box>
         </Box>

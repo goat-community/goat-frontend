@@ -40,3 +40,4 @@ yarn-error.log*
 build_keycloak
 storybook-static
 *.jar
+/.idea

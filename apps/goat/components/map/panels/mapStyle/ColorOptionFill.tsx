@@ -2,32 +2,51 @@ import BasicAccordion from "@p4b/ui/components/BasicAccordion";
 import { makeStyles } from "@/lib/theme";
 import Box from "@p4b/ui/components/Box";
 import { Divider, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   setLayerFillColor,
   setLayerFillOutLineColor,
 } from "@/lib/store/styling/slice";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { selectMapLayer } from '@/lib/store/styling/selectors'
+import { selectMapLayer } from "@/lib/store/styling/selectors";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const ColorOptionFill = () => {
-  const mapLayer = useSelector(selectMapLayer)
+  const mapLayer = useSelector(selectMapLayer);
+
+  const [fillColor, setFillColor] = useState<string>(
+    mapLayer?.paint?.["fill-color"] || "",
+  );
+  const [strokeColor, setStrokeColor] = useState<string>(
+    mapLayer?.paint?.["fill-outline-color"] || "",
+  );
 
   const { classes } = useStyles();
   const dispatch = useAppDispatch();
 
+  const fillColorDebounce = useDebounce(fillColor, 100);
+  const strokeColorDebounce = useDebounce(strokeColor, 100);
+
   const handleFillColorChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    dispatch(setLayerFillColor({ key: "fill-color", val: event.target.value }));
+    setFillColor(event.target.value);
   };
 
   const handleStrokeColorChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    dispatch(setLayerFillOutLineColor(event.target.value));
+    setStrokeColor(event.target.value);
   };
+
+  useEffect(() => {
+    dispatch(setLayerFillColor({ key: "fill-color", val: fillColorDebounce }));
+  }, [fillColorDebounce, dispatch]);
+
+  useEffect(() => {
+    dispatch(setLayerFillOutLineColor(strokeColorDebounce));
+  }, [strokeColorDebounce, dispatch]);
 
   // const handleFillOpacityChange = (
   //   event: React.ChangeEvent<HTMLInputElement>,
