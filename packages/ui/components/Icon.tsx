@@ -44,6 +44,7 @@ import {
   faUsers,
   faLanguage,
   faFile,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGoogle,
@@ -105,6 +106,7 @@ export enum ICON_NAME {
   LOCATION = "location",
   CROSS = "cross",
   CIRCLE = "circle",
+  USER = "user",
   USERS = "users",
   LANGUAGE = "language",
   FILE = "file",
@@ -165,6 +167,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.LOCATION]: faLocationDot,
   [ICON_NAME.CROSS]: faCross,
   [ICON_NAME.CIRCLE]: faCircle,
+  [ICON_NAME.USER]: faUser,
   [ICON_NAME.USERS]: faUsers,
   [ICON_NAME.LANGUAGE]: faLanguage,
   [ICON_NAME.FILE]: faFile,

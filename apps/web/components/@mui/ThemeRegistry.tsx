@@ -14,7 +14,7 @@ export default function ThemeRegistry({
 }) {
   let theme = "dark";
   if (typeof window !== "undefined") {
-    theme = localStorage.getItem("theme") || "light";
+    theme = localStorage.getItem("theme") || "dark";
   }
 
   const [mode, setMode] = React.useState<"light" | "dark">(
@@ -37,7 +37,6 @@ export default function ThemeRegistry({
     }),
     [],
   );
-
   return (
     <>
       <CssBaseline />

@@ -14,19 +14,19 @@ import Divider from "@mui/material/Divider";
 
 import { GOATLogoIconOnlyGreen } from "@p4b/ui/assets/svg/GOATLogoIconOnlyGreen";
 
-export type MapToolbarProps = {
+export type HeaderProps = {
   projectTitle: string;
-  lastSaved: string;
-  tags: string[];
+  lastSaved?: string;
+  tags?: string[];
   height?: number;
 };
 
-export function MapToolbar(props: MapToolbarProps) {
+export default function Header(props: HeaderProps) {
   const theme = useTheme();
   const { tags, projectTitle, lastSaved } = props;
 
   return (
-    <AppBar sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}>
+    <AppBar color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}>
       <Toolbar
         variant="dense"
         sx={{ minHeight: props.height, height: props.height }}
@@ -43,7 +43,9 @@ export function MapToolbar(props: MapToolbarProps) {
         >
           <Typography variant="h5">{projectTitle}</Typography>
           <Divider orientation="vertical" flexItem />
-          <Typography variant="body2">Last saved: {lastSaved}</Typography>
+          {lastSaved && (
+            <Typography variant="body2">Last saved: {lastSaved}</Typography>
+          )}
           {tags &&
             tags.map((tag) => (
               <Chip

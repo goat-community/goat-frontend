@@ -28,7 +28,10 @@ async function doFinalSignoutHandshake(token: JWT) {
 async function getOrganization(token: JWT) {
   try {
     // eslint-disable-next-line turbo/no-undeclared-env-vars
-    const url = new URL(`api/v1/users/organization`, process.env.API_URL);
+    const url = new URL(
+      `api/v1/users/organization`,
+      process.env.NEXT_PUBLIC_ACCOUNTS_API_URL,
+    );
     const res = await fetch(url.href, {
       headers: {
         "Content-Type": "application/json",
@@ -46,7 +49,10 @@ async function getOrganization(token: JWT) {
 async function getSubscriptions(token: JWT) {
   try {
     // eslint-disable-next-line turbo/no-undeclared-env-vars
-    const url = new URL(`api/v1/users/subscriptions`, process.env.API_URL);
+    const url = new URL(
+      `api/v1/users/subscriptions`,
+      process.env.NEXT_PUBLIC_ACCOUNTS_API_URL,
+    );
     const res = await fetch(url.href, {
       headers: {
         "Content-Type": "application/json",
@@ -63,16 +69,19 @@ async function getSubscriptions(token: JWT) {
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
-    const response = await fetch(`${keycloak.options?.issuer}/protocol/openid-connect/token`, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        client_id: keycloak.options?.clientId as string,
-        client_secret: keycloak.options?.clientSecret as string,
-        grant_type: "refresh_token",
-        refresh_token: token.refresh_token as string,
-      }),
-      method: "POST",
-    });
+    const response = await fetch(
+      `${keycloak.options?.issuer}/protocol/openid-connect/token`,
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          client_id: keycloak.options?.clientId as string,
+          client_secret: keycloak.options?.clientSecret as string,
+          grant_type: "refresh_token",
+          refresh_token: token.refresh_token as string,
+        }),
+        method: "POST",
+      },
+    );
 
     const tokensRaw = await response.json();
     const tokens: KeycloakTokenSet = tokensRaw;
@@ -80,7 +89,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 
     const expiresAt = Math.floor(Date.now() / 1000 + tokens.expires_in);
     console.log(
-      `Token was refreshed. New token expires in ${tokens.expires_in} sec at ${expiresAt}, refresh token expires in ${tokens.refresh_expires_in} sec`
+      `Token was refreshed. New token expires in ${tokens.expires_in} sec at ${expiresAt}, refresh token expires in ${tokens.refresh_expires_in} sec`,
     );
     const newToken: JWT = {
       ...token,
@@ -93,7 +102,8 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     const organization = await getOrganization(newToken);
     const subscriptions = await getSubscriptions(newToken);
     newToken.organization = organization ? organization.id : null;
-    newToken.subscriptions = subscriptions && subscriptions.length > 0 ? subscriptions : null;
+    newToken.subscriptions =
+      subscriptions && subscriptions.length > 0 ? subscriptions : null;
     return newToken;
   } catch (error) {
     console.error("Error refreshing access token: ", error);
@@ -121,8 +131,10 @@ export const options: NextAuthOptions = {
     },
     async jwt({ token, account, user }) {
       if (account && user) {
-        if (!account.access_token) throw Error("Auth Provider missing access token");
-        if (!account.refresh_token) throw Error("Auth Provider missing refresh token");
+        if (!account.access_token)
+          throw Error("Auth Provider missing access token");
+        if (!account.refresh_token)
+          throw Error("Auth Provider missing refresh token");
         if (!account.id_token) throw Error("Auth Provider missing ID token");
         const newToken: JWT = {
           ...token,
@@ -135,7 +147,8 @@ export const options: NextAuthOptions = {
         const organization = await getOrganization(newToken);
         const subscriptions = await getSubscriptions(newToken);
         newToken.organization = organization ? organization.id : null;
-        newToken.subscriptions = subscriptions && subscriptions.length > 0 ? subscriptions : null;
+        newToken.subscriptions =
+          subscriptions && subscriptions.length > 0 ? subscriptions : null;
         return newToken;
       }
       if (Date.now() < token.expires_at * 1000) {
