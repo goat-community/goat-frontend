@@ -9,39 +9,61 @@ import {
   Toolbar,
   useTheme,
   Typography,
+  IconButton,
 } from "@mui/material";
 import Divider from "@mui/material/Divider";
-
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { GOATLogoIconOnlyGreen } from "@p4b/ui/assets/svg/GOATLogoIconOnlyGreen";
 
 export type HeaderProps = {
-  projectTitle: string;
+  title: string;
   lastSaved?: string;
   tags?: string[];
+  showHambugerMenu?: boolean;
+  onMenuIconClick?: () => void;
   height?: number;
 };
 
 export default function Header(props: HeaderProps) {
   const theme = useTheme();
-  const { tags, projectTitle, lastSaved } = props;
+  const { tags, title, lastSaved, onMenuIconClick, showHambugerMenu } = props;
 
   return (
-    <AppBar color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}>
+    <AppBar
+      position="relative"
+      elevation={0}
+      color="primary"
+      sx={{
+        zIndex: (theme) => theme.zIndex.drawer,
+        borderBottom: "1px solid rgba(58, 53, 65, 0.12)",
+      }}
+    >
       <Toolbar
         variant="dense"
         sx={{ minHeight: props.height, height: props.height }}
       >
+        {showHambugerMenu && (
+          <>
+            <IconButton onClick={onMenuIconClick}>
+              <Icon iconName={ICON_NAME.HAMBURGER_MENU} fontSize="inherit" />
+            </IconButton>
+            <Divider orientation="vertical" flexItem sx={{ ml: 2, mr: 3 }} />
+          </>
+        )}
+
         <GOATLogoIconOnlyGreen
-          style={{ width: "30px", height: "30px", cursor: "pointer" }}
+          style={{ width: "35px", height: "35px", cursor: "pointer" }}
         />
         <Stack
           direction="row"
           alignItems="center"
           sx={{
-            mx: theme.spacing(2),
+            mx: theme.spacing(4),
           }}
         >
-          <Typography variant="h5">{projectTitle}</Typography>
+          <Typography variant="body1" fontWeight="bold">
+            {title}
+          </Typography>
           <Divider orientation="vertical" flexItem />
           {lastSaved && (
             <Typography variant="body2">Last saved: {lastSaved}</Typography>
@@ -59,6 +81,14 @@ export default function Header(props: HeaderProps) {
             ))}
         </Stack>
         <Box sx={{ flexGrow: 1 }} />
+        <IconButton
+          size="small"
+          onClick={() => {
+            window.open("https://docs.goat.plan4better.de", "_blank");
+          }}
+        >
+          <Icon iconName={ICON_NAME.HELP} fontSize="inherit" />
+        </IconButton>
         <UserInfoMenu />
       </Toolbar>
     </AppBar>

@@ -1,6 +1,4 @@
-import { Theme } from "@mui/material/styles";
-
-const MuiSelect = (theme: Theme) => {
+const MuiSelect = () => {
   return {
     styleOverrides: {
       select: {

@@ -1,4 +1,4 @@
-import { PaletteMode, ThemeOptions } from '@mui/material'
+import type { PaletteMode, ThemeOptions } from '@mui/material'
 
 const Shadows = (mode: PaletteMode): ThemeOptions['shadows'] => {
   if (mode === 'light') {

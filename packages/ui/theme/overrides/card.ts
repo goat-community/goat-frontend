@@ -46,7 +46,7 @@ const Card = (theme: Theme) => {
             paddingTop: 0,
           },
           "&:last-of-type": {
-            paddingBottom: theme.spacing(8),
+            paddingBottom: theme.spacing(6),
           },
           "& + .MuiCardActions-root": {
             paddingTop: 0,

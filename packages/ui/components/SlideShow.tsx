@@ -53,14 +53,6 @@ export const SlideShow = memo(
       setActiveStep(step);
     };
 
-    // const handleNext = () => {
-    //   setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // };
-
-    // const handleBack = () => {
-    //   setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    // };
-
     return (
       <Box sx={{ width: width, height: height, flexGrow: 1, position: "relative", marginBottom: "57px" }}>
         <AutoPlaySwipeableViews

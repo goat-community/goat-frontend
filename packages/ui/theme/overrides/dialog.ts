@@ -1,5 +1,5 @@
 // ** MUI Imports
-import { Theme } from '@mui/material/styles'
+import type { Theme } from '@mui/material/styles'
 
 
 const Dialog = (theme: Theme) => {

@@ -1,6 +1,4 @@
-import { Theme } from "@mui/material/styles";
-
-const MuiPaper = (theme: Theme) => {
+const MuiPaper = () => {
   return {
     styleOverrides: {
       root: {

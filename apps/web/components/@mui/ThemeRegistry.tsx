@@ -2,7 +2,6 @@
 import React from "react";
 import NextAppDirEmotionCacheProvider from "./EmotionCache";
 import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
-import { CssBaseline } from "@mui/material";
 export const ColorModeContext = React.createContext({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   toggleColorMode: () => {},
@@ -12,9 +11,9 @@ export default function ThemeRegistry({
 }: {
   children: React.ReactNode;
 }) {
-  let theme = "dark";
+  let theme = "light";
   if (typeof window !== "undefined") {
-    theme = localStorage.getItem("theme") || "dark";
+    theme = localStorage.getItem("theme") || "light";
   }
 
   const [mode, setMode] = React.useState<"light" | "dark">(
@@ -39,7 +38,6 @@ export default function ThemeRegistry({
   );
   return (
     <>
-      <CssBaseline />
       <ColorModeContext.Provider value={colorMode}>
         <NextAppDirEmotionCacheProvider options={{ key: "mui" }}>
           <ThemeProvider

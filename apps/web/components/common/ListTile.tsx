@@ -1,6 +1,5 @@
 import { Wrap } from "@/components/common/ConditionalWrap";
 import { SkeletonImage } from "@/components/common/SkeletonImage";
-import { makeStyles } from "@/lib/theme";
 import {
   Box,
   Checkbox,
@@ -90,7 +89,8 @@ function ListTileLabel({
         alignItems: "center",
         width: "100%",
         mr: 2,
-      }}>
+      }}
+    >
       <ListItemText
         sx={reverse ? { ml: 2, mr: 1 } : { mr: 2, ml: 1 }}
         primary={item.title}
@@ -126,20 +126,20 @@ function ButtonList({
     } else {
       newChecked.splice(currentIndex, 1);
     }
-    if (onChange)
-      onChange(newChecked);
+    if (onChange) onChange(newChecked);
   };
-  const { classes } = useStyles();
 
   return (
     <Fragment>
       {items.map((item, index) => (
         <ListItemButton
-          className={classes.root}
           role={undefined}
-          selected={!multiple && index === selected[0] && onChange !== undefined}
+          selected={
+            !multiple && index === selected[0] && onChange !== undefined
+          }
           key={index}
-          sx={{ py: 0, px: 1 }}>
+          sx={{ py: 0, px: 1 }}
+        >
           {onChange && (
             <FormControlLabel
               value={index}
@@ -204,7 +204,8 @@ export function ListTile({
         pb: 0,
         pt: 0,
         m: 0,
-      }}>
+      }}
+    >
       <Wrap
         with={multiple ? FormGroup : RadioGroup}
         wrapperProps={
@@ -216,7 +217,8 @@ export function ListTile({
                   if (onChange) onChange([parseInt(e.target.value)]);
                 },
               }
-        }>
+        }
+      >
         <ButtonList
           items={items}
           selected={selected}
@@ -231,11 +233,3 @@ export function ListTile({
     </DialogContent>
   );
 }
-
-const useStyles = makeStyles()((theme) => ({
-  root: {
-    "&:hover": {
-      backgroundColor: theme.colors.useCases.surfaces.surface2,
-    },
-  },
-}));
