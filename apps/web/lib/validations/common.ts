@@ -8,3 +8,11 @@ export const paginatedSchema = z.object({
   page: z.number().int().positive().optional(),
   size: z.number().int().positive().optional(),
 });
+
+export const getContentQueryParamsSchema = paginatedSchema.extend({
+  folder_id: z.string().uuid().optional(),
+  search: z.string().optional(),
+  authorization: z.string().optional(),
+});
+
+export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;

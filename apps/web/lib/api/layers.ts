@@ -1,21 +1,18 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
-import type { ProjectPaginated } from "@/lib/validations/project";
 import type { GetContentQueryParams } from "@/lib/validations/common";
+import type { LayerPaginated } from "@/lib/validations/layer";
 
-export const PROJECTS_API_BASE_URL = new URL(
-  "api/v2/project",
+export const LAYERS_API_BASE_URL = new URL(
+  "api/v2/Layer",
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
-export const useProjects = (queryParams?: GetContentQueryParams) => {
+export const useLayers = (queryParams?: GetContentQueryParams) => {
   const { data, isLoading, error, mutate, isValidating } =
-    useSWR<ProjectPaginated>(
-      [`${PROJECTS_API_BASE_URL}`, queryParams],
-      fetcher,
-    );
+    useSWR<LayerPaginated>([`${LAYERS_API_BASE_URL}`, queryParams], fetcher);
   return {
-    projects: data,
+    Layers: data,
     isLoading: isLoading,
     isError: error,
     mutate,

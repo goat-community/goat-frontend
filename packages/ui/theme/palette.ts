@@ -98,7 +98,7 @@ const DefaultPalette = (mode: PaletteMode, themeColor: ThemeColor) => {
       default: mode === 'light' ? '#F4F5FA' : '#18202B'
     },
     action: {
-      active: `rgba(${mainColor}, 0.54)`,
+      active: `rgba(${mainColor}, 0.7)`,
       hover: `rgba(${mainColor}, 0.04)`,
       selected: `rgba(${mainColor}, 0.08)`,
       disabled: `rgba(${mainColor}, 0.3)`,

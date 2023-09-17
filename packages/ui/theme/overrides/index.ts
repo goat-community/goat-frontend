@@ -39,7 +39,7 @@ const Overrides = (theme: Theme) => {
     ...MuiDateTimePicker(theme),
     ...MuiAppBar(theme),
     ...Link(),
-    ...CssBaseline(),
+    ...CssBaseline(theme),
   };
 };
 

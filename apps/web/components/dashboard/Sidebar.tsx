@@ -1,5 +1,6 @@
 import type { CSSObject, Theme } from "@mui/material";
 import {
+  Link,
   List,
   ListItem,
   ListItemButton,
@@ -10,36 +11,15 @@ import {
 } from "@mui/material";
 
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import NextLink from "next/link";
+import { usePathname } from "next/navigation";
 
-export interface SidebarItem {
+export interface NavbarItem {
   link: string;
   icon: ICON_NAME;
-  placeholder: string;
+  label: string;
+  current: boolean;
 }
-
-const sidebarItems: SidebarItem[] = [
-  {
-    link: "/home",
-    icon: ICON_NAME.HOUSE,
-    placeholder: "Home",
-  },
-  {
-    link: "/content",
-    icon: ICON_NAME.FOLDER,
-    placeholder: "Content",
-  },
-  {
-    link: "/settings",
-    icon: ICON_NAME.SETTINGS,
-    placeholder: "Settings",
-  },
-  {
-    //todo change test to id logic
-    link: "/map/test",
-    icon: ICON_NAME.STYLE,
-    placeholder: "Styling",
-  },
-];
 
 const openedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {
@@ -66,6 +46,7 @@ interface Props {
 const DashboardSidebar = (props: Props) => {
   const { hidden, width, collapsedWidth, navVisible, setNavVisible } = props;
   const theme = useTheme();
+  const pathname = usePathname();
 
   const MobileDrawerProps = {
     open: navVisible,
@@ -81,6 +62,27 @@ const DashboardSidebar = (props: Props) => {
     onOpen: () => null,
     onClose: () => null,
   };
+
+  const navigation: NavbarItem[] = [
+    {
+      link: "/home",
+      icon: ICON_NAME.HOUSE,
+      label: "Home",
+      current: pathname?.includes("/home"),
+    },
+    {
+      link: "/content",
+      icon: ICON_NAME.FOLDER,
+      label: "Content",
+      current: pathname?.includes("/content"),
+    },
+    {
+      link: "/settings",
+      icon: ICON_NAME.SETTINGS,
+      label: "Settings",
+      current: pathname?.includes("/settings"),
+    },
+  ];
 
   return (
     <SwipeableDrawer
@@ -108,36 +110,66 @@ const DashboardSidebar = (props: Props) => {
             ...closedMixin(theme),
           }),
           position: "relative",
-          overflow: "hidden",
+          overflowX: "hidden",
           backgroundColor: theme.palette.background.paper,
-          borderRight: "1px solid rgba(58, 53, 65, 0.12)"
+          borderRight: "1px solid rgba(58, 53, 65, 0.12)",
         },
       }}
     >
-      <List>
-        {sidebarItems.map((item) => (
-          <ListItem key={item.icon} disablePadding sx={{ display: "block" }}>
-            <ListItemButton
+      <List dense>
+        {navigation.map((item) => (
+          <Link
+            key={item.icon}
+            href={item.link}
+            component={NextLink}
+            passHref
+            style={{ textDecoration: "none" }}
+          >
+            <ListItem
+              disablePadding
               sx={{
-                minHeight: 48,
-              }}
-              onClick={() => {
-                console.log("click");
+                display: "block",
               }}
             >
-              <ListItemIcon
+              <ListItemButton
+                selected={item.current}
                 sx={{
-                  minWidth: 0,
-                  ml: 0,
-                  mr: 6,
-                  justifyContent: "center",
+                  minHeight: 48,
+                }}
+                onClick={() => {
+                  console.log("click");
                 }}
               >
-                <Icon iconName={item.icon} fontSize="small" />
-              </ListItemIcon>
-              <ListItemText primary={item.placeholder} />
-            </ListItemButton>
-          </ListItem>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    ml: 0,
+                    mr: 6,
+                    justifyContent: "center",
+                  }}
+                >
+                  <Icon
+                    iconName={item.icon}
+                    fontSize="small"
+                    htmlColor={
+                      item.current ? theme.palette.primary.main : "inherit"
+                    }
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.label}
+                  sx={{
+                    "& .MuiTypography-root": {
+                      fontWeight: 700,
+                      ...(item.current && {
+                        color: theme.palette.primary.main,
+                      }),
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Link>
         ))}
       </List>
     </SwipeableDrawer>

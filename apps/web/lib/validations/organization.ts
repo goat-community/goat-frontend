@@ -12,7 +12,7 @@ const organizationSchema = z.object({
   total_storage: z.number(),
   geocoding_quota: z.number(),
   on_trial: z.boolean(),
-  region: z.enum(["eu", "us", "ap"]),
+  region: regionEnum,
   contact_user_id: z.string(),
   hubspot_id: z.string(),
   suspended: z.boolean(),

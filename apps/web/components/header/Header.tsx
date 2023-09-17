@@ -14,6 +14,7 @@ import {
 import Divider from "@mui/material/Divider";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { GOATLogoIconOnlyGreen } from "@p4b/ui/assets/svg/GOATLogoIconOnlyGreen";
+import Link from "next/link";
 
 export type HeaderProps = {
   title: string;
@@ -47,13 +48,30 @@ export default function Header(props: HeaderProps) {
             <IconButton onClick={onMenuIconClick}>
               <Icon iconName={ICON_NAME.HAMBURGER_MENU} fontSize="inherit" />
             </IconButton>
+
             <Divider orientation="vertical" flexItem sx={{ ml: 2, mr: 3 }} />
           </>
         )}
 
-        <GOATLogoIconOnlyGreen
-          style={{ width: "35px", height: "35px", cursor: "pointer" }}
-        />
+        <Link
+          href="/home"
+          style={{
+            width: "35px",
+            height: "35px",
+            cursor: "pointer",
+          }}
+        >
+          <Box
+            sx={{
+              transition: "transform 0.2s ease-in-out",
+              "&:hover": {
+                transform: "scale(1.1)",
+              },
+            }}
+          >
+            <GOATLogoIconOnlyGreen />
+          </Box>
+        </Link>
         <Stack
           direction="row"
           alignItems="center"

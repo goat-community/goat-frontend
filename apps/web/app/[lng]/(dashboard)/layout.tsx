@@ -14,7 +14,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <Stack component="div" width="100%" height="100%" overflow="hidden">
       <Header
         height={52}
-        title="Dashboard"
+        title="Workspace"
         showHambugerMenu={hidden}
         onMenuIconClick={() => {
           setNavVisible(!navVisible);

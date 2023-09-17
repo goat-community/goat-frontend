@@ -9,8 +9,8 @@ import type { Metadata } from "next";
 import "react-toastify/dist/ReactToastify.css";
 import { Mulish } from "next/font/google";
 
-const mullish = Mulish({
-  subsets: ["latin"]
+const mulish = Mulish({
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -34,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang={lng} dir={dir(lng)}>
-      <body className={mullish.className}>
+      <body className={mulish.className}>
         <StoreProvider>
           <AuthProvider>
             <ToastProvider>
