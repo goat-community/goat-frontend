@@ -1,10 +1,13 @@
+import type { SxProps } from "@mui/material";
 import { Box, useTheme } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 
 export default function AuthLayout({
   children,
+  sx,
 }: {
   children: React.ReactNode;
+  sx?: SxProps;
 }) {
   const theme = useTheme();
 
@@ -14,6 +17,7 @@ export default function AuthLayout({
       sx={{
         display: "flex",
         flex: "1 1 auto",
+        ...sx,
       }}
     >
       <Grid

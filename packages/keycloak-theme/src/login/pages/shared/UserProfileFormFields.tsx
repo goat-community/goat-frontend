@@ -187,14 +187,10 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
         if (
           activeStep !== undefined &&
           steps !== undefined &&
-          steps[activeStep + 1].includes(attribute.name) &&
-          attribute.name !== "username"
+          steps[activeStep + 1].includes(attribute.name)
         ) {
           isVisible = true;
-        } else if (
-          (activeStep === undefined || steps === undefined) &&
-          attribute.name !== "username"
-        ) {
+        } else if (activeStep === undefined || steps === undefined) {
           isVisible = true;
         }
 
@@ -222,36 +218,15 @@ export function UserProfileFormFields(props: UserProfileFormFieldsProps) {
               disabled={attribute.readOnly}
               autoComplete={attribute.autocomplete}
               onBlur={() => {
-                if (attribute.name === "username")
-                  // don't validate username onBlur
-                  return;
-                if (attribute.name === "email") {
-                  formValidationDispatch({
-                    action: "focus lost",
-                    name: "username",
-                  });
-                }
                 formValidationDispatch({
                   action: "focus lost",
                   name: attribute.name,
                 });
               }}
               aria-label={attribute.name}
-              tabIndex={
-                attribute.name === "username" ? -1 : getIncrementedTabIndex()
-              }
+              tabIndex={getIncrementedTabIndex()}
               onChange={(event) => {
                 const { value } = event.target;
-                if (attribute.name === "username")
-                  // don't validate username while typing
-                  return;
-                if (attribute.name === "email") {
-                  formValidationDispatch({
-                    action: "update value",
-                    name: "username",
-                    newValue: value,
-                  });
-                }
                 formValidationDispatch({
                   action: "update value",
                   name: attribute.name,

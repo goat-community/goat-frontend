@@ -25,7 +25,6 @@ const steps: Steps = {
   1: ["firstName", "lastName", "country", "profession", "domain"],
   2: [
     "email",
-    "username",
     "password",
     "password-confirm",
     "terms_and_conditions",
