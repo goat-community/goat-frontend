@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowPopper } from "@/components/ArrowPoper";
 import {
   Box,
   Card,
@@ -7,11 +8,31 @@ import {
   CardMedia,
   Chip,
   Grid,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Stack,
   Typography,
   useTheme,
 } from "@mui/material";
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { formatDistance } from "date-fns";
+import { useState } from "react";
 
 export interface SectionCard {
+  createdAt?: string;
+  updatedAt?: string;
+  ownerInfo?: {
+    name: string;
+    avatar: string;
+  };
+  updatedBy?: {
+    name: string;
+    avatar: string;
+  };
   title: string;
   description?: string;
   tags?: string[];
@@ -19,8 +40,9 @@ export interface SectionCard {
 }
 
 const SectionCard = (props: SectionCard) => {
-  const { title, description, tags, image } = props;
+  const { title, updatedAt, tags, image } = props;
   const theme = useTheme();
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   return (
     <>
       <Card
@@ -60,16 +82,122 @@ const SectionCard = (props: SectionCard) => {
         )}
 
         <CardContent sx={{ flexGrow: 1 }}>
-          {description && (
-            <Typography gutterBottom variant="body2">
-              {description}
-            </Typography>
-          )}
-
-          {title && (
-            <Typography gutterBottom variant="body1">
-              {title}
-            </Typography>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ pb: theme.spacing(2) }}
+          >
+            {title && (
+              <Typography variant="body1" noWrap>
+                {title}
+              </Typography>
+            )}
+            <ArrowPopper
+              open={moreMenuOpen}
+              placement="bottom"
+              onClose={() => setMoreMenuOpen(false)}
+              arrow={false}
+              content={
+                <Paper
+                  elevation={8}
+                  sx={{
+                    minWidth: 220,
+                    maxWidth: 340,
+                    overflow: "auto",
+                    py: theme.spacing(2),
+                  }}
+                >
+                  <List dense={true}>
+                    <ListItemButton>
+                      <ListItemIcon
+                        sx={{
+                          color: "inherit",
+                          pr: 4,
+                          minWidth: 0,
+                        }}
+                      >
+                        <Icon
+                          iconName={ICON_NAME.EDIT}
+                          style={{ fontSize: 15 }}
+                          htmlColor="inherit"
+                        />
+                      </ListItemIcon>
+                      <ListItemText primary="Edit Name & Description" />
+                    </ListItemButton>
+                    <ListItemButton>
+                      <ListItemIcon
+                        sx={{
+                          color: "inherit",
+                          pr: 4,
+                          minWidth: 0,
+                        }}
+                      >
+                        <Icon
+                          iconName={ICON_NAME.SHARE}
+                          style={{ fontSize: 15 }}
+                          htmlColor="inherit"
+                        />
+                      </ListItemIcon>
+                      <ListItemText primary="Share" />
+                    </ListItemButton>
+                    <ListItemButton
+                      sx={{
+                        color: theme.palette.error.main,
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          color: "inherit",
+                          pr: 4,
+                          minWidth: 0,
+                        }}
+                      >
+                        <Icon
+                          iconName={ICON_NAME.TRASH}
+                          style={{ fontSize: 15 }}
+                          htmlColor="inherit"
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Delete"
+                        sx={{
+                          "& .MuiTypography-root": {
+                            color: theme.palette.error.main
+                          },
+                        }}
+                      />
+                    </ListItemButton>
+                  </List>
+                </Paper>
+              }
+            >
+              <IconButton
+                size="small"
+                onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                sx={{
+                  marginRight: "-12px",
+                }}
+              >
+                <Icon iconName={ICON_NAME.MORE_VERT} fontSize="inherit" />
+              </IconButton>
+            </ArrowPopper>
+          </Stack>
+          {/* Created by info  */}
+          {updatedAt && (
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              sx={{ pb: theme.spacing(2) }}
+            >
+              <Typography variant="caption" noWrap>
+                Last updated:{" "}
+                {formatDistance(new Date(updatedAt), new Date(), {
+                  addSuffix: true,
+                })}
+              </Typography>
+            </Stack>
           )}
           {tags && (
             <Grid container spacing={2} sx={{ pt: theme.spacing(2) }}>

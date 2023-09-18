@@ -63,6 +63,8 @@ const ProjectSection = (props: ProjectSectionProps) => {
                 <Skeleton variant="rectangular" height={200} />
               ) : (
                 <SectionCard
+                  createdAt={item.created_at}
+                  updatedAt={item.updated_at}
                   title={item.name}
                   description={item.description}
                   image={item.thumbnail_url}

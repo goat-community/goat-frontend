@@ -48,6 +48,9 @@ import {
   faGlobe,
   faExternalLinkAlt,
   faBars,
+  faShare,
+  faTrash,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGoogle,
@@ -116,6 +119,9 @@ export enum ICON_NAME {
   GLOBE = "globe",
   EXTERNAL_LINK = "external-link",
   HAMBURGER_MENU = "hamburger-menu",
+  SHARE = "share",
+  TRASH = "trash",
+  EDIT = "edit",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -178,6 +184,9 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.FILE]: faFile,
   [ICON_NAME.GLOBE]: faGlobe,
   [ICON_NAME.HAMBURGER_MENU]: faBars,
+  [ICON_NAME.SHARE]: faShare,
+  [ICON_NAME.TRASH]: faTrash,
+  [ICON_NAME.EDIT]: faEdit,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,
@@ -190,7 +199,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.INSTAGRAM]: faInstagram,
   [ICON_NAME.BITBUCKET]: faBitbucket,
   [ICON_NAME.PAYPAL]: faPaypal,
-  [ICON_NAME.EXTERNAL_LINK]: faExternalLinkAlt
+  [ICON_NAME.EXTERNAL_LINK]: faExternalLinkAlt,
 };
 
 interface BrandColors {

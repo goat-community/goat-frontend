@@ -41,6 +41,13 @@ const blogPosts: BlogPost[] = [
       "https://plan4better.de/images/blog/green-spaces-resilient-cities/thumbnail.webp",
     url: "https://plan4better.de/en/posts/2023-05-01-accessibility-to-green-spaces/",
   },
+  {
+    title: "GOAT Anwendungsbeispiel: Stadtplanung",
+    date: "April 17, 2023",
+    thumbnail:
+      "https://plan4better.de/images/blog/use-cases-development-concepts/stadtplanung_900450.webp",
+    url: "https://plan4better.de/posts/2023-03-01-goat-anwendungsbeispiel-stadtplanung/",
+  },
 ];
 
 const BlogSection = () => {
@@ -85,8 +92,8 @@ const BlogSection = () => {
               md={6}
               lg={4}
               display={{
-                sm: index > 2 ? "none" : "block",
-                md: index > 1 ? "none" : "block",
+                sm: index > 3 ? "none" : "block",
+                md: index > 3 ? "none" : "block",
                 lg: index > 2 ? "none" : "block",
               }}
             >
@@ -123,9 +130,12 @@ const BlogSection = () => {
                         height: 220,
                         objectFit: "cover",
                         backgroundSize: "cover",
-                        transition: theme.transitions.create((["box-shadow", "transform"]), {
-                          duration: theme.transitions.duration.standard
-                        })
+                        transition: theme.transitions.create(
+                          ["box-shadow", "transform"],
+                          {
+                            duration: theme.transitions.duration.standard,
+                          },
+                        ),
                       }}
                       image={item.thumbnail}
                     />
@@ -138,9 +148,12 @@ const BlogSection = () => {
 
                       <Typography
                         sx={{
-                          transition: theme.transitions.create(["color", "transform"], {
-                            duration: theme.transitions.duration.standard
-                          }),
+                          transition: theme.transitions.create(
+                            ["color", "transform"],
+                            {
+                              duration: theme.transitions.duration.standard,
+                            },
+                          ),
                         }}
                         fontWeight="bold"
                       >
