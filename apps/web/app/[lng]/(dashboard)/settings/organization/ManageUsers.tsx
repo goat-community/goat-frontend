@@ -1,6 +1,5 @@
 "use client";
 
-import SubscriptionCardSkeleton from "@/components/skeletons/SubscriptionCardSkeleton";
 import {
   useInviteUserDialog,
   useUserRemovalDialog,
@@ -10,7 +9,7 @@ import { useState } from "react";
 
 // import { Chip } from "@/components/common/Chip";
 import EnhancedTable from "@/components/common/tables/EnhancedTable";
-import { TextField, Card, Button, Box, Chip, Typography, IconButton, useTheme } from "@mui/material";
+import { TextField, Card, Button, Box, Chip, Typography, IconButton, useTheme, Skeleton } from "@mui/material";
 import UserRemovalConfirm from "@/components/dashboard/settings/organization/UserRemovalConfirm";
 import type { IUser } from "@/types/dashboard/organization";
 import Modal from "@/components/common/Modal";
@@ -98,7 +97,7 @@ const ManageUsers = () => {
 
   function getStatus() {
     if (isLoading) {
-      return <SubscriptionCardSkeleton />;
+      return <Skeleton variant="rounded" width="100%" height={210} />
     } else if (error) {
       return "There is an error with the connection, make sure to be connected to a valid network!";
     } else {

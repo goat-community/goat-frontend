@@ -1,11 +1,10 @@
 "use client";
 
 import { useSubscription } from "@/lib/api/subscription";
-import { Button, Typography, useTheme, Box } from "@mui/material";
+import { Button, Typography, useTheme, Box, Skeleton } from "@mui/material";
 import { v4 } from "uuid";
 import Banner from "@/components/dashboard/settings/Banner";
 import SubscriptionStatusCard from "./SubscriptionStatusCard";
-import SubscriptionCardSkeleton from "@/components/skeletons/SubscriptionCardSkeleton";
 
 import type { ISubscriptionStatusCardDataType } from "@/types/dashboard/subscription";
 import type { ISubscriptionCard } from "@/types/dashboard/subscription";
@@ -44,9 +43,9 @@ const Subscription = () => {
     if (isLoading) {
       return (
         <>
-          <SubscriptionCardSkeleton />
-          <SubscriptionCardSkeleton />
-          <SubscriptionCardSkeleton />
+          <Skeleton variant="rounded" width="100%" height={210} />;
+          <Skeleton variant="rounded" width="100%" height={210} />;
+          <Skeleton variant="rounded" width="100%" height={210} />;
         </>
       );
     } else if (isError) {
