@@ -4,7 +4,7 @@ import type { GetContentQueryParams } from "@/lib/validations/common";
 import type { LayerPaginated } from "@/lib/validations/layer";
 
 export const LAYERS_API_BASE_URL = new URL(
-  "api/v2/Layer",
+  "api/v2/layer",
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
@@ -12,7 +12,7 @@ export const useLayers = (queryParams?: GetContentQueryParams) => {
   const { data, isLoading, error, mutate, isValidating } =
     useSWR<LayerPaginated>([`${LAYERS_API_BASE_URL}`, queryParams], fetcher);
   return {
-    Layers: data,
+    layers: data,
     isLoading: isLoading,
     isError: error,
     mutate,

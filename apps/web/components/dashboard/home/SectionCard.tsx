@@ -108,7 +108,7 @@ const SectionCard = (props: SectionCard) => {
                     py: theme.spacing(2),
                   }}
                 >
-                  <List dense={true}>
+                  <List dense={true} disablePadding>
                     <ListItemButton>
                       <ListItemIcon
                         sx={{
@@ -173,13 +173,13 @@ const SectionCard = (props: SectionCard) => {
               }
             >
               <IconButton
-                size="small"
+                size="medium"
                 onClick={() => setMoreMenuOpen(!moreMenuOpen)}
                 sx={{
                   marginRight: "-12px",
                 }}
               >
-                <Icon iconName={ICON_NAME.MORE_VERT} fontSize="inherit" />
+                <Icon iconName={ICON_NAME.MORE_VERT} fontSize="small" />
               </IconButton>
             </ArrowPopper>
           </Stack>
