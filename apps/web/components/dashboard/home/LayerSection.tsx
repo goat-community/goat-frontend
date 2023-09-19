@@ -65,6 +65,8 @@ const LayerSection = (props: LayerSectionProps) => {
                 <SectionCard
                   createdAt={item.created_at}
                   updatedAt={item.updated_at}
+                  id={item.id}
+                  contentType="layer"
                   title={item.name}
                   description={item.description}
                   image={item.thumbnail_url}

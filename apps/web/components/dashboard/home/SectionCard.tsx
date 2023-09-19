@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowPopper } from "@/components/ArrowPoper";
+import DeleteContentModal from "@/components/modals/DeleteContent";
 import {
   Box,
   Card,
@@ -33,20 +34,36 @@ export interface SectionCard {
     name: string;
     avatar: string;
   };
+  id: string;
   title: string;
+  contentType: "project" | "layer";
   description?: string;
   tags?: string[];
   image?: string;
 }
 
+export interface ActiveCard {
+  id: string;
+  type: "project" | "layer";
+  title: string;
+}
+
 const SectionCard = (props: SectionCard) => {
-  const { title, updatedAt, tags, image } = props;
+  const { title, id, contentType, updatedAt, tags, image } = props;
   const theme = useTheme();
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const [activeContent, setActiveContent] = useState<ActiveCard | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   return (
     <>
+      <DeleteContentModal
+        open={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        activeContent={activeContent}
+      />
       <Card
-        onClick={() => console.log("clicked")}
+        // onClick={() => console.log("clicked")}
         sx={{
           height: "100%",
           display: "flex",
@@ -145,6 +162,15 @@ const SectionCard = (props: SectionCard) => {
                       sx={{
                         color: theme.palette.error.main,
                       }}
+                      onClick={() => {
+                        setActiveContent({
+                          id,
+                          type: contentType,
+                          title,
+                        });
+                        setIsDeleteDialogOpen(true);
+                        setMoreMenuOpen(false);
+                      }}
                     >
                       <ListItemIcon
                         sx={{
@@ -163,7 +189,7 @@ const SectionCard = (props: SectionCard) => {
                         primary="Delete"
                         sx={{
                           "& .MuiTypography-root": {
-                            color: theme.palette.error.main
+                            color: theme.palette.error.main,
                           },
                         }}
                       />
@@ -174,7 +200,9 @@ const SectionCard = (props: SectionCard) => {
             >
               <IconButton
                 size="medium"
-                onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+                onClick={() => {
+                  setMoreMenuOpen(!moreMenuOpen);
+                }}
                 sx={{
                   marginRight: "-12px",
                 }}

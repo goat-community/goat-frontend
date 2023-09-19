@@ -65,6 +65,8 @@ const ProjectSection = (props: ProjectSectionProps) => {
                 <SectionCard
                   createdAt={item.created_at}
                   updatedAt={item.updated_at}
+                  id={item.id}
+                  contentType="project"
                   title={item.name}
                   description={item.description}
                   image={item.thumbnail_url}

@@ -22,3 +22,15 @@ export const useProjects = (queryParams?: GetContentQueryParams) => {
     isValidating,
   };
 };
+
+export const deleteProject = async (id: string) => {
+  try {
+    await fetch(`${PROJECTS_API_BASE_URL}/${id}`, {
+      method: "DELETE",
+    });
+  }
+  catch (error) {
+    console.error(error);
+    throw Error(`deleteProject: unable to delete project with id ${id}`)
+  }
+}
