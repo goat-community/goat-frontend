@@ -1,32 +1,38 @@
 "use client";
 
 import SubscriptionCardSkeleton from "@/components/skeletons/SubscriptionCardSkeleton";
-import { useInviteUserDialog, useUserRemovalDialog, useUsersData } from "@/hooks/dashboard/OrganisationHooks";
-import { makeStyles, Text } from "@/lib/theme";
+import {
+  useInviteUserDialog,
+  useUserRemovalDialog,
+  useUsersData,
+} from "@/hooks/dashboard/OrganisationHooks";
 import { useState } from "react";
 
-// import { Chip } from "@p4b/ui/components/DataDisplay";
-import { Chip } from "@/components/common/Chip";
-import { EnhancedTable } from "@p4b/ui/components/DataDisplay/EnhancedTable";
-import { TextField } from "@p4b/ui/components/Inputs/TextField";
-import Modal from "@p4b/ui/components/Modal";
-import Banner from "@p4b/ui/components/Surfaces/Banner";
-import { Card } from "@p4b/ui/components/Surfaces/Card";
-import { Icon, Button, IconButton } from "@p4b/ui/components/theme";
-
-import InviteUser from "@/components/settings/organization/InviteUser";
-import UserRemovalConfirm from "@/components/settings/organization/UserRemovalConfirm";
+// import { Chip } from "@/components/common/Chip";
+import EnhancedTable from "@/components/common/tables/EnhancedTable";
+import { TextField, Card, Button, Box, Chip, Typography, IconButton, useTheme } from "@mui/material";
+import UserRemovalConfirm from "@/components/dashboard/settings/organization/UserRemovalConfirm";
 import type { IUser } from "@/types/dashboard/organization";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
+import Modal from "@/components/common/Modal";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import InviteUser from "@/components/dashboard/settings/organization/InviteUser";
 
 const ManageUsers = () => {
-  const { classes } = useStyles();
+
+  const theme = useTheme();
 
   const [searchWord, setSearchWord] = useState<string>("");
-  const { rawRows, setRawRows, setRows, rows, isLoading, error } = useUsersData(searchWord);
-  const { isAddUser, openInviteDialog, closeInviteDialog, email, setEmail } = useInviteUserDialog();
-  const { userInDialog, isModalVisible, openUserRemovalDialog, closeUserRemovalDialog, setTheUserInDialog } =
-    useUserRemovalDialog();
+  const { rawRows, setRawRows, setRows, rows, isLoading, error } =
+    useUsersData(searchWord);
+  const { isAddUser, openInviteDialog, closeInviteDialog, email, setEmail } =
+    useInviteUserDialog();
+  const {
+    userInDialog,
+    isModalVisible,
+    openUserRemovalDialog,
+    closeUserRemovalDialog,
+    setTheUserInDialog,
+  } = useUserRemovalDialog();
 
   const columnNames = [
     {
@@ -56,8 +62,6 @@ const ManageUsers = () => {
     },
   ];
 
-  // Functions
-
   function sendInvitation() {
     const newUserInvite: IUser = {
       name: "Luca William Silva",
@@ -70,16 +74,23 @@ const ManageUsers = () => {
     closeInviteDialog();
   }
 
-  function editUserRole(role: "Admin" | "User" | "Editor", user: IUser | undefined) {
+  function editUserRole(
+    role: "Admin" | "User" | "Editor",
+    user: IUser | undefined,
+  ) {
     if (user) {
-      const modifiedUsers = rows.map((row: IUser) => (row.email === user.email ? { ...row, role } : row));
+      const modifiedUsers = rows.map((row: IUser) =>
+        row.email === user.email ? { ...row, role } : row,
+      );
       setRows(modifiedUsers);
     }
   }
 
   function removeUser(user: IUser | undefined) {
     if (user) {
-      const modifiedUsers = rows.filter((row: IUser) => row.email !== user.email);
+      const modifiedUsers = rows.filter(
+        (row: IUser) => row.email !== user.email,
+      );
       setRawRows(modifiedUsers);
       closeUserRemovalDialog();
     }
@@ -99,27 +110,35 @@ const ManageUsers = () => {
     return users.map((user) => {
       const modifiedVisualData = user;
       const label =
-        typeof user.status !== "string" && user.status?.props ? user.status.props.label : user.status;
-      let color: "dark" | "focus" | "orangeWarning" | "redError" | undefined;
-      let icon: ICON_NAME | undefined;
+        typeof user.status !== "string" && user.status?.props
+          ? user.status.props.label
+          : user.status;
+      let color: "primary" | "secondary" | "warning" | undefined = undefined;
+      let icon: ICON_NAME | undefined = undefined;
 
       switch (label) {
         case "Active":
-          color = "focus";
+          color = "primary";
           icon = ICON_NAME.CIRCLECHECK;
           break;
         case "Invite sent":
-          color = "dark";
+          color = "secondary";
           icon = ICON_NAME.EMAIL;
           break;
         case "Expired":
-          color = "orangeWarning";
+          color = "warning";
           icon = ICON_NAME.CIRCLEINFO;
           break;
       }
 
       modifiedVisualData.status = (
-        <Chip className={classes.chip} label={label} variant="Border" color={color} icon={icon} />
+        <Chip
+          label={label}
+          sx={{marginLeft: theme.spacing(4), paddingLeft: theme.spacing(1)}}
+          variant="outlined"
+          color={color}
+          icon={icon ? <Icon iconName={icon} fontSize="small"/> : undefined}
+        />
       );
       return modifiedVisualData;
     });
@@ -127,31 +146,67 @@ const ManageUsers = () => {
 
   return (
     <div>
-      <div className={classes.container}>
-        <div className={classes.head}>
+      <Box
+        sx={{
+          padding: `0px ${theme.spacing(3)}px`,
+          marginBottom: theme.spacing(2),
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: theme.spacing(2),
+            marginBottom: theme.spacing(3),
+            paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
+          }}
+        >
           <Icon
-            iconId="user"
-            wrapped="circle"
-            bgVariant="gray2"
-            bgOpacity={0.6}
-            iconVariant="secondary"
-            size="medium"
+            iconName={ICON_NAME.USER}
+            htmlColor={theme.palette.secondary.main}
+            sx={{
+              backgroundColor: `${theme.palette.secondary.light}80`,
+              fontSize: "20px",
+              height: "1.5em",
+              width: "1.5em",
+              padding: "5px 7px",
+              borderRadius: "100%",
+            }}
           />
-          <Text typo="body 1" className={classes.name}>
+
+          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
             Organization name
-          </Text>
-        </div>
-        <div className={classes.search}>
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: theme.spacing(4),
+            marginBottom: theme.spacing(3),
+          }}
+        >
           <TextField
-            className={classes.searchInput}
+            sx={{ flexGrow: "1" }}
             type="text"
             label="Search"
             size="small"
-            onValueBeingTypedChange={({ value }) => setSearchWord(value)}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setSearchWord(event.target.value);
+            }}
           />
-          <Icon iconId="filter" size="medium" iconVariant="gray" />
+          <Icon
+            iconName={ICON_NAME.FILTER}
+            htmlColor={theme.palette.secondary.light}
+          />
           <div style={{ position: "relative" }}>
-            <Button onClick={openInviteDialog} className={classes.searchButton}>
+            <Button
+              variant="outlined"
+              onClick={openInviteDialog}
+              sx={{ width: "131px" }}
+            >
               Invite user
             </Button>
             {/* Invite User Dialog */}
@@ -161,57 +216,70 @@ const ManageUsers = () => {
                 open={isAddUser}
                 changeOpen={closeInviteDialog}
                 action={
-                  <>
-                    <Button variant="noBorder" onClick={closeInviteDialog}>
+                  <Box sx={{float: "right", marginTop: theme.spacing(3)}}>
+                    <Button variant="text" onClick={closeInviteDialog}>
                       CANCEL
                     </Button>
-                    <Button variant="noBorder" onClick={sendInvitation}>
+                    <Button variant="text" onClick={sendInvitation}>
                       SEND INVITATION
                     </Button>
-                  </>
+                  </Box>
                 }
                 header={
-                  <div className={classes.modalHeader2}>
-                    <Text typo="subtitle" className={classes.headerText}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: theme.spacing(1),
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ fontWeight: "normal" }}>
                       Invite user
-                    </Text>
-                    <IconButton onClick={closeInviteDialog} iconId="close" />
-                  </div>
-                }>
+                    </Typography>
+                    <IconButton onClick={closeInviteDialog}>
+                      <Icon
+                        iconName={ICON_NAME.XCLOSE}
+                        fontSize="small"
+                        htmlColor={
+                          theme.palette.secondary.main
+                        }
+                      />
+                    </IconButton>
+                  </Box>
+                }
+              >
                 <InviteUser setEmail={setEmail} />
               </Modal>
             ) : null}
           </div>
-        </div>
-      </div>
-      <Card noHover={true} className={classes.tableCard}>
+        </Box>
+      </Box>
+      <Card
+        sx={{ padding: theme.spacing(3), marginBottom: theme.spacing(5), marginTop: theme.spacing(6) }}
+      >
         {/* ManageUsers Table */}
         {rows.length ? (
           <EnhancedTable
             rows={returnRightFormat([...rows])}
             columnNames={columnNames}
-            openDialog={(value: object | null) => (value ? setTheUserInDialog(value as IUser) : undefined)}
-            action={<IconButton type="submit" iconId="moreVert" size="medium" />}
+            openDialog={(value: object | null) =>
+              value ? setTheUserInDialog(value as IUser) : undefined
+            }
+            action={
+              <IconButton>
+                <Icon iconName={ICON_NAME.MORE_VERT} fontSize="inherit" />
+              </IconButton>
+            }
             dense={false}
-            alternativeColors={true}
+            // alternativeColors={true}
           />
         ) : (
-          <Text typo="body 1" color="secondary">
+          <Typography variant="body1" color="secondary">
             {getStatus()}
-          </Text>
+          </Typography>
         )}
       </Card>
-      <Banner
-        actions={<Button>Subscribe Now</Button>}
-        content={
-          <Text className={classes.bannerText} typo="body 1">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-            massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.{" "}
-          </Text>
-        }
-        image="https://s3-alpha-sig.figma.com/img/630a/ef8f/d732bcd1f3ef5d6fe31bc6f94ddfbca8?Expires=1687132800&Signature=aJvQ22UUlmvNjDlrgzV6MjJK~YgohUyT9mh8onGD-HhU5yMI0~ThWZUGVn562ihhRYqlyiR5Rskno84OseNhAN21WqKNOZnAS0TyT3SSUP4t4AZJOmeuwsl2EcgElMzcE0~Qx2X~LWxor1emexxTlWntivbnUeS6qv1DIPwCferjYIwWsiNqTm7whk78HUD1-26spqW3AXVbTtwqz3B8q791QigocHaK9b4f-Ulrk3lsmp8BryHprwgetHlToFNlYYR-SqPFrEeOKNQuEDKH0QzgGv3TX7EfBNL0kgP3Crued~JNth-lIEPCjlDRnFQyNpSiLQtf9r2tH9xIsKA~XQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"
-        imageSide="right"
-      />
       {/* Confirm User Removal */}
       <UserRemovalConfirm
         removeUserFunctions={{
@@ -227,64 +295,5 @@ const ManageUsers = () => {
     </div>
   );
 };
-
-const useStyles = makeStyles({ name: { ManageUsers } })((theme) => ({
-  bannerText: {
-    color: "white",
-    "@media (max-width: 1268px)": {
-      fontSize: "14px",
-    },
-  },
-  name: {
-    fontWeight: "bold",
-  },
-  head: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(2),
-    marginBottom: theme.spacing(3),
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-  },
-  search: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: theme.spacing(4),
-    marginBottom: theme.spacing(3),
-  },
-  searchButton: {
-    width: "131px",
-  },
-  container: {
-    padding: `0px ${theme.spacing(3)}px`,
-    marginBottom: theme.spacing(2),
-  },
-  searchInput: {
-    flexGrow: "1",
-  },
-  tableCard: {
-    padding: theme.spacing(3),
-    marginBottom: theme.spacing(5),
-  },
-  modalHeader: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(1),
-  },
-  modalHeader2: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  chip: {
-    "& .mui-6od3lo-MuiChip-label": {
-      padding: "4px",
-    },
-  },
-  headerText: {
-    fontWeight: "normal",
-  },
-}));
 
 export default ManageUsers;

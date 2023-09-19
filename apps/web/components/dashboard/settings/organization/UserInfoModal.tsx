@@ -1,23 +1,38 @@
-
 import React, { useState } from "react";
 import { v4 } from "uuid";
-
-import { Switch } from "@p4b/ui/components/Inputs";
-import { SelectField } from "@p4b/ui/components/Inputs";
-import { Text } from "@p4b/ui/components/theme";
-import { makeStyles } from "@p4b/ui/lib/ThemeProvider";
-import type {IUser} from "@/types/dashboard/organization";
+import type { IUser } from "@/types/dashboard/organization";
+import {
+  Typography,
+  Switch,
+  Select,
+  MenuItem,
+  Box,
+  useTheme,
+} from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material";
+import { styled } from "@mui/material";
 
 interface UserInfoModal {
   ismodalVisible: boolean;
   userInDialog: IUser | undefined;
-  editUserRole: (role: "Admin" | "User" | "Editor", user: IUser | undefined) => void;
+  editUserRole: (role: string, user: IUser | undefined) => void;
 }
+
+const RowBox = styled(Box)(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing(2),
+  padding: theme.spacing(2),
+  alignItems: "center",
+}));
+
+const TitleTypography = styled(Typography)(({ theme }) => ({
+  fontWeight: "600", color: theme.palette.text.secondary
+}));
 
 const UserInfoModal = (props: UserInfoModal) => {
   const { ismodalVisible, userInDialog, editUserRole } = props;
 
-  const { classes } = useStyles();
+  const theme = useTheme();
 
   const [extensions, setExtensions] = useState<
     {
@@ -35,7 +50,6 @@ const UserInfoModal = (props: UserInfoModal) => {
       studyarea: "Greater Munich",
       maxPlaces: 3,
       placesLeft: 1,
-      // available: "1 of 3 seats available",
       checked: false,
     },
     {
@@ -79,19 +93,10 @@ const UserInfoModal = (props: UserInfoModal) => {
     },
   ];
 
-  // Function
-
-  /**
-   * Updates the state of the extensions array based on the provided element name and checked value
-   * @param _
-   * @param {boolean} checked - The new checked state of the switch.
-   * @param {string | undefined} elementName - The name of the element associated with the switch.
-   */
-
   function handleSwitch(
     _: React.ChangeEvent<HTMLInputElement>,
     checked: boolean,
-    elementName: string | undefined
+    elementName: string | undefined,
   ) {
     if (elementName) {
       extensions.forEach((ext, index) => {
@@ -109,131 +114,109 @@ const UserInfoModal = (props: UserInfoModal) => {
     }
   }
 
+  function handleSelectUserRole(e: SelectChangeEvent<string>) {
+    editUserRole(
+      e.target.value,
+      typeof userInDialog !== "boolean" ? userInDialog : undefined,
+    );
+  }
+
   return (
     <>
       {ismodalVisible ? (
-        <Text typo="body 1">
-          By removing a user they won&apos;t be able to access any projects under your organisation
-        </Text>
+        <Typography variant="body1">
+          By removing a user they won&apos;t be able to access any projects
+          under your organisation
+        </Typography>
       ) : (
         <div>
-          <div className={classes.userDataContainer}>
-            <span className={classes.userDataText}>
-              <Text typo="body 2" className={classes.userDataTitle}>
-                Name:{" "}
-              </Text>{" "}
-              <Text typo="label 1" className={classes.userDataValue}>
+          <Box
+            sx={{
+              border: `1px solid ${theme.palette.secondary.main}30`,
+              padding: theme.spacing(3),
+              borderRadius: 1,
+            }}
+          >
+            <RowBox>
+              <TitleTypography variant="body2">Name: </TitleTypography>{" "}
+              <Typography variant="body2">
                 {userInDialog ? userInDialog?.name : ""}
-              </Text>
-            </span>
-            <span className={classes.userDataText}>
-              <Text typo="body 2" className={classes.userDataTitle}>
-                E-mail:{" "}
-              </Text>{" "}
-              <Text typo="label 1" className={classes.userDataValue}>
-                { userInDialog ? userInDialog?.email : ""}
-              </Text>
-            </span>
-            <span className={classes.userDataText}>
-              <Text typo="body 2" className={classes.userDataTitle}>
-                Added in:{" "}
-              </Text>{" "}
-              <Text typo="label 1" className={classes.userDataValue}>
-                { userInDialog  ? userInDialog?.Added : ""}
-              </Text>
-            </span>
-            <span className={classes.userDataText}>
-              <Text typo="body 2" className={classes.userDataTitle}>
-                Last Active:{" "}
-              </Text>{" "}
-              <Text typo="label 1" className={classes.userDataValue}>
-                3 days ago
-              </Text>
-            </span>
-            <span className={classes.userDataText}>
-              <Text typo="body 2" className={classes.userDataTitle}>
-                Organisation role:{" "}
-              </Text>{" "}
-              <SelectField
-                options={organizationRoles}
-                label="Role"
-                size="small"
-                defaultValue={ userInDialog ? userInDialog?.role : ""}
-                updateChange={(value: "Admin" | "Editor" | "User") =>
-                  editUserRole(value, typeof userInDialog !== "boolean" ? userInDialog : undefined)
-                }
-              />
-            </span>
-            <span className={classes.userDataText}>
-              <Text typo="body 2" className={classes.userDataTitle}>
+              </Typography>
+            </RowBox>
+            <RowBox>
+              <TitleTypography variant="body2">E-mail: </TitleTypography>{" "}
+              <Typography variant="body2">
+                {userInDialog ? userInDialog?.email : ""}
+              </Typography>
+            </RowBox>
+            <RowBox>
+              <TitleTypography variant="body2">Added in: </TitleTypography>{" "}
+              <Typography variant="body2">
+                {userInDialog ? userInDialog?.Added : ""}
+              </Typography>
+            </RowBox>
+            <RowBox>
+              <TitleTypography variant="body2">Last Active: </TitleTypography>{" "}
+              <Typography variant="body2">3 days ago</Typography>
+            </RowBox>
+            <RowBox>
+              <TitleTypography variant="body2" sx={{ fontWeight: "800" }}>
                 Status:{" "}
-              </Text>{" "}
-              <div className={classes.userDataValue}>
-                { userInDialog  ? userInDialog?.status : ""}
-              </div>
-            </span>
-          </div>
-          <div className={classes.allSwitchers}>
-            <Text typo="body 2" className={classes.name}>
+              </TitleTypography>{" "}
+              <Box sx={{ marginTop: "3px" }}>
+                {userInDialog ? userInDialog?.status : ""}
+              </Box>
+            </RowBox>
+            <RowBox>
+              <TitleTypography variant="body2">Organisation role: </TitleTypography>{" "}
+              <Select
+                size="small"
+                label="Role"
+                defaultValue={userInDialog ? userInDialog?.role : ""}
+                onChange={handleSelectUserRole}
+              >
+                {organizationRoles.map((role) => (
+                  <MenuItem key={v4()} value={role.value}>
+                    {role.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </RowBox>
+          </Box>
+          <Box sx={{ margin: `${theme.spacing(5)} 0px` }}>
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
               Extensions:
-            </Text>
+            </Typography>
             {extensions.map((extension) => (
-              <div key={v4()} className={classes.switcher}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }} key={v4()}>
                 <Switch
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: theme.spacing(1),
+                    marginTop: theme.spacing(2),
+                  }}
                   checked={extension.checked}
-                  onChecked={handleSwitch}
-                  elementName={extension.id}
+                  onChange={(
+                    event: React.ChangeEvent<HTMLInputElement>,
+                    checked: boolean,
+                  ) => handleSwitch(event, checked, extension.id)}
                   disabled={!extension.placesLeft && !extension.checked}
                 />
-                <Text typo="body 1">
+                <Typography variant="body2">
                   {extension.extension} - {extension.studyarea}
-                </Text>
-                <Text typo="caption" color="secondary">
-                  {extension.placesLeft} of {extension.maxPlaces} seats available
-                </Text>
-              </div>
+                </Typography>
+                <Typography variant="body2" color="secondary">
+                  {extension.placesLeft} of {extension.maxPlaces} seats
+                  available
+                </Typography>
+              </Box>
             ))}
-          </div>
+          </Box>
         </div>
       )}
     </>
   );
 };
-
-const useStyles = makeStyles({ name: { UserInfoModal } })((theme) => ({
-  name: {
-    fontWeight: "bold",
-  },
-  container: {
-    padding: `0px ${theme.spacing(3)}px`,
-    marginBottom: theme.spacing(2),
-  },
-  userDataContainer: {
-    border: `1px solid ${theme.colors.palette[theme.isDarkModeEnabled ? "dark" : "light"].greyVariant1}`,
-    padding: theme.spacing(3),
-    borderRadius: 4,
-  },
-  userDataText: {
-    display: "flex",
-    gap: theme.spacing(2),
-    alignItems: "center",
-    marginBottom: theme.spacing(2),
-  },
-  userDataTitle: {
-    fontWeight: "800",
-  },
-  switcher: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(1),
-    marginTop: theme.spacing(2),
-  },
-  allSwitchers: {
-    margin: `${theme.spacing(5)}px 0px`,
-  },
-  userDataValue: {
-    marginTop: "3px",
-  },
-}));
 
 export default UserInfoModal;

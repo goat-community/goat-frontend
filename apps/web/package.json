@@ -25,6 +25,7 @@
     "@mui/lab": "5.0.0-alpha.132",
     "@mui/material": "latest",
     "@mui/private-theming": "^5.14.5",
+    "@mui/utils": "^5.13.7",
     "@p4b/types": "workspace:*",
     "@p4b/ui": "workspace:*",
     "@reduxjs/toolkit": "^1.9.5",

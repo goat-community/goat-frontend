@@ -1,14 +1,15 @@
 "use client";
 
-// import GridContainer from "@/components/grid/GridContainer";
-// import SingleGrid from "@/components/grid/SingleGrid";
-// import { makeStyles } from "@/lib/theme";
-// import { Text } from "@/lib/theme";
-// import Link from "next/link";
-// import { usePathname } from "next/navigation";
-
-// import Box from "@p4b/ui/components/Box";
-// import { Divider } from "@p4b/ui/components/DataDisplay/Divider";
+import {
+  Typography,
+  useTheme,
+  Box,
+  Divider,
+  Container,
+  Grid,
+} from "@mui/material";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -17,91 +18,67 @@ interface SettingsLayoutProps {
 const SettingsLayout = (props: SettingsLayoutProps) => {
   const { children } = props;
 
-  // const pathname = usePathname();
+  const pathname = usePathname();
+  console.log(pathname);
+  const theme = useTheme();
 
-  // const { classes } = useStyles();
+  const linkStyle = (page) =>
+    pathname.slice(3) === `/settings/${page}`
+      ? {
+          cursor: "pointer",
+          backgroundColor: theme.palette.primary.light + "14",
+          padding: `${theme.spacing(1)} ${theme.spacing(4)}`,
+        }
+      : {
+          cursor: "pointer",
+          "&:hover": {
+            backgroundColor: theme.palette.secondary.light + "50",
+          },
+          padding: `${theme.spacing(1)} ${theme.spacing(4)}`,
+        };
 
   return (
-    <>{children}</>
-    // <Box className={classes.root}>
-    //   <GridContainer>
-    //     <SingleGrid span={1}>
-    //       <div>
-    //         <Link href="/settings/organization" className={classes.link}>
-    //           <span>
-    //             <Text
-    //               typo="body 2"
-    //               className={
-    //                 pathname === "/settings/organization" ? classes.selectedSidebarText : classes.SidebarText
-    //               }>
-    //               Organization
-    //             </Text>
-    //           </span>
-    //         </Link>
-    //         <Divider width="100%" color="main" className={classes.hr} />
-    //         <Link href="/settings/subscription" className={classes.link}>
-    //           <span>
-    //             <Text
-    //               typo="body 2"
-    //               className={
-    //                 pathname === "/settings/subscription" ? classes.selectedSidebarText : classes.SidebarText
-    //               }>
-    //               Subscription
-    //             </Text>
-    //           </span>
-    //         </Link>
-    //         <Divider width="100%" color="main" className={classes.hr} />
-    //         <Link href="/settings/privacy-preference" className={classes.link}>
-    //           <span>
-    //             <Text
-    //               typo="body 2"
-    //               className={
-    //                 pathname === "/settings/privacy-preference"
-    //                   ? classes.selectedSidebarText
-    //                   : classes.SidebarText
-    //               }>
-    //               Privacy preferences
-    //             </Text>
-    //           </span>
-    //         </Link>
-    //         <Divider width="100%" color="main" className={classes.hr} />
-    //       </div>
-    //     </SingleGrid>
-    //     <SingleGrid span={3}>
-    //       <div>{children}</div>
-    //     </SingleGrid>
-    //   </GridContainer>
-    // </Box>
+    <Box>
+      <Container sx={{ py: 20, px: 10 }} maxWidth="xl">
+        <Grid container justifyContent="space-between">
+          <Grid item xs={2.5}>
+            <div>
+              <Link
+                href="/settings/organization"
+                style={{ textDecoration: "none" }}
+              >
+                <Box sx={linkStyle("organization")}>
+                  <Typography variant="body2">Organization</Typography>
+                </Box>
+              </Link>
+              <Divider sx={{ margin: `4px 0`, width: "100%" }} />
+              <Link
+                href="/settings/subscription"
+                style={{ textDecoration: "none" }}
+              >
+                <Box sx={linkStyle("subscription")}>
+                  <Typography variant="body2">Subscription</Typography>
+                </Box>
+              </Link>
+              <Divider sx={{ margin: `4px 0`, width: "100%" }} />
+              <Link
+                href="/settings/settings"
+                style={{ textDecoration: "none" }}
+              >
+                <Box sx={linkStyle("settings")}>
+                  <Typography variant="body2">Settings</Typography>
+                </Box>
+              </Link>
+              <Divider sx={{ margin: `4px 0`, width: "100%" }} />
+            </div>
+          </Grid>
+          <Grid item xs={9}>
+            <div>{children}</div>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
-
-// const useStyles = makeStyles({ name: { Settings } })((theme) => ({
-//   root: {
-//     marginTop: "100px",
-//   },
-//   wrapper: {
-//     display: "flex",
-//     gap: "1%",
-//   },
-//   SidebarText: {
-//     // padding: theme.spacing(1) theme.spacing(4),
-//     padding: `${theme.spacing(1)}px ${theme.spacing(4)}px`,
-//     cursor: "pointer",
-//     "&:hover": {
-//       backgroundColor: theme.colors.palette[theme.isDarkModeEnabled ? "dark" : "light"].greyVariant1 + "50",
-//     },
-//   },
-//   selectedSidebarText: {
-//     padding: `${theme.spacing(1)}px ${theme.spacing(4)}px`,
-//     cursor: "pointer",
-//     backgroundColor: theme.colors.palette.focus.light + "14",
-//   },
-//   hr: {
-//     margin: `${theme.spacing(1)}px 0`,
-//   },
-//   link: {
-//     textDecoration: "none",
-//   },
-// }));
 
 export default SettingsLayout;

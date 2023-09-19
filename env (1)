@@ -1,0 +1,22 @@
+############
+#  BASICS  #
+############
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+############
+#  GOAT    #
+############
+NEXT_PUBLIC_MAP_TOKEN=pk.eyJ1IjoibWFqayIsImEiOiJjazkyeWJnM2kwYmZsM25tczV3bjdqbnN2In0.IJ1PxolSiosSbsSioBZ7oQ
+NEXT_PUBLIC_API_URL=https://api.goat.dev.plan4better.de
+NEXT_PUBLIC_ACCOUNTS_API_URL=https://accounts.goat.dev.plan4better.de
+NEXT_PUBLIC_GEOAPI_URL=https://geoapi.goat.dev.plan4better.dev
+
+###############
+#  NEXT AUTH  #
+###############
+# @see: https://next-auth.js.org/providers/keycloak
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=secret
+KEYCLOAK_ISSUER=https://auth.dev.plan4better.de/realms/p4b
+KEYCLOAK_CLIENT_ID=account
+KEYCLOAK_CLIENT_SECRET=XLtGj1ICwYKCpffr0NKKUfUIU7VlMzvE

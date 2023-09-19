@@ -1,8 +1,7 @@
 import React from "react";
 
-import { TextField } from "@p4b/ui/components/Inputs";
-import { Text, Icon } from "@p4b/ui/components/theme";
-import { makeStyles } from "@p4b/ui/lib/ThemeProvider";
+import { Typography, TextField, Box, useTheme } from "@mui/material";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 interface InviteUserProps {
   setEmail: (value: string) => void;
@@ -11,49 +10,53 @@ interface InviteUserProps {
 const InviteUser = (props: InviteUserProps) => {
   const { setEmail } = props;
 
-  const { classes } = useStyles();
+  const theme = useTheme();
 
   return (
     <div>
-      <div className={classes.head}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: theme.spacing(2),
+          marginBottom: theme.spacing(3),
+        }}
+      >
         <Icon
-          iconId="home"
-          wrapped="circle"
-          bgVariant="focus"
-          bgOpacity={0.6}
-          iconVariant="secondary"
-          size="small"
+          iconName={ICON_NAME.HOUSE}
+          fontSize="small"
+          sx={{
+            backgroundColor: `${theme.palette.secondary.light}80`,
+            fontSize: "20px",
+            height: "1.5em",
+            width: "1.5em",
+            padding: "5px 7px",
+            borderRadius: "100%",
+          }}
         />
-        <Text typo="body 1">Organization name</Text>
-      </div>
-      <Text typo="body 2">
-        Send an invitation via email <br /> The receiver will get a link with 72 hours of expiration
-      </Text>
-      <div className={classes.formInputs}>
+        <Typography variant="body1">Organization name</Typography>
+      </Box>
+      <Typography variant="body2">
+        Send an invitation via email <br /> The receiver will get a link with 72
+        hours of expiration
+      </Typography>
+      <Box
+        sx={{
+          marginTop: theme.spacing(3),
+          display: "flex",
+          flexDirection: "column",
+          gap: theme.spacing(2),
+        }}
+      >
         <TextField
           size="small"
           type="email"
           label="Email address"
-          onValueBeingTypedChange={({ value }) => setEmail(value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
         />
-      </div>
+      </Box>
     </div>
   );
 };
-
-const useStyles = makeStyles({ name: { InviteUser } })((theme) => ({
-  formInputs: {
-    marginTop: theme.spacing(3),
-    display: "flex",
-    flexDirection: "column",
-    gap: theme.spacing(2),
-  },
-  head: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(2),
-    marginBottom: theme.spacing(3),
-  },
-}));
 
 export default InviteUser;

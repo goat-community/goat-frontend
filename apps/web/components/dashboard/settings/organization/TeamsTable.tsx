@@ -2,15 +2,13 @@ import { useUserDialog, useTeamSearch } from "@/hooks/dashboard/TeamsHooks";
 import React, { useState } from "react";
 
 import type { Option } from "@p4b/types/atomicComponents";
-import { EnhancedTable } from "@p4b/ui/components/DataDisplay";
-import Modal from "@p4b/ui/components/Modal";
-import { Card } from "@p4b/ui/components/Surfaces";
-import { IconButton } from "@p4b/ui/components/theme";
-import { Text, Button } from "@p4b/ui/components/theme";
-import { makeStyles } from "@p4b/ui/lib/ThemeProvider";
+import EnhancedTable from "@/components/common/tables/EnhancedTable";
+import Modal from "@/components/common/Modal";
+import { Card, IconButton, Typography, Button, useTheme, Box } from "@mui/material";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 import TeamModalBody from "./TeamModalBody";
-import type {ITeam} from "@/types/dashboard/organization";
+import type { ITeam } from "@/types/dashboard/organization";
 
 interface TeamsTableProps {
   rawRows: ITeam[];
@@ -25,7 +23,7 @@ const TeamsTable = (props: TeamsTableProps) => {
   const [selectedOption, setSelectedOption] = useState<Option[] | null>(null);
   const [teamName, setTeamName] = useState<string | null>(null);
 
-  const { classes } = useStyles();
+  const theme = useTheme(); 
 
   const { saveEditTeam } = useUserDialog({
     rawRows,
@@ -60,7 +58,7 @@ const TeamsTable = (props: TeamsTableProps) => {
   ];
 
   return (
-    <Card noHover={true} className={classes.tableCard}>
+    <Card sx={{padding: theme.spacing(3),}}>
       {rows && rows.length ? (
         <EnhancedTable
           rows={[
@@ -71,40 +69,48 @@ const TeamsTable = (props: TeamsTableProps) => {
             })),
           ]}
           dense={false}
-          alternativeColors={false}
           columnNames={columnNames}
           openDialog={setUserInDialog}
-          action={<IconButton type="submit" iconId="edit" size="medium" iconVariant="focus" />}
+          action={
+            <IconButton>
+              <Icon iconName={ICON_NAME.EDIT} sx={{fontSize: "15px"}}/>
+            </IconButton>
+          }
           checkbox={false}
           hover={true}
         />
       ) : (
-        <Text typo="body 1" color="secondary">
+        <Typography variant="body1" color="secondary">
           No results
-        </Text>
+        </Typography>
       )}
       <Modal
         header={
-          <div className={classes.modalHeader}>
-            <Text typo="subtitle" className={classes.modalHeadertext}>
+          <Box sx={{display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",}}>
+            <Typography variant="h6" sx={{fontWeight: "500",}}>
               Edit Team
-            </Text>
-            <IconButton onClick={() => setSelectedOption(null)} iconId="close" />
-          </div>
+            </Typography>
+            <IconButton>
+              <Icon iconName={ICON_NAME.XCLOSE} />
+            </IconButton>
+          </Box>
         }
         action={
-          <>
-            <Button onClick={() => setUserInDialog(false)} variant="noBorder">
+          <Box sx={{float: "right", marginTop: theme.spacing(3)}}>
+            <Button onClick={() => setUserInDialog(false)} variant="text">
               CANCEL
             </Button>
-            <Button onClick={saveEditTeam} variant="noBorder">
+            <Button onClick={saveEditTeam} variant="text">
               SAVE
             </Button>
-          </>
+          </Box>
         }
         width="444px"
         open={userInDialog ? true : false}
-        changeOpen={setUserInDialog}>
+        changeOpen={setUserInDialog}
+      >
         {userInDialog && typeof userInDialog !== "boolean" ? (
           <TeamModalBody
             selectedEditRow={userInDialog}
@@ -117,49 +123,5 @@ const TeamsTable = (props: TeamsTableProps) => {
     </Card>
   );
 };
-
-const useStyles = makeStyles({ name: { TeamsTable } })((theme) => ({
-  tableCard: {
-    padding: theme.spacing(3),
-  },
-  modalHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  modalHeadertext: {
-    fontWeight: "500",
-  },
-  input: {
-    width: "100%",
-  },
-  label: {
-    paddingBottom: theme.spacing(2),
-    fontWeight: "bold",
-  },
-  boxLabel: {
-    marginBottom: theme.spacing(5),
-  },
-  useSelectedWrapper: {
-    display: "flex",
-    marginTop: theme.spacing(3),
-    justifyContent: "space-between",
-  },
-  userSelected: {
-    display: "flex",
-    gap: theme.spacing(1),
-  },
-  italic: {
-    fontStyle: "italic",
-  },
-  orangeButton: {
-    "&.MuiButton-text": {
-      color: "orange",
-      "&:hover": {
-        color: "orange",
-      },
-    },
-  },
-}));
 
 export default TeamsTable;
