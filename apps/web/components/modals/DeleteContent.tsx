@@ -1,4 +1,6 @@
 import type { ActiveCard } from "@/components/dashboard/home/SectionCard";
+import { LAYERS_API_BASE_URL, deleteLayer } from "@/lib/api/layers";
+import { PROJECTS_API_BASE_URL, deleteProject } from "@/lib/api/projects";
 import {
   Button,
   Dialog,
@@ -8,6 +10,8 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { toast } from "react-toastify";
+import { mutate } from "swr";
 
 interface DeleteContentDialogProps {
   open: boolean;
@@ -24,7 +28,21 @@ const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
   onDelete,
   activeContent,
 }) => {
-  const handleDelete = () => {
+  const handleDelete = async () => {
+    try {
+      if (!activeContent) return;
+      if (activeContent.type === "layer") {
+        await deleteLayer(activeContent?.id);
+        mutate((key) => Array.isArray(key) && key[0] === LAYERS_API_BASE_URL);
+      } else if (activeContent.type === "project") {
+        await deleteProject(activeContent?.id);
+        mutate((key) => Array.isArray(key) && key[0] === PROJECTS_API_BASE_URL);
+      }
+      toast.success(`${activeContent?.type} deleted successfully`);
+    } catch {
+      toast.error(`Error deleting ${activeContent?.type}`);
+    }
+
     if (onDelete) onDelete();
   };
 
@@ -43,10 +61,7 @@ const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
           pb: 2,
         }}
       >
-        <Button
-          onClick={onClose}
-          variant="text"
-        >
+        <Button onClick={onClose} variant="text" sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             Cancel
           </Typography>
@@ -56,6 +71,7 @@ const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
           variant="text"
           color="error"
           disabled={disabled}
+          sx={{ borderRadius: 0 }}
         >
           <Typography variant="body2" fontWeight="bold" color="inherit">
             Delete

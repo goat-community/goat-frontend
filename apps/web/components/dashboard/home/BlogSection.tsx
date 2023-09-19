@@ -35,7 +35,7 @@ const blogPosts: BlogPost[] = [
     url: "https://plan4better.de/en/posts/2023-08-01-parking/",
   },
   {
-    title: "GOAT as a cross-stakeholder planning platform in the MRN",
+    title: "Green Spaces in Urban Areas: The Key to Resilient Cities",
     date: "May 30, 2023",
     thumbnail:
       "https://plan4better.de/images/blog/green-spaces-resilient-cities/thumbnail.webp",

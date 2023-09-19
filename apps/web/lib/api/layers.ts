@@ -19,3 +19,14 @@ export const useLayers = (queryParams?: GetContentQueryParams) => {
     isValidating,
   };
 };
+
+export const deleteLayer = async (id: string) => {
+  try {
+    await fetch(`${LAYERS_API_BASE_URL}/${id}`, {
+      method: "DELETE",
+    });
+  } catch (error) {
+    console.error(error);
+    throw Error(`deleteLayer: unable to delete project with id ${id}`);
+  }
+};

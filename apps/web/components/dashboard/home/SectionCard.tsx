@@ -60,6 +60,11 @@ const SectionCard = (props: SectionCard) => {
       <DeleteContentModal
         open={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
+        onDelete={() => {
+          setIsDeleteDialogOpen(false);
+          setActiveContent(null);
+          // show success toast
+        }}
         activeContent={activeContent}
       />
       <Card

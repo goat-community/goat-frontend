@@ -34,3 +34,4 @@ export const deleteProject = async (id: string) => {
     throw Error(`deleteProject: unable to delete project with id ${id}`)
   }
 }
+

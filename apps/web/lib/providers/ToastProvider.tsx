@@ -10,7 +10,12 @@ export default function ToastProvider({ children }: ToastProviderProps) {
   return (
     <>
       {children}
-      <ToastContainer transition={Zoom} position="top-center" autoClose={2000} />
+      <ToastContainer
+        transition={Zoom}
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar
+      />
     </>
   );
 }
