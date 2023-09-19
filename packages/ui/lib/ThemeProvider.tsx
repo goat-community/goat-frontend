@@ -105,7 +105,7 @@ export declare namespace ThemeProviderProps {
 }
 
 export function createThemeProvider<
-  Palette extends PaletteBase = PaletteBase,
+  // Palette extends PaletteBase = PaletteBase,
   ColorUseCases extends ColorUseCasesBase = ColorUseCasesBase,
   CustomTypographyVariantName extends string = never,
 >(params: {

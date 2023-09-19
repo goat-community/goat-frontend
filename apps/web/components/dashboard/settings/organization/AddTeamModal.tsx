@@ -2,10 +2,10 @@ import TeamModalBody from "./TeamModalBody";
 import React, { useState } from "react";
 
 import type { Option } from "@p4b/types/atomicComponents";
-import Modal from "@p4b/ui/components/Modal";
-import { Button, Text, IconButton } from "@p4b/ui/components/theme";
-import { makeStyles } from "@p4b/ui/lib/ThemeProvider";
-import type {ITeam} from "@/types/dashboard/organization";
+import Modal from "@/components/common/Modal";
+import { Button, IconButton, Typography, useTheme, Box } from "@mui/material";
+import type { ITeam } from "@/types/dashboard/organization";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 interface AddTeamModalProps {
   visibility: boolean;
@@ -16,9 +16,11 @@ interface AddTeamModalProps {
 const AddTeamModal = (props: AddTeamModalProps) => {
   const { visibility, setVisibility, addTeam } = props;
 
-  const { classes } = useStyles();
+  const theme = useTheme();
 
-  const [selectedOption, setSelectedOption] = useState<Option[] | undefined>([]);
+  const [selectedOption, setSelectedOption] = useState<Option[] | undefined>(
+    [],
+  );
   const [teamName, setTeamName] = useState<string | null>(null);
 
   function saveTeam() {
@@ -44,23 +46,36 @@ const AddTeamModal = (props: AddTeamModalProps) => {
       open={visibility}
       changeOpen={setVisibility}
       action={
-        <>
-          <Button onClick={handleClose} variant="noBorder">
+        <Box sx={{float: "right", marginTop: theme.spacing(3)}}>
+          <Button onClick={handleClose} variant="text" color="primary">
             CANCEL
           </Button>
-          <Button onClick={saveTeam} variant="noBorder">
+          <Button onClick={saveTeam} variant="text" color="primary">
             SAVE
           </Button>
-        </>
+        </Box>
       }
       header={
-        <div className={classes.modalHeader}>
-          <Text typo="subtitle" className={classes.modalHeadertext}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: "500" }}>
             New team
-          </Text>
-          <IconButton onClick={handleClose} iconId="close" />
-        </div>
-      }>
+          </Typography>
+          <IconButton onClick={handleClose}>
+            <Icon
+              iconName={ICON_NAME.XCLOSE}
+              fontSize="small"
+              htmlColor={theme.palette.text.secondary}
+            />
+          </IconButton>
+        </Box>
+      }
+    >
       <TeamModalBody
         setSelectedOption={setSelectedOption}
         selectedOption={selectedOption}
@@ -69,46 +84,5 @@ const AddTeamModal = (props: AddTeamModalProps) => {
     </Modal>
   );
 };
-
-const useStyles = makeStyles({ name: { AddTeamModal } })((theme) => ({
-  modalHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  modalHeadertext: {
-    fontWeight: "500",
-  },
-  input: {
-    width: "100%",
-  },
-  label: {
-    paddingBottom: theme.spacing(2),
-    fontWeight: "bold",
-  },
-  boxLabel: {
-    marginBottom: theme.spacing(5),
-  },
-  useSelectedWrapper: {
-    display: "flex",
-    marginTop: theme.spacing(3),
-    justifyContent: "space-between",
-  },
-  userSelected: {
-    display: "flex",
-    gap: theme.spacing(1),
-  },
-  italic: {
-    fontStyle: "italic",
-  },
-  orangeButton: {
-    "&.MuiButton-text": {
-      color: "orange",
-      "&:hover": {
-        color: "orange",
-      },
-    },
-  },
-}));
 
 export default AddTeamModal;

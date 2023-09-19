@@ -1,9 +1,7 @@
-import { makeStyles } from "@/lib/theme";
 import { v4 } from "uuid";
 
-import { Card } from "@p4b/ui/components/Surfaces/Card";
-import { Text } from "@p4b/ui/components/theme";
-import WrappedIcon from "@/components/common/WrappedIcon";
+import { Card, Typography, useTheme, Box } from "@mui/material";
+import { Icon } from "@p4b/ui/components/Icon";
 import type { ISubscriptionStatusCardDataType } from "@/types/dashboard/subscription";
 
 interface SubscriptionStatusCardProps {
@@ -13,17 +11,48 @@ interface SubscriptionStatusCardProps {
 const SubscriptionStatusCard = (props: SubscriptionStatusCardProps) => {
   const { sectionData } = props;
 
-  const { classes } = useStyles();
+const theme = useTheme();
+
   return (
     <>
-      <Card width="100%" className={classes.settingSection} noHover={true}>
-        <div className={classes.headerSection}>
-          <WrappedIcon icon={sectionData.icon}/>
-          <Text typo="body 1" className={classes.title}>
+      <Card
+        sx={{
+          width: "100%",
+          padding: `0px ${theme.spacing(3)}`,
+          marginBottom: theme.spacing(5),
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: theme.spacing(2),
+            padding: `${theme.spacing(3)} 0`,
+          }}
+        >
+          <Icon
+            iconName={sectionData.icon}
+            htmlColor={theme.palette.text.secondary}
+            sx={{
+              backgroundColor: `${theme.palette.primary.light}50`,
+              fontSize: "20px",
+              height: "1.5em",
+              width: "1.5em",
+              padding: "5px 7px",
+              borderRadius: "100%",
+            }}
+          />
+          <Typography variant="body1" sx={{ fontWeight: "bolder" }}>
             {sectionData.title}
-          </Text>
-        </div>
-        <div className={classes.flexWrapper}>
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "start",
+          }}
+        >
           <ul style={{ paddingLeft: "30px" }}>
             {sectionData.listItems.map((listItam: React.ReactNode) => (
               <li style={{ paddingBottom: "12.5px" }} key={v4()}>
@@ -32,37 +61,10 @@ const SubscriptionStatusCard = (props: SubscriptionStatusCardProps) => {
             ))}
           </ul>
           {sectionData.action}
-        </div>
+        </Box>
       </Card>
     </>
   );
 };
-
-const useStyles = makeStyles({ name: { SubscriptionStatusCard } })((theme) => ({
-  settingSection: {
-    padding: `0px ${theme.spacing(3)}px`,
-    marginBottom: theme.spacing(5),
-  },
-  title: {
-    fontWeight: "bolder",
-  },
-  headerSection: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(2),
-    padding: `${theme.spacing(2)}px 0px`,
-  },
-  icon: {
-    color: theme.colors.palette.focus.main,
-  },
-  lastListItem: {
-    marginBottom: theme.spacing(5), //32
-  },
-  flexWrapper: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "start",
-  }
-}));
 
 export default SubscriptionStatusCard;

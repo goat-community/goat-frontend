@@ -1,22 +1,23 @@
 "use client";
 
-import AddTeamModal from "@/components/settings/organization/AddTeamModal";
-import TeamsTable from "@/components/settings/organization/TeamsTable";
+import AddTeamModal from "@/components/dashboard/settings/organization/AddTeamModal";
+import TeamsTable from "@/components/dashboard/settings/organization/TeamsTable";
 import React, { useState } from "react";
 
-import { TextField } from "@p4b/ui/components/Inputs";
-import Banner from "@p4b/ui/components/Surfaces/Banner";
-import { Button, Icon, Text } from "@p4b/ui/components/theme";
-import { makeStyles } from "@p4b/ui/lib/ThemeProvider";
+import { Typography, Button, TextField, Box } from "@mui/material";
+
 import Image from "next/image";
-import type {ITeam} from "@/types/dashboard/organization";
+import type { ITeam } from "@/types/dashboard/organization";
+import { useTheme } from "@mui/material";
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 const Teams = () => {
   const [ismodalVisible, setModalVisible] = useState<boolean>(false);
   const [teams, setTeams] = useState<ITeam[]>([]);
   const [searchWord, setSearchWord] = useState<string>("");
 
-  const { classes } = useStyles();
+  const theme = useTheme();
+  console.log(theme)
 
   function addTeam(team: ITeam) {
     setTeams([...teams, team]);
@@ -35,158 +36,101 @@ const Teams = () => {
   }
 
   return (
-    <div className={classes.container}>
-      <div className={classes.headWrapper}>
-        <div className={classes.head}>
+    <Box sx={{ marginBottom: theme.spacing(2) }}>
+      <Box sx={{ padding: theme.spacing(3), paddingTop: "0" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: theme.spacing(2),
+            marginBottom: theme.spacing(3),
+            paddingTop: theme.spacing(2),
+            paddingBottom: theme.spacing(2),
+          }}
+        >
           <Icon
-            iconId="user"
-            wrapped="circle"
-            bgVariant="gray2"
-            bgOpacity={0.6}
-            iconVariant="secondary"
-            size="medium"
+            iconName={ICON_NAME.USER}
+            sx={{
+              backgroundColor: `${theme.palette.secondary.dark}80`,
+              fontSize: "20px",
+              height: "1.5em",
+              width: "1.5em",
+              padding: "5px 7px",
+              borderRadius: "100%",
+            }}
+            htmlColor={theme.palette.secondary.main}
           />
-          <Text typo="body 1" className={classes.name}>
+          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
             Organization name
-          </Text>
-        </div>
-        <div className={classes.search}>
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: theme.spacing(4),
+            marginBottom: theme.spacing(3),
+          }}
+        >
           <TextField
-            className={classes.searchInput}
+            sx={{ flexGrow: "1" }}
             type="text"
             label="Search"
             size="small"
-            onValueBeingTypedChange={({ value }) => setSearchWord(value)}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setSearchWord(event.target.value);
+            }}
           />
-          <Icon iconId="filter" size="medium" iconVariant="gray" />
+          <Icon
+            iconName={ICON_NAME.FILTER}
+            fontSize="small"
+            htmlColor={theme.palette.text.secondary}
+          />
           <div style={{ position: "relative" }}>
-            <Button className={classes.searchButton} onClick={() => setModalVisible(true)}>
+            <Button
+              sx={{ width: "131px" }}
+              onClick={() => setModalVisible(true)}
+            >
               New Team
             </Button>
           </div>
-        </div>
-        <AddTeamModal visibility={ismodalVisible} setVisibility={setModalVisible} addTeam={addTeam} />
-      </div>
+        </Box>
+        <AddTeamModal
+          visibility={ismodalVisible}
+          setVisibility={setModalVisible}
+          addTeam={addTeam}
+        />
+      </Box>
       {teams.length ? (
-        <TeamsTable rawRows={teams} editTeam={editTeam} searchText={searchWord} />
+        <TeamsTable
+          rawRows={teams}
+          editTeam={editTeam}
+          searchText={searchWord}
+        />
       ) : (
-        <div className={classes.createTeam}>
-          <Image src="/assets/illustrations/teams.svg" alt="" width={400} height={300}/>
-          <Text typo="page heading" color="focus" className={classes.IconText}>
+        <Box
+          sx={{
+            marginTop: "22px",
+            marginBottom: theme.spacing(5) + theme.spacing(3),
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            src="/assets/illustrations/teams.svg"
+            alt=""
+            width={400}
+            height={300}
+          />
+          <Typography variant="h6" color="focus" sx={{ fontWeight: "500", marginBottom: "100px" }}>
             Create teams to easily manage your projects
-          </Text>
-        </div>
+          </Typography>
+        </Box>
       )}
-      <Banner
-        className={classes.banner}
-        actions={<Button>Subscribe Now</Button>}
-        content={
-          <Text className={classes.bannerText} typo="body 1">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-            massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.{" "}
-          </Text>
-        }
-        image="https://s3-alpha-sig.figma.com/img/630a/ef8f/d732bcd1f3ef5d6fe31bc6f94ddfbca8?Expires=1687132800&Signature=aJvQ22UUlmvNjDlrgzV6MjJK~YgohUyT9mh8onGD-HhU5yMI0~ThWZUGVn562ihhRYqlyiR5Rskno84OseNhAN21WqKNOZnAS0TyT3SSUP4t4AZJOmeuwsl2EcgElMzcE0~Qx2X~LWxor1emexxTlWntivbnUeS6qv1DIPwCferjYIwWsiNqTm7whk78HUD1-26spqW3AXVbTtwqz3B8q791QigocHaK9b4f-Ulrk3lsmp8BryHprwgetHlToFNlYYR-SqPFrEeOKNQuEDKH0QzgGv3TX7EfBNL0kgP3Crued~JNth-lIEPCjlDRnFQyNpSiLQtf9r2tH9xIsKA~XQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"
-        imageSide="right"
-      />
-    </div>
+    </Box>
   );
 };
-
-const useStyles = makeStyles({ name: { Teams } })((theme) => ({
-  bannerText: {
-    color: "white",
-    "@media (max-width: 1268px)": {
-      fontSize: "14px",
-    },
-  },
-  IconText: {
-    fontWeight: "500",
-  },
-  name: {
-    fontWeight: "bold",
-  },
-  createTeam: {
-    marginTop: "22px",
-    marginBottom: theme.spacing(5) + theme.spacing(3),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  headWrapper: {
-    padding: theme.spacing(3),
-    paddingTop: "0",
-  },
-  head: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(2),
-    marginBottom: theme.spacing(3),
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2),
-  },
-  buttons: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "end",
-    gap: theme.spacing(2),
-  },
-  search: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: theme.spacing(4),
-    marginBottom: theme.spacing(3),
-  },
-  searchButton: {
-    width: "131px",
-  },
-  container: {
-    marginBottom: theme.spacing(2),
-  },
-  searchInput: {
-    flexGrow: "1",
-  },
-  tableCard: {
-    padding: theme.spacing(3),
-    marginBottom: theme.spacing(5),
-  },
-  userDataContainer: {
-    border: `1px solid ${theme.colors.palette[theme.isDarkModeEnabled ? "dark" : "light"].greyVariant1}`,
-    padding: theme.spacing(3),
-    borderRadius: 4,
-  },
-  userDataText: {
-    display: "flex",
-    gap: theme.spacing(1),
-    alignItems: "center",
-    marginBottom: theme.spacing(2),
-  },
-  userDataTitle: {
-    fontWeight: "800",
-  },
-  formInputs: {
-    // marginTop: theme.spacing(3),
-    display: "flex",
-    flexDirection: "column",
-    gap: theme.spacing(2),
-  },
-  modalHeader: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(1),
-  },
-  buttonSmall: {
-    padding: "3px 10px",
-  },
-  switcher: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(1),
-  },
-  banner: {
-    marginTop: theme.spacing(5),
-  },
-}));
 
 export default Teams;

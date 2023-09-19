@@ -1,11 +1,9 @@
 import React from "react";
 import UserInfoModal from "./UserInfoModal";
-import Modal from "@p4b/ui/components/Modal";
-import { Button, Text, IconButton } from "@p4b/ui/components/theme";
-import { useTheme, makeStyles } from "@/lib/theme";
-import { Icon } from "@p4b/ui/components/Icon";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
+import { Typography, Button, IconButton, useTheme, Box } from "@mui/material";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import type { IUser } from "@/types/dashboard/organization";
+import Modal from "@/components/common/Modal";
 
 interface UserRemovalFunctions {
   userInDialog: IUser | undefined;
@@ -14,7 +12,10 @@ interface UserRemovalFunctions {
   setTheUserInDialog: (user: IUser | undefined) => void;
   closeUserRemovalDialog: () => void;
   openUserRemovalDialog: (user: IUser | undefined) => void;
-  editUserRole: (role: "Admin" | "User" | "Editor", user: IUser | undefined) => void;
+  editUserRole: (
+    role: "Admin" | "User" | "Editor",
+    user: IUser | undefined,
+  ) => void;
 }
 
 interface UserRemovalConfirmProps {
@@ -35,24 +36,44 @@ const UserRemovalConfirm: React.FC<UserRemovalConfirmProps> = ({
   } = removeUserFunctions;
 
   const theme = useTheme();
-  const { classes } = useStyles();
 
   const renderModalHeader = () => {
     if (isModalVisible) {
       return (
-        <Text className={classes.modalHeader} typo="subtitle">
-          <Icon iconName={ICON_NAME.CIRCLEINFO} htmlColor={theme.colors.palette.orangeWarning.main} />{" "}
+        <Typography
+          sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}
+          variant="h6"
+        >
+          <Icon
+            fontSize="small"
+            iconName={ICON_NAME.CIRCLEINFO}
+            htmlColor={theme.palette.warning.main}
+          />{" "}
           Attention
-        </Text>
+        </Typography>
       );
     } else {
       return (
-        <div className={classes.modalHeader2}>
-          <Text typo="subtitle" className={classes.headerText}>
-            {userInDialog instanceof Object && "name" in userInDialog ? userInDialog.name : ""}
-          </Text>
-          <IconButton onClick={closeUserRemovalDialog} iconId="close" />
-        </div>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: "normal" }}>
+            {userInDialog instanceof Object && "name" in userInDialog
+              ? userInDialog.name
+              : ""}
+          </Typography>
+          <IconButton onClick={closeUserRemovalDialog}>
+            <Icon
+              iconName={ICON_NAME.XCLOSE}
+              fontSize="small"
+              htmlColor={theme.palette.secondary.main}
+            />
+          </IconButton>
+        </Box>
       );
     }
   };
@@ -64,18 +85,20 @@ const UserRemovalConfirm: React.FC<UserRemovalConfirmProps> = ({
       changeOpen={() => setTheUserInDialog(undefined)}
       action={
         isModalVisible ? (
-          <>
-            <Button onClick={closeUserRemovalDialog} variant="noBorder">
+          <Box sx={{marginTop: theme.spacing(4), float: "right"}}>
+            <Button onClick={closeUserRemovalDialog} variant="text">
               CANCEL
             </Button>
-            <Button onClick={() => removeUser(userInDialog)} variant="noBorder">
+            <Button onClick={() => removeUser(userInDialog)} variant="text">
               CONFIRM
             </Button>
-          </>
+          </Box>
         ) : (
           <Button
             onClick={() => openUserRemovalDialog(userInDialog)}
-            variant="noBorder"
+            variant="text"
+            color="primary"
+            sx={{ float: "right" }}
           >
             REMOVE USER
           </Button>
@@ -91,21 +114,5 @@ const UserRemovalConfirm: React.FC<UserRemovalConfirmProps> = ({
     </Modal>
   );
 };
-
-const useStyles = makeStyles({ name: { UserRemovalConfirm } })((theme) => ({
-  modalHeader: {
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing(1),
-  },
-  modalHeader2: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerText: {
-    fontWeight: "normal",
-  },
-}));
 
 export default UserRemovalConfirm;
