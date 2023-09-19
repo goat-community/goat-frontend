@@ -54,7 +54,6 @@ export const dummyOrganization: ISubscriptionCard = {
     "Next payment: 23 July 2024",
     "Annual payment cycle: 23 July 2023 - 23 July 2024",
     "2 of 12 editors seat available",
-    "Region: Greater Munich",
   ],
 };
 
@@ -65,7 +64,6 @@ export const dummySubscription: ISubscriptionCard = {
     "Next payment: 23 July 2024",
     "Annual payment cycle: 23 July 2023 - 23 July 2024",
     "2 of 12 editors seat available",
-    "Region: Greater Munich",
   ],
 };
 
@@ -77,7 +75,6 @@ export const extensionSubscriptions: ISubscriptionCard[] = [
       "Next payment: 23 July 2024",
       "Annual payment cycle: 23 July 2023 - 23 July 2024",
       "2 of 12 editors seat available",
-      "Region: Greater Munich",
     ],
   },
   {
@@ -87,7 +84,6 @@ export const extensionSubscriptions: ISubscriptionCard[] = [
       "Next payment: 23 July 2024",
       "Annual payment cycle: 23 July 2023 - 23 July 2024",
       "2 of 12 editors seat available",
-      "Region: Greater Munich",
     ],
   },
 ];

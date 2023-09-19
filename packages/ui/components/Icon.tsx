@@ -51,6 +51,8 @@ import {
   faShare,
   faTrash,
   faEdit,
+  faXmark,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGoogle,
@@ -122,6 +124,8 @@ export enum ICON_NAME {
   SHARE = "share",
   TRASH = "trash",
   EDIT = "edit",
+  XCLOSE = "xclose",
+  EDITPEN = "editpen",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -187,6 +191,8 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.SHARE]: faShare,
   [ICON_NAME.TRASH]: faTrash,
   [ICON_NAME.EDIT]: faEdit,
+  [ICON_NAME.XCLOSE]: faXmark,
+  [ICON_NAME.EDITPEN]: faPen,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

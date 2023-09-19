@@ -8,10 +8,10 @@ const Button = (theme: Theme) => {
       },
       styleOverrides: {
         root: {
-          borderRadius: 50,
+          borderRadius: "50px",
           lineHeight: 1.71,
           letterSpacing: "0.3px",
-          padding: `${theme.spacing(1.875, 3)}`,
+          // padding: `${theme.spacing(1.875, 3)}`,
           '&.MuiButton-containedPrimary:not(:disabled)': {
             backgroundColor: theme.palette.primary.main,
             '&:hover': {
@@ -24,7 +24,7 @@ const Button = (theme: Theme) => {
           padding: `${theme.spacing(1.875, 5.5)}`,
         },
         outlined: {
-          padding: `${theme.spacing(1.625, 5.25)}`,
+          padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,
         },
         sizeSmall: {
           padding: `${theme.spacing(1, 2.25)}`,
