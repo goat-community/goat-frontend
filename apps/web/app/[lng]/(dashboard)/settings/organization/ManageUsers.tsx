@@ -1,6 +1,5 @@
 "use client";
 
-import SubscriptionCardSkeleton from "@/components/skeletons/SubscriptionCardSkeleton";
 import {
   useInviteUserDialog,
   useUserRemovalDialog,
@@ -8,9 +7,18 @@ import {
 } from "@/hooks/dashboard/OrganisationHooks";
 import { useState } from "react";
 
-// import { Chip } from "@/components/common/Chip";
 import EnhancedTable from "@/components/common/tables/EnhancedTable";
-import { TextField, Card, Button, Box, Chip, Typography, IconButton, useTheme } from "@mui/material";
+import {
+  TextField,
+  Card,
+  Button,
+  Box,
+  Chip,
+  Typography,
+  IconButton,
+  useTheme,
+  Skeleton,
+} from "@mui/material";
 import UserRemovalConfirm from "@/components/dashboard/settings/organization/UserRemovalConfirm";
 import type { IUser } from "@/types/dashboard/organization";
 import Modal from "@/components/common/Modal";
@@ -18,7 +26,6 @@ import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import InviteUser from "@/components/dashboard/settings/organization/InviteUser";
 
 const ManageUsers = () => {
-
   const theme = useTheme();
 
   const [searchWord, setSearchWord] = useState<string>("");
@@ -98,7 +105,11 @@ const ManageUsers = () => {
 
   function getStatus() {
     if (isLoading) {
-      return <SubscriptionCardSkeleton />;
+      return (
+        <Box sx={{ width: "100%", marginBottom: "32px" }}>
+          <Skeleton variant="rounded" width="100%" height={440} />
+        </Box>
+      );
     } else if (error) {
       return "There is an error with the connection, make sure to be connected to a valid network!";
     } else {
@@ -134,10 +145,10 @@ const ManageUsers = () => {
       modifiedVisualData.status = (
         <Chip
           label={label}
-          sx={{marginLeft: theme.spacing(4), paddingLeft: theme.spacing(1)}}
+          sx={{ marginLeft: theme.spacing(4), paddingLeft: theme.spacing(1) }}
           variant="outlined"
           color={color}
-          icon={icon ? <Icon iconName={icon} fontSize="small"/> : undefined}
+          icon={icon ? <Icon iconName={icon} fontSize="small" /> : undefined}
         />
       );
       return modifiedVisualData;
@@ -186,21 +197,43 @@ const ManageUsers = () => {
             justifyContent: "space-between",
             gap: theme.spacing(4),
             marginBottom: theme.spacing(3),
+            [theme.breakpoints.down("sm")]: {
+              display: "block",
+            },
           }}
         >
-          <TextField
-            sx={{ flexGrow: "1" }}
-            type="text"
-            label="Search"
-            size="small"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setSearchWord(event.target.value);
+          <Box
+            sx={{
+              display: "flex",
+              flexGrow: "1",
+              alignItems: "center",
+              gap: theme.spacing(4),
             }}
-          />
-          <Icon
-            iconName={ICON_NAME.FILTER}
-            htmlColor={theme.palette.secondary.light}
-          />
+          >
+            <TextField
+              sx={{
+                flexGrow: "1",
+                [theme.breakpoints.down("sm")]: {
+                  marginBottom: theme.spacing(2),
+                },
+              }}
+              type="text"
+              label="Search"
+              size="small"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchWord(event.target.value);
+              }}
+            />
+            <Icon
+              sx={{
+                [theme.breakpoints.down("sm")]: {
+                  marginBottom: theme.spacing(2),
+                },
+              }}
+              iconName={ICON_NAME.FILTER}
+              htmlColor={theme.palette.secondary.light}
+            />
+          </Box>
           <div style={{ position: "relative" }}>
             <Button
               variant="outlined"
@@ -216,7 +249,7 @@ const ManageUsers = () => {
                 open={isAddUser}
                 changeOpen={closeInviteDialog}
                 action={
-                  <Box sx={{float: "right", marginTop: theme.spacing(3)}}>
+                  <Box sx={{ float: "right", marginTop: theme.spacing(3) }}>
                     <Button variant="text" onClick={closeInviteDialog}>
                       CANCEL
                     </Button>
@@ -241,9 +274,7 @@ const ManageUsers = () => {
                       <Icon
                         iconName={ICON_NAME.XCLOSE}
                         fontSize="small"
-                        htmlColor={
-                          theme.palette.secondary.main
-                        }
+                        htmlColor={theme.palette.secondary.main}
                       />
                     </IconButton>
                   </Box>
@@ -256,7 +287,11 @@ const ManageUsers = () => {
         </Box>
       </Box>
       <Card
-        sx={{ padding: theme.spacing(3), marginBottom: theme.spacing(5), marginTop: theme.spacing(6) }}
+        sx={{
+          padding: theme.spacing(3),
+          marginBottom: theme.spacing(5),
+          marginTop: theme.spacing(6),
+        }}
       >
         {/* ManageUsers Table */}
         {rows.length ? (

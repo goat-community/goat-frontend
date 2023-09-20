@@ -157,40 +157,42 @@ const TeamModalBody = (props: TeamModalBodyProps) => {
             >
               User list
             </Typography>
-            {selectedOption.map((option) => (
-              <Box
-                sx={{
-                  display: "flex",
-                  marginTop: theme.spacing(3),
-                  justifyContent: "space-between",
-                }}
-                key={v4()}
-              >
-                <Box sx={{ display: "flex", gap: theme.spacing(1) }}>
-                  <Checkbox
-                    checked={
-                      typeof option.selected === "boolean"
-                        ? option.selected
-                        : false
-                    }
-                    onChange={(_: React.SyntheticEvent, value: boolean) =>
-                      changeStatusOfUser(option, false)
-                    }
-                  />
-                  <div>
-                    <Typography variant="body2">{option.label}</Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ fontStyle: "italic" }}
-                      color="secondary"
-                    >
-                      user@email.com
-                    </Typography>
-                  </div>
+            <Box sx={{maxHeight: "200px", overflow: "scroll"}}>
+              {selectedOption.map((option) => (
+                <Box
+                  sx={{
+                    display: "flex",
+                    marginTop: theme.spacing(3),
+                    justifyContent: "space-between",
+                  }}
+                  key={v4()}
+                >
+                  <Box sx={{ display: "flex", gap: theme.spacing(1) }}>
+                    <Checkbox
+                      checked={
+                        typeof option.selected === "boolean"
+                          ? option.selected
+                          : false
+                      }
+                      onChange={(_: React.SyntheticEvent, value: boolean) =>
+                        changeStatusOfUser(option, false)
+                      }
+                    />
+                    <div>
+                      <Typography variant="body2">{option.label}</Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontStyle: "italic" }}
+                        color="secondary"
+                      >
+                        user@email.com
+                      </Typography>
+                    </div>
+                  </Box>
+                  <Chip label="invited" />
                 </Box>
-                <Chip label="invited" />
-              </Box>
-            ))}
+              ))}
+            </Box>
           </>
         ) : null}
       </div>

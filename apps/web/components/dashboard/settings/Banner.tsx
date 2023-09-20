@@ -1,18 +1,50 @@
 import React from "react";
 
-import { Card, useTheme, Box } from "@mui/material";
+import { Card, useTheme, Box, styled } from "@mui/material";
 import { GOATLogoGreenSvg } from "@p4b/ui/assets/svg/GOATLogoGreen";
 
 export type BannerProps = {
   children?: React.ReactNode;
-  imageSide?: "left" | "right" | "full" | "fullBehind";
+  // imageSide?: "left" | "right" | "full" | "fullBehind";
   content?: React.ReactNode;
   image?: string;
   actions?: React.ReactNode;
 };
 
+const BannerImage = styled(Box)(({ theme }) => ({
+  width: imageWidthBasedOnImageSide("right"),
+  position: "relative",
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    borderRadius: 4,
+    left: "0",
+    top: "0",
+    width: "100%",
+    height: "100%",
+    background:
+      "radial-gradient(50% 50% at 50% 50%, rgba(40,54,72,0.8) 0%, rgba(40,54,72,0.9) 100%), url(https://assets.plan4better.de/img/login/artwork_1.png) no-repeat center",
+  },
+  [theme.breakpoints.down("sm")]: {
+    display: "none",
+  },
+}));
+
+const BannerBody = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(5),
+  width: "69%",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  color: "white",
+  zIndex: "100",
+  [theme.breakpoints.down("sm")]: {
+    width: "100%",
+  },
+}));
+
 const Banner = (props) => {
-  const { imageSide = "right", content, image, actions } = props;
+  const { content, image, actions } = props;
 
   const theme = useTheme();
 
@@ -28,76 +60,31 @@ const Banner = (props) => {
         sx={{
           height: "210px",
           display: "flex",
-          backgroundImage:
-            image && imageSide && !["right", "left"].includes(imageSide)
-              ? `url("${image}")`
-              : "",
-          flexDirection: imageSide === "left" ? "row-reverse" : "row",
+          flexDirection: "right",
         }}
       >
-        {imageSide !== "full" ? (
-          <>
-            <Box
-              sx={{
-                padding: theme.spacing(5),
-                width:
-                  image &&
-                  imageSide &&
-                  !["full", "fullBehind"].includes(imageSide)
-                    ? "69%"
-                    : "0",
+        <>
+          <BannerBody>
+            <div>{content}</div>
+            <div>{actions}</div>
+          </BannerBody>
+
+          <BannerImage>
+            <span
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
                 display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                color: "white",
-                zIndex: "100",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <div>{content}</div>
-              <div>{actions}</div>
-            </Box>
-            {imageSide === "fullBehind" ? (
-              <div />
-            ) : (
-              <Box
-                sx={{
-                  width:
-                    image && imageSide
-                      ? imageWidthBasedOnImageSide(imageSide)
-                      : "0",
-                  position: "relative",
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    borderRadius: 4,
-                    left: "0",
-                    top: "0",
-                    width: "100%",
-                    height: "100%",
-                    background:
-                      "radial-gradient(50% 50% at 50% 50%, rgba(40,54,72,0.8) 0%, rgba(40,54,72,0.9) 100%), url(https://assets.plan4better.de/img/login/artwork_1.png) no-repeat center",
-                  },
-                }}
-              >
-                <span
-                  style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <GOATLogoGreenSvg height={100} width={200} />
-                </span>
-                <div />
-              </Box>
-            )}
-          </>
-        ) : (
-          <div />
-        )}
+              <GOATLogoGreenSvg height={100} width={200} />
+            </span>
+            <div />
+          </BannerImage>
+        </>
       </Box>
     </Card>
   );

@@ -3,7 +3,6 @@
 import { useSubscription } from "@/lib/api/subscription";
 import { Button, Typography, useTheme, Box } from "@mui/material";
 import { v4 } from "uuid";
-import Banner from "@/components/dashboard/settings/Banner";
 import SubscriptionStatusCard from "./SubscriptionStatusCard";
 import SubscriptionCardSkeleton from "@/components/skeletons/SubscriptionCardSkeleton";
 
@@ -25,16 +24,25 @@ const Subscription = () => {
         </Typography>
       )),
       action: (
-        <Button
+        <Box
           sx={{
             marginTop: theme.spacing(3),
-            padding: `${theme.spacing(1)} ${theme.spacing(2) + 2}`,
-            fontSize: "13px",
+            [theme.breakpoints.down("md")]: {
+              marginTop: 0,
+              marginBottom: theme.spacing(3),
+            },
           }}
-          color="primary"
         >
-          Add seats
-        </Button>
+          <Button
+            sx={{
+              padding: `${theme.spacing(1)} ${theme.spacing(2) + 2}`,
+              fontSize: "13px",
+            }}
+            color="primary"
+          >
+            Add seats
+          </Button>
+        </Box>
       ),
     }));
     return visualData;
@@ -58,7 +66,7 @@ const Subscription = () => {
 
   return (
     <div>
-      <Box sx={{marginBottom: "100px"}}>
+      <Box sx={{ marginBottom: "100px" }}>
         {!isLoading && !isError
           ? [
               ...getSubscriptionDetails([Subscriptions.subscription]),
@@ -68,26 +76,6 @@ const Subscription = () => {
             ))
           : beforeLoadedMessage()}
       </Box>
-      <Banner
-        actions={<Button variant="outlined">Subscribe Now</Button>}
-        content={
-          <Typography
-            sx={{
-              color: "white",
-              "@media (max-width: 1268px)": {
-                fontSize: "14px",
-              },
-            }}
-            variant="body1"
-          >
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-            commodo ligula eget dolor. Aenean massa. Cum sociis natoque
-            penatibus et magnis dis parturient montes, nascetur ridiculus mus.{" "}
-          </Typography>
-        }
-        image="https://s3-alpha-sig.figma.com/img/630a/ef8f/d732bcd1f3ef5d6fe31bc6f94ddfbca8?Expires=1687132800&Signature=aJvQ22UUlmvNjDlrgzV6MjJK~YgohUyT9mh8onGD-HhU5yMI0~ThWZUGVn562ihhRYqlyiR5Rskno84OseNhAN21WqKNOZnAS0TyT3SSUP4t4AZJOmeuwsl2EcgElMzcE0~Qx2X~LWxor1emexxTlWntivbnUeS6qv1DIPwCferjYIwWsiNqTm7whk78HUD1-26spqW3AXVbTtwqz3B8q791QigocHaK9b4f-Ulrk3lsmp8BryHprwgetHlToFNlYYR-SqPFrEeOKNQuEDKH0QzgGv3TX7EfBNL0kgP3Crued~JNth-lIEPCjlDRnFQyNpSiLQtf9r2tH9xIsKA~XQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"
-        imageSide="right"
-      />
     </div>
   );
 };

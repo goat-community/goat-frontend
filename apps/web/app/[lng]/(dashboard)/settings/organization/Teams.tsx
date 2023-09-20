@@ -17,7 +17,7 @@ const Teams = () => {
   const [searchWord, setSearchWord] = useState<string>("");
 
   const theme = useTheme();
-  console.log(theme)
+  console.log(theme);
 
   function addTeam(team: ITeam) {
     setTeams([...teams, team]);
@@ -71,24 +71,46 @@ const Teams = () => {
             justifyContent: "space-between",
             gap: theme.spacing(4),
             marginBottom: theme.spacing(3),
+            [theme.breakpoints.down("sm")]: {
+              display: "block",
+            },
           }}
         >
-          <TextField
-            sx={{ flexGrow: "1" }}
-            type="text"
-            label="Search"
-            size="small"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setSearchWord(event.target.value);
+          <Box
+            sx={{
+              display: "flex",
+              flexGrow: "1",
+              alignItems: "center",
+              gap: theme.spacing(4),
             }}
-          />
-          <Icon
-            iconName={ICON_NAME.FILTER}
-            fontSize="small"
-            htmlColor={theme.palette.text.secondary}
-          />
+          >
+            <TextField
+              sx={{
+                flexGrow: "1",
+                [theme.breakpoints.down("sm")]: {
+                  marginBottom: theme.spacing(2),
+                },
+              }}
+              type="text"
+              label="Search"
+              size="small"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSearchWord(event.target.value);
+              }}
+            />
+            <Icon
+              sx={{
+                [theme.breakpoints.down("sm")]: {
+                  marginBottom: theme.spacing(2),
+                },
+              }}
+              iconName={ICON_NAME.FILTER}
+              htmlColor={theme.palette.secondary.light}
+            />
+          </Box>
           <div style={{ position: "relative" }}>
             <Button
+              variant="outlined"
               sx={{ width: "131px" }}
               onClick={() => setModalVisible(true)}
             >
@@ -123,8 +145,20 @@ const Teams = () => {
             alt=""
             width={400}
             height={300}
+            className="teamsImage"
           />
-          <Typography variant="h6" color="focus" sx={{ fontWeight: "500", marginBottom: "100px" }}>
+          <Typography
+            variant="h6"
+            color="focus"
+            sx={{
+              fontWeight: "500",
+              marginBottom: "100px",
+              textAlign: "center",
+              [theme.breakpoints.down("sm")]: {
+                marginBottom: theme.typography.body2,
+              },
+            }}
+          >
             Create teams to easily manage your projects
           </Typography>
         </Box>

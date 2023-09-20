@@ -51,6 +51,9 @@ const theme = useTheme();
             display: "flex",
             justifyContent: "space-between",
             alignItems: "start",
+            [theme.breakpoints.down('sm')]: {
+              display: "block"
+            },
           }}
         >
           <ul style={{ paddingLeft: "30px" }}>

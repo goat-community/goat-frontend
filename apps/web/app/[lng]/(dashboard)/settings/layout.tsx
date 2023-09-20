@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   Typography,
   useTheme,
@@ -7,9 +8,13 @@ import {
   Divider,
   Container,
   Grid,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -19,8 +24,16 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
   const { children } = props;
 
   const pathname = usePathname();
-  console.log(pathname);
   const theme = useTheme();
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const linkStyle = (page) =>
     pathname.slice(3) === `/settings/${page}`
@@ -39,9 +52,69 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
 
   return (
     <Box>
-      <Container sx={{ py: 20, px: 10 }} maxWidth="xl">
+      <Container
+        sx={{
+          py: 20,
+          px: 10,
+        }}
+        maxWidth="xl"
+      >
+        <Box>
+          <IconButton
+            sx={{
+              float: "right",
+              [theme.breakpoints.up("md")]: {
+                display: "none",
+              },
+            }}
+            onClick={handleClick}
+          >
+            <Icon
+              iconName={ICON_NAME.MORE_VERT}
+              sx={{
+                backgroundColor: `${theme.palette.secondary.main}80`,
+                fontSize: theme.typography.h4,
+                padding: theme.spacing(1),
+                borderRadius: "100%",
+              }}
+            />
+          </IconButton>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <Link
+              href="/settings/organization"
+              style={{ textDecoration: "none" }}
+            >
+              <MenuItem onClick={handleClose}>Organization</MenuItem>
+            </Link>
+            <Link
+              href="/settings/subscription"
+              style={{ textDecoration: "none" }}
+            >
+              <MenuItem onClick={handleClose}>Subscription</MenuItem>
+            </Link>
+            <Link href="/settings/settings" style={{ textDecoration: "none" }}>
+              <MenuItem onClick={handleClose}>Settings</MenuItem>
+            </Link>
+          </Menu>
+        </Box>
         <Grid container justifyContent="space-between">
-          <Grid item xs={2.5}>
+          <Grid
+            item
+            xs={2.5}
+            sx={{
+              [theme.breakpoints.down("md")]: {
+                display: "none",
+              },
+            }}
+          >
             <div>
               <Link
                 href="/settings/organization"
@@ -72,7 +145,7 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
               <Divider sx={{ margin: `4px 0`, width: "100%" }} />
             </div>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={12} md={9}>
             <div>{children}</div>
           </Grid>
         </Grid>
