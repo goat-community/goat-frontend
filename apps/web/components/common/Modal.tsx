@@ -38,6 +38,9 @@ const Modal = memo(
             boxShadow: "24",
             backgroundColor: theme.palette.background.paper,
             padding: `${theme.spacing(5)} ${theme.spacing(5)}`,
+            [theme.breakpoints.down("sm")]: {
+              width: "90%"
+            },
           }}
         >
           {header ? <Box sx={{paddingBottom: theme.spacing(3)}}>{header}</Box> : null}

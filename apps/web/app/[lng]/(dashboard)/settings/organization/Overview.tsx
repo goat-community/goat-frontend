@@ -52,6 +52,10 @@ const Overview = () => {
               marginTop: theme.spacing(3),
               padding: `${theme.spacing(1)}px ${theme.spacing(2) + 2}px`,
               fontSize: "13px",
+              [theme.breakpoints.down('sm')]: {
+                marginTop: "0px",
+                marginBottom: theme.spacing(4)
+              },
             }}
             variant="outlined"
             color="primary"

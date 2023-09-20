@@ -23,6 +23,7 @@ import { useTheme } from "@mui/material";
 
 const CustomTableRow = styled(TableRow)(({ theme }) => ({
   backgroundColor: "transparent",
+  transition: "all .3s ease",
   "&:nth-of-type": {},
   "&:nth-of-type(odd)": {
     backgroundColor: (props) =>
@@ -37,13 +38,38 @@ const CustomTableRow = styled(TableRow)(({ theme }) => ({
       opacity: 0.08,
     }),
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
-    border: (props) => (props.alternativeColors ? 0 : ""),
+    border: "none",
   },
   "&.MuiTableRow-hover:hover": {
-    background: theme.palette.secondary.dark,
+    background: `${theme.palette.secondary.light}50`,
   },
+}));
+
+const PaginationStyled = styled(TablePagination)(({ theme }) => ({
+  "& .MuiTablePagination-toolbar": {
+    flexWrap: "wrap",
+  },
+  "& .MuiTablePagination-spacer": {
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
+    },
+  },
+  "& .MuiTablePagination-actions": {
+    margin: "0px",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+      display: "flex",
+      justifyContent: "end",
+    },
+  },
+  "& .mui-mngh4t-MuiTableCell-root-MuiTablePagination-root": {
+    borderBottom: "none",
+  },
+  "&::-webkit-scrollbar": {
+    height: "6px",
+  },
+  borderBottom: "none",
 }));
 
 const CustomTableCell = styled(TableCell)(({ theme }) => ({
@@ -61,7 +87,6 @@ const CustomTableCell = styled(TableCell)(({ theme }) => ({
         ? "none"
         : `0.5px solid ${theme.palette.secondary.main}`,
   },
-  // paddingLeft: (props) => (props.checkbox ? 0 : theme.spacing(3)),
 }));
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -166,10 +191,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
               direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
-              <Typography
-                sx={{ fontWeight: "bold" }}
-                variant="body2"
-              >
+              <Typography sx={{ fontWeight: "bold" }} variant="body2">
                 {headCell.label}
               </Typography>
               {orderBy === headCell.id ? (
@@ -309,7 +331,11 @@ export default function EnhancedTable(props: EnhanceTableProps) {
           mb: 2,
         }}
       >
-        <TableContainer>
+        <TableContainer sx={{
+          "&::-webkit-scrollbar": {
+            height: "6px",
+          }
+        }}>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
@@ -367,7 +393,9 @@ export default function EnhancedTable(props: EnhanceTableProps) {
                             <Typography
                               variant="body2"
                               sx={{
-                                padding: dense ? `0px ${theme.spacing(3)}` : theme.spacing(4),
+                                padding: dense
+                                  ? `0px ${theme.spacing(3)}`
+                                  : theme.spacing(4),
                                 fontSize: "12px",
                               }}
                             >
@@ -400,9 +428,8 @@ export default function EnhancedTable(props: EnhanceTableProps) {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
+        <PaginationStyled
           rowsPerPageOptions={[5, 10, 25]}
-          component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
           page={page}

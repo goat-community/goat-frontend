@@ -51,7 +51,7 @@ const PersonalPreferences = () => {
 
   return (
     <div>
-      <Box key={v4()} sx={{marginBottom: "100px" }}>
+      <Box key={v4()} sx={{ marginBottom: "100px" }}>
         <Card
           sx={{
             width: "100%",
@@ -150,6 +150,32 @@ const PersonalPreferences = () => {
             }}
           >
             <Typography>Dark</Typography>
+            <Switch />
+          </Box>
+        </Card>
+        <Card
+          sx={{
+            margin: `${theme.spacing(5)} 0px`,
+            borderRadius: "4px",
+            width: "100%",
+          }}
+        >
+          <Box sx={{ padding: "15px", paddingLeft: "25px" }}>
+            <Typography sx={{ fontWeight: "bold" }}>Newsletter</Typography>
+            <Typography variant="caption">
+              Subscribe to our Newsletter
+            </Typography>
+          </Box>
+          <Divider />
+          <Box
+            sx={{
+              padding: "20px  25px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography>Subscribe</Typography>
             <Switch />
           </Box>
         </Card>

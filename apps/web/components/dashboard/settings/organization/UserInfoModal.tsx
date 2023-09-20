@@ -171,7 +171,7 @@ const UserInfoModal = (props: UserInfoModal) => {
               <TitleTypography variant="body2">Organisation role: </TitleTypography>{" "}
               <Select
                 size="small"
-                label="Role"
+                label=""
                 defaultValue={userInDialog ? userInDialog?.role : ""}
                 onChange={handleSelectUserRole}
               >
