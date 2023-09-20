@@ -66,6 +66,9 @@ const PaginationStyled = styled(TablePagination)(({ theme }) => ({
   "& .mui-mngh4t-MuiTableCell-root-MuiTablePagination-root": {
     borderBottom: "none",
   },
+  "&::-webkit-scrollbar": {
+    height: "6px",
+  },
   borderBottom: "none",
 }));
 
@@ -328,7 +331,11 @@ export default function EnhancedTable(props: EnhanceTableProps) {
           mb: 2,
         }}
       >
-        <TableContainer>
+        <TableContainer sx={{
+          "&::-webkit-scrollbar": {
+            height: "6px",
+          }
+        }}>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"

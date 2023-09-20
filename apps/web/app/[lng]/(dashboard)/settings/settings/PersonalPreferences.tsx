@@ -14,10 +14,8 @@ import {
   Select,
   MenuItem,
   useTheme,
-  Button
 } from "@mui/material";
 import type { SelectChangeEvent } from "@mui/material";
-import Banner from "@/components/dashboard/settings/Banner";
 
 function removeNrOfElementsFromArray(pathname: string, len: number) {
   const parts = pathname.split("/");
@@ -155,25 +153,32 @@ const PersonalPreferences = () => {
             <Switch />
           </Box>
         </Card>
-        <Banner
-          actions={<Button variant="outlined">Subscribe Now</Button>}
-          content={
-            <Typography
-              sx={{
-                color: "white",
-                "@media (max-width: 1268px)": {
-                  fontSize: "14px",
-                },
-              }}
-              variant="body1"
-            >
-              Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-              commodo ligula eget dolor. Aenean massa. Cum sociis natoque
-              penatibus et magnis dis parturient montes, nascetur ridiculus mus.{" "}
+        <Card
+          sx={{
+            margin: `${theme.spacing(5)} 0px`,
+            borderRadius: "4px",
+            width: "100%",
+          }}
+        >
+          <Box sx={{ padding: "15px", paddingLeft: "25px" }}>
+            <Typography sx={{ fontWeight: "bold" }}>Newsletter</Typography>
+            <Typography variant="caption">
+              Subscribe to our Newsletter
             </Typography>
-          }
-          image="https://s3-alpha-sig.figma.com/img/630a/ef8f/d732bcd1f3ef5d6fe31bc6f94ddfbca8?Expires=1687132800&Signature=aJvQ22UUlmvNjDlrgzV6MjJK~YgohUyT9mh8onGD-HhU5yMI0~ThWZUGVn562ihhRYqlyiR5Rskno84OseNhAN21WqKNOZnAS0TyT3SSUP4t4AZJOmeuwsl2EcgElMzcE0~Qx2X~LWxor1emexxTlWntivbnUeS6qv1DIPwCferjYIwWsiNqTm7whk78HUD1-26spqW3AXVbTtwqz3B8q791QigocHaK9b4f-Ulrk3lsmp8BryHprwgetHlToFNlYYR-SqPFrEeOKNQuEDKH0QzgGv3TX7EfBNL0kgP3Crued~JNth-lIEPCjlDRnFQyNpSiLQtf9r2tH9xIsKA~XQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"
-        />
+          </Box>
+          <Divider />
+          <Box
+            sx={{
+              padding: "20px  25px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography>Subscribe</Typography>
+            <Switch />
+          </Box>
+        </Card>
       </Box>
     </div>
   );

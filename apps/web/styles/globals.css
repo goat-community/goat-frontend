@@ -19,20 +19,6 @@ input[type=number]::-webkit-outer-spin-button {
   }
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #2836484D;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #28364880;
-}
-
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
