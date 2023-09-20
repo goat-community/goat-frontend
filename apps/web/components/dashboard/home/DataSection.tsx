@@ -1,4 +1,4 @@
-import SectionCard from "@/components/dashboard/home/SectionCard";
+import TileCard from "@/components/dashboard/common/TileCard";
 import type { Layer } from "@/lib/validations/layer";
 import {
   Box,
@@ -10,12 +10,12 @@ import {
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
-interface LayerSectionProps {
+interface DataSectionProps {
   layers: Layer[];
   isLoading: boolean;
 }
 
-const LayerSection = (props: LayerSectionProps) => {
+const DataSection = (props: DataSectionProps) => {
   const { layers, isLoading } = props;
   return (
     <Box>
@@ -27,7 +27,7 @@ const LayerSection = (props: LayerSectionProps) => {
           mb: 2,
         }}
       >
-        <Typography variant="h6">Recent Layers</Typography>
+        <Typography variant="h6">Recent Data</Typography>
         <Button
           variant="text"
           size="small"
@@ -62,7 +62,8 @@ const LayerSection = (props: LayerSectionProps) => {
               {!item ? (
                 <Skeleton variant="rectangular" height={200} />
               ) : (
-                <SectionCard
+                <TileCard
+                  cardType="grid"
                   createdAt={item.created_at}
                   updatedAt={item.updated_at}
                   id={item.id}
@@ -81,4 +82,4 @@ const LayerSection = (props: LayerSectionProps) => {
   );
 };
 
-export default LayerSection;
+export default DataSection;

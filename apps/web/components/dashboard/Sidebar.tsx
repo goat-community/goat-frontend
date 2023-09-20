@@ -71,10 +71,22 @@ const DashboardSidebar = (props: Props) => {
       current: pathname?.includes("/home"),
     },
     {
-      link: "/content",
-      icon: ICON_NAME.FOLDER,
-      label: "Content",
-      current: pathname?.includes("/content"),
+      link: "/projects",
+      icon: ICON_NAME.MAP,
+      label: "Projects",
+      current: pathname?.includes("/projects"),
+    },
+    {
+      link: "/data",
+      icon: ICON_NAME.DATABASE,
+      label: "Data",
+      current: pathname?.includes("/data"),
+    },
+    {
+      link: "/catalog",
+      icon: ICON_NAME.GLOBE,
+      label: "Catalog",
+      current: pathname?.includes("/catalog"),
     },
     {
       link: "/settings",
