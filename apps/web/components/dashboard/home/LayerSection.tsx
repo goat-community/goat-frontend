@@ -1,5 +1,5 @@
 import SectionCard from "@/components/dashboard/home/SectionCard";
-import type { Project } from "@/lib/validations/project";
+import type { Layer } from "@/lib/validations/layer";
 import {
   Box,
   Button,
@@ -10,13 +10,13 @@ import {
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
-interface ProjectSectionProps {
-  projects: Project[];
+interface LayerSectionProps {
+  layers: Layer[];
   isLoading: boolean;
 }
 
-const ProjectSection = (props: ProjectSectionProps) => {
-  const { projects, isLoading } = props;
+const LayerSection = (props: LayerSectionProps) => {
+  const { layers, isLoading } = props;
   return (
     <Box>
       <Box
@@ -27,14 +27,14 @@ const ProjectSection = (props: ProjectSectionProps) => {
           mb: 2,
         }}
       >
-        <Typography variant="h6">Recent Projects</Typography>
+        <Typography variant="h6">Recent Layers</Typography>
         <Button
           variant="text"
           size="small"
           endIcon={
             <Icon iconName={ICON_NAME.CHEVRON_RIGHT} style={{ fontSize: 12 }} />
           }
-          href="/projects"
+          href="/content"
           sx={{
             borderRadius: 0,
           }}
@@ -44,8 +44,8 @@ const ProjectSection = (props: ProjectSectionProps) => {
       </Box>
       <Divider sx={{ mb: 4 }} />
       <Grid container spacing={5}>
-        {(isLoading ? Array.from(new Array(4)) : projects ?? []).map(
-          (item: Project, index: number) => (
+        {(isLoading ? Array.from(new Array(4)) : layers ?? []).map(
+          (item: Layer, index: number) => (
             <Grid
               item
               key={item?.id ?? index}
@@ -66,7 +66,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
                   createdAt={item.created_at}
                   updatedAt={item.updated_at}
                   id={item.id}
-                  contentType="project"
+                  contentType="layer"
                   title={item.name}
                   description={item.description}
                   image={item.thumbnail_url}
@@ -81,4 +81,4 @@ const ProjectSection = (props: ProjectSectionProps) => {
   );
 };
 
-export default ProjectSection;
+export default LayerSection;

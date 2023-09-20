@@ -1,15 +1,21 @@
 "use client";
 
 import SubscriptionStatusCard from "@/app/[lng]/(dashboard)/settings/subscription/SubscriptionStatusCard";
-import SubscriptionCardSkeleton from "@/components/skeletons/SubscriptionCardSkeleton";
 import React from "react";
 import type { ISubscriptionCard } from "@/types/dashboard/subscription";
 import { v4 } from "uuid";
 
 import Modal from "@/components/common/Modal";
-import { Button, Typography, TextField, Box, useTheme } from "@mui/material";
+import {
+  Button,
+  Typography,
+  TextField,
+  Box,
+  useTheme,
+  Skeleton,
+} from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useOrganization } from "@/lib/api/organization";
+import { useOrganization } from "@/lib/api/users";
 
 const Overview = () => {
   const [organizationEdit, setOrganizationEdit] =
@@ -17,15 +23,11 @@ const Overview = () => {
 
   const theme = useTheme();
 
-  const {isLoading, Organization, isError} = useOrganization();
+  const { isLoading, organization, isError } = useOrganization();
 
   function beforeLoadedMessage() {
     if (isLoading) {
-      return (
-        <>
-          <SubscriptionCardSkeleton />
-        </>
-      );
+      return <Skeleton variant="rounded" width="100%" height={210} />;
     } else if (isError) {
       return "Error";
     } else {
@@ -35,9 +37,9 @@ const Overview = () => {
 
   function getOrganizationOverviewDetails(data: ISubscriptionCard) {
     const visualData = {
-      icon: Organization.icon,
-      title: Organization.title,
-      listItems: Organization.listItems.map((item: string) => (
+      icon: organization.icon,
+      title: organization.title,
+      listItems: organization.listItems.map((item: string) => (
         <Typography variant="body2" key={v4()}>
           {item}
         </Typography>
@@ -115,11 +117,15 @@ const Overview = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: theme.spacing(2),
-                marginBottom: theme.spacing(4)
+                marginBottom: theme.spacing(4),
               }}
             >
-              <TextField type="text" label="New name" size="small"/>
-              <TextField type="password" label="Confirm password" size="small"/>
+              <TextField type="text" label="New name" size="small" />
+              <TextField
+                type="password"
+                label="Confirm password"
+                size="small"
+              />
             </Box>
           </Modal>
         </Box>

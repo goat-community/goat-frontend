@@ -105,11 +105,7 @@ const ManageUsers = () => {
 
   function getStatus() {
     if (isLoading) {
-      return (
-        <Box sx={{ width: "100%", marginBottom: "32px" }}>
-          <Skeleton variant="rounded" width="100%" height={440} />
-        </Box>
-      );
+      return <Skeleton variant="rounded" width="100%" height={440} />
     } else if (error) {
       return "There is an error with the connection, make sure to be connected to a valid network!";
     } else {

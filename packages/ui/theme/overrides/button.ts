@@ -44,6 +44,9 @@ const Button = (theme: Theme) => {
             padding: `${theme.spacing(1.875, 6.25)}`,
           },
         },
+        dialogBoxRectangle: {
+          borderRadius: 0,
+        }
       },
     },
   };
