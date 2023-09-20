@@ -11,7 +11,7 @@ export default function ThemeRegistry({
 }: {
   children: React.ReactNode;
 }) {
-  let theme = "light";
+  let theme = "dark";
   if (typeof window !== "undefined") {
     theme = localStorage.getItem("theme") || "dark";
   }
