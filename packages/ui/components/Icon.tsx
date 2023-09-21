@@ -53,7 +53,8 @@ import {
   faEdit,
   faXmark,
   faPen,
-  faFloppyDisk
+  faFloppyDisk,
+  faDatabase,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGoogle,
@@ -110,6 +111,7 @@ export enum ICON_NAME {
   EYE = "eye",
   EYE_SLASH = "eye-slash",
   MORE_VERT = "more-vert",
+  MORE_HORIZ = "more-horiz",
   STEPUP = "step-up",
   STEPDOWN = "step-down",
   LOCATION = "location",
@@ -128,6 +130,8 @@ export enum ICON_NAME {
   XCLOSE = "xclose",
   EDITPEN = "editpen",
   SAVE = "save",
+=======
+  DATABASE = "database",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -179,6 +183,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.EYE_SLASH]: faEyeSlash,
   [ICON_NAME.STAR]: faStar,
   [ICON_NAME.MORE_VERT]: faEllipsisVertical,
+  [ICON_NAME.MORE_HORIZ]: faEllipsis,
   [ICON_NAME.STEPUP]: faCaretUp,
   [ICON_NAME.STEPDOWN]: faCaretDown,
   [ICON_NAME.LOCATION]: faLocationDot,
@@ -196,6 +201,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.XCLOSE]: faXmark,
   [ICON_NAME.EDITPEN]: faPen,
   [ICON_NAME.SAVE]: faFloppyDisk,
+  [ICON_NAME.DATABASE]: faDatabase,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

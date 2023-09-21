@@ -11,6 +11,7 @@ const Button = (theme: Theme) => {
           borderRadius: "50px",
           lineHeight: 1.71,
           letterSpacing: "0.3px",
+          textTransform: "none",
           // padding: `${theme.spacing(1.875, 3)}`,
           '&.MuiButton-containedPrimary:not(:disabled)': {
             backgroundColor: theme.palette.primary.main,
@@ -21,7 +22,7 @@ const Button = (theme: Theme) => {
         },
         contained: {
           boxShadow: theme.shadows[3],
-          padding: `${theme.spacing(1.875, 5.5)}`,
+          padding: `${theme.spacing(1.875, 5.5)}`
         },
         outlined: {
           padding: `${theme.spacing(2)}px ${theme.spacing(4)}px`,

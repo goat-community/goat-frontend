@@ -1,4 +1,4 @@
-import type { ActiveCard } from "@/components/dashboard/home/SectionCard";
+import type { ActiveCard } from "@/components/dashboard/common/TileCard";
 import { LAYERS_API_BASE_URL, deleteLayer } from "@/lib/api/layers";
 import { PROJECTS_API_BASE_URL, deleteProject } from "@/lib/api/projects";
 import {
@@ -43,7 +43,7 @@ const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
       toast.error(`Error deleting ${activeContent?.type}`);
     }
 
-    if (onDelete) onDelete();
+    onDelete?.();
   };
 
   return (
