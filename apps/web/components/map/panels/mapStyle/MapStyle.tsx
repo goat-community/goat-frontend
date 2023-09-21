@@ -1,5 +1,4 @@
 import Container from "@/components/map/panels/Container";
-import { IconButton, Text, useTheme } from "@p4b/ui/components/theme";
 import {
   Button,
   CardContent,
@@ -9,17 +8,19 @@ import {
   Radio,
   RadioGroup,
   Typography,
+  Tab,
+  Tabs,
+  Card,
+  IconButton,
+  useTheme,
+  Checkbox,
+  Select,
+  Box,
+  MenuItem,
 } from "@mui/material";
-import { makeStyles } from "@/lib/theme";
 import { useSelector } from "react-redux";
 import type { IStore } from "@/types/store";
 import { saveStyles, setTabValue } from "@/lib/store/styling/slice";
-import { Card } from "@p4b/ui/components/Surfaces";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import { Checkbox } from "@p4b/ui/components/Checkbox";
-import { MultipleSelect } from "@p4b/ui/components/Inputs/MultipleSelect";
-import Box from "@p4b/ui/components/Box";
 import type { MapSidebarItem } from "@/components/map/Sidebar";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import React from "react";
@@ -33,7 +34,8 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import ColorOptionSymbol from "@/components/map/panels/mapStyle/ColorOptionSymbol";
 import StrokeOptionSymbol from "@/components/map/panels/mapStyle/StrokeOptionSymbol";
 import SizeOptionSymbol from "@/components/map/panels/mapStyle/SizeOptionSymbol";
-import { selectMapLayer } from '@/lib/store/styling/selectors'
+import { selectMapLayer } from "@/lib/store/styling/selectors";
+import { v4 } from "uuid";
 
 interface MapStyleProps {
   setActiveRight: (item: MapSidebarItem | undefined) => void;
@@ -56,7 +58,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
   const mapLayer = useSelector(selectMapLayer);
 
   const dispatch = useAppDispatch();
-  const { classes } = useStyles();
+
   const theme = useTheme();
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -76,39 +78,56 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
   return (
     <Container
       header={
-        <Box className={classes.contentHeading}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "20px",
+          }}
+        >
           <Icon
             iconName={ICON_NAME.CHEVRON_RIGHT}
-            htmlColor={theme.colors.palette.focus.main}
+            htmlColor={theme.palette.primary.main}
             fontSize="small"
             onClick={() => setActiveRight(undefined)}
           />
-          <Typography color={theme.colors.palette.focus.main} variant="body1">
+          <Typography color={theme.palette.primary.main} variant="body1">
             Layer design
           </Typography>
         </Box>
       }
       body={
-        <Box className={classes.contentInfo}>
-          <Card className={classes.card}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            rowGap: "24px",
+          }}
+        >
+          <Card sx={{ paddingLeft: theme.spacing(2) }}>
             <RadioGroup aria-label="options" name="options">
               <FormControlLabel
                 value="@content_label"
-                className={classes.radioLabel}
+                sx={{
+                  span: {
+                    fontSize: "12px",
+                    fontStyle: "italic",
+                  },
+                }}
                 control={
                   <Radio
                     color="default"
                     icon={
                       <Icon
                         iconName={ICON_NAME.STAR}
-                        htmlColor={theme.colors.palette.focus.darkVariant3}
+                        htmlColor={theme.palette.primary.dark}
                         fontSize="small"
                       />
                     }
                     checkedIcon={
                       <Icon
                         iconName={ICON_NAME.STAR}
-                        htmlColor={theme.colors.palette.focus.main}
+                        htmlColor={theme.palette.primary.main}
                         fontSize="small"
                       />
                     }
@@ -124,21 +143,41 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
               onChange={handleChange}
               aria-label="basic tabs example"
             >
-              <Tab label="SIMPLE" className={classes.tab} />
-              <Tab label="SMART" className={classes.tab} />
+              <Tab
+                label="SIMPLE"
+                sx={{
+                  width: "50%",
+                }}
+              />
+              <Tab
+                label="SMART"
+                sx={{
+                  width: "50%",
+                }}
+              />
             </Tabs>
           </Box>
           {tabValue === 0 ? (
             <>
               <Card>
-                <CardMedia className={classes.media} component="div" />
-                <CardContent className={classes.content}>
-                  <IconButton
-                    type="submit"
-                    size="small"
-                    iconId="info"
-                    className={classes.contentButton}
-                  />
+                <CardMedia
+                  sx={{
+                    height: "42px",
+                    backgroundColor: theme.palette.secondary.main,
+                    border: "none",
+                  }}
+                  component="div"
+                />
+                <CardContent
+                  sx={{
+                    display: "flex",
+                    columnGap: "6px",
+                    padding: "8px 16px",
+                  }}
+                >
+                  <IconButton type="submit" sx={{ alignSelf: "flex-start" }}>
+                    <Icon iconName={ICON_NAME.CIRCLEINFO} fontSize="small" />
+                  </IconButton>
                   <Typography variant="body2" color="text.secondary">
                     Location (single symbol)
                   </Typography>
@@ -148,58 +187,116 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
               {mapLayer?.type === "line" ? (
                 <>
                   <ColorOptionLine />
-                  <Divider className={classes.divider} />
+                  <Divider
+                    sx={{
+                      width: "100%",
+                      borderTop: "none",
+                      borderBottom: `1px solid ${theme.palette.primary.main}`,
+                    }}
+                  />
                   <StrokeOptionLine />
                 </>
               ) : null}
               {mapLayer?.type === "fill" ? (
                 <>
                   <ColorOptionFill />
-                  <Divider className={classes.divider} />
+                  <Divider
+                    sx={{
+                      width: "100%",
+                      borderTop: "none",
+                      borderBottom: `1px solid ${theme.palette.primary.main}`,
+                    }}
+                  />
                   <SelectStrokeOptionFill />
                 </>
               ) : null}
               {mapLayer?.type === "symbol" ? (
                 <>
                   <MarkerOptionSymbol />
-                  <Divider className={classes.divider} />
+                  <Divider
+                    sx={{
+                      width: "100%",
+                      borderTop: "none",
+                      borderBottom: `1px solid ${theme.palette.primary.main}`,
+                    }}
+                  />
                   <ColorOptionSymbol />
-                  <Divider className={classes.divider} />
+                  <Divider
+                    sx={{
+                      width: "100%",
+                      borderTop: "none",
+                      borderBottom: `1px solid ${theme.palette.primary.main}`,
+                    }}
+                  />
                   <StrokeOptionSymbol />
-                  <Divider className={classes.divider} />
+                  <Divider
+                    sx={{
+                      width: "100%",
+                      borderTop: "none",
+                      borderBottom: `1px solid ${theme.palette.primary.main}`,
+                    }}
+                  />
                   <SizeOptionSymbol />
                 </>
               ) : null}
             </>
           ) : (
             <>
-              <Box className={classes.attributeContainer}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  rowGap: "8px",
+                  width: "100%",
+                }}
+              >
                 <Typography variant="body2">Attribute</Typography>
-                <MultipleSelect
-                  options={layerTypes}
-                  label="Browser layer attributes"
-                />
+                <Select label="Browser layer attributes">
+                  {layerTypes.map((type) => (
+                    <MenuItem key={v4()} value={type.value}>
+                      {type.label}
+                    </MenuItem>
+                  ))}
+                </Select>
               </Box>
               <Box>
-                <Text
+                <Typography
                   color="secondary"
-                  typo="label 2"
-                  className={classes.descriptionText}
+                  variant="subtitle2"
+                  sx={{
+                    fontStyle: "italic",
+                    margin: "0 8px",
+                  }}
                 >
                   Style your map according to the values of a specific attribute
                   or column in the dataset, using techniques such as color
                   coding or symbol size variation for categorical and numerical
                   data.
-                </Text>
+                </Typography>
               </Box>
             </>
           )}
         </Box>
       }
       action={
-        <Box className={classes.buttonsContainer}>
+        <Box
+          sx={{
+            minWidth: "266px",
+            display: "flex",
+            columnGap: "16px",
+          }}
+        >
           <Button
-            className={classes.button}
+            sx={{
+              borderRadius: "24px",
+              textTransform: "none",
+              fontSize: "14px",
+              width: "50%",
+              "&:disabled": {
+                border: "1px solid #ccc",
+                color: theme.palette.secondary.dark,
+              },
+            }}
             color="secondary"
             variant="outlined"
             onClick={resetStylesHandler}
@@ -207,7 +304,16 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
             Reset
           </Button>
           <Button
-            className={classes.button}
+            sx={{
+              borderRadius: "24px",
+              textTransform: "none",
+              fontSize: "14px",
+              width: "50%",
+              "&:disabled": {
+                border: "1px solid #ccc",
+                color: theme.palette.secondary.dark,
+              },
+            }}
             color="primary"
             variant="outlined"
             onClick={saveStylesHandler}
@@ -222,78 +328,5 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
     />
   );
 };
-
-const useStyles = makeStyles({ name: { MapStylePanel } })((theme) => ({
-  contentHeading: {
-    display: "flex",
-    alignItems: "center",
-    gap: "20px",
-  },
-  buttonsContainer: {
-    minWidth: "266px",
-    display: "flex",
-    columnGap: "16px",
-  },
-  button: {
-    borderRadius: "24px",
-    textTransform: "none",
-    fontSize: "14px",
-    width: "50%",
-    "&:disabled": {
-      border: "1px solid #ccc",
-      color: theme.colors.palette.light.greyVariant4,
-    },
-  },
-  contentInfo: {
-    display: "flex",
-    flexDirection: "column",
-    rowGap: "24px",
-  },
-  descriptionText: {
-    fontStyle: "italic",
-    margin: "0 8px",
-  },
-  tab: {
-    width: "50%",
-  },
-  attributeContainer: {
-    display: "flex",
-    flexDirection: "column",
-    rowGap: "8px",
-    width: "100%",
-  },
-  card: {
-    paddingLeft: theme.spacing(2),
-  },
-  media: {
-    height: "42px",
-    backgroundColor: theme.colors.palette.focus.darkVariant2,
-    border: "none",
-  },
-  content: {
-    display: "flex",
-    columnGap: "6px",
-    padding: "8px 16px",
-  },
-  contentButton: {
-    alignSelf: "flex-start",
-  },
-  accordion: {
-    "& .MuiPaper-root": {
-      boxShadow: "unset",
-    },
-  },
-  divider: {
-    width: "100%",
-    borderTop: "none",
-    borderBottom: `1px solid ${theme.colors.palette.focus}`,
-  },
-  radioLabel: {
-    span: {
-      fontSize: "12px",
-      fontStyle: "italic",
-    },
-  },
-}));
 
 export default MapStylePanel;

@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Autocomplete from "@mui/material/Autocomplete";
 import parse from "@/lib/utils/parse";
 import { useEffect, useMemo, useState } from "react";
-import Typography from "@mui/material/Typography";
 import { useMap } from "react-map-gl";
-import { makeStyles } from "@/lib/theme";
-import Paper from "@mui/material/Paper";
-import InputBase from "@mui/material/InputBase";
 import {
   Divider,
   Fab,
@@ -16,6 +11,11 @@ import {
   Popper,
   Tooltip,
   debounce,
+  Paper,
+  Autocomplete,
+  InputBase,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import search from "@/lib/services/geocoder";
@@ -75,7 +75,9 @@ interface Properties {
 const COORDINATE_REGEX_STRING =
   "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)";
 const COORDINATE_REGEX = RegExp(COORDINATE_REGEX_STRING);
-export const testForCoordinates = (query: string): [true, number, number] | [false, string] => {
+export const testForCoordinates = (
+  query: string,
+): [true, number, number] | [false, string] => {
   const isValid = COORDINATE_REGEX.test(query.trim());
 
   if (!isValid) {
@@ -106,27 +108,45 @@ export default function Geocoder({
   const [focused, setFocused] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
   const { map } = useMap();
-  const { classes } = useStyles({ focused });
+
+  const theme = useTheme();
 
   const fetch = useMemo(
     () =>
-      debounce((request: { value: string }, onresult: (_error: Error, fc: FeatureCollection) => void) => {
-        search(
-          endpoint,
-          source,
-          accessToken,
-          request.value,
-          onresult,
-          proximity,
-          country,
-          bbox,
-          types,
-          limit,
-          autocomplete,
-          language
-        );
-      }, 400),
-    [accessToken, autocomplete, bbox, country, endpoint, language, limit, proximity, source, types]
+      debounce(
+        (
+          request: { value: string },
+          onresult: (_error: Error, fc: FeatureCollection) => void,
+        ) => {
+          search(
+            endpoint,
+            source,
+            accessToken,
+            request.value,
+            onresult,
+            proximity,
+            country,
+            bbox,
+            types,
+            limit,
+            autocomplete,
+            language,
+          );
+        },
+        400,
+      ),
+    [
+      accessToken,
+      autocomplete,
+      bbox,
+      country,
+      endpoint,
+      language,
+      limit,
+      proximity,
+      source,
+      types,
+    ],
   );
 
   useEffect(() => {
@@ -173,7 +193,7 @@ export default function Geocoder({
                 feature: feature,
                 label: feature.place_name,
               }))
-              .filter((feature) => feature.label)
+              .filter((feature) => feature.label),
           );
         }
       }
@@ -195,14 +215,24 @@ export default function Geocoder({
                   setFocused(false);
                 }}
                 size="small"
-                className={classes.btn}>
-                <Icon iconName={ICON_NAME.SEARCH} fontSize="small" />
+                sx={{
+                  backgroundColor: theme.palette.background.paper,
+                  "&:hover": {
+                    backgroundColor: theme.palette.background.default,
+                  },
+                }}
+              >
+                <Icon iconName={ICON_NAME.SEARCH} htmlColor={theme.palette.secondary.light} fontSize="small" />
               </Fab>
             </Tooltip>
           )}
           {!collapsed && (
             <Autocomplete
-              className={classes.root}
+              sx={{
+                alignItems: "flex-start",
+                marginTop: theme.spacing(1),
+                marginBottom: theme.spacing(1),
+              }}
               id="geocoder"
               freeSolo
               filterOptions={(x) => x}
@@ -232,11 +262,10 @@ export default function Geocoder({
                   sx={{
                     boxShadow: 2,
                   }}
-                  className={classes.popper}
                   style={{ ...style, width: 350 }}
                 />
               )}
-              ListboxProps={{ className: classes.listBox }}
+              // ListboxProps={{ className: classes.listBox }}
               clearIcon={null}
               onChange={(_event: any, newValue: Result | null) => {
                 setOptions(newValue ? [newValue, ...options] : options);
@@ -253,13 +282,37 @@ export default function Geocoder({
               renderInput={(params) => {
                 const { InputLabelProps: _, InputProps: __, ...rest } = params;
                 return (
-                  <Paper elevation={2} className={classes.paper}>
-                    <Icon iconName={ICON_NAME.SEARCH} fontSize="small" className={classes.icon} />
-                    <Divider className={classes.divider} orientation="vertical" />
+                  <Paper
+                    elevation={2}
+                    sx={{
+                      padding: theme.spacing(0.5),
+                      display: "flex",
+                      alignItems: "center",
+                      width: 350,
+                    }}
+                  >
+                    <Icon
+                      iconName={ICON_NAME.SEARCH}
+                      fontSize="small"
+                      sx={{
+                        color: focused
+                              ? theme.palette.primary.main
+                              : theme.palette.text.secondary,
+                            margin: theme.spacing(2),
+                      }}
+                    />
+                    <Divider
+                      sx={{ height: 28, margin: theme.spacing(0.5) }}
+                      orientation="vertical"
+                    />
                     <InputBase
                       {...params.InputProps}
                       {...rest}
-                      className={classes.inputBase}
+                      sx={{
+                        marginLeft: theme.spacing(1),
+                        flex: 1,
+                        padding: 0,
+                      }}
                       placeholder="Enter an address or coordinates"
                       onBlur={() => {
                         setFocused(false);
@@ -272,23 +325,47 @@ export default function Geocoder({
                     {inputValue && (
                       <IconButton
                         type="button"
-                        className={classes.iconButton}
+                        sx={{
+                          padding: theme.spacing(1),
+                        }}
                         onClick={() => {
                           setInputValue("");
                           setValue(null);
                           setOptions([]);
-                        }}>
-                        <Icon iconName={ICON_NAME.CLOSE} fontSize="small" className={classes.icon} />
+                        }}
+                      >
+                        <Icon
+                          iconName={ICON_NAME.CLOSE}
+                          fontSize="small"
+                          sx={{
+                            color: focused
+                              ? theme.palette.primary.main
+                              : theme.palette.text.secondary,
+                            margin: theme.spacing(2),
+                          }}
+                        />
                       </IconButton>
                     )}
                     {!inputValue && (
                       <IconButton
                         type="button"
-                        className={classes.iconButton}
+                        sx={{
+                          padding: theme.spacing(1),
+                        }}
                         onClick={() => {
                           setCollapsed(true);
-                        }}>
-                        <Icon iconName={ICON_NAME.CHEVRON_LEFT} fontSize="small" className={classes.icon} />
+                        }}
+                      >
+                        <Icon
+                          iconName={ICON_NAME.CHEVRON_LEFT}
+                          fontSize="small"
+                          sx={{
+                            color: focused
+                              ? theme.palette.primary.main
+                              : theme.palette.text.secondary,
+                            margin: theme.spacing(2),
+                          }}
+                        />
                       </IconButton>
                     )}
                   </Paper>
@@ -300,19 +377,43 @@ export default function Geocoder({
                 const { className: _, style: __, ...rest } = props;
                 return (
                   <li {...rest} key={option.label}>
-                    <ListItemButton className={classes.listButton}>
+                    <ListItemButton
+                      sx={{
+                        paddingLeft: theme.spacing(3),
+                        "&:hover": {
+                          backgroundColor:
+                            theme.palette.background.default,
+                        },
+                      }}
+                    >
                       <ListItemText
                         primary={
-                          <Typography noWrap className={classes.listItemTypography} variant="body2">
-                            {parts.map((part: { highlight: boolean; text: string }, index: number) => (
-                              <Typography
-                                key={index}
-                                component="span"
-                                variant="inherit"
-                                sx={{ fontWeight: part.highlight ? 600 : 300 }}>
-                                {part.text}
-                              </Typography>
-                            ))}
+                          <Typography
+                            noWrap
+                            sx={{
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                              width: "270px",
+                            }}
+                            variant="body2"
+                          >
+                            {parts.map(
+                              (
+                                part: { highlight: boolean; text: string },
+                                index: number,
+                              ) => (
+                                <Typography
+                                  key={index}
+                                  component="span"
+                                  variant="inherit"
+                                  sx={{
+                                    fontWeight: part.highlight ? 600 : 300,
+                                  }}
+                                >
+                                  {part.text}
+                                </Typography>
+                              ),
+                            )}
                           </Typography>
                         }
                       />
@@ -327,57 +428,3 @@ export default function Geocoder({
     </>
   );
 }
-
-const useStyles = makeStyles<{ focused: boolean }>()((theme, { focused }) => ({
-  root: {
-    alignItems: "flex-start",
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  paper: {
-    padding: theme.spacing(0.5),
-    display: "flex",
-    alignItems: "center",
-    width: 350,
-  },
-  listBox: {
-    maxHeight: "176px",
-    overflow: "hidden",
-  },
-  divider: {
-    height: 28,
-    margin: theme.spacing(0.5),
-  },
-  inputBase: {
-    marginLeft: theme.spacing(1),
-    flex: 1,
-    padding: 0,
-  },
-  iconButton: {
-    padding: theme.spacing(1),
-  },
-  popper: {},
-  icon: {
-    color: focused
-      ? theme.colors.palette.focus.main
-      : theme.isDarkModeEnabled
-      ? "white"
-      : theme.colors.palette.light.greyVariant4,
-    margin: theme.spacing(2),
-  },
-  btn: {
-    backgroundColor: theme.colors.useCases.surfaces.surface2,
-    color: theme.isDarkModeEnabled ? "white" : theme.colors.palette.light.greyVariant4,
-  },
-  listItemTypography: {
-    textOverflow: "ellipsis",
-    overflow: "hidden",
-    width: "270px",
-  },
-  listButton: {
-    paddingLeft: theme.spacing(3),
-    "&:hover": {
-      backgroundColor: theme.colors.useCases.surfaces.surface2,
-    },
-  },
-}));

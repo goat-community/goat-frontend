@@ -1,11 +1,15 @@
 import React, { useRef } from "react";
-import { makeStyles } from "@/lib/theme";
-import { MenuItem, Select, InputBase, TextField } from "@mui/material";
+import {
+  MenuItem,
+  Select,
+  InputBase,
+  TextField,
+  useTheme,
+  Box,
+} from "@mui/material";
 import type { Option } from "@p4b/types/atomicComponents";
 import { v4 } from "uuid";
-import { Icon } from "@p4b/ui/components/Icon";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useTheme } from "@/lib/theme";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 interface TextInputSelectProps {
   setInputValue: (value: string | number) => void;
@@ -17,7 +21,7 @@ interface TextInputSelectProps {
 const TextInputSelect = (props: TextInputSelectProps) => {
   const { inputValue, setInputValue, options, type = "text" } = props;
   const input = useRef<HTMLInputElement | null>(null);
-  const { classes } = useStyles();
+
   const theme = useTheme();
 
   const handleInputChange = (event) => {
@@ -29,24 +33,36 @@ const TextInputSelect = (props: TextInputSelectProps) => {
   };
 
   const increaseNumber = () => {
-    if(input.current){
-      input.current.stepUp()
+    if (input.current) {
+      input.current.stepUp();
       setInputValue(input.current.value);
     }
-  }
+  };
 
   const decreaseNumber = () => {
-    if(input.current){
-      input.current.stepDown()
+    if (input.current) {
+      input.current.stepDown();
       setInputValue(input.current.value);
     }
-  }
-
+  };
 
   return (
-    <div className={classes.container}>
+    <Box
+      sx={{
+        display: "flex",
+        border: `1px solid ${theme.palette.secondary.main}`,
+        borderRadius: 4,
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
       <TextField
-        className={classes.input}
+        sx={{
+          flex: 9,
+          "& .mui-1d3z3hw-MuiOutlinedInput-notchedOutline": {
+            border: "none",
+          },
+        }}
         size="small"
         inputRef={input}
         value={inputValue}
@@ -54,12 +70,42 @@ const TextInputSelect = (props: TextInputSelectProps) => {
         type={type}
       />
       {type === "number" ? (
-        <div className={classes.numberArrows}>
-          <Icon iconName={ICON_NAME.STEPUP} viewBox="0 0 10 5" htmlColor={theme.colors.palette.focus.main} style={{ height: "13px", cursor: "pointer"}} onClick={increaseNumber}/>
-          <Icon iconName={ICON_NAME.STEPDOWN} viewBox="0 0 45 24" htmlColor={theme.colors.palette.focus.main} style={{ height: "13px", cursor: "pointer" }} onClick={decreaseNumber}/>
-        </div>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "0 8px",
+            borderLeft: `1px solid ${theme.palette.secondary.main}`,
+          }}
+        >
+          <Icon
+            iconName={ICON_NAME.STEPUP}
+            viewBox="0 0 10 5"
+            htmlColor={theme.palette.text.primary}
+            style={{ height: "13px", cursor: "pointer" }}
+            onClick={increaseNumber}
+          />
+          <Icon
+            iconName={ICON_NAME.STEPDOWN}
+            viewBox="0 0 45 24"
+            htmlColor={theme.palette.text.primary}
+            style={{ height: "13px", cursor: "pointer" }}
+            onClick={decreaseNumber}
+          />
+        </Box>
       ) : null}
-      <div className={classes.select}>
+      <Box
+        sx={{
+          flex: 1,
+          backgroundColor: "transparent",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          paddingLeft: "7px",
+          borderLeft: `1px solid ${theme.palette.secondary.main}`,
+        }}
+      >
         {options ? (
           <Select
             size="small"
@@ -68,7 +114,7 @@ const TextInputSelect = (props: TextInputSelectProps) => {
             input={<InputBase />}
             MenuProps={{
               classes: {
-                paper: classes.selectDropdown,
+                // paper: classes.selectDropdown,
               },
               anchorOrigin: {
                 vertical: "bottom",
@@ -78,7 +124,8 @@ const TextInputSelect = (props: TextInputSelectProps) => {
                 vertical: "top",
                 horizontal: "right",
               },
-            }}>
+            }}
+          >
             {options.map((option) => (
               <MenuItem key={v4()} value={option.value}>
                 {option.label}
@@ -86,57 +133,16 @@ const TextInputSelect = (props: TextInputSelectProps) => {
             ))}
           </Select>
         ) : null}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
-const useStyles = makeStyles({ name: { TextInputSelect } })((theme) => ({
-  inputWrapper: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    border: `1px solid ${theme.colors.palette.light.greyVariant2}`,
-    borderRadius: "4px",
-    "&:hover": {
-      borderColor: theme.colors.palette.dark.main,
-    },
-  },
-  container: {
-    display: "flex",
-    border: `1px solid ${theme.colors.palette.light.greyVariant2}`,
-    borderRadius: 4,
-    overflow: "hidden",
-    position: "relative",
-  },
-  input: {
-    flex: 9,
-    "& .mui-1d3z3hw-MuiOutlinedInput-notchedOutline": {
-      border: "none",
-    },
-  },
-  select: {
-    flex: 1,
-    backgroundColor: "transparent",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingLeft: "7px",
-    borderLeft: `1px solid ${theme.colors.palette.light.greyVariant2}`,
-  },
-  selectDropdown: {
-    position: "absolute",
-    width: "265px",
-    marginTop: "6px",
-    zIndex: 1000,
-  },
-  numberArrows: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    padding: "0 8px",
-    borderLeft: `1px solid ${theme.colors.palette.light.greyVariant2}`
-  },
-}));
-
 export default TextInputSelect;
+
+// selectDropdown: {
+//   position: "absolute",
+//   width: "265px",
+//   marginTop: "6px",
+//   zIndex: 1000,
+// },

@@ -53,6 +53,7 @@ import {
   faEdit,
   faXmark,
   faPen,
+  faFloppyDisk,
   faDatabase,
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -128,6 +129,8 @@ export enum ICON_NAME {
   EDIT = "edit",
   XCLOSE = "xclose",
   EDITPEN = "editpen",
+  SAVE = "save",
+=======
   DATABASE = "database",
   // Brand icons
   GOOGLE = "google",
@@ -197,6 +200,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.EDIT]: faEdit,
   [ICON_NAME.XCLOSE]: faXmark,
   [ICON_NAME.EDITPEN]: faPen,
+  [ICON_NAME.SAVE]: faFloppyDisk,
   [ICON_NAME.DATABASE]: faDatabase,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,

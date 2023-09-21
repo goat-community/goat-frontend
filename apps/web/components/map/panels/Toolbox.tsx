@@ -1,10 +1,12 @@
 import Container from "@/components/map/panels/Container";
-
-import { Text } from "@p4b/ui/components/theme";
+import { Typography } from "@mui/material";
 
 const ToolboxPanel = () => {
   return (
-    <Container header={<Text typo="page heading">Toolbox</Text>} body={<Text typo="body 1">Body</Text>} />
+    <Container
+      header={<Typography variant="h6">Toolbox</Typography>}
+      body={<Typography variant="body1">Body</Typography>}
+    />
   );
 };
 

@@ -1,12 +1,19 @@
 import { ArrowPopper } from "@/components/ArrowPoper";
 import { ListTile } from "@/components/common/ListTile";
-import { makeStyles, useTheme } from "@/lib/theme";
-import { Box, IconButton, Paper, Stack, Tooltip } from "@mui/material";
+// import { makeStyles, useTheme } from "@/lib/theme";
+import {
+  Box,
+  IconButton,
+  Paper,
+  Stack,
+  Tooltip,
+  useTheme,
+  Typography,
+} from "@mui/material";
 import Fab from "@mui/material/Fab";
 import { useState } from "react";
 
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { Text } from "@p4b/ui/components/theme";
 import { useMap } from "react-map-gl";
 
 interface Item {
@@ -27,14 +34,20 @@ interface BasemapSelectorProps {
 export function BasemapSelector(props: BasemapSelectorProps) {
   const [open, setOpen] = useState(false);
   const { styles, active, basemapChange } = props;
-  const { classes } = useStyles();
   const theme = useTheme();
   const { map } = useMap();
 
   return (
     <>
       {map && (
-        <Stack direction="column" className={classes.root}>
+        <Stack
+          direction="column"
+          sx={{
+            alignItems: "flex-end",
+            marginTop: theme.spacing(1),
+            marginBottom: theme.spacing(1),
+          }}
+        >
           <ArrowPopper
             placement="top-end"
             content={
@@ -43,15 +56,15 @@ export function BasemapSelector(props: BasemapSelectorProps) {
                   <IconButton onClick={() => setOpen(false)}>
                     <Icon
                       iconName={ICON_NAME.CLOSE}
-                      htmlColor={theme.isDarkModeEnabled ? "white" : "gray"}
+                      htmlColor={theme.palette.text.secondary}
                       fontSize="small"
                     />
                   </IconButton>
                 </Box>
 
-                <Text typo="page heading" className={classes.title}>
+                <Typography variant="body2" sx={{ margin: theme.spacing(3) }}>
                   Map Style
-                </Text>
+                </Typography>
                 <ListTile
                   items={styles}
                   selected={active}
@@ -67,7 +80,17 @@ export function BasemapSelector(props: BasemapSelectorProps) {
             onClose={() => setOpen(false)}
           >
             <Tooltip title="Basemaps" arrow placement="left">
-              <Fab onClick={() => setOpen(!open)} size="large" className={classes.btn}>
+              <Fab
+                onClick={() => setOpen(!open)}
+                size="large"
+                sx={{
+                  backgroundColor: theme.palette.background.paper,
+                  color: theme.palette.secondary.light,
+                  "&:hover": {
+                    backgroundColor: theme.palette.background.default,
+                  },
+                }}
+              >
                 <Icon iconName={ICON_NAME.MAP} fontSize="small" />
               </Fab>
             </Tooltip>
@@ -77,18 +100,3 @@ export function BasemapSelector(props: BasemapSelectorProps) {
     </>
   );
 }
-
-const useStyles = makeStyles()((theme) => ({
-  root: {
-    alignItems: "flex-end",
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  title: {
-    margin: theme.spacing(3),
-  },
-  btn: {
-    backgroundColor: theme.colors.useCases.surfaces.surface2,
-    color: theme.isDarkModeEnabled ? "white" : theme.colors.palette.light.greyVariant4,
-  },
-}));

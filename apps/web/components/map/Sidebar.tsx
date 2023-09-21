@@ -1,12 +1,19 @@
 "use client";
 
-import { makeStyles } from "@/lib/theme";
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, Tooltip } from "@mui/material";
+import {
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  Tooltip,
+  useTheme,
+} from "@mui/material";
 import type { CSSProperties } from "react";
 
 import type { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Icon } from "@p4b/ui/components/Icon";
-import { useTheme } from "@p4b/ui/components/theme";
 
 export type MapSidebarItem = {
   icon: ICON_NAME;
@@ -27,46 +34,71 @@ export type MapSidebarProps = {
 
 export type MapSidebarListProps = {
   items: MapSidebarItem[];
-  classes: Record<string, string>;
   justifyContent: CSSProperties["justifyContent"];
   sidebarPosition: MapSidebarProps["position"];
   active?: MapSidebarItem;
+  sidebarWidth: number;
   onClick?: (active: MapSidebarItem) => void;
 };
 
 const MapSidebarList = (props: MapSidebarListProps) => {
-  const { items, classes, justifyContent, sidebarPosition, active } = props;
+  const { items, justifyContent, sidebarPosition, active, sidebarWidth } = props;
   const theme = useTheme();
 
   const htmlColor = (name: string) => {
     if (name === active?.name) {
-      return theme.colors.palette.focus.main;
+      return theme.palette.primary.main;
     }
-    return theme.isDarkModeEnabled ? "white" : theme.colors.palette.light.greyVariant4;
+    return theme.palette.text.secondary
   };
 
   return (
     <List
-      className={classes.list}
       sx={{
         justifyContent,
-      }}>
+        display: "flex",
+        width: sidebarWidth,
+        flexDirection: "column",
+        padding: 0,
+      }}
+    >
       {items.map((item) => (
         <Tooltip
           key={`${item.icon}_tooltip`}
           title={item.name}
           arrow
-          placement={sidebarPosition == "left" ? "right" : "left"}>
-          <ListItem key={item.icon} disablePadding disableGutters className={classes.listItem}>
+          placement={sidebarPosition == "left" ? "right" : "left"}
+        >
+          <ListItem
+            key={item.icon}
+            disablePadding
+            disableGutters
+            sx={{
+              display: "block",
+            }}
+          >
             <ListItemButton
-              className={classes.listButton}
+              sx={{
+                minHeight: 60,
+                justifyContent: "center",
+                "&:hover": {
+                  backgroundColor: theme.palette.background.default,
+                },
+              }}
               onClick={() => {
                 if (props.onClick) {
                   props.onClick(item);
                 }
-              }}>
-              <ListItemIcon className={classes.listItemIcon}>
-                <Icon iconName={item.icon} htmlColor={htmlColor(item.name)} fontSize="small" />
+              }}
+            >
+              <ListItemIcon
+                sx={{ minWidth: 0, mr: "auto", justifyContent: "center" }}
+              >
+                <Icon
+                  iconName={item.icon}
+                  htmlColor={htmlColor(item.name)}
+                  fontSize="small"
+                />
               </ListItemIcon>
             </ListItemButton>
           </ListItem>
@@ -77,18 +109,38 @@ const MapSidebarList = (props: MapSidebarListProps) => {
 };
 
 export default function MapSidebar(props: MapSidebarProps) {
-  const { classes, cx } = useStyles({ sidebarWidth: props.width });
+
+  const {width} = props;
+
   return (
     <Drawer
       variant="permanent"
       open={false}
       anchor={props.position}
-      className={cx(classes.root, props.className)}>
-      <Box className={classes.box}>
+      sx={{
+        ".MuiDrawer-paper": {
+          flexShrink: 0,
+          whiteSpace: "nowrap",
+          border: "none",
+          width: width,
+          overflowX: "hidden",
+          overflowY: "hidden",
+          boxSizing: "border-box",
+        },
+      }}
+    >
+      <Box
+        sx={{
+          display: "grid",
+          height: "100%",
+          gridTemplateRows: "repeat(3, 1fr)",
+          justify: "center",
+        }}
+      >
         <MapSidebarList
           items={props.topItems ?? []}
           active={props.active}
-          classes={classes}
+          sidebarWidth={width}
           justifyContent="flex-start"
           sidebarPosition={props.position}
           onClick={props.onClick}
@@ -96,7 +148,7 @@ export default function MapSidebar(props: MapSidebarProps) {
         <MapSidebarList
           items={props.centerItems ?? []}
           active={props.active}
-          classes={classes}
+          sidebarWidth={width}
           justifyContent="center"
           sidebarPosition={props.position}
           onClick={props.onClick}
@@ -104,7 +156,7 @@ export default function MapSidebar(props: MapSidebarProps) {
         <MapSidebarList
           items={props.bottomItems ?? []}
           active={props.active}
-          classes={classes}
+          sidebarWidth={width}
           justifyContent="flex-end"
           sidebarPosition={props.position}
           onClick={props.onClick}
@@ -113,46 +165,3 @@ export default function MapSidebar(props: MapSidebarProps) {
     </Drawer>
   );
 }
-
-const useStyles = makeStyles<{ sidebarWidth: number }>({ name: { MapSidebar } })(
-  (theme, { sidebarWidth }) => ({
-    root: {
-      ".MuiDrawer-paper": {
-        flexShrink: 0,
-        whiteSpace: "nowrap",
-        border: "none",
-        width: sidebarWidth,
-        overflowX: "hidden",
-        overflowY: "hidden",
-        boxSizing: "border-box",
-      },
-    },
-    box: {
-      display: "grid",
-      height: "100%",
-      gridTemplateRows: "repeat(3, 1fr)",
-      justify: "center",
-    },
-    list: {
-      display: "flex",
-      width: sidebarWidth,
-      flexDirection: "column",
-      padding: 0,
-    },
-    listItem: {
-      display: "block",
-    },
-    listItemIcon: {
-      minWidth: 0,
-      mr: "auto",
-      justifyContent: "center",
-    },
-    listButton: {
-      minHeight: 60,
-      justifyContent: "center",
-      "&:hover": {
-        backgroundColor: theme.colors.useCases.surfaces.surface2,
-      },
-    },
-  })
-);
