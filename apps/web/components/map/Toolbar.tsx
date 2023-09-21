@@ -1,49 +1,60 @@
 "use client";
 
 import UserInfoMenu from "@/components/UserInfoMenu";
-import {
-  AppBar,
-  Box,
-  Chip,
-  Stack,
-  Toolbar,
-  useTheme,
-  Typography,
-} from "@mui/material";
+import { Chip, Stack, useTheme, Typography } from "@mui/material";
 import Divider from "@mui/material/Divider";
-
-import { GOATLogoIconOnlyGreen } from "@p4b/ui/assets/svg/GOATLogoIconOnlyGreen";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { Toolbar } from "../header/Toolbar";
 
 export type MapToolbarProps = {
   projectTitle: string;
   lastSaved: string;
   tags: string[];
-  height?: number;
+  height: number;
 };
 
 export function MapToolbar(props: MapToolbarProps) {
   const theme = useTheme();
-  const { tags, projectTitle, lastSaved } = props;
+  const { tags, projectTitle, lastSaved, height } = props;
 
   return (
-    <AppBar sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}>
-      <Toolbar
-        variant="dense"
-        sx={{ minHeight: props.height, height: props.height }}
-      >
-        <GOATLogoIconOnlyGreen
-          style={{ width: "30px", height: "30px", cursor: "pointer" }}
-        />
+    <Toolbar
+      height={height}
+      LeftToolbarChild={
         <Stack
           direction="row"
           alignItems="center"
           sx={{
             mx: theme.spacing(2),
+            gap: theme.spacing(2),
           }}
         >
-          <Typography variant="h5">{projectTitle}</Typography>
-          <Divider orientation="vertical" flexItem />
-          <Typography variant="body2">Last saved: {lastSaved}</Typography>
+          <Typography variant="caption" sx={{ marginLeft: theme.spacing(5) }}>
+            {projectTitle}
+          </Typography>
+          <Divider
+            orientation="vertical"
+            flexItem
+            sx={{
+              [theme.breakpoints.down("sm")]: {
+                display: "none",
+              },
+            }}
+          />
+          <Typography
+            variant="caption"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: theme.spacing(1),
+              [theme.breakpoints.down("md")]: {
+                display: "none",
+              },
+            }}
+          >
+            <Icon iconName={ICON_NAME.SAVE} style={{ fontSize: "13px" }} />
+            Last saved: {lastSaved}
+          </Typography>
           {tags &&
             tags.map((tag) => (
               <Chip
@@ -52,13 +63,19 @@ export function MapToolbar(props: MapToolbarProps) {
                 key={tag}
                 sx={{
                   mx: theme.spacing(1),
+                  [theme.breakpoints.down("sm")]: {
+                    display: "none",
+                  },
                 }}
               />
             ))}
         </Stack>
-        <Box sx={{ flexGrow: 1 }} />
-        <UserInfoMenu />
-      </Toolbar>
-    </AppBar>
+      }
+      RightToolbarChild={
+        <>
+          <UserInfoMenu />
+        </>
+      }
+    />
   );
 }

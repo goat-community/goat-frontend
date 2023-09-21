@@ -1,10 +1,9 @@
 import Container from "@/components/map/panels/Container";
-
-import { Text } from "@p4b/ui/components/theme";
+import { Typography } from "@mui/material";
 
 const ScenarioPanel = () => {
   return (
-    <Container header={<Text typo="page heading">Scenario</Text>} body={<Text typo="body 1">Body</Text>} />
+    <Container header={<Typography variant="h6">Scenario</Typography>} body={<Typography variant="body1">Body</Typography>} />
   );
 };
 

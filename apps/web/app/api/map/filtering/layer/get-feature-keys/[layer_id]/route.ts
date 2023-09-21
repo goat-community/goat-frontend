@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 
-const url = "http://127.0.0.1:8080";
+const url = "https://geoapi.goat.dev.plan4better.de";
 
 export async function GET(request: Request) {
   const layer_id = request.url.slice(request.url.lastIndexOf("/") + 1);
-  console.log(layer_id);
   try {
     const res = await fetch(`${url}/collections/${layer_id}/queryables`);
-
+    
     const keys = await res.json();
+    console.log(keys);
 
     return NextResponse.json(keys);
   } catch (error) {

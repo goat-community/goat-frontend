@@ -1,22 +1,27 @@
 import React, { useState } from "react";
 import { comparerModes } from "@/public/assets/data/comparers_filter";
-import type { ComparerMode } from "@/types/map/filtering";
-
-import { SelectField } from "@p4b/ui/components/Inputs";
 
 import FilterOptionField from "./FilterOptionField";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Icon } from "@p4b/ui/components/Icon";
-import { Text } from "@/lib/theme";
-import { Box } from "@mui/material";
 import { v4 } from "uuid";
-import { Chip } from "@/components/common/Chip";
-import { makeStyles } from "@/lib/theme";
-import { Button, Menu, MenuItem } from "@mui/material";
+import {
+  Button,
+  Menu,
+  MenuItem,
+  Box,
+  useTheme,
+  Typography,
+  Select,
+  Chip,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import type { Expression } from "@/types/map/filtering";
 import { useDispatch } from "react-redux";
 import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
 import type { LayerPropsMode } from "@/types/map/filtering";
+import type { SelectChangeEvent } from "@mui/material";
 
 interface ExpressionProps {
   isLast: boolean;
@@ -35,36 +40,36 @@ const Exppression = (props: ExpressionProps) => {
     expression.expression ? expression.expression.value : "",
   );
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const open = Boolean(anchorEl);
-
-  const { classes } = useStyles();
-
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   function getFeatureAttribute(type: string | string[]) {
     const valueToFilter = keys.filter((key) => key.name === type);
-    if (valueToFilter[0].type === "string") {
+    console.log(valueToFilter);
+    if (valueToFilter.length && valueToFilter[0].type === "string") {
       return "text";
     }
     return valueToFilter[0].type;
   }
 
-  function handleAttributeSelect(value: string) {
+  function handleAttributeSelect(event: SelectChangeEvent<string>) {
     const newExpression = { ...expression };
     newExpression.attribute = {
-      type: getFeatureAttribute(value),
-      name: value,
+      type: getFeatureAttribute(event.target.value),
+      name: event.target.value,
     };
-    setAttributeSelected(value);
+    setAttributeSelected(event.target.value);
     dispatch(addExpression(newExpression));
   }
 
-  function handleComparerSelect(value: string) {
+  function handleComparerSelect(event: SelectChangeEvent<string>) {
     const newExpression = { ...expression };
-    newExpression.expression = getComparer(value)[0];
+    newExpression.expression = getComparer(event.target.value)[0];
     newExpression.firstInput = "";
     newExpression.secondInput = "";
-    setComparerSelected(value);
+    setComparerSelected(event.target.value);
     dispatch(addExpression(newExpression));
     dispatch(removeFilter(newExpression.id));
   }
@@ -81,16 +86,30 @@ const Exppression = (props: ExpressionProps) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  console.log(comparerModes);
   return (
     <>
       <Box key={v4()}>
-        <Box className={classes.expressionHeader}>
-          <Text typo="body 2" className={classes.label}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: theme.spacing(4),
+            padding: "9.5px 0",
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: theme.palette.text.secondary,
+              fontWeight: "600",
+            }}
+          >
             Expression
-          </Text>
+          </Typography>
           <Box>
-            <Button onClick={openMorePopover}>
+            <Button onClick={openMorePopover} variant="text">
               <Icon iconName={ICON_NAME.ELLIPSIS} />
             </Button>
             <Menu
@@ -107,37 +126,54 @@ const Exppression = (props: ExpressionProps) => {
             </Menu>
           </Box>
         </Box>
-        <SelectField
-          className={classes.fields}
-          options={keys.map((key) => ({ name: key.name, value: key.name }))}
-          label="Select attribute"
+        <FormControl
+          fullWidth
           size="small"
-          defaultValue={attributeSelected ? attributeSelected : ""}
-          updateChange={handleAttributeSelect}
-        />
-        <SelectField
-          className={classes.fields}
-          options={
-            attributeSelected.length
-              ? comparerModes[getFeatureAttribute(attributeSelected)].map(
-                  (attr: ComparerMode) => ({
-                    name: attr.label,
-                    value: attr.value,
-                  }),
-                )
-              : [
-                  {
-                    name: "",
-                    value: "",
-                  },
-                ]
-          }
-          label="Select an expression"
-          defaultValue={comparerSelected ? comparerSelected : ""}
+          sx={{
+            margin: `${theme.spacing(1)} 0`,
+          }}
+        >
+          <InputLabel id="demo-simple-select-label">
+            Select attribute
+          </InputLabel>
+          <Select
+            label="Select attribute"
+            defaultValue={attributeSelected ? attributeSelected : ""}
+            onChange={handleAttributeSelect}
+          >
+            {keys.map((key) => (
+              <MenuItem key={v4()} value={key.name}>
+                {key.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl
           size="small"
-          disabled={attributeSelected.length ? false : true}
-          updateChange={handleComparerSelect}
-        />
+          fullWidth
+          sx={{
+            margin: `${theme.spacing(1)} 0`,
+          }}
+        >
+          <InputLabel id="demo-simple-select-label">
+            Select an expression
+          </InputLabel>
+          <Select
+            label="Select an expression"
+            defaultValue={comparerSelected ? comparerSelected : ""}
+            disabled={attributeSelected.length ? false : true}
+            onChange={handleComparerSelect}
+          >
+            {attributeSelected.length &&
+              comparerModes[getFeatureAttribute(attributeSelected)].map(
+                (key) => (
+                  <MenuItem key={v4()} value={key.value}>
+                    {key.label}
+                  </MenuItem>
+                ),
+              )}
+          </Select>
+        </FormControl>
         {attributeSelected.length ? (
           <>
             {comparerSelected.length ? (
@@ -158,7 +194,13 @@ const Exppression = (props: ExpressionProps) => {
         ) : null}
       </Box>
       {isLast ? (
-        <Box className={classes.andExpression}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            margin: `${theme.spacing(4)}px 0`,
+          }}
+        >
           <Chip
             label={logicalOperator === "match_all_expressions" ? "And" : "Or"}
           />
@@ -167,27 +209,5 @@ const Exppression = (props: ExpressionProps) => {
     </>
   );
 };
-
-const useStyles = makeStyles({ name: { Exppression } })((theme) => ({
-  expressionHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: theme.spacing(4),
-    padding: "9.5px 0",
-  },
-  andExpression: {
-    display: "flex",
-    justifyContent: "center",
-    margin: `${theme.spacing(4)}px 0`,
-  },
-  fields: {
-    margin: `${theme.spacing(2)}px 0`,
-  },
-  label: {
-    color: theme.colors.palette.dark.main,
-    fontWeight: "600",
-  },
-}));
 
 export default Exppression;

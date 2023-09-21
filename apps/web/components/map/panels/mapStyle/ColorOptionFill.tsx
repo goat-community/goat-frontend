@@ -1,7 +1,13 @@
-import BasicAccordion from "@p4b/ui/components/BasicAccordion";
-import { makeStyles } from "@/lib/theme";
 import Box from "@p4b/ui/components/Box";
-import { Divider, TextField, Typography } from "@mui/material";
+import {
+  Divider,
+  TextField,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  useTheme
+} from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import {
@@ -9,12 +15,14 @@ import {
   setLayerFillOutLineColor,
 } from "@/lib/store/styling/slice";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { selectMapLayer } from '@/lib/store/styling/selectors'
+import { selectMapLayer } from "@/lib/store/styling/selectors";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 const ColorOptionFill = () => {
-  const mapLayer = useSelector(selectMapLayer)
+  const mapLayer = useSelector(selectMapLayer);
 
-  const { classes } = useStyles();
+  const theme = useTheme();
+
   const dispatch = useAppDispatch();
 
   const handleFillColorChange = (
@@ -42,85 +50,126 @@ const ColorOptionFill = () => {
   // };
 
   return (
-    <BasicAccordion title="Color" variant="secondary">
-      <Box className={classes.root}>
-        <Box className={classes.colorContainer}>
-          <Typography variant="body1">Fill</Typography>
-          <Box className={classes.inputsContainer}>
-            <TextField
-              type="color"
-              size="small"
-              className={classes.inputs}
-              value={mapLayer?.paint ? mapLayer?.paint["fill-color"] : "#000"}
-              onChange={handleFillColorChange}
-            />
-            {/*<TextField*/}
-            {/*  type="number"*/}
-            {/*  size="small"*/}
-            {/*  className={classes.inputs}*/}
-            {/*  value={fillOpacity}*/}
-            {/*  onChange={handleFillOpacityChange}*/}
-            {/*/>*/}
+    <Box>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<Icon iconName={ICON_NAME.CHEVRON_DOWN} />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+          sx={{
+            padding: "0 16px",
+          }}
+        >
+          <Typography>Color</Typography>
+        </AccordionSummary>
+        <AccordionDetails
+          sx={{
+            padding: "0 16px",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              rowGap: "16px",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                rowGap: "8px",
+              }}
+            >
+              <Typography variant="body1">Fill</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  columnGap: "4px",
+                }}
+              >
+                <TextField
+                  type="color"
+                  size="small"
+                  sx={{
+                    width: "50%",
+                    "& .MuiInputBase-root": {
+                      height: "32px",
+                      padding: "2px 8px",
+                    },
+                    input: {
+                      padding: "unset",
+                      height: "100%",
+                    },
+                  }}
+                  value={
+                    mapLayer?.paint ? mapLayer?.paint["fill-color"] : "#000"
+                  }
+                  onChange={handleFillColorChange}
+                />
+                {/*<TextField*/}
+                {/*  type="number"*/}
+                {/*  size="small"*/}
+                {/*  className={classes.inputs}*/}
+                {/*  value={fillOpacity}*/}
+                {/*  onChange={handleFillOpacityChange}*/}
+                {/*/>*/}
+              </Box>
+            </Box>
+            <Divider sx={{
+              width: "100%",
+              borderTop: "none",
+              borderBottom: `1px solid ${theme.palette.primary.main}`,
+            }} />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                rowGap: "8px",
+              }}
+            >
+              <Typography variant="body1">Stroke</Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  columnGap: "4px",
+                }}
+              >
+                <TextField
+                  type="color"
+                  size="small"
+                  sx={{
+                    width: "50%",
+                    "& .MuiInputBase-root": {
+                      height: "32px",
+                      padding: "2px 8px",
+                    },
+                    input: {
+                      padding: "unset",
+                      height: "100%",
+                    },
+                  }}
+                  value={
+                    mapLayer?.paint
+                      ? mapLayer?.paint["fill-outline-color"]
+                      : "#000"
+                  }
+                  onChange={handleStrokeColorChange}
+                />
+                {/*<TextField*/}
+                {/*  type="number"*/}
+                {/*  size="small"*/}
+                {/*  className={classes.inputs}*/}
+                {/*  value={strokeOpacity}*/}
+                {/*  onChange={handleStrokeOpacityChange}*/}
+                {/*/>*/}
+              </Box>
+            </Box>
           </Box>
-        </Box>
-        <Divider className={classes.divider} />
-        <Box className={classes.colorContainer}>
-          <Typography variant="body1">Stroke</Typography>
-          <Box className={classes.inputsContainer}>
-            <TextField
-              type="color"
-              size="small"
-              className={classes.inputs}
-              value={
-                mapLayer?.paint ? mapLayer?.paint["fill-outline-color"] : "#000"
-              }
-              onChange={handleStrokeColorChange}
-            />
-            {/*<TextField*/}
-            {/*  type="number"*/}
-            {/*  size="small"*/}
-            {/*  className={classes.inputs}*/}
-            {/*  value={strokeOpacity}*/}
-            {/*  onChange={handleStrokeOpacityChange}*/}
-            {/*/>*/}
-          </Box>
-        </Box>
-      </Box>
-    </BasicAccordion>
+        </AccordionDetails>
+      </Accordion>
+    </Box>
   );
 };
-
-const useStyles = makeStyles({ name: { ColorOptionFill } })((theme) => ({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-    rowGap: "16px",
-  },
-  colorContainer: {
-    display: "flex",
-    flexDirection: "column",
-    rowGap: "8px",
-  },
-  inputsContainer: {
-    display: "flex",
-    columnGap: "4px",
-  },
-  inputs: {
-    width: "50%",
-    "& .MuiInputBase-root": {
-      height: "32px",
-      padding: "2px 8px",
-    },
-    input: {
-      padding: "unset",
-      height: "100%",
-    },
-  },
-  divider: {
-    width: "100%",
-    borderTop: "none",
-    borderBottom: `1px solid ${theme.colors.palette.focus}`,
-  },
-}));
 
 export default ColorOptionFill;

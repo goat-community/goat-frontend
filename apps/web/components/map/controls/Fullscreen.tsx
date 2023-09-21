@@ -1,13 +1,14 @@
-import { Fab, Stack, Tooltip } from "@mui/material";
+import { Fab, Stack, Tooltip, useTheme } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { makeStyles } from "@/lib/theme";
 import { useMap } from "react-map-gl";
 import { useState } from "react";
 import screenfull from "screenfull";
 
 export function Fullscren() {
   const [fullscreen, setFullscreen] = useState(screenfull.isFullscreen);
-  const { classes } = useStyles();
+
+  const theme = useTheme();
+
   const { map } = useMap();
   if (screenfull.isEnabled) {
     screenfull.on("change", () => {
@@ -23,10 +24,38 @@ export function Fullscren() {
     <>
       {map && (
         <>
-          <Stack direction="column" className={classes.root}>
-            <Tooltip title={fullscreen ? "Exit Fullscreen" : "Fullscreen"} arrow placement="left">
-              <Fab onClick={() => toggleFullscreen()} size="small" className={classes.btn}>
-                <Icon iconName={fullscreen ? ICON_NAME.MINIMIZE : ICON_NAME.MAXIMIZE} fontSize="small" />
+          <Stack
+            direction="column"
+            sx={{
+              alignItems: "flex-end",
+              marginTop: theme.spacing(1),
+              marginBottom: theme.spacing(1),
+            }}
+          >
+            <Tooltip
+              title={fullscreen ? "Exit Fullscreen" : "Fullscreen"}
+              arrow
+              placement="left"
+            >
+              <Fab
+                onClick={() => toggleFullscreen()}
+                size="small"
+                sx={{
+                  backgroundColor: theme.palette.background.paper,
+                  marginTop: theme.spacing(1),
+                  marginBottom: theme.spacing(1),
+                  "&:hover": {
+                    backgroundColor: theme.palette.background.default,
+                  },
+                }}
+              >
+                <Icon
+                  iconName={
+                    fullscreen ? ICON_NAME.MINIMIZE : ICON_NAME.MAXIMIZE
+                  }
+                  htmlColor={theme.palette.secondary.light}
+                  fontSize="small"
+                />
               </Fab>
             </Tooltip>
           </Stack>
@@ -35,17 +64,3 @@ export function Fullscren() {
     </>
   );
 }
-
-const useStyles = makeStyles()((theme) => ({
-  root: {
-    alignItems: "flex-end",
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  btn: {
-    backgroundColor: theme.colors.useCases.surfaces.surface2,
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    color: theme.isDarkModeEnabled ? "white" : theme.colors.palette.light.greyVariant4,
-  },
-}));
