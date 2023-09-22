@@ -10,6 +10,7 @@ import {
   useTheme,
   IconButton,
   Divider,
+  Link,
 } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
@@ -24,14 +25,28 @@ export type MapToolbarProps = {
 };
 
 export function Toolbar(props: MapToolbarProps) {
-  const { LeftToolbarChild, RightToolbarChild, height, showHambugerMenu, onMenuIconClick } = props;
+  const {
+    LeftToolbarChild,
+    RightToolbarChild,
+    height,
+    showHambugerMenu,
+    onMenuIconClick,
+  } = props;
 
   const theme = useTheme();
 
   return (
-    <AppBar color="primary" sx={{ zIndex: (theme) => theme.zIndex.drawer + 2 }}>
+    <AppBar
+      position="relative"
+      elevation={0}
+      color="primary"
+      sx={{
+        zIndex: (theme) => theme.zIndex.drawer + 2,
+        borderBottom: "1px solid rgba(58, 53, 65, 0.12)",
+      }}
+    >
       <MUIToolbar variant="dense" sx={{ minHeight: height, height: height }}>
-      {showHambugerMenu && (
+        {showHambugerMenu && (
           <>
             <IconButton onClick={onMenuIconClick}>
               <Icon iconName={ICON_NAME.HAMBURGER_MENU} fontSize="inherit" />
@@ -40,10 +55,29 @@ export function Toolbar(props: MapToolbarProps) {
             <Divider orientation="vertical" flexItem sx={{ ml: 2, mr: 3 }} />
           </>
         )}
-        
-        <GOATLogoIconOnlyGreen
-          style={{ width: "30px", height: "30px", cursor: "pointer" }}
-        />
+
+        <Link
+          href="/home"
+          style={{
+            width: "35px",
+            height: "35px",
+            cursor: "pointer",
+          }}
+        >
+          <Box
+            sx={{
+              transition: "transform 0.2s ease-in-out",
+              "&:hover": {
+                transform: "scale(1.1)",
+              },
+            }}
+          >
+            <GOATLogoIconOnlyGreen
+              style={{ width: "30px", height: "30px", cursor: "pointer" }}
+            />
+          </Box>
+        </Link>
+
         <Stack
           direction="row"
           alignItems="center"

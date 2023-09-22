@@ -55,6 +55,7 @@ import {
   faPen,
   faFloppyDisk,
   faDatabase,
+  faFolderPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGoogle,
@@ -91,6 +92,7 @@ export enum ICON_NAME {
   CLOSE = "close",
   HOUSE = "house",
   FOLDER = "folder",
+  FOLDER_NEW = "folder-new",
   SETTINGS = "settings",
   CIRCLECHECK = "circleCheck",
   CIRCLEINFO = "circleInfo",
@@ -130,7 +132,6 @@ export enum ICON_NAME {
   XCLOSE = "xclose",
   EDITPEN = "editpen",
   SAVE = "save",
-=======
   DATABASE = "database",
   // Brand icons
   GOOGLE = "google",
@@ -163,6 +164,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.CLOSE]: faClose,
   [ICON_NAME.HOUSE]: faHouse,
   [ICON_NAME.FOLDER]: faFolder,
+  [ICON_NAME.FOLDER_NEW]: faFolderPlus,
   [ICON_NAME.SETTINGS]: faGears,
   [ICON_NAME.CIRCLECHECK]: faCircleCheck,
   [ICON_NAME.CIRCLEINFO]: faCircleExclamation,
@@ -239,7 +241,7 @@ library.add(...Object.values(nameToIcon));
 export function Icon({
   iconName,
   ...rest
-}: SvgIconProps & { iconName: ICON_NAME }) {
+}: SvgIconProps & { iconName: ICON_NAME }): JSX.Element {
   if (!(iconName in nameToIcon)) {
     throw new Error(`Invalid icon name: ${iconName}`);
   }

@@ -24,7 +24,13 @@ const TileGrid = (props: TileGridProps) => {
   };
 
   return (
-    <Box>
+    <Box
+      sx={{
+        ...(props.view === "list" && {
+          boxShadow: 3,
+        }),
+      }}
+    >
       <Grid container spacing={props.view === "list" ? 0 : 5}>
         {(isLoading ? Array.from(new Array(4)) : items ?? []).map(
           (item: Project, index: number) => (

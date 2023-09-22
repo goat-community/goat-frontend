@@ -1,10 +1,12 @@
 const MuiPaper = () => {
   return {
-    styleOverrides: {
-      root: {
-        backgroundImage: 'none'
-      }
-    }
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "unset",
+        },
+      },
+    },
   };
 };
 

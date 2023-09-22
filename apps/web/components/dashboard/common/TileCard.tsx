@@ -217,12 +217,7 @@ const TileCard = (props: TileCard) => {
   const updatedAtText = (
     <>
       {updatedAt && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={1}
-          sx={{ pb: 0 }}
-        >
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ pb: 0 }}>
           <Typography variant="caption" noWrap>
             Last updated:{" "}
             {formatDistance(new Date(updatedAt), new Date(), {
@@ -237,12 +232,7 @@ const TileCard = (props: TileCard) => {
   const createdAtText = (
     <>
       {createdAt && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={1}
-          sx={{ pb: 0 }}
-        >
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ pb: 0 }}>
           <Typography variant="caption" noWrap>
             Created:{" "}
             {formatDistance(new Date(createdAt), new Date(), {
@@ -301,11 +291,11 @@ const TileCard = (props: TileCard) => {
           display: "flex",
           flexDirection: cardType === "grid" ? "column" : "row",
           ...(cardType === "list" && {
-            boxShadow: 0,
             p: 2,
             borderTop: `1px solid ${theme.palette.divider}`,
             alignItems: "center",
             borderRadius: 0,
+            boxShadow: 0,
           }),
           "&:hover": {
             cursor: "pointer",
