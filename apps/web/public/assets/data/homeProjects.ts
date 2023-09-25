@@ -51,7 +51,7 @@ export const tempCardInfo: CardDataType[] = [
     ],
   },
   {
-    buttons: [{label: "See all", path: "/content"}],
+    buttons: [{label: "See all", path: "/datasets"}],
     title: "Recent Contents",
     cards: [
       {

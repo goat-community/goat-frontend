@@ -62,7 +62,7 @@ const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
         }}
       >
         <Button onClick={onClose} variant="text" sx={{ borderRadius: 0 }}>
-          <Typography variant="body2" fontWeight="bold" color="inherit">
+          <Typography variant="body2" fontWeight="bold">
             Cancel
           </Typography>
         </Button>

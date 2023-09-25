@@ -15,24 +15,24 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import GridViewIcon from "@mui/icons-material/GridView";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useEffect, useState } from "react";
-import { useProjects } from "@/lib/api/projects";
+import { useLayers } from "@/lib/api/layers";
 import TileGrid from "@/components/dashboard/common/TileGrid";
 import type { SelectedFolder } from "@/components/dashboard/common/FoldersTreeView";
 import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import { debounce } from "@mui/material/utils";
 
-const Projects = () => {
+const Datasets = () => {
   const [queryParams, setQueryParams] = useState<GetContentQueryParams>({
     order: "descendent",
     order_by: "updated_at",
   });
 
   const {
-    projects,
-    isLoading: isProjectLoading,
-    isError: _isProjectError,
-  } = useProjects(queryParams);
+    layers: datasets,
+    isLoading: isDataLoading,
+    isError: _isDatasetError,
+  } = useLayers(queryParams);
 
   const [view, setView] = useState<"list" | "grid">("grid");
   const handleViewToggle = () => {
@@ -70,15 +70,15 @@ const Projects = () => {
           mb: 8,
         }}
       >
-        <Typography variant="h6">Projects</Typography>
+        <Typography variant="h6">Datasets</Typography>
         <Button
           disableElevation={true}
           startIcon={
             <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />
           }
-          href="/projects"
+          href="/layers"
         >
-          New project
+          Upload
         </Button>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>
@@ -106,8 +106,8 @@ const Projects = () => {
               <Icon iconName={ICON_NAME.SEARCH} style={{ fontSize: 17 }} />
               <InputBase
                 sx={{ ml: 3, flex: 1 }}
-                placeholder="Search Projects"
-                inputProps={{ "aria-label": "search projects" }}
+                placeholder="Search Datasets"
+                inputProps={{ "aria-label": "search datasets" }}
                 onChange={(e) =>
                   debounce(() => {
                     setQueryParams({
@@ -157,9 +157,9 @@ const Projects = () => {
         <Grid item xs={9}>
           <TileGrid
             view={view}
-            items={projects?.items ?? []}
-            isLoading={isProjectLoading}
-            type="project"
+            items={datasets?.items ?? []}
+            isLoading={isDataLoading}
+            type="layer"
           />
         </Grid>
       </Grid>
@@ -167,4 +167,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Datasets;
