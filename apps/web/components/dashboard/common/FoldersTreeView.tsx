@@ -14,7 +14,10 @@ import { useFolders } from "@/lib/api/folders";
 import { useState } from "react";
 import type { SelectedFolderForEdit } from "@/components/modals/EditFolder";
 import EditFolderModal from "@/components/modals/EditFolder";
-import MoreMenu from "@/components/common/MoreMenu";
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import MoreMenu from "@/components/common/PopperMenu";
+import type { GetLayersQueryParams } from "@/lib/validations/layer";
+import type { GetProjectsQueryParams } from "@/lib/validations/project";
 
 type EditModal = {
   type: "create" | "update" | "delete";
@@ -41,18 +44,31 @@ function getIconName(type: string, id: string): ICON_NAME {
 }
 
 interface FoldersTreeViewProps {
-  selectedFolder: SelectedFolder;
-  onFolderSelect: (folder: SelectedFolder) => void;
+  setQueryParams: (
+    params: GetLayersQueryParams | GetProjectsQueryParams,
+  ) => void;
+  queryParams: GetLayersQueryParams | GetProjectsQueryParams;
 }
 
 export default function FoldersTreeView(props: FoldersTreeViewProps) {
+  const { setQueryParams, queryParams } = props;
   const [open, setOpen] = useState<boolean[]>([true, false, false]);
-  const { onFolderSelect, selectedFolder } = props;
   const handleListItemClick = (
     _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     item: SelectedFolder,
   ) => {
-    onFolderSelect(item);
+    setSelectedFolder(item);
+    if (item.id !== "0" && item.type === "folder") {
+      setQueryParams({
+        ...queryParams,
+        folder_id: item.id,
+      });
+    } else {
+      const { folder_id: _, ...rest } = queryParams;
+      setQueryParams({
+        ...rest,
+      });
+    }
   };
   const [editModal, setEditModal] = useState<EditModal>();
   const { folders } = useFolders({});
@@ -75,6 +91,23 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
   const folderTypes = ["folder", "team", "organization"];
   const folderTypeTitles = ["My Content", "Teams", "Organizations"];
 
+  const moreMenuItems: PopperMenuItem[] = [
+    {
+      label: "Rename",
+      icon: ICON_NAME.EDIT,
+    },
+    {
+      label: "Delete",
+      icon: ICON_NAME.TRASH,
+      color: theme.palette.error.main,
+    },
+  ];
+  const [selectedFolder, setSelectedFolder] = useState<SelectedFolder>({
+    type: "folder",
+    id: "0",
+    name: "Home",
+  });
+
   return (
     <>
       <EditFolderModal
@@ -84,6 +117,14 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
           setEditModal(undefined);
         }}
         onEdit={() => {
+          if (editModal?.type === "delete") {
+            setSelectedFolder({
+              type: "folder",
+              id: "0",
+              name: "Home",
+            });
+          }
+
           setEditModal(undefined);
         }}
         existingFolderNames={folders?.items?.map((folder) => folder.name)}
@@ -236,37 +277,36 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
                         {folderTypes[typeIndex] === "folder" &&
                           item?.id !== "0" && (
                             <MoreMenu
-                              menuItems={[
-                                {
-                                  label: "Rename",
-                                  icon: ICON_NAME.EDIT,
-                                  onClick: () => {
-                                    setEditModal({
-                                      type: "update",
-                                      selectedFolder: {
-                                        id: item.id,
-                                        name: item.name,
-                                      },
-                                      open: true,
-                                    });
-                                  },
-                                },
-                                {
-                                  label: "Delete",
-                                  icon: ICON_NAME.TRASH,
-                                  color: theme.palette.error.main,
-                                  onClick: () => {
-                                    setEditModal({
-                                      type: "delete",
-                                      selectedFolder: {
-                                        id: item.id,
-                                        name: item.name,
-                                      },
-                                      open: true,
-                                    });
-                                  },
-                                },
-                              ]}
+                              menuItems={moreMenuItems}
+                              menuButton={
+                                <IconButton size="medium">
+                                  <Icon
+                                    iconName={ICON_NAME.MORE_VERT}
+                                    fontSize="small"
+                                  />
+                                </IconButton>
+                              }
+                              onSelect={(index) => {
+                                if (index === 0) {
+                                  setEditModal({
+                                    type: "update",
+                                    selectedFolder: {
+                                      id: item.id,
+                                      name: item.name,
+                                    },
+                                    open: true,
+                                  });
+                                } else if (index === 1) {
+                                  setEditModal({
+                                    type: "delete",
+                                    selectedFolder: {
+                                      id: item.id,
+                                      name: item.name,
+                                    },
+                                    open: true,
+                                  });
+                                }
+                              }}
                             />
                           )}
                       </ListItemButton>

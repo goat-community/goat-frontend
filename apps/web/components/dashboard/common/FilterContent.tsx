@@ -1,0 +1,144 @@
+import { ArrowPopper } from "@/components/ArrowPoper";
+import { layerTypesArray, type LayerType } from "@/lib/validations/layer";
+import {
+  Badge,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useState } from "react";
+
+export interface FilterContentMenuProps {
+  type: "project" | "layer";
+  onLayerTypeSelect?: (layerTypes: LayerType[]) => void;
+  onTagSelect?: (tags: string[]) => void;
+}
+
+export default function FilterContentMenu(props: FilterContentMenuProps) {
+  const theme = useTheme();
+  const [layerTypes, setLayerTypes] = useState<LayerType[]>([]);
+  const [filterContentMenuOpen, setFilterContentMenuOpen] =
+    useState<boolean>(false);
+
+  //todo get tags from api
+  const [tags, setTags] = useState<string[]>([]);
+
+  return (
+    <ArrowPopper
+      open={filterContentMenuOpen}
+      placement="bottom"
+      onClose={() => setFilterContentMenuOpen(false)}
+      arrow={false}
+      content={
+        <Paper
+          elevation={8}
+          sx={{
+            minWidth: 220,
+            maxWidth: 340,
+            overflow: "auto",
+            py: theme.spacing(2),
+            px: theme.spacing(3),
+          }}
+        >
+          <Typography variant="body1" sx={{ pb: 4 }}>
+            Filters
+          </Typography>
+          <Grid container spacing={2}>
+            {props.type === "layer" && (
+              <Grid item xs={12}>
+                <Stack direction="column">
+                  <Typography variant="body2" gutterBottom>
+                    Layer Types
+                  </Typography>
+                  {layerTypesArray.map((layerType, index) => (
+                    <FormControlLabel
+                      key={index}
+                      control={
+                        <Checkbox
+                          size="small"
+                          checked={layerTypes?.includes(layerType)}
+                          onChange={() => {
+                            let newLayerTypes = [...layerTypes];
+                            if (layerTypes?.includes(layerType)) {
+                              newLayerTypes = newLayerTypes.filter(
+                                (type) => type !== layerType,
+                              );
+                            } else {
+                              newLayerTypes.push(layerType);
+                            }
+                            props.onLayerTypeSelect?.(newLayerTypes);
+                            setLayerTypes(newLayerTypes);
+                          }}
+                        />
+                      }
+                      label={layerType}
+                    />
+                  ))}
+                </Stack>
+              </Grid>
+            )}
+            {tags.length > 0 && (
+              <Grid item xs={12}>
+                <Stack direction="column">
+                  <Typography variant="body2" gutterBottom>
+                    Tags
+                  </Typography>
+                  {tags.map((tag, index) => (
+                    <FormControlLabel
+                      key={index}
+                      control={
+                        <Checkbox
+                          size="small"
+                          checked={tags?.includes(tag)}
+                          onChange={() => {
+                            if (tags?.includes(tag)) {
+                              setTags(tags.filter((type) => type !== tag));
+                            } else {
+                              setTags([...tags, tag]);
+                            }
+                            props.onTagSelect?.(tags);
+                          }}
+                        />
+                      }
+                      label={tag}
+                    />
+                  ))}
+                </Stack>
+              </Grid>
+            )}
+          </Grid>
+        </Paper>
+      }
+    >
+      <IconButton
+        onClick={(event) => {
+          event.stopPropagation();
+          setFilterContentMenuOpen(!filterContentMenuOpen);
+        }}
+        disabled={tags.length === 0 && props.type === "project"}
+        sx={{
+          mx: 2,
+          p: 2,
+          borderRadius: 1,
+          ...(layerTypes.length > 0 && {
+            color: theme.palette.primary.main,
+          }),
+        }}
+      >
+        <Badge badgeContent={layerTypes.length} color="primary">
+          <Icon
+            iconName={ICON_NAME.FILTER}
+            fontSize="small"
+            htmlColor="inherit"
+          />
+        </Badge>
+      </IconButton>
+    </ArrowPopper>
+  );
+}

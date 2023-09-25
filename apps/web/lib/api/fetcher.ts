@@ -1,18 +1,27 @@
-import { getSession } from "next-auth/react";
+// import { getSession } from "next-auth/react";
 
 export const fetcher = async (params) => {
   let queryParams, url;
+  const urlSearchParams = new URLSearchParams();
+
   if (Array.isArray(params)) {
     url = params[0];
     queryParams = params[1];
+    for (const key in queryParams) {
+      if (Array.isArray(queryParams[key])) {
+        queryParams[key].forEach((value) => {
+          urlSearchParams.append(key, value);
+        });
+      } else {
+        urlSearchParams.append(key, queryParams[key]);
+      }
+    }
   } else {
     url = params;
   }
-  const urlWithParams = queryParams
-    ? `${url}?${new URLSearchParams(queryParams)}`
-    : url;
+  const urlWithParams = `${url}?${urlSearchParams.toString()}`;
   const options = {};
-  const session = await getSession();
+  // const session = await getSession();
   // if (session?.access_token) {
   //   options["headers"] = {
   //     Authorization: `Bearer ${session.access_token}`,

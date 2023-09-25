@@ -39,6 +39,7 @@ export interface TileCard {
   id: string;
   title: string;
   contentType: "project" | "layer";
+  layerType?: string;
   description?: string;
   tags?: string[];
   image?: string;
@@ -100,6 +101,7 @@ const TileCard = (props: TileCard) => {
     createdAt,
     tags,
     image,
+    layerType,
   } = props;
   const theme = useTheme();
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
@@ -287,6 +289,7 @@ const TileCard = (props: TileCard) => {
       />
       <Card
         sx={{
+          position: "relative",
           height: "100%",
           display: "flex",
           flexDirection: cardType === "grid" ? "column" : "row",
@@ -326,6 +329,19 @@ const TileCard = (props: TileCard) => {
               }}
               image={image}
             />
+            {layerType && (
+              <Chip
+                color="primary"
+                variant="filled"
+                size="small"
+                sx={{
+                  position: "absolute",
+                  top: 15,
+                  right: 15,
+                }}
+                label={layerType}
+              />
+            )}
           </Box>
         )}
 
