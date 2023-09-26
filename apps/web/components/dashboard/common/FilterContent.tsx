@@ -2,10 +2,12 @@ import { ArrowPopper } from "@/components/ArrowPoper";
 import { layerTypesArray, type LayerType } from "@/lib/validations/layer";
 import {
   Badge,
+  Button,
   Checkbox,
   FormControlLabel,
   Grid,
   IconButton,
+  Link,
   Paper,
   Stack,
   Typography,
@@ -46,9 +48,28 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
             px: theme.spacing(3),
           }}
         >
-          <Typography variant="body1" sx={{ pb: 4 }}>
-            Filters
-          </Typography>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography variant="body1" sx={{ pb: 4 }}>
+              Filters
+            </Typography>
+            {/* Clear all */}
+            {tags.length > 0 ||
+              (layerTypes.length > 0 && (
+                <Link
+                  underline="none"
+                  typography="body2"
+                  onClick={() => {
+                    setLayerTypes([]);
+                    setTags([]);
+                    props.onLayerTypeSelect?.([]);
+                    props.onTagSelect?.([]);
+                  }}
+                  sx={{ cursor: "pointer", color: theme.palette.primary.main }}
+                >
+                  Clear all
+                </Link>
+              ))}
+          </Stack>
           <Grid container spacing={2}>
             {props.type === "layer" && (
               <Grid item xs={12}>
