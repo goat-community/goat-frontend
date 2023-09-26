@@ -3,24 +3,24 @@
 import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
-import { useProjects } from "@/lib/api/projects";
+import { useLayers } from "@/lib/api/layers";
 import TileGrid from "@/components/dashboard/common/TileGrid";
 import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
-import type { GetProjectsQueryParams } from "@/lib/validations/project";
+import type { GetLayersQueryParams } from "@/lib/validations/layer";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 
-const Projects = () => {
-  const [queryParams, setQueryParams] = useState<GetProjectsQueryParams>({
+const Datasets = () => {
+  const [queryParams, setQueryParams] = useState<GetLayersQueryParams>({
     order: "descendent",
     order_by: "updated_at",
   });
   const [view, setView] = useState<"list" | "grid">("grid");
 
   const {
-    projects,
-    isLoading: isProjectLoading,
-    isError: _isProjectError,
-  } = useProjects(queryParams);
+    layers: datasets,
+    isLoading: isDatasetLoading,
+    isError: _isDatasetError,
+  } = useLayers(queryParams);
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
@@ -32,21 +32,21 @@ const Projects = () => {
           mb: 8,
         }}
       >
-        <Typography variant="h6">Projects</Typography>
+        <Typography variant="h6">Datasets</Typography>
         <Button
           disableElevation={true}
           startIcon={
             <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />
           }
-          href="/projects"
+          href="/datasets"
         >
-          New project
+          New dataset
         </Button>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>
         <Grid item xs={12}>
           <ContentSearchBar
-            contentType="project"
+            contentType="layer"
             view={view}
             setView={setView}
             queryParams={queryParams}
@@ -64,9 +64,9 @@ const Projects = () => {
         <Grid item xs={9}>
           <TileGrid
             view={view}
-            items={projects?.items ?? []}
-            isLoading={isProjectLoading}
-            type="project"
+            items={datasets?.items ?? []}
+            isLoading={isDatasetLoading}
+            type="layer"
           />
         </Grid>
       </Grid>
@@ -74,4 +74,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Datasets;

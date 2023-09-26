@@ -27,14 +27,14 @@ const DataSection = (props: DataSectionProps) => {
           mb: 2,
         }}
       >
-        <Typography variant="h6">Recent Data</Typography>
+        <Typography variant="h6">Recent Datasets</Typography>
         <Button
           variant="text"
           size="small"
           endIcon={
             <Icon iconName={ICON_NAME.CHEVRON_RIGHT} style={{ fontSize: 12 }} />
           }
-          href="/content"
+          href="/datasets"
           sx={{
             borderRadius: 0,
           }}

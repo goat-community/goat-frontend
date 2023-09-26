@@ -56,6 +56,9 @@ import {
   faFloppyDisk,
   faDatabase,
   faFolderPlus,
+  faSortAlphaUp,
+  faSortAlphaDown,
+  faClock,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {faCircleQuestion} from "@fortawesome/free-regular-svg-icons"
@@ -137,6 +140,9 @@ export enum ICON_NAME {
   EDITPEN = "editpen",
   SAVE = "save",
   DATABASE = "database",
+  SORT_ALPHA_ASC = "sort-alpha-asc",
+  SORT_ALPHA_DESC = "sort-alpha-desc",  
+  CLOCK = "clock",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -210,6 +216,9 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.EDITPEN]: faPen,
   [ICON_NAME.SAVE]: faFloppyDisk,
   [ICON_NAME.DATABASE]: faDatabase,
+  [ICON_NAME.SORT_ALPHA_ASC]: faSortAlphaUp,
+  [ICON_NAME.SORT_ALPHA_DESC]: faSortAlphaDown,
+  [ICON_NAME.CLOCK]: faClock,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

@@ -20,13 +20,40 @@ export const useFolders = (queryParams?: GetContentQueryParams) => {
   };
 };
 
-export const deleteFolders = async (id: string) => {
-  try {
-    await fetch(`${FOLDERS_API_BASE_URL}/${id}`, {
-      method: "DELETE",
-    });
-  } catch (error) {
-    console.error(error);
-    throw Error(`deleteFolder: unable to delete folder with id ${id}`);
+export const deleteFolder = async (id: string) => {
+  const response = await fetch(`${FOLDERS_API_BASE_URL}/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw new Error("Failed to delete folder");
   }
+  return await response;
+};
+
+export const createFolder = async (name: string) => {
+  const response = await fetch(`${FOLDERS_API_BASE_URL}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to create folder");
+  }
+  return await response.json();
+};
+
+export const updateFolder = async (id: string, name: string) => {
+  const response = await fetch(`${FOLDERS_API_BASE_URL}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name }),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to update folder");
+  }
+  return await response.json();
 };
