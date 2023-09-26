@@ -3,43 +3,22 @@ import Container from "@/components/map/panels/Container";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { Card, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import type { LayerProps, SourceProps } from "@/types/map/layers";
+import type { MapSidebarItem } from "../Sidebar";
 
 interface PanelProps {
   onCollapse?: () => void;
   layers?: (SourceProps & LayerProps)[];
+  setActiveLeft: (item: MapSidebarItem | undefined) => void;
 }
 
-const LayerPanel = ({ onCollapse, layers }: PanelProps) => {
+const LayerPanel = ({ layers, setActiveLeft }: PanelProps) => {
   const theme = useTheme();
 
   return (
     <Container
-      header={
-        <>
-          <Typography variant="h6">Layers</Typography>
-          {onCollapse && (
-            <IconButton
-              onClick={onCollapse}
-              type="button"
-              sx={{
-                padding: theme.spacing(1),
-              }}
-            >
-              <Icon
-                iconName={ICON_NAME.CHEVRON_LEFT}
-                fontSize="small"
-                sx={{
-                  color: theme.palette.text.secondary,
-                  margin: theme.spacing(2),
-                  "&:hover": {
-                    color: theme.palette.primary.main,
-                  },
-                }}
-              />
-            </IconButton>
-          )}
-        </>
-      }
+      title="Layers"
+      close={setActiveLeft}
+      direction="left"
       body={
         <>
           {layers?.map((layer) => (

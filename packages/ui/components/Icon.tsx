@@ -57,6 +57,9 @@ import {
   faDatabase,
   faFolderPlus,
 } from "@fortawesome/free-solid-svg-icons";
+
+import {faCircleQuestion} from "@fortawesome/free-regular-svg-icons"
+
 import {
   faGoogle,
   faFacebook,
@@ -96,6 +99,7 @@ export enum ICON_NAME {
   SETTINGS = "settings",
   CIRCLECHECK = "circleCheck",
   CIRCLEINFO = "circleInfo",
+  OUTILINEDINFO = "outlinedInfo",
   EMAIL = "email",
   ROCKET = "rocket",
   RUN = "run",
@@ -145,6 +149,7 @@ export enum ICON_NAME {
   INSTAGRAM = "instagram",
   BITBUCKET = "bitbucket",
   PAYPAL = "paypal",
+  PULLER = "puller"
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -168,6 +173,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.SETTINGS]: faGears,
   [ICON_NAME.CIRCLECHECK]: faCircleCheck,
   [ICON_NAME.CIRCLEINFO]: faCircleExclamation,
+  [ICON_NAME.OUTILINEDINFO]: faCircleQuestion,
   [ICON_NAME.EMAIL]: faEnvelope,
   [ICON_NAME.ROCKET]: faRocket,
   [ICON_NAME.RUN]: faPersonRunning,

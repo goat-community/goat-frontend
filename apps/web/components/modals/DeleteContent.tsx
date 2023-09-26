@@ -21,13 +21,11 @@ interface DeleteContentDialogProps {
   activeContent: ActiveCard | null;
 }
 
-const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
-  open,
-  disabled,
-  onClose,
-  onDelete,
-  activeContent,
-}) => {
+const DeleteContentModal: React.FC<DeleteContentDialogProps> = (
+  props: DeleteContentDialogProps,
+) => {
+  const { open, disabled, onClose, onDelete, activeContent } = props;
+
   const handleDelete = async () => {
     try {
       if (!activeContent) return;

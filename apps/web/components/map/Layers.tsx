@@ -14,7 +14,7 @@ interface LayersProps {
 }
 
 const Layers = (props: LayersProps) => {
-  const sampleLayerID = "user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e";
+  const sampleLayerID = "user_data.e66f60f87ec248faaebb8a8c64c29990";
 
   const { filters, logicalOperator } = useSelector(
     (state: IStore) => state.mapFilters,
@@ -49,8 +49,7 @@ const Layers = (props: LayersProps) => {
       addLayer([
         {
           id: "layer1",
-          sourceUrl:
-            "http://127.0.0.1:8080/collections/user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e/tiles/{z}/{x}/{y}",
+          sourceUrl: FILTERING(sampleLayerID),
           color: "#FF0000",
         },
       ]);

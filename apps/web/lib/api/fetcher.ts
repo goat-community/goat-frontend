@@ -11,7 +11,7 @@ export const fetcher = async (params) => {
   const urlWithParams = queryParams
     ? `${url}?${new URLSearchParams(queryParams)}`
     : url;
-  console.log("urlWithParams", urlWithParams);
+  // console.log("urlWithParams", urlWithParams);
   const options = {};
   const session = await getSession();
   // if (session?.access_token) {

@@ -1,10 +1,18 @@
 import Container from "@/components/map/panels/Container";
 import { Typography } from "@mui/material";
+import type { MapSidebarItem } from "../Sidebar";
 
-const ToolboxPanel = () => {
+interface ToolboxPanelProps {
+  setActiveRight: (item: MapSidebarItem | undefined) => void;
+}
+
+const ToolboxPanel = (props: ToolboxPanelProps) => {
+  const { setActiveRight } = props;
+
   return (
     <Container
-      header={<Typography variant="h6">Toolbox</Typography>}
+      title="Toolbox"
+      close={setActiveRight}
       body={<Typography variant="body1">Body</Typography>}
     />
   );

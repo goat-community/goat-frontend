@@ -1,6 +1,7 @@
 "use client";
 
-import type { MapSidebarItem, MapSidebarProps } from "@/components/map/Sidebar";
+import type { MapSidebarProps } from "@/components/map/Sidebar";
+import type { MapSidebarItem } from "@/types/map/sidebar";
 import MapSidebar from "@/components/map/Sidebar";
 import type { MapToolbarProps } from "@/components/map/Toolbar";
 import type { XYZ_Layer } from "@/types/map/layer";
@@ -19,6 +20,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Map, { MapProvider, Layer, Source } from "react-map-gl";
 import Layers from "@/components/map/Layers";
+import MobileDrawer from "@/components/map/panels/MobileDrawer";
 
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Fullscren } from "@/components/map/controls/Fullscreen";
@@ -52,7 +54,7 @@ export default function MapPage({ params: { projectId } }) {
     {
       id: "layer1",
       sourceUrl:
-        "http://127.0.0.1:8081/collections/user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e/tiles/{z}/{x}/{y}",
+        "https://geoapi.goat.dev.plan4better.de/collections/user_data.e66f60f87ec248faaebb8a8c64c29990/tiles/{z}/{x}/{y}",
       color: "#FF0000",
     },
   ]);
@@ -83,17 +85,22 @@ export default function MapPage({ params: { projectId } }) {
       {
         icon: ICON_NAME.LAYERS,
         name: "Layers",
-        component: <LayerPanel onCollapse={handleCollapse} />,
+        component: (
+          <LayerPanel
+            onCollapse={handleCollapse}
+            setActiveLeft={setActiveLeft}
+          />
+        ),
       },
       {
         icon: ICON_NAME.LEGEND,
         name: "Legend",
-        component: <Legend />,
+        component: <Legend setActiveLeft={setActiveLeft} />,
       },
       {
         icon: ICON_NAME.CHART,
         name: "Charts",
-        component: <Charts />,
+        component: <Charts setActiveLeft={setActiveLeft} />,
       },
     ],
     bottomItems: [
@@ -112,17 +119,17 @@ export default function MapPage({ params: { projectId } }) {
       {
         icon: ICON_NAME.TOOLBOX,
         name: "Tools",
-        component: <Toolbox />,
+        component: <Toolbox setActiveRight={setActiveRight} />,
       },
       {
         icon: ICON_NAME.FILTER,
         name: "Filter",
-        component: <Filter />,
+        component: <Filter setActiveRight={setActiveRight} />,
       },
       {
         icon: ICON_NAME.SCENARIO,
         name: "Scenario",
-        component: <Scenario />,
+        component: <Scenario setActiveRight={setActiveRight} />,
       },
       {
         icon: ICON_NAME.STYLE,
@@ -151,8 +158,8 @@ export default function MapPage({ params: { projectId } }) {
   }, [dispatch, projectId]);
 
   return (
-    // <div>Map</div>
     <MapProvider>
+      <MapToolbar {...toolbar} />
       <Box
         sx={{
           display: "flex",
@@ -165,8 +172,7 @@ export default function MapPage({ params: { projectId } }) {
           },
         }}
       >
-        <Box sx={{}}>
-          <MapToolbar {...toolbar} />
+        <Box>
           <Box
             sx={{
               ".MuiDrawer-paper": {
@@ -204,7 +210,7 @@ export default function MapPage({ params: { projectId } }) {
               pointerEvents: "all",
               left: sidebarWidth,
               [theme.breakpoints.down("sm")]: {
-                left: "0"
+                left: "0",
               },
             }}
           >
@@ -237,9 +243,9 @@ export default function MapPage({ params: { projectId } }) {
             {/* Left Controls */}
             <Stack
               direction="column"
-              justifyContent="space-between"
               sx={{
                 height: `calc(100% - ${toolbarHeight}px)`,
+                justifyContent: "space-between",
                 marginTop: `${toolbarHeight}px`,
                 padding: theme.spacing(4),
               }}
@@ -259,15 +265,15 @@ export default function MapPage({ params: { projectId } }) {
               pointerEvents: "none",
               right: sidebarWidth,
               [theme.breakpoints.down("sm")]: {
-                right: "0"
+                right: "0",
               },
             }}
           >
             <Stack
               direction="column"
-              justifyContent="space-between"
               sx={{
                 height: `calc(100% - ${toolbarHeight}px)`,
+                justifyContent: "space-between",
                 marginTop: `${toolbarHeight}px`,
                 padding: theme.spacing(4),
               }}
@@ -346,7 +352,6 @@ export default function MapPage({ params: { projectId } }) {
               display: "none",
             },
             height: `calc(100% - ${toolbarHeight}px)`,
-            marginTop: `${toolbarHeight}px`,
           }}
         >
           <Map
@@ -370,6 +375,9 @@ export default function MapPage({ params: { projectId } }) {
             <Layers layers={layers} addLayer={addLayer} />
           </Map>
         </Box>
+      </Box>
+      <Box>
+        <MobileDrawer />
       </Box>
     </MapProvider>
   );
