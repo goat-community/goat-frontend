@@ -64,14 +64,7 @@ const DataSection = (props: DataSectionProps) => {
               ) : (
                 <TileCard
                   cardType="grid"
-                  createdAt={item.created_at}
-                  updatedAt={item.updated_at}
-                  id={item.id}
-                  contentType="layer"
-                  title={item.name}
-                  description={item.description}
-                  image={item.thumbnail_url}
-                  tags={item.tags}
+                  item={item}
                 />
               )}
             </Grid>

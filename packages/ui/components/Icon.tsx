@@ -59,6 +59,8 @@ import {
   faSortAlphaUp,
   faSortAlphaDown,
   faClock,
+  faDownload,
+  faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGoogle,
@@ -139,6 +141,8 @@ export enum ICON_NAME {
   SORT_ALPHA_ASC = "sort-alpha-asc",
   SORT_ALPHA_DESC = "sort-alpha-desc",  
   CLOCK = "clock",
+  DOWNLOAD = "download",
+  UPLOAD = "upload",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -213,6 +217,8 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.SORT_ALPHA_ASC]: faSortAlphaUp,
   [ICON_NAME.SORT_ALPHA_DESC]: faSortAlphaDown,
   [ICON_NAME.CLOCK]: faClock,
+  [ICON_NAME.DOWNLOAD]: faDownload,
+  [ICON_NAME.UPLOAD]: faUpload,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

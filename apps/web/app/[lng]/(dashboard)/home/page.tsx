@@ -38,7 +38,6 @@ const Home = () => {
     ...queryParams,
   });
 
-  console.log("layers", layers);
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">

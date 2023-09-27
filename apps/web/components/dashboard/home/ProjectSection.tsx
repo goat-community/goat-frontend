@@ -32,14 +32,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
               ) : (
                 <TileCard
                   cardType="grid"
-                  createdAt={item.created_at}
-                  updatedAt={item.updated_at}
-                  id={item.id}
-                  contentType="project"
-                  title={item.name}
-                  description={item.description}
-                  image={item.thumbnail_url}
-                  tags={item.tags}
+                  item={item}
                 />
               )}
             </Grid>

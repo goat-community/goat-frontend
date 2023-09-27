@@ -1,6 +1,7 @@
-import type { ActiveCard } from "@/components/dashboard/common/TileCard";
 import { LAYERS_API_BASE_URL, deleteLayer } from "@/lib/api/layers";
 import { PROJECTS_API_BASE_URL, deleteProject } from "@/lib/api/projects";
+import type { Layer } from "@/lib/validations/layer";
+import type { Project } from "@/lib/validations/project";
 import {
   Button,
   Dialog,
@@ -18,7 +19,8 @@ interface DeleteContentDialogProps {
   disabled?: boolean;
   onClose?: () => void;
   onDelete?: () => void;
-  activeContent: ActiveCard | null;
+  type: "project" | "layer";
+  content: Project | Layer;
 }
 
 const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
@@ -26,21 +28,22 @@ const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
   disabled,
   onClose,
   onDelete,
-  activeContent,
+  type,
+  content,
 }) => {
   const handleDelete = async () => {
     try {
-      if (!activeContent) return;
-      if (activeContent.type === "layer") {
-        await deleteLayer(activeContent?.id);
+      if (!content) return;
+      if (type === "layer") {
+        await deleteLayer(content?.id);
         mutate((key) => Array.isArray(key) && key[0] === LAYERS_API_BASE_URL);
-      } else if (activeContent.type === "project") {
-        await deleteProject(activeContent?.id);
+      } else if (type === "project") {
+        await deleteProject(content?.id);
         mutate((key) => Array.isArray(key) && key[0] === PROJECTS_API_BASE_URL);
       }
-      toast.success(`${activeContent?.type} deleted successfully`);
+      toast.success(`${type} deleted successfully`);
     } catch {
-      toast.error(`Error deleting ${activeContent?.type}`);
+      toast.error(`Error deleting ${type}`);
     }
 
     onDelete?.();
@@ -48,11 +51,10 @@ const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{`Delete ${activeContent?.type}`}</DialogTitle>
+      <DialogTitle>{`Delete ${type}`}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to delete {activeContent?.type}{" "}
-          <b>{activeContent?.title}</b>?
+          Are you sure you want to delete {type} <b>{content?.name}</b>?
         </DialogContentText>
       </DialogContent>
       <DialogActions
