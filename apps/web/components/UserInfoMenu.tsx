@@ -24,11 +24,6 @@ export default function UserInfoMenu() {
   const { organization } = useOrganization();
   return (
     <>
-      <Divider
-        orientation="vertical"
-        sx={{ mx: 2, height: "75%" }}
-        variant="middle"
-      />
       <ArrowPopper
         content={
           <Paper

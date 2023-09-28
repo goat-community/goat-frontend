@@ -3,14 +3,15 @@
 import UserInfoMenu from "@/components/UserInfoMenu";
 import {
   Chip,
-  // Toolbar,
   useTheme,
   Typography,
   IconButton,
+  Stack,
 } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { Toolbar } from "./Toolbar";
+import JobsPopper from "@/components/jobs/JobsPopper";
 
 export type HeaderProps = {
   title: string;
@@ -38,7 +39,7 @@ export default function Header(props: HeaderProps) {
           </Typography>
           <Divider orientation="vertical" flexItem />
           {lastSaved && (
-            <Typography variant="body2" >Last saved: {lastSaved}</Typography>
+            <Typography variant="body2">Last saved: {lastSaved}</Typography>
           )}
           {tags &&
             tags.map((tag) => (
@@ -55,15 +56,25 @@ export default function Header(props: HeaderProps) {
       }
       RightToolbarChild={
         <>
-          <IconButton
-            size="small"
-            onClick={() => {
-              window.open("https://docs.goat.plan4better.de", "_blank");
-            }}
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
           >
-            <Icon iconName={ICON_NAME.HELP} fontSize="inherit" />
-          </IconButton>
-          <UserInfoMenu />
+            <JobsPopper />
+            <Divider orientation="vertical" flexItem />
+            <IconButton
+              size="small"
+              onClick={() => {
+                window.open("https://docs.goat.plan4better.de", "_blank");
+              }}
+            >
+              <Icon iconName={ICON_NAME.HELP} fontSize="inherit" />
+            </IconButton>
+            <Divider orientation="vertical" flexItem />
+            <UserInfoMenu />
+          </Stack>
         </>
       }
     />

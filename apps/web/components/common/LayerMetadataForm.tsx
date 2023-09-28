@@ -31,8 +31,6 @@ const LayerMetadataForm: React.FC<LayerMetadataFormProps> = ({
       <TextField
         fullWidth
         label="Name"
-        margin="normal"
-        variant="outlined"
         {...register("name")}
         error={!!errors.name}
         helperText={errors.name?.message}
@@ -42,8 +40,6 @@ const LayerMetadataForm: React.FC<LayerMetadataFormProps> = ({
         multiline
         rows={4}
         label="Description"
-        margin="normal"
-        variant="outlined"
         {...register("description")}
         error={!!errors.description}
         helperText={errors.description?.message}
@@ -51,8 +47,6 @@ const LayerMetadataForm: React.FC<LayerMetadataFormProps> = ({
       <TextField
         fullWidth
         label="Data Source"
-        margin="normal"
-        variant="outlined"
         {...register("data_source")}
         error={!!errors.data_source}
         helperText={errors.data_source?.message}
@@ -60,8 +54,6 @@ const LayerMetadataForm: React.FC<LayerMetadataFormProps> = ({
       <TextField
         fullWidth
         label="Data reference year"
-        margin="normal"
-        variant="outlined"
         {...register("data_reference_year")}
         error={!!errors.data_reference_year}
         helperText={errors.data_reference_year?.message}

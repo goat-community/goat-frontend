@@ -14,6 +14,8 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  MenuItem,
+  Select,
   Stack,
   Step,
   StepLabel,
@@ -21,9 +23,23 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+
 import { useState } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useForm } from "react-hook-form";
+import type { FeatureLayerType, LayerMetadata } from "@/lib/validations/layer";
+import {
+  createNewDatasetLayerSchema,
+  createNewStandardLayerSchema,
+  createNewTableLayerSchema,
+  layerMetadataSchema,
+} from "@/lib/validations/layer";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createLayer } from "@/lib/api/layers";
+import { toast } from "react-toastify";
+import { getJob } from "@/lib/api/jobs";
 
 interface DatasetUploadDialogProps {
   open: boolean;
@@ -52,6 +68,23 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(
     homeFolder,
   );
+  const [datasetType, setDatasetType] = useState<"feature_layer" | "table">(
+    "feature_layer",
+  );
+  const [isBusy, setIsBusy] = useState(false);
+
+  const [featureLayerType, setFeatureLayerType] =
+    useState<FeatureLayerType>("standard");
+
+  const {
+    register,
+    getValues,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<LayerMetadata>({
+    mode: "onChange",
+    resolver: zodResolver(layerMetadataSchema),
+  });
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -80,12 +113,70 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         setFileUploadError("Invalid file type. Please select a file of type");
         return;
       }
+
+      // Autodetect dataset type
+      const isFeatureLayer =
+        file.name.endsWith(".gpkg") ||
+        file.name.endsWith(".geojson") ||
+        file.name.endsWith(".shp") ||
+        file.name.endsWith(".kml");
+      const isTable = file.name.endsWith(".csv") || file.name.endsWith(".xlsx");
+      if (isFeatureLayer) {
+        setDatasetType("feature_layer");
+      } else if (isTable) {
+        setDatasetType("table");
+      }
+      console.log("file", file);
       setFileValue(file);
     }
   };
 
+  const handleOnClose = () => {
+    setFileValue(null);
+    setActiveStep(0);
+    setSelectedFolder(homeFolder);
+    setFileUploadError(undefined);
+    setIsBusy(false);
+    reset();
+    onClose?.();
+  };
+
+  const handleUpload = async () => {
+    let layerBaseInput;
+    try {
+      setIsBusy(true);
+      if (datasetType === "feature_layer") {
+        layerBaseInput = createNewStandardLayerSchema.parse({
+          ...getValues(),
+          folder_id: selectedFolder?.id,
+          type: datasetType,
+          feature_layer_type: featureLayerType,
+        });
+      } else if (datasetType === "table") {
+        layerBaseInput = createNewTableLayerSchema.parse({
+          ...getValues(),
+          folder_id: selectedFolder?.id,
+          type: datasetType,
+        });
+      }
+      const payload = createNewDatasetLayerSchema.parse({
+        layer_in: layerBaseInput,
+        file: fileValue,
+      });
+      const response = await createLayer(payload);
+      const jobId = response?.job_id;
+      const jobDetails = await getJob(jobId);
+      console.log("jobDetails", jobDetails);
+    } catch (error) {
+      toast.error("Error uploading dataset");
+      handleOnClose();
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth="sm">
       <DialogTitle>Upload Dataset</DialogTitle>
       <DialogContent>
         <Box sx={{ width: "100%" }}>
@@ -128,7 +219,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         )}
         {activeStep === 1 && (
           <>
-            <Stack direction="column" spacing={2}>
+            <Stack direction="column" spacing={4}>
               <Autocomplete
                 fullWidth
                 value={selectedFolder}
@@ -167,7 +258,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
                     {...params}
                     fullWidth
                     sx={{
-                      my: 4,
+                      mt: 4,
                     }}
                     InputProps={{
                       ...params.InputProps,
@@ -189,14 +280,77 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
                   />
                 )}
               />
+
               <TextField
                 fullWidth
-                id="dataset-title"
-                label="Title"
-                variant="outlined"
+                required
+                label="Name"
+                {...register("name")}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+              />
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                label="Description"
+                {...register("description")}
+                error={!!errors.description}
+                helperText={errors.description?.message}
               />
             </Stack>
           </>
+        )}
+        {activeStep === 2 && (
+          <Stack direction="column" spacing={4}>
+            <Typography variant="caption">
+              Please review the details below before uploading the dataset.
+            </Typography>
+            <Select
+              fullWidth
+              labelId="dataset-type"
+              value={datasetType}
+              label="Dataset Type"
+              onChange={(event) => {
+                setDatasetType(event.target.value as "feature_layer" | "table");
+              }}
+            >
+              <MenuItem value="feature_layer">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Icon iconName={ICON_NAME.MAP} fontSize="small" />
+                  <ListItemText primary="Feature Layer" />
+                </Stack>
+              </MenuItem>
+              <MenuItem value="table">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Icon iconName={ICON_NAME.TABLE} fontSize="small" />
+                  <ListItemText primary="Table" />
+                </Stack>
+              </MenuItem>
+            </Select>
+            <Typography variant="body2">
+              <b>File:</b> {fileValue?.name}
+            </Typography>
+            <Typography variant="body2">
+              <b>Destination:</b> {selectedFolder?.name}
+            </Typography>
+            <Typography variant="body2">
+              <b>Name:</b> {getValues("name")}
+            </Typography>
+            <Typography variant="body2">
+              <b>Description:</b> {getValues("description")}
+            </Typography>
+          </Stack>
         )}
       </Box>
       <DialogActions
@@ -217,7 +371,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
           )}
         </Stack>
         <Stack direction="row" spacing={2} justifyContent="flex-end">
-          <Button onClick={onClose} variant="text">
+          <Button onClick={handleOnClose} variant="text">
             <Typography variant="body2" fontWeight="bold">
               Cancel
             </Typography>
@@ -226,7 +380,8 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
             <Button
               disabled={
                 (activeStep === 0 && fileValue === null) ||
-                (activeStep === 1 && selectedFolder === null)
+                (activeStep === 1 &&
+                  (isValid !== true || selectedFolder === null))
               }
               onClick={handleNext}
               variant="outlined"
@@ -238,11 +393,17 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
             </Button>
           )}
           {activeStep === steps.length - 1 && (
-            <Button onClick={handleNext} variant="contained" color="primary">
+            <LoadingButton
+              onClick={handleUpload}
+              disabled={isBusy}
+              loading={isBusy}
+              variant="contained"
+              color="primary"
+            >
               <Typography variant="body2" fontWeight="bold" color="inherit">
                 Upload
               </Typography>
-            </Button>
+            </LoadingButton>
           )}
         </Stack>
       </DialogActions>

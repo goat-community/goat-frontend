@@ -15,4 +15,11 @@ export const getContentQueryParamsSchema = paginatedSchema.extend({
   authorization: z.string().optional(),
 });
 
+export const contentMetadataSchema = z.object({
+  name: z.string().min(1).max(100),
+  description: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  thumbnail_url: z.string().url().optional(),
+});
+
 export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;

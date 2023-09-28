@@ -61,6 +61,8 @@ import {
   faClock,
   faDownload,
   faUpload,
+  faTable,
+  faBarsProgress,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGoogle,
@@ -143,6 +145,8 @@ export enum ICON_NAME {
   CLOCK = "clock",
   DOWNLOAD = "download",
   UPLOAD = "upload",
+  TABLE = "table",
+  BARS_PROGRESS = "bar-progress",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -219,6 +223,8 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.CLOCK]: faClock,
   [ICON_NAME.DOWNLOAD]: faDownload,
   [ICON_NAME.UPLOAD]: faUpload,
+  [ICON_NAME.TABLE]: faTable,
+  [ICON_NAME.BARS_PROGRESS]: faBarsProgress,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

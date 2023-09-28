@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { responseSchema } from "@/lib/validations/response";
-import { getContentQueryParamsSchema } from "@/lib/validations/common";
+import { contentMetadataSchema, getContentQueryParamsSchema } from "@/lib/validations/common";
 
 export const layerType = z.enum([
   "feature_layer",
@@ -18,11 +18,7 @@ export const featureLayerType = z.enum([
 
 export const data_type = z.enum(["wms", "mvt"]);
 
-export const layerMetadataSchema = z.object({
-  name: z.string(),
-  description: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  thumbnail_url: z.string().url().optional(),
+export const layerMetadataSchema = contentMetadataSchema.extend({
   data_source: z.string().optional(),
   data_reference_year: z.number().optional(),
 });
@@ -84,8 +80,12 @@ export const createNewExternalTileLayerSchema = createLayerBaseSchema.extend({
   extent: z.string().optional(),
 });
 
-export const createNewDatasetLayerSchema = createLayerBaseSchema.extend({
-  file: z.instanceof(File),
+export const createNewDatasetLayerSchema = z.object({
+  file: z.any(),
+  layer_in: z.union([
+    createNewTableLayerSchema,
+    createNewStandardLayerSchema
+  ]),
 });
 
 export const layerResponseSchema = responseSchema(layerSchema);
@@ -96,6 +96,7 @@ export type Layer = z.infer<typeof layerSchema>;
 export type LayerPaginated = z.infer<typeof layerResponseSchema>;
 export type LayerType = z.infer<typeof layerType>;
 export type LayerMetadata = z.infer<typeof layerMetadataSchema>;
+export type FeatureLayerType = z.infer<typeof featureLayerType>;
 export type GetLayersQueryParams = z.infer<typeof getLayersQueryParamsSchema>;
 export type CreateNewTableLayer = z.infer<typeof createNewTableLayerSchema>;
 export type CreateNewStandardLayer = z.infer<
