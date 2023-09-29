@@ -11,7 +11,7 @@ const keycloak = KeycloakProvider({
 });
 
 // this performs the final handshake for the keycloak provider
-async function doFinalSignoutHandshake(token: JWT) {
+export async function doFinalSignoutHandshake(token: JWT) {
   if (token.provider == keycloak.id) {
     try {
       const issuerUrl = keycloak.options?.issuer;
@@ -25,49 +25,7 @@ async function doFinalSignoutHandshake(token: JWT) {
   }
 }
 
-async function getOrganization(token: JWT) {
-  try {
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
-    const url = new URL(
-      `api/v1/users/organization`,
-      process.env.NEXT_PUBLIC_ACCOUNTS_API_URL,
-    );
-    const res = await fetch(url.href, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token.access_token}`,
-      },
-    });
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error("Error retrieving organization: ", error);
-    return null;
-  }
-}
-
-async function getSubscriptions(token: JWT) {
-  try {
-    // eslint-disable-next-line turbo/no-undeclared-env-vars
-    const url = new URL(
-      `api/v1/users/subscriptions`,
-      process.env.NEXT_PUBLIC_ACCOUNTS_API_URL,
-    );
-    const res = await fetch(url.href, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token.access_token}`,
-      },
-    });
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.error("Error retrieving subscriptions: ", error);
-    return [];
-  }
-}
-
-async function refreshAccessToken(token: JWT): Promise<JWT> {
+export async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     const response = await fetch(
       `${keycloak.options?.issuer}/protocol/openid-connect/token`,
@@ -99,11 +57,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       id_token: tokens.id_token ?? token.id_token,
       provider: keycloak.id,
     };
-    const organization = await getOrganization(newToken);
-    const subscriptions = await getSubscriptions(newToken);
-    newToken.organization = organization ? organization.id : null;
-    newToken.subscriptions =
-      subscriptions && subscriptions.length > 0 ? subscriptions : null;
+
     return newToken;
   } catch (error) {
     console.error("Error refreshing access token: ", error);
@@ -122,10 +76,7 @@ export const options: NextAuthOptions = {
       if (token) {
         session.access_token = token.access_token;
       }
-      if (session.user) {
-        session.user.organization = token.organization;
-        session.user.subscriptions = token.subscriptions;
-      }
+
       session.error = token.error;
       return session;
     },
@@ -144,11 +95,7 @@ export const options: NextAuthOptions = {
           expires_at: Math.floor(account.expires_at ?? 0),
           provider: account.provider,
         };
-        const organization = await getOrganization(newToken);
-        const subscriptions = await getSubscriptions(newToken);
-        newToken.organization = organization ? organization.id : null;
-        newToken.subscriptions =
-          subscriptions && subscriptions.length > 0 ? subscriptions : null;
+
         return newToken;
       }
       if (Date.now() < token.expires_at * 1000) {

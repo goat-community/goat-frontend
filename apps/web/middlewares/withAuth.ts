@@ -8,7 +8,7 @@ import {
 } from "next/server";
 import { fallbackLng, cookieName } from "@/app/i18/settings";
 
-const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map"];
+const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map", "/onboarding"];
 
 export const withAuth: MiddlewareFactory = (next: NextMiddleware) => {
   return async (request: NextRequest, _next: NextFetchEvent) => {

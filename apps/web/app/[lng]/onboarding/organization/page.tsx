@@ -17,6 +17,7 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import type * as z from "zod";
 import AuthContainer from "@p4b/ui/components/AuthContainer";
+import AuthLayout from "@p4b/ui/components/AuthLayout";
 
 type FormData = z.infer<typeof postOrganizationSchema>;
 
@@ -80,7 +81,7 @@ export default function OrganizationCreate() {
   }
 
   return (
-    <>
+    <AuthLayout>
       {status == "authenticated" && (
         <AuthContainer
           headerTitle="Create organization"
@@ -131,6 +132,6 @@ export default function OrganizationCreate() {
           }
         />
       )}
-    </>
+    </AuthLayout>
   );
 }
