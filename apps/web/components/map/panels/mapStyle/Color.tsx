@@ -1,29 +1,27 @@
 import BasicAccordion from "@p4b/ui/components/BasicAccordion";
-import { makeStyles } from "@/lib/theme";
-import Box from "@p4b/ui/components/Box";
-import { Divider, TextField, Typography } from "@mui/material";
+import { Divider, TextField, Typography, useTheme, Box } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setLayerFillColor,
-  setLayerFillOutLineColor
+  setLayerFillOutLineColor,
 } from "@/lib/store/styling/slice";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
 
 const Color = () => {
   const mapLayer = useSelector(selectMapLayer);
 
-  const { classes } = useStyles();
+  const theme = useTheme();
   const dispatch = useDispatch();
 
   const handleFillColorChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     dispatch(setLayerFillColor({ key: "fill-color", val: event.target.value }));
   };
 
   const handleStrokeColorChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     dispatch(setLayerFillOutLineColor(event.target.value));
   };
@@ -42,14 +40,41 @@ const Color = () => {
 
   return (
     <BasicAccordion title="Color" variant="secondary">
-      <Box className={classes.root}>
-        <Box className={classes.colorContainer}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          rowGap: "16px",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            rowGap: "8px",
+          }}
+        >
           <Typography variant="body1">Fill</Typography>
-          <Box className={classes.inputsContainer}>
+          <Box
+            sx={{
+              display: "flex",
+              columnGap: "4px",
+            }}
+          >
             <TextField
               type="color"
               size="small"
-              className={classes.inputs}
+              sx={{
+                width: "50%",
+                "& .MuiInputBase-root": {
+                  height: "32px",
+                  padding: "2px 8px",
+                },
+                input: {
+                  padding: "unset",
+                  height: "100%",
+                },
+              }}
               value={mapLayer?.paint ? mapLayer?.paint["fill-color"] : "#000"}
               onChange={handleFillColorChange}
             />
@@ -62,14 +87,41 @@ const Color = () => {
             {/*/>*/}
           </Box>
         </Box>
-        <Divider className={classes.divider} />
-        <Box className={classes.colorContainer}>
+        <Divider
+          sx={{
+            width: "100%",
+            borderTop: "none",
+            borderBottom: `1px solid ${theme.palette.primary.main}`,
+          }}
+        />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            rowGap: "8px",
+          }}
+        >
           <Typography variant="body1">Stroke</Typography>
-          <Box className={classes.inputsContainer}>
+          <Box
+            sx={{
+              display: "flex",
+              columnGap: "4px",
+            }}
+          >
             <TextField
               type="color"
               size="small"
-              className={classes.inputs}
+              sx={{
+                width: "50%",
+                "& .MuiInputBase-root": {
+                  height: "32px",
+                  padding: "2px 8px",
+                },
+                input: {
+                  padding: "unset",
+                  height: "100%",
+                },
+              }}
               value={
                 mapLayer?.paint ? mapLayer?.paint["fill-outline-color"] : "#000"
               }
@@ -88,38 +140,4 @@ const Color = () => {
     </BasicAccordion>
   );
 };
-
-const useStyles = makeStyles({ name: { Color } })((theme) => ({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-    rowGap: "16px",
-  },
-  colorContainer: {
-    display: "flex",
-    flexDirection: "column",
-    rowGap: "8px",
-  },
-  inputsContainer: {
-    display: "flex",
-    columnGap: "4px",
-  },
-  inputs: {
-    width: "50%",
-    "& .MuiInputBase-root": {
-      height: "32px",
-      padding: "2px 8px",
-    },
-    input: {
-      padding: "unset",
-      height: "100%",
-    },
-  },
-  divider: {
-    width: "100%",
-    borderTop: "none",
-    borderBottom: `1px solid ${theme.colors.palette.focus}`,
-  },
-}));
-
 export default Color;

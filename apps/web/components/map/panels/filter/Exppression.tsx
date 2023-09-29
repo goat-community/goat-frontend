@@ -7,7 +7,7 @@ import { Icon } from "@p4b/ui/components/Icon";
 import { v4 } from "uuid";
 import {
   Button,
-  Menu,
+  MenuList,
   MenuItem,
   Box,
   useTheme,
@@ -23,23 +23,28 @@ import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
 import type { LayerPropsMode } from "@/types/map/filtering";
 import type { SelectChangeEvent } from "@mui/material";
 
+import CustomMenu from "@/components/common/CustomMenu";
+
 interface ExpressionProps {
   isLast: boolean;
   expression: Expression;
   logicalOperator: string;
+  deleteOneExpression: (value: string) => void;
+  duplicateExpression: (value: string) => void;
   id: string;
   keys: LayerPropsMode[];
 }
 
 const Exppression = (props: ExpressionProps) => {
-  const { isLast, expression, logicalOperator, id, keys } = props;
+  const { isLast, expression, logicalOperator, id, keys, deleteOneExpression, duplicateExpression } =
+    props;
   const [attributeSelected, setAttributeSelected] = useState<string | string[]>(
     expression.attribute ? expression.attribute.name : "",
   );
   const [comparerSelected, setComparerSelected] = useState<string | string[]>(
     expression.expression ? expression.expression.value : "",
   );
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
 
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
@@ -47,7 +52,6 @@ const Exppression = (props: ExpressionProps) => {
 
   function getFeatureAttribute(type: string | string[]) {
     const valueToFilter = keys.filter((key) => key.name === type);
-    console.log(valueToFilter);
     if (valueToFilter.length && valueToFilter[0].type === "string") {
       return "text";
     }
@@ -80,13 +84,10 @@ const Exppression = (props: ExpressionProps) => {
     );
   }
 
-  function openMorePopover(event: React.MouseEvent<HTMLButtonElement>) {
-    setAnchorEl(event.currentTarget);
+  function toggleMorePopover() {
+    setAnchorEl(!anchorEl);
   }
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  console.log(comparerModes);
+
   return (
     <>
       <Box key={v4()}>
@@ -108,22 +109,27 @@ const Exppression = (props: ExpressionProps) => {
           >
             Expression
           </Typography>
-          <Box>
-            <Button onClick={openMorePopover} variant="text">
+          <Box sx={{ position: "relative" }}>
+            <Button
+              id="basic-button"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={toggleMorePopover}
+              variant="text"
+            >
               <Icon iconName={ICON_NAME.ELLIPSIS} />
             </Button>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
-            >
-              <MenuItem onClick={handleClose}>Delete expression</MenuItem>
-              <MenuItem onClick={handleClose}>Duplicate</MenuItem>
-            </Menu>
+            {open ? (
+              <CustomMenu close={toggleMorePopover}>
+                <MenuList>
+                  <MenuItem onClick={() => deleteOneExpression(expression.id)}>
+                    Delete Expression
+                  </MenuItem>
+                  <MenuItem onClick={() => duplicateExpression(expression.id)}>Duplicate</MenuItem>
+                </MenuList>
+              </CustomMenu>
+            ) : null}
           </Box>
         </Box>
         <FormControl
@@ -198,7 +204,7 @@ const Exppression = (props: ExpressionProps) => {
           sx={{
             display: "flex",
             justifyContent: "center",
-            margin: `${theme.spacing(4)}px 0`,
+            marginTop: theme.spacing(8),
           }}
         >
           <Chip

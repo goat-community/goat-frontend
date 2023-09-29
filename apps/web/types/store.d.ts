@@ -1,5 +1,7 @@
 import type {IStylingState} from "@/lib/store/styling/slice";
 import type { Expression } from "./map/filtering";
+import type { LayerState } from "@/lib/store/layer/slice";
+
 export interface IStore {
   map: object;
   content: {
@@ -13,4 +15,5 @@ export interface IStore {
     logicalOperator: string;
     expressions: Expression[];
   };
+  layers: LayerState;
 }

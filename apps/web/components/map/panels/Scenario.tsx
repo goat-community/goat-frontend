@@ -1,9 +1,20 @@
 import Container from "@/components/map/panels/Container";
 import { Typography } from "@mui/material";
+import type { MapSidebarItem } from "../Sidebar";
 
-const ScenarioPanel = () => {
+interface ScenarioPanelProps {
+  setActiveRight: (item: MapSidebarItem | undefined) => void;
+}
+
+const ScenarioPanel = (props: ScenarioPanelProps) => {
+  const { setActiveRight } = props;
+
   return (
-    <Container header={<Typography variant="h6">Scenario</Typography>} body={<Typography variant="body1">Body</Typography>} />
+    <Container
+      title="Scenario"
+      close={setActiveRight}
+      body={<Typography variant="body1">Body</Typography>}
+    />
   );
 };
 

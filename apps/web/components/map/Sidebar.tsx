@@ -12,15 +12,9 @@ import {
 } from "@mui/material";
 import type { CSSProperties } from "react";
 
-import type { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Icon } from "@p4b/ui/components/Icon";
+import type { MapSidebarItem } from "@/types/map/sidebar";
 
-export type MapSidebarItem = {
-  icon: ICON_NAME;
-  name: string;
-  component?: JSX.Element;
-  link?: string;
-};
 export type MapSidebarProps = {
   className?: string;
   topItems?: MapSidebarItem[];
@@ -29,15 +23,6 @@ export type MapSidebarProps = {
   width: number;
   position: "left" | "right";
   active?: MapSidebarItem;
-  onClick?: (active: MapSidebarItem) => void;
-};
-
-export type MapSidebarListProps = {
-  items: MapSidebarItem[];
-  justifyContent: CSSProperties["justifyContent"];
-  sidebarPosition: MapSidebarProps["position"];
-  active?: MapSidebarItem;
-  sidebarWidth: number;
   onClick?: (active: MapSidebarItem) => void;
 };
 
@@ -108,6 +93,15 @@ const MapSidebarList = (props: MapSidebarListProps) => {
   );
 };
 
+export type MapSidebarListProps = {
+  items: MapSidebarItem[];
+  justifyContent: CSSProperties["justifyContent"];
+  sidebarPosition: MapSidebarProps["position"];
+  active?: MapSidebarItem;
+  sidebarWidth: number;
+  onClick?: (active: MapSidebarItem) => void;
+};
+
 export default function MapSidebar(props: MapSidebarProps) {
 
   const {width} = props;
@@ -128,7 +122,7 @@ export default function MapSidebar(props: MapSidebarProps) {
           boxSizing: "border-box",
         },
       }}
-    >
+    > 
       <Box
         sx={{
           display: "grid",

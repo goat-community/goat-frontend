@@ -51,7 +51,7 @@ const TextInputSelect = (props: TextInputSelectProps) => {
       sx={{
         display: "flex",
         border: `1px solid ${theme.palette.secondary.main}`,
-        borderRadius: 4,
+        borderRadius: "4px",
         overflow: "hidden",
         position: "relative",
       }}
@@ -59,7 +59,8 @@ const TextInputSelect = (props: TextInputSelectProps) => {
       <TextField
         sx={{
           flex: 9,
-          "& .mui-1d3z3hw-MuiOutlinedInput-notchedOutline": {
+          "& .mui-9425fu-MuiOutlinedInput-notchedOutline": {
+            outline: "none",
             border: "none",
           },
         }}
@@ -112,8 +113,29 @@ const TextInputSelect = (props: TextInputSelectProps) => {
             value=""
             onChange={handleSelectChange}
             input={<InputBase />}
+            sx={{
+              "& .mui-bd3j14-MuiPaper-root-MuiPopover-paper-MuiMenu-paper": {
+                position: "absolute",
+                width: "265px",
+                marginTop: "6px",
+                zIndex: 1000,
+              },
+              "& .mui-1c8tfof-MuiButtonBase-root-MuiMenuItem-root": {
+                position: "absolute",
+                width: "265px",
+                marginTop: "6px",
+                zIndex: 1000,
+              },
+              "&.mui-6hp17o-MuiList-root-MuiMenu-list": {
+                position: "absolute",
+                width: "265px",
+                marginTop: "6px",
+                zIndex: 1000,
+              },
+            }}
             MenuProps={{
               classes: {
+                paper: "selectTextInput",
                 // paper: classes.selectDropdown,
               },
               anchorOrigin: {

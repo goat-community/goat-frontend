@@ -125,7 +125,7 @@ const DashboardSidebar = (props: Props) => {
           overflowX: "hidden",
           backgroundColor: theme.palette.background.paper,
           borderRight: "1px solid rgba(58, 53, 65, 0.12)",
-        },
+        }
       }}
     >
       <List dense>

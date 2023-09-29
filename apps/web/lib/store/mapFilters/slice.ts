@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { EmptyObject, PayloadAction } from "@reduxjs/toolkit";
 import type { Expression } from "@/types/map/filtering";
+import { v4 } from "uuid";
 
 interface FilterState {
   filters: { [key: string]: string } | EmptyObject;
@@ -35,10 +36,7 @@ const filterSlice = createSlice({
     },
     removeFilter(state, action: PayloadAction<string>) {
       const filters = state.filters;
-      console.log(filters, action.payload);
       delete filters[action.payload];
-      console.log(filters);
-      // state.filters = state.filters[action.payload]
     },
     addExpression(state, action: PayloadAction<Expression>) {
       const existingExpression = state.expressions.find(
@@ -62,6 +60,22 @@ const filterSlice = createSlice({
     getExpressionById(state, action: PayloadAction<string>) {
       state.expressions.find((expr) => expr.id === action.payload);
     },
+    removeExpressionById(state, action: PayloadAction<string>) {
+      state.expressions = state.expressions.filter(
+        (expression) => expression.id !== action.payload,
+      );
+    },
+    duplicateExpression(state, action: PayloadAction<string>){
+      const elementToClone = {...state.expressions.filter((expression) => expression.id === action.payload)[0]};
+      
+      elementToClone.id = v4();
+
+      state.expressions = [...state.expressions, elementToClone];
+
+      const filterToClone = state.filters[action.payload];
+
+      state.filters[action.payload] = filterToClone;
+    }
   },
 });
 
@@ -73,6 +87,8 @@ export const {
   clearExpression,
   setExpression,
   removeFilter,
+  removeExpressionById,
+  duplicateExpression
 } = filterSlice.actions;
 
 export const filtersReducer = filterSlice.reducer;
