@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
 import type { GetContentQueryParams } from "@/lib/validations/common";
-import type { LayerPaginated } from "@/lib/validations/layer";
+import type { CreateNewDatasetLayer, LayerPaginated } from "@/lib/validations/layer";
 
 export const LAYERS_API_BASE_URL = new URL(
   "api/v2/layer",
@@ -29,4 +29,18 @@ export const deleteLayer = async (id: string) => {
     console.error(error);
     throw Error(`deleteLayer: unable to delete project with id ${id}`);
   }
+};
+
+export const createLayer = async (data: CreateNewDatasetLayer) => {
+  const formData = new FormData();
+  formData.append("file", data.file);
+  formData.append("layer_in", JSON.stringify(data.layer_in));
+  const response = await fetch(`${LAYERS_API_BASE_URL}`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error("Failed to upload folder");
+  }
+  return await response.json();
 };

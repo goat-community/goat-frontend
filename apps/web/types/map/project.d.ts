@@ -33,3 +33,19 @@ export interface Project {
   initial_view_state: MapViewState;
   reports: Report[];
 }
+
+export interface Layer {
+  active?: boolean;
+  created_at: string;
+  data_source: string;
+  extent: string;
+  feature_layer_type: string;
+  folder_id: string;
+  id: string;
+  name: string;
+  size: number;
+  style: Record<string, unknown>; // Empty object for now, but you can define a more specific type if needed
+  type: string;
+  updated_at: string;
+  user_id: string;
+}

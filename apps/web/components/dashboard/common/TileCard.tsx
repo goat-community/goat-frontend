@@ -1,7 +1,9 @@
 "use client";
 
-import { ArrowPopper } from "@/components/ArrowPoper";
-import DeleteContentModal from "@/components/modals/DeleteContent";
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import MoreMenu from "@/components/common/PopperMenu";
+import type { Layer } from "@/lib/validations/layer";
+import type { Project } from "@/lib/validations/project";
 import {
   Box,
   Card,
@@ -10,11 +12,6 @@ import {
   Chip,
   Grid,
   IconButton,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Paper,
   Stack,
   Tooltip,
   Typography,
@@ -26,23 +23,9 @@ import { useState } from "react";
 
 export interface TileCard {
   cardType: "list" | "grid";
-  createdAt?: string;
-  updatedAt?: string;
-  ownerInfo?: {
-    name: string;
-    avatar: string;
-  };
-  updatedBy?: {
-    name: string;
-    avatar: string;
-  };
-  id: string;
-  title: string;
-  contentType: "project" | "layer";
-  layerType?: string;
-  description?: string;
-  tags?: string[];
-  image?: string;
+  item: Project | Layer;
+  moreMenuOptions?: PopperMenuItem[];
+  onMoreMenuSelect?: (optionIndex: number, item: Project | Layer) => void;
 }
 
 export interface ActiveCard {
@@ -92,137 +75,44 @@ const CardTags = ({ tags, maxTags = 5 }: CardTagsProps) => {
 };
 
 const TileCard = (props: TileCard) => {
-  const {
-    cardType,
-    title,
-    id,
-    contentType,
-    updatedAt,
-    createdAt,
-    tags,
-    image,
-    layerType,
-  } = props;
+  const { cardType, item } = props;
   const theme = useTheme();
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
-  const [activeContent, setActiveContent] = useState<ActiveCard | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
   const moreMenu = (
-    <ArrowPopper
-      open={moreMenuOpen}
-      placement="bottom"
-      onClose={() => setMoreMenuOpen(false)}
-      arrow={false}
-      content={
-        <Paper
-          elevation={8}
+    <MoreMenu
+      menuItems={props.moreMenuOptions ?? []}
+      menuButton={
+        <IconButton
+          size="medium"
+          onClick={() => {
+            setMoreMenuOpen(!moreMenuOpen);
+          }}
           sx={{
-            minWidth: 220,
-            maxWidth: 340,
-            overflow: "auto",
-            py: theme.spacing(2),
+            marginRight: "-12px",
           }}
         >
-          <List dense={true} disablePadding>
-            <ListItemButton>
-              <ListItemIcon
-                sx={{
-                  color: "inherit",
-                  pr: 4,
-                  minWidth: 0,
-                }}
-              >
-                <Icon
-                  iconName={ICON_NAME.EDIT}
-                  style={{ fontSize: 15 }}
-                  htmlColor="inherit"
-                />
-              </ListItemIcon>
-              <ListItemText primary="Edit Name & Description" />
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemIcon
-                sx={{
-                  color: "inherit",
-                  pr: 4,
-                  minWidth: 0,
-                }}
-              >
-                <Icon
-                  iconName={ICON_NAME.SHARE}
-                  style={{ fontSize: 15 }}
-                  htmlColor="inherit"
-                />
-              </ListItemIcon>
-              <ListItemText primary="Share" />
-            </ListItemButton>
-            <ListItemButton
-              sx={{
-                color: theme.palette.error.main,
-              }}
-              onClick={() => {
-                setActiveContent({
-                  id,
-                  type: contentType,
-                  title,
-                });
-                setIsDeleteDialogOpen(true);
-                setMoreMenuOpen(false);
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color: "inherit",
-                  pr: 4,
-                  minWidth: 0,
-                }}
-              >
-                <Icon
-                  iconName={ICON_NAME.TRASH}
-                  style={{ fontSize: 15 }}
-                  htmlColor="inherit"
-                />
-              </ListItemIcon>
-              <ListItemText
-                primary="Delete"
-                sx={{
-                  "& .MuiTypography-root": {
-                    color: theme.palette.error.main,
-                  },
-                }}
-              />
-            </ListItemButton>
-          </List>
-        </Paper>
+          <Icon
+            iconName={
+              cardType === "grid" ? ICON_NAME.MORE_VERT : ICON_NAME.MORE_HORIZ
+            }
+            fontSize="small"
+          />
+        </IconButton>
       }
-    >
-      <IconButton
-        size="medium"
-        onClick={() => {
-          setMoreMenuOpen(!moreMenuOpen);
-        }}
-        sx={{
-          marginRight: "-12px",
-        }}
-      >
-        <Icon
-          iconName={
-            cardType === "grid" ? ICON_NAME.MORE_VERT : ICON_NAME.MORE_HORIZ
-          }
-          fontSize="small"
-        />
-      </IconButton>
-    </ArrowPopper>
+      onSelect={(index: number) => {
+        setMoreMenuOpen(false);
+        props.onMoreMenuSelect?.(index, item);
+      }}
+    />
   );
 
   const updatedAtText = (
     <>
-      {updatedAt && (
+      {item?.updated_at && (
         <Stack direction="row" alignItems="center" spacing={1} sx={{ pb: 0 }}>
           <Typography variant="caption" noWrap>
             Last updated:{" "}
-            {formatDistance(new Date(updatedAt), new Date(), {
+            {formatDistance(new Date(item.updated_at), new Date(), {
               addSuffix: true,
             })}
           </Typography>
@@ -233,11 +123,11 @@ const TileCard = (props: TileCard) => {
 
   const createdAtText = (
     <>
-      {createdAt && (
+      {item?.created_at && (
         <Stack direction="row" alignItems="center" spacing={1} sx={{ pb: 0 }}>
           <Typography variant="caption" noWrap>
             Created:{" "}
-            {formatDistance(new Date(createdAt), new Date(), {
+            {formatDistance(new Date(item.created_at), new Date(), {
               addSuffix: true,
             })}
           </Typography>
@@ -248,9 +138,9 @@ const TileCard = (props: TileCard) => {
 
   const cardTitle = (
     <>
-      {title && (
+      {item?.name && (
         <Typography variant="body1" noWrap>
-          {title}
+          {item.name}
         </Typography>
       )}
     </>
@@ -271,22 +161,13 @@ const TileCard = (props: TileCard) => {
       {updatedAtText}
       {/* Tags */}
       <Box sx={{ mt: theme.spacing(2) }} display="flex-start">
-        <CardTags tags={tags} maxTags={3} />
+        <CardTags tags={item.tags} maxTags={3} />
       </Box>
     </>
   );
 
   return (
     <>
-      <DeleteContentModal
-        open={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onDelete={() => {
-          setIsDeleteDialogOpen(false);
-          setActiveContent(null);
-        }}
-        activeContent={activeContent}
-      />
       <Card
         sx={{
           position: "relative",
@@ -311,7 +192,7 @@ const TileCard = (props: TileCard) => {
           },
         }}
       >
-        {image && cardType === "grid" && (
+        {item?.thumbnail_url && cardType === "grid" && (
           <Box
             sx={{
               overflow: "hidden",
@@ -327,25 +208,12 @@ const TileCard = (props: TileCard) => {
                 objectFit: "cover",
                 backgroundSize: "cover",
               }}
-              image={image}
+              image={item.thumbnail_url}
             />
-            {layerType && (
-              <Chip
-                color="primary"
-                variant="filled"
-                size="small"
-                sx={{
-                  position: "absolute",
-                  top: 15,
-                  right: 15,
-                }}
-                label={layerType}
-              />
-            )}
           </Box>
         )}
 
-        {image && cardType === "list" && (
+        {item?.thumbnail_url && cardType === "list" && (
           <Box
             sx={{
               overflow: "hidden",
@@ -364,7 +232,7 @@ const TileCard = (props: TileCard) => {
                 backgroundSize: "cover",
                 border: `1px solid ${theme.palette.divider}`,
               }}
-              image={image}
+              image={item.thumbnail_url}
             />
           </Box>
         )}
@@ -416,7 +284,7 @@ const TileCard = (props: TileCard) => {
                 }}
               >
                 <Box display="flex-start">
-                  <CardTags tags={tags} maxTags={1} />
+                  <CardTags tags={item?.tags} maxTags={1} />
                 </Box>
               </Grid>
               <Grid item sm={1}>
