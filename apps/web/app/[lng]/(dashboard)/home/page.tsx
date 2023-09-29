@@ -38,7 +38,6 @@ const Home = () => {
     ...queryParams,
   });
 
-
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
       <Stack direction="column" spacing={24}>

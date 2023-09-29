@@ -1,10 +1,19 @@
 import Container from "@/components/map/panels/Container";
-import {Typography, Button} from "@mui/material";
+import { Typography, Button } from "@mui/material";
+import type { MapSidebarItem } from "../Sidebar";
 
-const LegendPanel = () => {
+interface LegendPanelProps {
+  setActiveLeft: (item: MapSidebarItem | undefined) => void;
+}
+
+const LegendPanel = (props: LegendPanelProps) => {
+  const { setActiveLeft } = props;
+
   return (
     <Container
-      header={<Typography variant="h6">Legend</Typography>}
+      title="Legend"
+      close={setActiveLeft}
+      direction="left"
       body={<Typography variant="body1">Body</Typography>}
       action={<Button variant="contained">Action</Button>}
     />

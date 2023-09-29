@@ -45,7 +45,7 @@ export function Toolbar(props: MapToolbarProps) {
         borderBottom: "1px solid rgba(58, 53, 65, 0.12)",
       }}
     >
-      <MUIToolbar variant="dense" sx={{ minHeight: height, height: height }}>
+      <MUIToolbar variant="dense" sx={{ minHeight: height, height: height, boxShadow: theme.shadows[1] }}>
         {showHambugerMenu && (
           <>
             <IconButton onClick={onMenuIconClick}>

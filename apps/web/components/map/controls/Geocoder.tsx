@@ -289,6 +289,9 @@ export default function Geocoder({
                       display: "flex",
                       alignItems: "center",
                       width: 350,
+                      [theme.breakpoints.down('sm')]: {
+                        width: 270,
+                      },
                     }}
                   >
                     <Icon

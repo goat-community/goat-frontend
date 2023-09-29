@@ -1,8 +1,11 @@
 import Container from "@/components/map/panels/Container";
 import {
+  // Checkbox,
+  // IconButton,
+  // CardContent,
+  // CardMedia,
   Button,
-  CardContent,
-  CardMedia,
+  Card,
   Divider,
   FormControlLabel,
   Radio,
@@ -10,13 +13,12 @@ import {
   Typography,
   Tab,
   Tabs,
-  Card,
-  IconButton,
   useTheme,
-  Checkbox,
   Select,
   Box,
   MenuItem,
+  FormControl,
+  InputLabel
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import type { IStore } from "@/types/store";
@@ -77,25 +79,8 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
 
   return (
     <Container
-      header={
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "20px",
-          }}
-        >
-          <Icon
-            iconName={ICON_NAME.CHEVRON_RIGHT}
-            htmlColor={theme.palette.primary.main}
-            fontSize="small"
-            onClick={() => setActiveRight(undefined)}
-          />
-          <Typography color={theme.palette.primary.main} variant="body1">
-            Layer design
-          </Typography>
-        </Box>
-      }
+      title="Layer design"
+      close={setActiveRight}
       body={
         <Box
           sx={{
@@ -121,14 +106,14 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                       <Icon
                         iconName={ICON_NAME.STAR}
                         htmlColor={theme.palette.primary.dark}
-                        fontSize="small"
+                        sx={{fontSize: "18px"}}
                       />
                     }
                     checkedIcon={
                       <Icon
                         iconName={ICON_NAME.STAR}
                         htmlColor={theme.palette.primary.main}
-                        fontSize="small"
+                        sx={{fontSize: "18px"}}
                       />
                     }
                   />
@@ -159,7 +144,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
           </Box>
           {tabValue === 0 ? (
             <>
-              <Card>
+              {/* <Card>
                 <CardMedia
                   sx={{
                     height: "42px",
@@ -167,7 +152,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                     border: "none",
                   }}
                   component="div"
-                />
+                /> 
                 <CardContent
                   sx={{
                     display: "flex",
@@ -183,7 +168,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                   </Typography>
                   <Checkbox />
                 </CardContent>
-              </Card>
+              </Card> */}
               {mapLayer?.type === "line" ? (
                 <>
                   <ColorOptionLine />
@@ -250,17 +235,30 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                   width: "100%",
                 }}
               >
-                <Typography variant="body2">Attribute</Typography>
-                <Select label="Browser layer attributes">
-                  {layerTypes.map((type) => (
-                    <MenuItem key={v4()} value={type.value}>
-                      {type.label}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <Typography variant="body2">Field</Typography>
+                <Typography
+                  color="secondary"
+                  variant="caption"
+                  sx={{
+                    fontStyle: "italic",
+                    paddingBottom: theme.spacing(2)
+                  }}
+                >
+                  Select a field containing the data of interest to display
+                </Typography>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="demo-simple-select-label">Select Option</InputLabel>
+                  <Select label="Select Option">
+                    {layerTypes.map((type) => (
+                      <MenuItem key={v4()} value={type.value}>
+                        {type.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
               <Box>
-                <Typography
+                {/* <Typography
                   color="secondary"
                   variant="subtitle2"
                   sx={{
@@ -272,7 +270,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                   or column in the dataset, using techniques such as color
                   coding or symbol size variation for categorical and numerical
                   data.
-                </Typography>
+                </Typography> */}
               </Box>
             </>
           )}
