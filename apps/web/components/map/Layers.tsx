@@ -20,6 +20,10 @@ const Layers = (props: LayersProps) => {
     (state: IStore) => state.mapFilters,
   );
 
+  const projectLayers = useSelector(
+    (state: IStore) => state.layers.layers
+  )
+
   const { layers, addLayer } = props;
 
   useEffect(() => {
@@ -55,6 +59,11 @@ const Layers = (props: LayersProps) => {
       ]);
     }
   }, [filters]);
+
+  useEffect(() => {
+    console.log(projectLayers)
+  }, [projectLayers])
+  
 
   function getQuery() {
     if (Object.keys(filters).length) {

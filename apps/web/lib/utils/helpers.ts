@@ -103,3 +103,21 @@ export function changeColorOpacity(params: { color: string; opacity: number }): 
   const { color, opacity } = params;
   return new Color(color).rgb().alpha(opacity).string();
 }
+
+export function getFrequentValuesOnProperty<T>(
+  arrayGiven: T[],
+  property: keyof T
+): string[] {
+  const typeCounts: Record<string, number> = arrayGiven.reduce(
+    (counts, currObject) => {
+      const propertyValue = currObject[property] as string;
+      counts[propertyValue] = (counts[propertyValue] || 0) + 1;
+      return counts;
+    },
+    {}
+  );
+
+  return Object.keys(typeCounts).sort(
+    (a, b) => typeCounts[b] - typeCounts[a]
+  );
+}

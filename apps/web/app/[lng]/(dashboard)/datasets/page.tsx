@@ -8,6 +8,7 @@ import TileGrid from "@/components/dashboard/common/TileGrid";
 import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import type { GetLayersQueryParams } from "@/lib/validations/layer";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
+import DatasetUploadModal from "@/components/modals/DatasetUpload";
 
 const Datasets = () => {
   const [queryParams, setQueryParams] = useState<GetLayersQueryParams>({
@@ -15,6 +16,7 @@ const Datasets = () => {
     order_by: "updated_at",
   });
   const [view, setView] = useState<"list" | "grid">("grid");
+  const [openDatasetUploadModal, setOpenDatasetUploadModal] = useState(false);
 
   const {
     layers: datasets,
@@ -24,6 +26,10 @@ const Datasets = () => {
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
+      <DatasetUploadModal
+        open={openDatasetUploadModal}
+        onClose={() => setOpenDatasetUploadModal(false)}
+      />
       <Box
         sx={{
           display: "flex",
@@ -38,9 +44,9 @@ const Datasets = () => {
           startIcon={
             <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />
           }
-          href="/datasets"
+          onClick={() => setOpenDatasetUploadModal(true)}
         >
-          New dataset
+          Add Dataset
         </Button>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>
