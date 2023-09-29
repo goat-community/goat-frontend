@@ -9,6 +9,7 @@ import { fallbackLng, cookieName as lngCookieName } from "@/app/i18/settings";
 import { USERS_API_BASE_URL } from "@/lib/api/users";
 import { getToken } from "next-auth/jwt";
 import { refreshAccessToken } from "@/app/api/auth/[...nextauth]/options";
+
 const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map"];
 
 export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
