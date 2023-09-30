@@ -12,6 +12,7 @@ import { Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
 
 export interface PopperMenuItem {
+  id: string;
   label: string;
   icon?: ICON_NAME;
   color?: string;
@@ -21,7 +22,7 @@ export interface PopperMenuProps {
   menuItems: PopperMenuItem[];
   selectedItem?: PopperMenuItem;
   menuButton: React.ReactNode;
-  onSelect: (index: number) => void;
+  onSelect: (item: PopperMenuItem) => void;
 }
 
 export default function PopperMenu(props: PopperMenuProps) {
@@ -51,7 +52,7 @@ export default function PopperMenu(props: PopperMenuProps) {
                 selected={selectedItem?.label === item.label}
                 key={index}
                 onClick={() => {
-                  props.onSelect(index);
+                  props.onSelect(item);
                   setPopperMenuOpen(false);
                 }}
                 sx={{

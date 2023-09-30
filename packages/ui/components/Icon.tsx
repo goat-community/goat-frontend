@@ -63,9 +63,9 @@ import {
   faUpload,
   faTable,
   faBarsProgress,
+  faCircleQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 
-import {faCircleQuestion} from "@fortawesome/free-regular-svg-icons"
 
 import {
   faGoogle,
@@ -162,8 +162,7 @@ export enum ICON_NAME {
   LINKEDIN = "linkedin",
   INSTAGRAM = "instagram",
   BITBUCKET = "bitbucket",
-  PAYPAL = "paypal",
-  PULLER = "puller"
+  PAYPAL = "paypal"
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -231,6 +230,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.UPLOAD]: faUpload,
   [ICON_NAME.TABLE]: faTable,
   [ICON_NAME.BARS_PROGRESS]: faBarsProgress,
+  [ICON_NAME.EXTERNAL_LINK]: faExternalLinkAlt,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,
@@ -242,8 +242,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.LINKEDIN]: faLinkedin,
   [ICON_NAME.INSTAGRAM]: faInstagram,
   [ICON_NAME.BITBUCKET]: faBitbucket,
-  [ICON_NAME.PAYPAL]: faPaypal,
-  [ICON_NAME.EXTERNAL_LINK]: faExternalLinkAlt,
+  [ICON_NAME.PAYPAL]: faPaypal
 };
 
 interface BrandColors {

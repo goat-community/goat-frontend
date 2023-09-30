@@ -25,7 +25,7 @@ export interface TileCard {
   cardType: "list" | "grid";
   item: Project | Layer;
   moreMenuOptions?: PopperMenuItem[];
-  onMoreMenuSelect?: (optionIndex: number, item: Project | Layer) => void;
+  onMoreMenuSelect?: (menuItem: PopperMenuItem, contentItem: Project | Layer) => void;
 }
 
 export interface ActiveCard {
@@ -99,9 +99,9 @@ const TileCard = (props: TileCard) => {
           />
         </IconButton>
       }
-      onSelect={(index: number) => {
+      onSelect={(menuItem: PopperMenuItem) => {
         setMoreMenuOpen(false);
-        props.onMoreMenuSelect?.(index, item);
+        props.onMoreMenuSelect?.(menuItem, item);
       }}
     />
   );

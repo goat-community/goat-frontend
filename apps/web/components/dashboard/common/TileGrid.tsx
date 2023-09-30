@@ -1,9 +1,9 @@
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import TileCard from "@/components/dashboard/common/TileCard";
-import DeleteContentModal from "@/components/modals/DeleteContent";
-import EditMetadataModal from "@/components/modals/EditMetadata";
+import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
+import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";
+import { ContentActions } from "@/types/common";
 import {
   Box,
   Grid,
@@ -13,7 +13,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useState } from "react";
 
 interface TileGridProps {
   view: "list" | "grid";
@@ -22,37 +21,8 @@ interface TileGridProps {
   isLoading: boolean;
 }
 
-export const moreMenuOptions: PopperMenuItem[] = [
-  {
-    label: "Info",
-    icon: ICON_NAME.CIRCLEINFO,
-  },
-  {
-    label: "Edit metadata",
-    icon: ICON_NAME.EDIT,
-  },
-  {
-    label: "Move to folder",
-    icon: ICON_NAME.FOLDER,
-  },
-  {
-    label: "Download",
-    icon: ICON_NAME.DOWNLOAD,
-  },
-  {
-    label: "Share",
-    icon: ICON_NAME.SHARE,
-  },
-  {
-    label: "Delete",
-    icon: ICON_NAME.TRASH,
-    color: "error.main",
-  },
-];
-
 const TileGrid = (props: TileGridProps) => {
   const { items, isLoading } = props;
-  const [activeContent, setActiveContent] = useState<Project | Layer>();
   const theme = useTheme();
   const listProps = {
     xs: 12,
@@ -64,32 +34,23 @@ const TileGrid = (props: TileGridProps) => {
     lg: 3,
   };
 
-  const [moreMenuState, setMoreMenuState] = useState<boolean[]>(
-    new Array(moreMenuOptions.length).fill(false) as boolean[],
-  );
-
-  const closeMoreMenu = () => {
-    setActiveContent(undefined);
-    setMoreMenuState(
-      new Array(moreMenuOptions.length).fill(false) as boolean[],
-    );
-  };
+  const {
+    moreMenuOptions,
+    activeContent,
+    moreMenuState,
+    closeMoreMenu,
+    openMoreMenu,
+  } = useContentMoreMenu();
 
   return (
     <>
-      {activeContent && (
+      {activeContent && moreMenuState && (
         <>
-          <EditMetadataModal
-            open={moreMenuState[1]}
-            onClose={closeMoreMenu}
+          <ContentDialogWrapper
             content={activeContent}
-            type={props.type}
-          />
-          <DeleteContentModal
-            open={moreMenuState[5]}
+            action={moreMenuState.id as ContentActions}
             onClose={closeMoreMenu}
-            onDelete={closeMoreMenu}
-            content={activeContent}
+            onContentDelete={closeMoreMenu}
             type={props.type}
           />
         </>
@@ -149,15 +110,7 @@ const TileGrid = (props: TileGridProps) => {
                     cardType={props.view}
                     item={item}
                     moreMenuOptions={moreMenuOptions}
-                    onMoreMenuSelect={(
-                      optionIndex: number,
-                      item: Project | Layer,
-                    ) => {
-                      setActiveContent(item);
-                      setMoreMenuState(
-                        moreMenuState.map((_, i) => i === optionIndex),
-                      );
-                    }}
+                    onMoreMenuSelect={openMoreMenu}
                   />
                 )}
               </Grid>

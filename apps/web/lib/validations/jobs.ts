@@ -1,3 +1,5 @@
+import { paginatedSchema } from "@/lib/validations/common";
+import { responseSchema } from "@/lib/validations/response";
 import * as z from "zod";
 
 export const msgTypeEnum = z.enum(["info", "warning", "error"]);
@@ -34,11 +36,24 @@ export const jobSchema = z.object({
   type: jobTypeEnum,
   status: jobStatusLayerUpload,
   payload: z.record(z.any()).optional(),
+  read: z.boolean().optional(),
 });
 
+export const getJobsQueryParamsSchema = paginatedSchema.extend({
+  job_type: jobTypeEnum.optional(),
+  project_id: z.string().uuid().optional(),
+  start_data: z.string().optional(),
+  read: z.boolean().optional(),
+  end_data: z.string().optional(),
+  authorization: z.string().optional(),
+});
+
+export const jobResponseSchema = responseSchema(jobSchema);
 
 export type JobStatusType = z.infer<typeof jobStatusTypeEnum>;
 export type JobType = z.infer<typeof jobTypeEnum>;
 export type MsgType = z.infer<typeof msgTypeEnum>;
 export type JobStep = z.infer<typeof jobStepSchema>;
 export type Job = z.infer<typeof jobSchema>;
+export type JobPaginated = z.infer<typeof jobResponseSchema>;
+export type GetJobsQueryParam = z.infer<typeof getJobsQueryParamsSchema>;

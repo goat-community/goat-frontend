@@ -1,5 +1,8 @@
 import TileCard from "@/components/dashboard/common/TileCard";
+import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
+import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Layer } from "@/lib/validations/layer";
+import { ContentActions } from "@/types/common";
 import {
   Box,
   Button,
@@ -17,8 +20,27 @@ interface DataSectionProps {
 
 const DataSection = (props: DataSectionProps) => {
   const { layers, isLoading } = props;
+
+  const {
+    moreMenuOptions,
+    activeContent,
+    moreMenuState,
+    closeMoreMenu,
+    openMoreMenu,
+  } = useContentMoreMenu();
   return (
     <Box>
+      {activeContent && moreMenuState && (
+        <>
+          <ContentDialogWrapper
+            content={activeContent}
+            action={moreMenuState.id as ContentActions}
+            onClose={closeMoreMenu}
+            onContentDelete={closeMoreMenu}
+            type="layer"
+          />
+        </>
+      )}
       <Box
         sx={{
           display: "flex",
@@ -65,6 +87,8 @@ const DataSection = (props: DataSectionProps) => {
                 <TileCard
                   cardType="grid"
                   item={item}
+                  moreMenuOptions={moreMenuOptions}
+                  onMoreMenuSelect={openMoreMenu}
                 />
               )}
             </Grid>

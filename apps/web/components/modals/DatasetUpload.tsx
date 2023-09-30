@@ -14,8 +14,6 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  MenuItem,
-  Select,
   Stack,
   Step,
   StepLabel,
@@ -169,6 +167,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
       console.log("jobDetails", jobDetails);
     } catch (error) {
       toast.error("Error uploading dataset");
+      console.error("error", error); 
       handleOnClose();
     } finally {
       setIsBusy(false);
@@ -306,38 +305,6 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
             <Typography variant="caption">
               Please review the details below before uploading the dataset.
             </Typography>
-            <Select
-              fullWidth
-              labelId="dataset-type"
-              value={datasetType}
-              label="Dataset Type"
-              onChange={(event) => {
-                setDatasetType(event.target.value as "feature_layer" | "table");
-              }}
-            >
-              <MenuItem value="feature_layer">
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <Icon iconName={ICON_NAME.MAP} fontSize="small" />
-                  <ListItemText primary="Feature Layer" />
-                </Stack>
-              </MenuItem>
-              <MenuItem value="table">
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <Icon iconName={ICON_NAME.TABLE} fontSize="small" />
-                  <ListItemText primary="Table" />
-                </Stack>
-              </MenuItem>
-            </Select>
             <Typography variant="body2">
               <b>File:</b> {fileValue?.name}
             </Typography>

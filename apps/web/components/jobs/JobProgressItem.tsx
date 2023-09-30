@@ -47,7 +47,7 @@ export default function JobProgressItem(props: JobProgressItemProps) {
       aria-label={name}
       role="job_item"
     >
-      <Box flexGrow={1} flexShrink={1} flexBasis="100%" sx={{ mr: 2 }}>
+      <Box flexGrow={1} flexShrink={1} flexBasis="100%" sx={{ mr: 2 }} width="0">
         <Stack spacing={2}>
           <Box textOverflow="ellipsis" overflow="hidden">
             <Typography variant="body2" fontWeight="bold" noWrap>

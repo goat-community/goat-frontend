@@ -1,7 +1,6 @@
 import { LAYERS_API_BASE_URL, deleteLayer } from "@/lib/api/layers";
 import { PROJECTS_API_BASE_URL, deleteProject } from "@/lib/api/projects";
-import type { Layer } from "@/lib/validations/layer";
-import type { Project } from "@/lib/validations/project";
+import { ContentDialogBaseProps } from "@/types/dashboard/content";
 import {
   Button,
   Dialog,
@@ -14,13 +13,9 @@ import {
 import { toast } from "react-toastify";
 import { mutate } from "swr";
 
-interface DeleteContentDialogProps {
-  open: boolean;
+interface DeleteContentDialogProps extends ContentDialogBaseProps {
   disabled?: boolean;
-  onClose?: () => void;
   onDelete?: () => void;
-  type: "project" | "layer";
-  content: Project | Layer;
 }
 
 const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({

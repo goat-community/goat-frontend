@@ -1,5 +1,8 @@
 import TileCard from "@/components/dashboard/common/TileCard";
+import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
+import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Project } from "@/lib/validations/project";
+import { ContentActions } from "@/types/common";
 import { Box, Grid, Skeleton } from "@mui/material";
 
 interface ProjectSectionProps {
@@ -9,8 +12,26 @@ interface ProjectSectionProps {
 
 const ProjectSection = (props: ProjectSectionProps) => {
   const { projects, isLoading } = props;
+  const {
+    moreMenuOptions,
+    activeContent,
+    moreMenuState,
+    closeMoreMenu,
+    openMoreMenu,
+  } = useContentMoreMenu();
   return (
     <Box>
+      {activeContent && moreMenuState && (
+        <>
+          <ContentDialogWrapper
+            content={activeContent}
+            action={moreMenuState.id as ContentActions}
+            onClose={closeMoreMenu}
+            onContentDelete={closeMoreMenu}
+            type="project"
+          />
+        </>
+      )}
       <Grid container spacing={5}>
         {(isLoading ? Array.from(new Array(4)) : projects ?? []).map(
           (item: Project, index: number) => (
@@ -33,6 +54,8 @@ const ProjectSection = (props: ProjectSectionProps) => {
                 <TileCard
                   cardType="grid"
                   item={item}
+                  moreMenuOptions={moreMenuOptions}
+                  onMoreMenuSelect={openMoreMenu}
                 />
               )}
             </Grid>

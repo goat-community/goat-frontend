@@ -40,18 +40,22 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
 
   const sortByItems: PopperMenuItem[] = [
     {
+      id: "sort-by-alpha-asc",
       label: "A-Z (Asc)",
       icon: ICON_NAME.SORT_ALPHA_ASC,
     },
     {
+      id: "sort-by-alpha-desc",
       label: "A-Z (Desc)",
       icon: ICON_NAME.SORT_ALPHA_DESC,
     },
     {
+      id: "sort-by-last-updated",
       label: "Last updated",
       icon: ICON_NAME.CLOCK,
     },
     {
+      id: "sort-by-last-created",
       label: "Last created",
       icon: ICON_NAME.CLOCK,
     },
@@ -61,12 +65,12 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
     sortByItems[0],
   );
 
-  const sortByOptions = [
-    { order_by: "name", order: "ascendent" as const },
-    { order_by: "name", order: "descendent" as const },
-    { order_by: "updated_at", order: "descendent" as const },
-    { order_by: "created_at", order: "descendent" as const },
-  ];
+  const soryByOptions = {
+    "sort-by-alpha-asc": { order_by: "name", order: "ascendent" },
+    "sort-by-alpha-desc": { order_by: "name", order: "descendent" },
+    "sort-by-last-updated": { order_by: "updated_at", order: "descendent" },
+    "sort-by-last-created": { order_by: "created_at", order: "descendent" },
+  };
 
   return (
     <Box
@@ -111,11 +115,11 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
 
         <SortByMenu
           selectedItem={selectedSortBy}
-          onSelect={(index) => {
-            setSelectedSortBy(sortByItems[index]);
+          onSelect={(item: PopperMenuItem) => {
+            setSelectedSortBy(item);
             setQueryParams({
               ...queryParams,
-              ...sortByOptions[index],
+              ...soryByOptions[item?.id],
             });
           }}
           menuItems={sortByItems}

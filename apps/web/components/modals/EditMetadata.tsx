@@ -1,6 +1,6 @@
 import LayerMetadataForm from "@/components/common/LayerMetadataForm";
 import type { Layer } from "@/lib/validations/layer";
-import type { Project } from "@/lib/validations/project";
+import { ContentDialogBaseProps } from "@/types/dashboard/content";
 import {
   Dialog,
   DialogTitle,
@@ -10,12 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 
-interface EditMetadataDialogProps {
-  open: boolean;
-  onClose?: () => void;
-  type: "project" | "layer";
-  content: Project | Layer;
-}
+interface EditMetadataDialogProps extends ContentDialogBaseProps {}
 
 const EditMetadata: React.FC<EditMetadataDialogProps> = ({
   open,

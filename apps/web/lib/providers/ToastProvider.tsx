@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "@mui/material";
 import { ToastContainer, Zoom } from "react-toastify";
 
 interface ToastProviderProps {
@@ -7,14 +8,17 @@ interface ToastProviderProps {
 }
 
 export default function ToastProvider({ children }: ToastProviderProps) {
+  const theme = useTheme();
   return (
     <>
       {children}
       <ToastContainer
+        
         transition={Zoom}
         position="top-center"
         autoClose={2000}
         hideProgressBar
+        theme={theme.palette.mode}
       />
     </>
   );

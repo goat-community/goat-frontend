@@ -93,10 +93,12 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
 
   const moreMenuItems: PopperMenuItem[] = [
     {
+      id: "rename",
       label: "Rename",
       icon: ICON_NAME.EDIT,
     },
     {
+      id: "delete",
       label: "Delete",
       icon: ICON_NAME.TRASH,
       color: theme.palette.error.main,
@@ -286,26 +288,18 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
                                   />
                                 </IconButton>
                               }
-                              onSelect={(index) => {
-                                if (index === 0) {
-                                  setEditModal({
-                                    type: "update",
-                                    selectedFolder: {
-                                      id: item.id,
-                                      name: item.name,
-                                    },
-                                    open: true,
-                                  });
-                                } else if (index === 1) {
-                                  setEditModal({
-                                    type: "delete",
-                                    selectedFolder: {
-                                      id: item.id,
-                                      name: item.name,
-                                    },
-                                    open: true,
-                                  });
-                                }
+                              onSelect={(menuItem: PopperMenuItem) => {
+                                setEditModal({
+                                  type:
+                                    menuItem.id === "rename"
+                                      ? "update"
+                                      : "delete",
+                                  selectedFolder: {
+                                    id: item.id,
+                                    name: item.name,
+                                  },
+                                  open: true,
+                                });
                               }}
                             />
                           )}

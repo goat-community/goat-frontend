@@ -37,9 +37,9 @@ export default function RootLayout({
       <body className={mulish.className}>
         <StoreProvider>
           <AuthProvider>
-            <ToastProvider>
-              <ThemeRegistry>{children}</ThemeRegistry>
-            </ToastProvider>
+            <ThemeRegistry>
+              <ToastProvider>{children} </ToastProvider>
+            </ThemeRegistry>
           </AuthProvider>
         </StoreProvider>
       </body>
