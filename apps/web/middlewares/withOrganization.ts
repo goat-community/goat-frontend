@@ -35,22 +35,26 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
       secret: process.env.NEXTAUTH_SECRET,
     });
     if (!token) return await next(request, _next);
-    const refreshedToken = await refreshAccessToken(token);
-    const checkOrganization = await fetch(
-      `${USERS_API_BASE_URL}/organization`,
-      {
-        headers: {
-          Authorization: `Bearer ${refreshedToken.access_token}`,
+    try {
+      const refreshedToken = await refreshAccessToken(token);
+      const checkOrganization = await fetch(
+        `${USERS_API_BASE_URL}/organization`,
+        {
+          headers: {
+            Authorization: `Bearer ${refreshedToken.access_token}`,
+          },
         },
-      },
-    );
-    if (checkOrganization.ok) {
-      const organization = await checkOrganization.json();
-      if (organization?.id) {
-        const response = (await next(request, _next)) as NextResponse;
-        response.cookies.set("organization", organization.id);
-        return response;
+      );
+      if (checkOrganization.ok) {
+        const organization = await checkOrganization.json();
+        if (organization?.id) {
+          const response = (await next(request, _next)) as NextResponse;
+          response.cookies.set("organization", organization.id);
+          return response;
+        }
       }
+    } catch (error) {
+      console.error("Error while fetching organization", error);
     }
 
     const organizationUrl = new URL(`${basePath}${organizationPage}`, origin);

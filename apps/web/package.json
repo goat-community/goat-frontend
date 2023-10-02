@@ -43,6 +43,7 @@
     "i18next": "^23.4.4",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-resources-to-backend": "^1.1.4",
+    "js-cookie": "^3.0.5",
     "mapbox-gl": "^2.15.0",
     "maplibre-gl": "^3.1.0",
     "next": "v13.4.12",

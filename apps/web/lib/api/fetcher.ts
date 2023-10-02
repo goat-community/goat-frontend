@@ -1,4 +1,4 @@
-// import { getSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 
 export const fetcher = async (params) => {
   let queryParams, url;
@@ -22,14 +22,13 @@ export const fetcher = async (params) => {
   const urlWithParams = queryParams
     ? `${url}?${new URLSearchParams(queryParams)}`
     : url;
-  // console.log("urlWithParams", urlWithParams);
   const options = {};
-  // const session = await getSession();
-  // if (session?.access_token) {
-  //   options["headers"] = {
-  //     Authorization: `Bearer ${session.access_token}`,
-  //   };
-  // }
+  const session = await getSession();
+  if (session?.access_token) {
+    options["headers"] = {
+      Authorization: `Bearer ${session.access_token}`,
+    };
+  }
 
   const res = await fetch(urlWithParams, options);
   // If the status code is not in the range 200-299,

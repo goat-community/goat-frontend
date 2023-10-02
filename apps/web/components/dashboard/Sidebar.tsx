@@ -1,3 +1,4 @@
+import { NavItem } from "@/types/common/navigation";
 import type { CSSObject, Theme } from "@mui/material";
 import {
   Link,
@@ -13,13 +14,6 @@ import {
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-
-export interface NavbarItem {
-  link: string;
-  icon: ICON_NAME;
-  label: string;
-  current: boolean;
-}
 
 const openedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {
@@ -63,7 +57,7 @@ const DashboardSidebar = (props: Props) => {
     onClose: () => null,
   };
 
-  const navigation: NavbarItem[] = [
+  const navigation: NavItem[] = [
     {
       link: "/home",
       icon: ICON_NAME.HOUSE,
@@ -125,7 +119,7 @@ const DashboardSidebar = (props: Props) => {
           overflowX: "hidden",
           backgroundColor: theme.palette.background.paper,
           borderRight: "1px solid rgba(58, 53, 65, 0.12)",
-        }
+        },
       }}
     >
       <List dense>
@@ -147,9 +141,6 @@ const DashboardSidebar = (props: Props) => {
                 selected={item.current}
                 sx={{
                   minHeight: 48,
-                }}
-                onClick={() => {
-                  console.log("click");
                 }}
               >
                 <ListItemIcon

@@ -1,37 +1,24 @@
 "use client";
 import React from "react";
+import Cookies from "js-cookie";
 import NextAppDirEmotionCacheProvider from "./EmotionCache";
 import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
+import type { PaletteMode } from "@mui/material";
+import { THEME_COOKIE_NAME } from "@/lib/constants";
 export const ColorModeContext = React.createContext({
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  toggleColorMode: () => {},
+  changeColorMode: (_mode: PaletteMode) => {},
 });
 export default function ThemeRegistry({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  let theme = "dark";
-  if (typeof window !== "undefined") {
-    theme = localStorage.getItem("theme") || "dark";
-  }
-
-  const [mode, setMode] = React.useState<"light" | "dark">(
-    theme as "light" | "dark",
-  );
+  const defaultMode = Cookies.get(THEME_COOKIE_NAME) as PaletteMode
+  const [mode, setMode] = React.useState<PaletteMode>(defaultMode);
   const colorMode = React.useMemo(
     () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => {
-          localStorage.setItem(
-            "theme",
-            prevMode === "light" ? "dark" : "light",
-          );
-          if (prevMode === "light") {
-            return "dark";
-          }
-          return "light";
-        });
+      changeColorMode: (mode: PaletteMode) => {
+        setMode(mode);
       },
     }),
     [],

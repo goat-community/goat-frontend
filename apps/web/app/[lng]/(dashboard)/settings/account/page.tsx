@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default async function Organization({}) {
-  return redirect("/settings/account");
+  return redirect("/settings/account/profile");
 }

@@ -51,9 +51,10 @@ export default function PopperMenu(props: PopperMenuProps) {
               <ListItemButton
                 selected={selectedItem?.label === item.label}
                 key={index}
-                onClick={() => {
+                onClick={(event) => {
                   props.onSelect(item);
                   setPopperMenuOpen(false);
+                  event.stopPropagation();
                 }}
                 sx={{
                   ...(item.color && {

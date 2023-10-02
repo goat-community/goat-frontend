@@ -3,8 +3,11 @@ import type { NextFetchEvent, NextMiddleware, NextRequest } from "next/server";
 
 import type { MiddlewareFactory } from "./types";
 import acceptLanguage from "accept-language";
-import { fallbackLng, languages, cookieName } from "@/app/i18/settings";
-
+import {
+  fallbackLng,
+  languages,
+  cookieName as lngCookieName,
+} from "@/app/i18/settings";
 acceptLanguage.languages(languages);
 
 const excluded = [
@@ -15,16 +18,19 @@ const excluded = [
   "/favicon.ico",
   "/sw.js",
 ];
-export const withLanguages: MiddlewareFactory = (next: NextMiddleware) => {
+export const withLanguage: MiddlewareFactory = (
+  next: NextMiddleware,
+) => {
   return async (request: NextRequest, _next: NextFetchEvent) => {
     const { pathname } = request.nextUrl;
 
     if (excluded.some((path) => pathname.startsWith(path)))
       return next(request, _next);
 
+    // Language redirect
     let lng;
-    if (request.cookies.has(cookieName))
-      lng = acceptLanguage.get(request.cookies.get(cookieName)?.value);
+    if (request.cookies.has(lngCookieName))
+      lng = acceptLanguage.get(request.cookies.get(lngCookieName)?.value);
     if (!lng) lng = acceptLanguage.get(request.headers.get("Accept-Language"));
     if (!lng) lng = fallbackLng;
     if (
@@ -40,7 +46,7 @@ export const withLanguages: MiddlewareFactory = (next: NextMiddleware) => {
       );
       const response = (await next(request, _next)) as NextResponse;
       if (response && lngInReferer)
-        response.cookies.set(cookieName, lngInReferer);
+        response.cookies.set(lngCookieName, lngInReferer);
       return response;
     }
 

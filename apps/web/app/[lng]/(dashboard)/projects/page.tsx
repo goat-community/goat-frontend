@@ -54,7 +54,7 @@ const Projects = () => {
           />
         </Grid>
         <Grid item xs={3}>
-          <Paper elevation={3} sx={{ backgroundImage: "none" }}>
+          <Paper elevation={3}>
             <FoldersTreeView
               queryParams={queryParams}
               setQueryParams={setQueryParams}

@@ -1,6 +1,12 @@
 import { stackMiddlewares } from "@/middlewares/stackMiddlewares";
-import { withLanguages } from "@/middlewares/withLanguages";
 import { withAuth } from "@/middlewares/withAuth";
+import { withCookies } from "@/middlewares/withCookies";
+import { withLanguage } from "@/middlewares/withLanguage";
 import { withOrganization } from "@/middlewares/withOrganization";
 
-export default stackMiddlewares([withLanguages, withAuth, withOrganization]);
+export default stackMiddlewares([
+  withCookies,
+  withLanguage,
+  withAuth,
+  withOrganization,
+]);

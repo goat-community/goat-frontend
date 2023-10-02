@@ -2,19 +2,23 @@
 
 import React from "react";
 import {
-  Typography,
   useTheme,
   Box,
-  Divider,
   Container,
   Grid,
-  IconButton,
-  Menu,
-  MenuItem,
+  Paper,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Link,
+  ListItem,
+  Typography,
 } from "@mui/material";
-import Link from "next/link";
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { NavItem } from "@/types/common/navigation";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -35,122 +39,106 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
     setAnchorEl(null);
   };
 
-  const linkStyle = (page) =>
-    pathname.slice(3) === `/settings/${page}`
-      ? {
-          cursor: "pointer",
-          backgroundColor: theme.palette.primary.light + "14",
-          padding: `${theme.spacing(1)} ${theme.spacing(4)}`,
-        }
-      : {
-          cursor: "pointer",
-          "&:hover": {
-            backgroundColor: theme.palette.secondary.light + "50",
-          },
-          padding: `${theme.spacing(1)} ${theme.spacing(4)}`,
-        };
+  const navigation: NavItem[] = [
+    {
+      link: "/settings/account",
+      icon: ICON_NAME.USER,
+      label: "Account",
+      current: pathname?.includes("/account"),
+    },
+    {
+      link: "/settings/organization",
+      icon: ICON_NAME.ORGANIZATION,
+      label: "Organization",
+      current: pathname?.includes("/organization"),
+    },
+    {
+      link: "/settings/subscription",
+      icon: ICON_NAME.CREDIT_CARD,
+      label: "Subscriptions",
+      current: pathname?.includes("/subscription"),
+    },
+  ];
 
   return (
-    <Box>
-      <Container
+    <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
+      <Box
         sx={{
-          py: 20,
-          px: 10,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 8,
         }}
-        maxWidth="xl"
       >
-        <Box>
-          <IconButton
-            sx={{
-              float: "right",
-              [theme.breakpoints.up("md")]: {
-                display: "none",
-              },
-            }}
-            onClick={handleClick}
-          >
-            <Icon
-              iconName={ICON_NAME.MORE_VERT}
-              sx={{
-                backgroundColor: `${theme.palette.secondary.main}80`,
-                fontSize: theme.typography.h4,
-                padding: theme.spacing(1),
-                borderRadius: "100%",
-              }}
-            />
-          </IconButton>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleClose}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
-          >
-            <Link
-              href="/settings/organization"
-              style={{ textDecoration: "none" }}
+        <Typography variant="h6">Settings</Typography>
+      </Box>
+      <Grid container justifyContent="space-between" spacing={4}>
+        <Grid
+          item
+          xs={3}
+          sx={{
+            [theme.breakpoints.down("md")]: {
+              display: "none",
+            },
+          }}
+        >
+          <Paper elevation={3}>
+            <List
+              sx={{ width: "100%" }}
+              component="nav"
+              aria-labelledby="settings-navigation"
             >
-              <MenuItem onClick={handleClose}>Organization</MenuItem>
-            </Link>
-            <Link
-              href="/settings/subscription"
-              style={{ textDecoration: "none" }}
-            >
-              <MenuItem onClick={handleClose}>Subscription</MenuItem>
-            </Link>
-            <Link href="/settings/settings" style={{ textDecoration: "none" }}>
-              <MenuItem onClick={handleClose}>Settings</MenuItem>
-            </Link>
-          </Menu>
-        </Box>
-        <Grid container justifyContent="space-between">
-          <Grid
-            item
-            xs={2.5}
-            sx={{
-              [theme.breakpoints.down("md")]: {
-                display: "none",
-              },
-            }}
-          >
-            <div>
-              <Link
-                href="/settings/organization"
-                style={{ textDecoration: "none" }}
-              >
-                <Box sx={linkStyle("organization")}>
-                  <Typography variant="body2">Organization</Typography>
-                </Box>
-              </Link>
-              <Divider sx={{ margin: `4px 0`, width: "100%" }} />
-              <Link
-                href="/settings/subscription"
-                style={{ textDecoration: "none" }}
-              >
-                <Box sx={linkStyle("subscription")}>
-                  <Typography variant="body2">Subscription</Typography>
-                </Box>
-              </Link>
-              <Divider sx={{ margin: `4px 0`, width: "100%" }} />
-              <Link
-                href="/settings/settings"
-                style={{ textDecoration: "none" }}
-              >
-                <Box sx={linkStyle("settings")}>
-                  <Typography variant="body2">Settings</Typography>
-                </Box>
-              </Link>
-              <Divider sx={{ margin: `4px 0`, width: "100%" }} />
-            </div>
-          </Grid>
-          <Grid item xs={12} md={9}>
-            <div>{children}</div>
-          </Grid>
+              {navigation.map((item) => (
+                <Link
+                  key={item.icon}
+                  href={item.link}
+                  component={NextLink}
+                  passHref
+                  style={{ textDecoration: "none" }}
+                >
+                  <ListItem
+                    disablePadding
+                    sx={{
+                      display: "block",
+                    }}
+                  >
+                    <ListItemButton
+                      selected={item.current}
+                      sx={{
+                        minHeight: 48,
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          ml: 0,
+                          mr: 6,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Icon
+                          iconName={item.icon}
+                          fontSize="small"
+                          htmlColor={
+                            item.current
+                              ? theme.palette.primary.main
+                              : "inherit"
+                          }
+                        />
+                      </ListItemIcon>
+                      <ListItemText primary={item.label} />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+              ))}
+            </List>
+          </Paper>
         </Grid>
-      </Container>
-    </Box>
+        <Grid item xs={12} md={9}>
+          <Paper elevation={3}>{children}</Paper>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 
