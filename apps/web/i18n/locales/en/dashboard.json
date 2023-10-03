@@ -1,0 +1,13 @@
+{
+    "preferences": "Preferences",
+    "manage_preferences": "Manage client preferences",
+    "language": "Language",
+    "en": "English",
+    "de": "Deutsch",
+    "theme": "Theme",
+    "dark": "Dark",
+    "light": "Light",
+    "measurement_unit": "Measurement Unit",
+    "metric": "Metric",
+    "imperial": "Imperial"
+}

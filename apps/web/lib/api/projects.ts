@@ -1,6 +1,10 @@
 import useSWR from "swr";
-import { fetcher } from "@/lib/api/fetcher";
-import type { ProjectPaginated, ProjectLayers, Project } from "@/lib/validations/project";
+import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
+import type {
+  ProjectPaginated,
+  ProjectLayers,
+  Project,
+} from "@/lib/validations/project";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 
 export const PROJECTS_API_BASE_URL = new URL(
@@ -24,11 +28,10 @@ export const useProjects = (queryParams?: GetContentQueryParams) => {
 };
 
 export const useProject = (id: string) => {
-  const { data, isLoading, error, mutate, isValidating } =
-    useSWR<Project>(
-      [`${PROJECTS_API_BASE_URL}/${id}`],
-      fetcher,
-    );
+  const { data, isLoading, error, mutate, isValidating } = useSWR<Project>(
+    [`${PROJECTS_API_BASE_URL}/${id}`],
+    fetcher,
+  );
   return {
     project: data,
     isLoading: isLoading,
@@ -36,28 +39,29 @@ export const useProject = (id: string) => {
     mutate,
     isValidating,
   };
-}
+};
 
 export const getProjectLayers = async (id: string) => {
   try {
-    const data: Promise<ProjectLayers[]> = (await fetch(`${PROJECTS_API_BASE_URL}/${id}/layer`)).json();
+    const data: Promise<ProjectLayers[]> = (
+      await fetchWithAuth(`${PROJECTS_API_BASE_URL}/${id}/layer`)
+    ).json();
     return data;
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
-    throw Error(`error: make sure you are connected to an internet connection!`)
+    throw Error(
+      `error: make sure you are connected to an internet connection!`,
+    );
   }
-}
+};
 
 export const deleteProject = async (id: string) => {
   try {
-    await fetch(`${PROJECTS_API_BASE_URL}/${id}`, {
+    await fetchWithAuth(`${PROJECTS_API_BASE_URL}/${id}`, {
       method: "DELETE",
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
-    throw Error(`deleteProject: unable to delete project with id ${id}`)
+    throw Error(`deleteProject: unable to delete project with id ${id}`);
   }
-}
-
+};

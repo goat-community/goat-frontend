@@ -45,6 +45,23 @@ export const fetcher = async (params) => {
   return res.json();
 };
 
+export const fetchWithAuth = async (
+  url: string,
+  options?: RequestInit,
+): Promise<Response> => {
+  const session = await getSession();
+  if (session?.access_token) {
+    if (!options) {
+      options = {};
+    }
+    if (!options.headers) {
+      options.headers = {};
+    }
+    options.headers["Authorization"] = `Bearer ${session.access_token}`;
+  }
+  return fetch(url, options);
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateRessource = async (url: string, { arg }: { arg: any }) => {
   return fetch(url, {

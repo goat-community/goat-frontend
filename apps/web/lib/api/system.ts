@@ -1,4 +1,4 @@
-import { fetcher } from "@/lib/api/fetcher";
+import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type {
   SystemSettings,
   SystemSettingsUpdate,
@@ -25,7 +25,7 @@ export const useSystemSettings = () => {
 export const updateSystemSettings = async (
   system_settings: SystemSettingsUpdate,
 ): Promise<SystemSettings> => {
-  const response = await fetch(`${SYSTEM_API_BASE_URL}/settings`, {
+  const response = await fetchWithAuth(`${SYSTEM_API_BASE_URL}/settings`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

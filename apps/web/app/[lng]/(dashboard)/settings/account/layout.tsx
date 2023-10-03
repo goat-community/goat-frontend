@@ -1,7 +1,7 @@
 "use client";
 
-import { NavItem } from "@/types/common/navigation";
-import { Tab, Tabs } from "@mui/material";
+import type { NavItem } from "@/types/common/navigation";
+import { Box, Tab, Tabs } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
@@ -40,7 +40,13 @@ const AccountLayout = (props: AccountLayoutProps) => {
             key={item.link}
             href={`/settings/account${item.link}`}
             icon={
-              <Icon iconName={item.icon} htmlColor="inherit" fontSize="small" />
+              <Box sx={{ pr: 2 }}>
+                <Icon
+                  iconName={item.icon}
+                  htmlColor="inherit"
+                  style={{ fontSize: 15 }}
+                />
+              </Box>
             }
             iconPosition="start"
             label={item.label}

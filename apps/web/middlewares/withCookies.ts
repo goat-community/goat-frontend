@@ -6,7 +6,7 @@ import type {
 } from "next/server";
 
 import type { MiddlewareFactory } from "./types";
-import { cookieName as lngCookieName } from "@/app/i18/settings";
+import { cookieName as lngCookieName } from "@/i18n/settings";
 import { THEME_COOKIE_NAME as themeCookieName } from "@/lib/constants";
 import { getToken } from "next-auth/jwt";
 import { refreshAccessToken } from "@/app/api/auth/[...nextauth]/options";
@@ -54,12 +54,16 @@ export const withCookies: MiddlewareFactory = (next: NextMiddleware) => {
           if (systemPreferences.ok) {
             const preferences = await systemPreferences.json();
             const response = (await next(request, _next)) as NextResponse;
+            const expirationDate = new Date(Date.now() + 10 * 60 * 1000);
             if (preferences?.client_theme)
-              response.cookies.set(themeCookieName, preferences.client_theme);
+              response.cookies.set(themeCookieName, preferences.client_theme, {
+                expires: expirationDate,
+              });
             if (preferences?.preferred_language)
               response.cookies.set(
                 lngCookieName,
                 preferences.preferred_language,
+                { expires: expirationDate },
               );
             return response;
           }

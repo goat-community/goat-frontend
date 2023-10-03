@@ -57,7 +57,6 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       id_token: tokens.id_token ?? token.id_token,
       provider: keycloak.id,
     };
-
     return newToken;
   } catch (error) {
     console.error("Error refreshing access token: ", error);
@@ -75,9 +74,8 @@ export const options: NextAuthOptions = {
     async session({ session, token }) {
       if (token) {
         session.access_token = token.access_token;
+        session.error = token.error;
       }
-
-      session.error = token.error;
       return session;
     },
     async jwt({ token, account, user }) {

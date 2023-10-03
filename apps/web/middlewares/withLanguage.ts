@@ -7,7 +7,7 @@ import {
   fallbackLng,
   languages,
   cookieName as lngCookieName,
-} from "@/app/i18/settings";
+} from "@/i18n/settings";
 acceptLanguage.languages(languages);
 
 const excluded = [

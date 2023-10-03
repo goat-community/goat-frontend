@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
+import type { PaletteMode } from "@mui/material";
 import {
   Typography,
   Box,
@@ -9,10 +10,10 @@ import {
   Stack,
   TextField,
   InputAdornment,
-  PaletteMode,
+  Link,
 } from "@mui/material";
 import Cookies from "js-cookie";
-import { THEME_COOKIE_NAME } from "@/lib/constants";
+import { THEME_COOKIE_NAME as themeCookieName } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
@@ -25,14 +26,18 @@ import {
 import { updateSystemSettings } from "@/lib/api/system";
 import { toast } from "react-toastify";
 import { ColorModeContext } from "@/components/@mui/ThemeRegistry";
-const AccountPreferences = () => {
+import { languages, cookieName as lngCookieName } from "@/i18n/settings";
+import NextLink from "next/link";
+import { useTranslation } from "@/i18n/client";
+
+const AccountPreferences = ({ params: { lng } }) => {
+  const { t } = useTranslation(lng, "dashboard");
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const theme = useTheme();
 
   const { changeColorMode } = useContext(ColorModeContext);
   const themeModes = ["dark", "light"] as const;
   const units = ["metric", "imperial"] as const;
-  const languages = ["en", "de"] as const;
 
   const {
     register: registerSystemSettings,
@@ -47,8 +52,10 @@ const AccountPreferences = () => {
       setIsBusy(true);
       await updateSystemSettings(systemSettings);
       changeColorMode(systemSettings.client_theme as PaletteMode);
-      Cookies.set(THEME_COOKIE_NAME, systemSettings.client_theme);
+      Cookies.set(themeCookieName, systemSettings.client_theme);
+      Cookies.set(lngCookieName, systemSettings.preferred_language);
     } catch (error) {
+      console.error(error);
       toast.error("Failed to update system settings");
     } finally {
       setIsBusy(false);
@@ -60,7 +67,7 @@ const AccountPreferences = () => {
       handleSystemSettingsSubmit(onSystemSettingsSubmit)();
     });
     return () => subscription.unsubscribe();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchSystemSettings, handleSystemSettingsSubmit]);
 
   return (
@@ -69,13 +76,14 @@ const AccountPreferences = () => {
         <Stack spacing={theme.spacing(6)}>
           <Box>
             <Typography variant="body1" fontWeight="bold">
-              Client
+              {t("preferences")}
             </Typography>
+            <Typography variant="caption">{t("manage_preferences")}</Typography>
           </Box>
           <TextField
             select
-            defaultValue="en"
-            label="Language"
+            defaultValue={lng}
+            label={t("language")}
             size="medium"
             disabled={isBusy}
             {...registerSystemSettings("preferred_language")}
@@ -88,15 +96,22 @@ const AccountPreferences = () => {
             }}
           >
             {languages.map((lng) => (
-              <MenuItem key={lng} value={lng}>
-                {lng}
+              <MenuItem value={lng} key={lng} sx={{ p: 0 }}>
+                <Link
+                  sx={{ p: 2, width: "100%" }}
+                  component={NextLink}
+                  href={`/${lng}/settings/account/preferences`}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  {t(lng)}
+                </Link>
               </MenuItem>
             ))}
           </TextField>
           <TextField
             select
             defaultValue={theme.palette.mode}
-            label="Theme"
+            label={t("theme")}
             size="medium"
             disabled={isBusy}
             {...registerSystemSettings("client_theme")}
@@ -114,14 +129,14 @@ const AccountPreferences = () => {
           >
             {themeModes.map((theme) => (
               <MenuItem key={theme} value={theme}>
-                {theme}
+                {t(theme)}
               </MenuItem>
             ))}
           </TextField>
           <TextField
             select
             defaultValue="metric"
-            label="Measurement unit"
+            label={t("measurement_unit")}
             size="medium"
             disabled={isBusy}
             {...registerSystemSettings("unit")}
@@ -135,7 +150,7 @@ const AccountPreferences = () => {
           >
             {units.map((unit) => (
               <MenuItem key={unit} value={unit}>
-                {unit}
+                {t(unit)}
               </MenuItem>
             ))}
           </TextField>

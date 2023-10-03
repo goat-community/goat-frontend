@@ -6,7 +6,7 @@ import {
   type NextFetchEvent,
   type NextMiddleware,
 } from "next/server";
-import { fallbackLng, cookieName } from "@/app/i18/settings";
+import { fallbackLng, cookieName } from "@/i18n/settings";
 
 const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map", "/onboarding"];
 

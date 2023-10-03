@@ -5,7 +5,7 @@ import {
   type NextFetchEvent,
   type NextMiddleware,
 } from "next/server";
-import { fallbackLng, cookieName as lngCookieName } from "@/app/i18/settings";
+import { fallbackLng, cookieName as lngCookieName } from "@/i18n/settings";
 import { USERS_API_BASE_URL } from "@/lib/api/users";
 import { getToken } from "next-auth/jwt";
 import { refreshAccessToken } from "@/app/api/auth/[...nextauth]/options";

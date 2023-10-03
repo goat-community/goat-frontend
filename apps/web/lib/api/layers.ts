@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { fetcher } from "@/lib/api/fetcher";
+import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import type { CreateNewDatasetLayer, LayerPaginated } from "@/lib/validations/layer";
 
@@ -22,7 +22,7 @@ export const useLayers = (queryParams?: GetContentQueryParams) => {
 
 export const deleteLayer = async (id: string) => {
   try {
-    await fetch(`${LAYERS_API_BASE_URL}/${id}`, {
+    await fetchWithAuth(`${LAYERS_API_BASE_URL}/${id}`, {
       method: "DELETE",
     });
   } catch (error) {
@@ -35,7 +35,7 @@ export const createLayer = async (data: CreateNewDatasetLayer) => {
   const formData = new FormData();
   formData.append("file", data.file);
   formData.append("layer_in", JSON.stringify(data.layer_in));
-  const response = await fetch(`${LAYERS_API_BASE_URL}`, {
+  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}`, {
     method: "POST",
     body: formData,
   });

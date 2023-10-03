@@ -4,7 +4,7 @@ import {
   updateFolder,
   deleteFolder,
 } from "@/lib/api/folders";
-import { DialogBaseProps } from "@/types/common/dialog";
+import type { DialogBaseProps } from "@/types/common/dialog";
 import {
   Button,
   Dialog,

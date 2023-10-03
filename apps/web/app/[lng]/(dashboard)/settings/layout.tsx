@@ -18,7 +18,7 @@ import {
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { NavItem } from "@/types/common/navigation";
+import type { NavItem } from "@/types/common/navigation";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -26,18 +26,8 @@ interface SettingsLayoutProps {
 
 const SettingsLayout = (props: SettingsLayoutProps) => {
   const { children } = props;
-
   const pathname = usePathname();
   const theme = useTheme();
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const navigation: NavItem[] = [
     {

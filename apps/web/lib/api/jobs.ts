@@ -1,9 +1,10 @@
-import { fetcher } from "@/lib/api/fetcher";
+import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
+import type {
+  JobPaginated,
+  GetJobsQueryParam} from "@/lib/validations/jobs";
 import {
   jobSchema,
-  type Job,
-  JobPaginated,
-  GetJobsQueryParam,
+  type Job
 } from "@/lib/validations/jobs";
 import useSWR from "swr";
 
@@ -27,7 +28,7 @@ export const useJobs = (queryParams?: GetJobsQueryParam) => {
 };
 
 export const getJob = async (id: string): Promise<Job> => {
-  const response = await fetch(`${JOBS_API_BASE_URL}/${id}`, {
+  const response = await fetchWithAuth(`${JOBS_API_BASE_URL}/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -47,7 +48,7 @@ export const getJob = async (id: string): Promise<Job> => {
 
 
 export const setJobsReadStatus = async (ids: string[]) => {
-  const response = await fetch(`${JOBS_API_BASE_URL}/read`, {
+  const response = await fetchWithAuth(`${JOBS_API_BASE_URL}/read`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
