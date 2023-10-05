@@ -17,6 +17,7 @@ import MuiSwitches from "./switches";
 import MuiTypography from "./typography";
 import MuiDateTimePicker from "./dateTimePicker";
 import MuiAppBar from "./appbar";
+import MuiMenuItem from "./menu";
 import Link from "./link";
 import CssBaseline from "./cssbaseline";
 const Overrides = (theme: Theme) => {
@@ -38,6 +39,7 @@ const Overrides = (theme: Theme) => {
     ...MuiTypography(theme),
     ...MuiDateTimePicker(theme),
     ...MuiAppBar(theme),
+    ...MuiMenuItem(),
     ...Link(),
     ...CssBaseline(theme),
   };

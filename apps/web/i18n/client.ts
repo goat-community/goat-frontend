@@ -28,7 +28,7 @@ i18next
   });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useTranslation(lng?: string, ns?: string, options?: UseTranslationOptions<any>) {
+export function useTranslation(lng?: string, ns?: string | string[], options?: UseTranslationOptions<any>) {
   const ret = useTranslationOrg(ns, options);
   const { i18n } = ret;
   if (runsOnServerSide && lng && i18n.resolvedLanguage !== lng) {

@@ -1,13 +1,23 @@
 import * as z from "zod";
 
-const regionEnum = z.enum(["eu"]);
+const regionEnum = z.enum(["EU"]);
 
-const organizationSchema = z.object({
+const organizationBaseSchema = z.object({
+  name: z.string().min(1).max(50),
+  type: z.string().min(1).max(50),
+  size: z.string().min(1).max(50),
+  industry: z.string().min(1).max(150),
+  department: z.string().min(1).max(150),
+  use_case: z.string().min(1).max(250),
+  phone_number: z.string().min(1).max(50),
+  location: z.string().min(1).max(50),
+  newsletter_subscribe: z.boolean(),
+});
+
+const organizationSchema = organizationBaseSchema.extend({
   id: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
-  name: z.string(),
-  image_url: z.string().url(),
   used_storage: z.number(),
   total_storage: z.number(),
   geocoding_quota: z.number(),
@@ -18,8 +28,7 @@ const organizationSchema = z.object({
   suspended: z.boolean(),
 });
 
-export const postOrganizationSchema = z.object({
-  name: z.string().min(1).max(50),
+export const postOrganizationSchema = organizationBaseSchema.extend({
   region: regionEnum,
 });
 

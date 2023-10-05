@@ -1,8 +1,7 @@
 "use client";
 
+import { useTheme } from "@mui/material";
 import { DotPulse, Ring } from "@uiball/loaders";
-
-import { useTheme } from "./theme";
 
 export type LoadingProps = {
   loadingType?: "ring" | "dotpulse";
@@ -20,7 +19,7 @@ export const defaultProps: LoadingProps = {
 
 export function Loading(props: LoadingProps = defaultProps) {
   const theme = useTheme();
-  const color = theme.colors.palette.focus.main;
+  const color = theme.palette.primary.main;
   props = { ...defaultProps, ...props, color };
   return props.loadingType === "ring" ? <Ring {...props} /> : <DotPulse {...props} />;
 }

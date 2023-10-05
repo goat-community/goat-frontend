@@ -18,7 +18,7 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
 
     const lng = request.cookies.get(lngCookieName)?.value;
     const lngPath = lng ? `/${lng}` : fallbackLng ? `/${fallbackLng}` : "";
-    const organizationPage = `${lngPath}/onboarding/organization/`;
+    const organizationPageCreate = `${lngPath}/onboarding/organization/create`;
     const _protectedPaths = protectedPaths.map((p) =>
       lngPath ? `${lngPath}${p}` : p,
     );
@@ -57,7 +57,7 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
       console.error("Error while fetching organization", error);
     }
 
-    const organizationUrl = new URL(`${basePath}${organizationPage}`, origin);
+    const organizationUrl = new URL(`${basePath}${organizationPageCreate}`, origin);
 
     return NextResponse.redirect(organizationUrl);
   };
