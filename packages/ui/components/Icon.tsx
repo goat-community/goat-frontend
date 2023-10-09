@@ -66,6 +66,7 @@ import {
   faCircleQuestion,
   faCreditCard,
   faRulerCombined,
+  faCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 
@@ -132,6 +133,7 @@ export enum ICON_NAME {
   LOCATION = "location",
   CROSS = "cross",
   CIRCLE = "circle",
+  CIRCLE_PLUS = "circle-plus",
   USER = "user",
   USERS = "users",
   LANGUAGE = "language",
@@ -214,6 +216,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.LOCATION]: faLocationDot,
   [ICON_NAME.CROSS]: faCross,
   [ICON_NAME.CIRCLE]: faCircle,
+  [ICON_NAME.CIRCLE_PLUS]: faCirclePlus,
   [ICON_NAME.USER]: faUser,
   [ICON_NAME.USERS]: faUsers,
   [ICON_NAME.LANGUAGE]: faLanguage,

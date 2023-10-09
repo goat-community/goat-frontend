@@ -27,6 +27,7 @@ import { RhfSelectField } from "@/components/common/form-inputs/SelectField";
 import { useOrganizationSetup } from "@/hooks/onboarding/OrganizationCreate";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useRouter } from "next/navigation";
+import { createOrganization } from "@/lib/api/organizations";
 
 type FormData = z.infer<typeof postOrganizationSchema>;
 
@@ -123,27 +124,20 @@ export default function OrganizationOnBoarding({ params: { lng } }) {
 
   async function onSubmit(data: FormData) {
     console.log(data);
-    // setResponseResult({ message: "", status: undefined });
-
-    // setIsBusy(true);
-    // const response = await fetch(`/api/auth/organizations`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(data),
-    // });
-    // const responseJson = await response.json();
-    // setIsBusy(false);
-    // if (!response.ok) {
-    //   setResponseResult({
-    //     message: responseJson.detail,
-    //     status: "error",
-    //   });
-    //   return;
-    // }
-    // update();
-    // router.push("/");
+    setResponseResult({ message: "", status: undefined });
+    setIsBusy(true);
+    try {
+      await createOrganization(data);
+    } catch (_error) {
+      setResponseResult({
+        message: t("onboarding:organization_creation_error"),
+        status: "error",
+      });
+    } finally {
+      setIsBusy(false);
+    }
+    update();
+    router.push("/");
   }
 
   return (
@@ -339,6 +333,7 @@ export default function OrganizationOnBoarding({ params: { lng } }) {
                         mt: theme.spacing(2),
                       }}
                       fullWidth
+                      disabled={isBusy}
                       onClick={handleBack}
                       variant="text"
                     >

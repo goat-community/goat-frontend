@@ -2,7 +2,7 @@ import TileCard from "@/components/dashboard/common/TileCard";
 import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Layer } from "@/lib/validations/layer";
-import { ContentActions } from "@/types/common";
+import type { ContentActions } from "@/types/common";
 import {
   Box,
   Button,

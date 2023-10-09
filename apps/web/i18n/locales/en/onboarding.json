@@ -67,5 +67,6 @@
   "organization_location_label": "Country/Region",
   "organization_subscribe_to_newsletter": "Stay in touch with our latest updates",
   "organization_onboarding_trial_note": "Note: Your 14-day trial starts after you create your organization.",
-  "organization_accept_terms": "By signing up, you agree to our Terms of Service and Privacy Policy."
+  "organization_accept_terms": "By signing up, you agree to our Terms of Service and Privacy Policy.",
+  "organization_creation_error": "Something went wrong. Please try again later."
 }

@@ -21,7 +21,7 @@ const Home = () => {
   const queryParams: GetContentQueryParams = {
     order: "descendent",
     order_by: "updated_at",
-    size: 4,
+    size: 3,
   };
   const {
     projects,

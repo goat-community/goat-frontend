@@ -1,8 +1,9 @@
+import EmptyCard from "@/components/dashboard/common/EmptyCard";
 import TileCard from "@/components/dashboard/common/TileCard";
 import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Project } from "@/lib/validations/project";
-import { ContentActions } from "@/types/common";
+import type { ContentActions } from "@/types/common";
 import { Box, Grid, Skeleton } from "@mui/material";
 
 interface ProjectSectionProps {
@@ -33,7 +34,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
         </>
       )}
       <Grid container spacing={5}>
-        {(isLoading ? Array.from(new Array(4)) : projects ?? []).map(
+        {(isLoading ? Array.from(new Array(3)) : projects ?? []).map(
           (item: Project, index: number) => (
             <Grid
               item
@@ -43,9 +44,9 @@ const ProjectSection = (props: ProjectSectionProps) => {
               md={4}
               lg={3}
               display={{
-                sm: index > 3 ? "none" : "block",
-                md: index > 2 ? "none" : "block",
-                lg: index > 3 ? "none" : "block",
+                sm: index > 2 ? "none" : "block",
+                md: index > 1 ? "none" : "block",
+                lg: index > 2 ? "none" : "block",
               }}
             >
               {!item ? (
@@ -61,6 +62,19 @@ const ProjectSection = (props: ProjectSectionProps) => {
             </Grid>
           ),
         )}
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          {isLoading ? (
+            <Skeleton variant="rectangular" height={200} />
+          ) : (
+            <EmptyCard
+              onClick={() => {
+                console.log("create new project");
+              }}
+              tooltip="Create New Project"
+              backgroundImage="https://assets.plan4better.de/img/goat_new_project_artwork.png"
+            />
+          )}
+        </Grid>
       </Grid>
     </Box>
   );
