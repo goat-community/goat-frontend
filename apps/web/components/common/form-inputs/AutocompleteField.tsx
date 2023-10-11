@@ -3,20 +3,28 @@ import type { Control, Path, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import {
+  Box,
+  InputAdornment,
+  ListItemIcon,
+  Typography,
+} from "@mui/material";
+import { Icon, type ICON_NAME } from "@p4b/ui/components/Icon";
 
 interface RhfAutocompleteFieldProps<
-  O extends { value: string; label: string },
+  O extends { value: string; label: string; icon?: React.ReactNode },
   TField extends FieldValues,
 > {
   control: Control<TField>;
   name: Path<TField>;
   options: O[];
+  startIcon?: ICON_NAME;
   label?: string;
   disabled?: boolean;
 }
 
 export const RhfAutocompleteField = <
-  O extends { value: string; label: string },
+  O extends { value: string; label: string; icon?: React.ReactNode },
   TField extends FieldValues,
 >(
   props: RhfAutocompleteFieldProps<O, TField>,
@@ -31,16 +39,15 @@ export const RhfAutocompleteField = <
       }}
       render={({ field, fieldState: { error } }) => {
         const { onChange, value, ref } = field;
+        const selectedOption =
+          options.find((option) => {
+            return value === option.value;
+          }) ?? null;
         return (
           <>
             <Autocomplete
-              value={
-                value
-                ? options.find((option) => {
-                  return value === option.value;
-                }) ?? null
-                : null
-              }
+              value={value ? selectedOption : null}
+              disableClearable={value ? true : false}
               getOptionLabel={(option) => {
                 return option.label;
               }}
@@ -50,20 +57,50 @@ export const RhfAutocompleteField = <
               id="controllable-autocomplete"
               options={options}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  disabled={props.disabled}
-                  label={props.label}
-                  inputRef={ref}
-                  name={name}
-                  size="medium"
-                  helperText={error ? error.message : null}
-                  error={!!error}
-                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {props.startIcon && (
+                    <Icon
+                      iconName={props.startIcon}
+                      style={{ marginRight: 10 }}
+                    />
+                  )}
+                  <TextField
+                    {...params}
+                    disabled={props.disabled}
+                    label={props.label}
+                    inputRef={ref}
+                    name={name}
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: selectedOption?.icon && (
+                        <InputAdornment position="start">
+                          {selectedOption.icon}
+                        </InputAdornment>
+                      ),
+                    }}
+                    helperText={error ? error.message : null}
+                    error={!!error}
+                  />
+                </Box>
               )}
               renderOption={(props, option) => (
                 <li {...props} key={option.value}>
-                  <span>{option.label}</span>
+                  {option.icon && (
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 35,
+                      }}
+                    >
+                      {option.icon}
+                    </ListItemIcon>
+                  )}
+                  <Typography variant="body1">{option.label}</Typography>
                 </li>
               )}
             />

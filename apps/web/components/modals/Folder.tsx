@@ -24,7 +24,7 @@ export interface SelectedFolderForEdit {
   name: string;
 }
 
-interface EditFolderDialogProps extends DialogBaseProps {
+interface FolderDialogProps extends DialogBaseProps {
   type: "create" | "update" | "delete";
   selectedFolder?: SelectedFolderForEdit;
   disabled?: boolean;
@@ -32,7 +32,7 @@ interface EditFolderDialogProps extends DialogBaseProps {
   existingFolderNames?: string[];
 }
 
-const EditFolderModal: React.FC<EditFolderDialogProps> = ({
+const FolderModal: React.FC<FolderDialogProps> = ({
   type,
   selectedFolder,
   open,
@@ -160,4 +160,4 @@ const EditFolderModal: React.FC<EditFolderDialogProps> = ({
   );
 };
 
-export default EditFolderModal;
+export default FolderModal;

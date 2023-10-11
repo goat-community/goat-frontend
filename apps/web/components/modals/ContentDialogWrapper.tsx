@@ -1,4 +1,4 @@
-import EditMetadataModal from "@/components/modals/EditMetadata";
+import MetadataModal from "@/components/modals/Metadata";
 import DeleteContentModal from "@/components/modals/DeleteContent";
 import type { ContentDialogBaseProps } from "@/types/dashboard/content";
 import { ContentActions } from "@/types/common";
@@ -19,7 +19,7 @@ export default function ContentDialogWrapper(props: ContentDialogProps) {
   return (
     <>
       {props.action === ContentActions.EDIT_METADATA && (
-        <EditMetadataModal {...commonModalProps} />
+        <MetadataModal {...commonModalProps} />
       )}
       {props.action === ContentActions.DELETE && (
         <DeleteContentModal

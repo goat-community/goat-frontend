@@ -271,6 +271,7 @@ export default function OrganizationOnBoarding({ params: { lng } }) {
                               <FormControlLabel
                                 control={
                                   <Checkbox
+                                  sx={{ ml: -3}}
                                     onChange={onChange}
                                     checked={value}
                                   />
@@ -282,7 +283,7 @@ export default function OrganizationOnBoarding({ params: { lng } }) {
                             );
                           }}
                         />
-                        <Stack spacing={2}>
+                        <Stack spacing={3}>
                           <Typography variant="body1">
                             {t("onboarding:organization_onboarding_trial_note")}
                           </Typography>
@@ -298,7 +299,7 @@ export default function OrganizationOnBoarding({ params: { lng } }) {
                   <LoadingButton
                     loading={isBusy}
                     variant="contained"
-                    sx={{ mt: theme.spacing(8) }}
+                    sx={{ mt: theme.spacing(4) }}
                     fullWidth
                     ref={submitButtonRef}
                     aria-label="finish-org-creation"

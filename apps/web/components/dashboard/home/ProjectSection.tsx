@@ -1,10 +1,13 @@
 import EmptyCard from "@/components/dashboard/common/EmptyCard";
 import TileCard from "@/components/dashboard/common/TileCard";
 import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
+import ProjectModal from "@/components/modals/Project";
 import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Project } from "@/lib/validations/project";
 import type { ContentActions } from "@/types/common";
 import { Box, Grid, Skeleton } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface ProjectSectionProps {
   projects: Project[];
@@ -12,6 +15,7 @@ interface ProjectSectionProps {
 }
 
 const ProjectSection = (props: ProjectSectionProps) => {
+  const router = useRouter();
   const { projects, isLoading } = props;
   const {
     moreMenuOptions,
@@ -20,8 +24,14 @@ const ProjectSection = (props: ProjectSectionProps) => {
     closeMoreMenu,
     openMoreMenu,
   } = useContentMoreMenu();
+  const [openProjectModal, setOpenProjectModal] = useState(false);
   return (
     <Box>
+      <ProjectModal
+        type="create"
+        open={openProjectModal}
+        onClose={() => setOpenProjectModal(false)}
+      />
       {activeContent && moreMenuState && (
         <>
           <ContentDialogWrapper
@@ -43,6 +53,11 @@ const ProjectSection = (props: ProjectSectionProps) => {
               sm={6}
               md={4}
               lg={3}
+              onClick={() => {
+                if (item && item.id) {
+                  router.push(`/map/${item.id}`);
+                }
+              }}
               display={{
                 sm: index > 2 ? "none" : "block",
                 md: index > 1 ? "none" : "block",
@@ -68,7 +83,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
           ) : (
             <EmptyCard
               onClick={() => {
-                console.log("create new project");
+                setOpenProjectModal(true);
               }}
               tooltip="Create New Project"
               backgroundImage="https://assets.plan4better.de/img/goat_new_project_artwork.png"

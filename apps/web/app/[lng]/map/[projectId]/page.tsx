@@ -1,8 +1,6 @@
 "use client";
 
-import type { MapToolbarProps } from "@/components/map/Toolbar";
 import type { XYZ_Layer } from "@/types/map/layer";
-import { MapToolbar } from "@/components/map/Toolbar";
 import { MAPBOX_TOKEN } from "@/lib/constants";
 import { Box, useTheme } from "@mui/material";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -15,6 +13,8 @@ import { useSelector } from "react-redux";
 import type { IStore } from "@/types/store";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
+import Header from "@/components/header/Header";
+import { useProject } from "@/lib/api/projects";
 
 const sidebarWidth = 48;
 const toolbarHeight = 52;
@@ -23,6 +23,7 @@ export default function MapPage({ params: { projectId } }) {
   const { basemaps, activeBasemapIndex, initialViewState } = useSelector(
     (state: IStore) => state.styling,
   );
+  const { project } = useProject(projectId);
   const mapLayer = useSelector(selectMapLayer);
 
   const [layers, setLayers] = useState<XYZ_Layer[] | []>([
@@ -40,16 +41,14 @@ export default function MapPage({ params: { projectId } }) {
     setLayers(newLayer);
   }, []);
 
-  const toolbar: MapToolbarProps = {
-    projectTitle: "@project_title",
-    lastSaved: "08:35am 03/07/2023",
-    tags: ["Bike Sharing Project", "City of Munich"],
-    height: toolbarHeight,
-  };
-
   return (
     <MapProvider>
-      <MapToolbar {...toolbar} />
+      <Header
+        title={`Project ${project?.name ?? ""}`}
+        showHambugerMenu={false}
+        tags={project?.tags}
+        lastSaved={project?.updated_at}
+      />
       <Box
         sx={{
           display: "flex",
@@ -63,7 +62,7 @@ export default function MapPage({ params: { projectId } }) {
         }}
       >
         <Box>
-          <ProjectNavigation projectId={projectId}/>
+          <ProjectNavigation projectId={projectId} />
         </Box>
         <Box
           sx={{

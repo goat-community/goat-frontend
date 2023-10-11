@@ -59,8 +59,8 @@ export function Toolbar(props: MapToolbarProps) {
         <Link
           href="/home"
           style={{
-            width: "35px",
-            height: "35px",
+            width: "32px",
+            height: "32px",
             cursor: "pointer",
           }}
         >
@@ -73,7 +73,7 @@ export function Toolbar(props: MapToolbarProps) {
             }}
           >
             <GOATLogoIconOnlyGreen
-              style={{ width: "30px", height: "30px", cursor: "pointer" }}
+              style={{ width: "32px", height: "32px", cursor: "pointer" }}
             />
           </Box>
         </Link>

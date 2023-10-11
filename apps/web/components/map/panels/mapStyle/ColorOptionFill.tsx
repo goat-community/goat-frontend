@@ -1,4 +1,3 @@
-import Box from "@p4b/ui/components/Box";
 import {
   Divider,
   TextField,
@@ -6,7 +5,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  useTheme
+  useTheme,
+  Box
 } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";

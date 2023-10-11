@@ -4,6 +4,7 @@ import type {
   ProjectPaginated,
   ProjectLayers,
   Project,
+  PostProject,
 } from "@/lib/validations/project";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 
@@ -40,6 +41,23 @@ export const useProject = (id: string) => {
     isValidating,
   };
 };
+
+export const createProject = async (
+  payload: PostProject,
+): Promise<Project> => {
+  const response = await fetchWithAuth(`${PROJECTS_API_BASE_URL}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to create project");
+  }
+  return await response.json();
+};
+
 
 export const getProjectLayers = async (id: string) => {
   try {

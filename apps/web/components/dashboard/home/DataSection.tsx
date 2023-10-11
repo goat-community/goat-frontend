@@ -1,5 +1,7 @@
+import EmptyCard from "@/components/dashboard/common/EmptyCard";
 import TileCard from "@/components/dashboard/common/TileCard";
 import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
+import DatasetUploadModal from "@/components/modals/DatasetUpload";
 import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Layer } from "@/lib/validations/layer";
 import type { ContentActions } from "@/types/common";
@@ -12,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useState } from "react";
 
 interface DataSectionProps {
   layers: Layer[];
@@ -28,8 +31,14 @@ const DataSection = (props: DataSectionProps) => {
     closeMoreMenu,
     openMoreMenu,
   } = useContentMoreMenu();
+
+  const [openDatasetUploadModal, setOpenDatasetUploadModal] = useState(false);
   return (
     <Box>
+      <DatasetUploadModal
+        open={openDatasetUploadModal}
+        onClose={() => setOpenDatasetUploadModal(false)}
+      />
       {activeContent && moreMenuState && (
         <>
           <ContentDialogWrapper
@@ -94,6 +103,17 @@ const DataSection = (props: DataSectionProps) => {
             </Grid>
           ),
         )}
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          {isLoading ? (
+            <Skeleton variant="rectangular" height={200} />
+          ) : (
+            <EmptyCard
+              onClick={() => setOpenDatasetUploadModal(true)}
+              tooltip="Add new dataset"
+              backgroundImage="https://assets.plan4better.de/img/grid_thumbnail.png"
+            />
+          )}
+        </Grid>
       </Grid>
     </Box>
   );

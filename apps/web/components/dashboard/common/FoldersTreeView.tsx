@@ -12,12 +12,12 @@ import {
 } from "@mui/material";
 import { useFolders } from "@/lib/api/folders";
 import { useState } from "react";
-import type { SelectedFolderForEdit } from "@/components/modals/EditFolder";
-import EditFolderModal from "@/components/modals/EditFolder";
+import type { SelectedFolderForEdit } from "@/components/modals/Folder";
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
 import type { GetLayersQueryParams } from "@/lib/validations/layer";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
+import FolderModal from "@/components/modals/Folder";
 
 type EditModal = {
   type: "create" | "update" | "delete";
@@ -112,7 +112,7 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
 
   return (
     <>
-      <EditFolderModal
+      <FolderModal
         type={editModal?.type || "create"}
         open={editModal?.open || false}
         onClose={() => {

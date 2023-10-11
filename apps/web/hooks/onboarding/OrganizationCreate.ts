@@ -78,7 +78,8 @@ export const useOrganizationSetup = (lng: string) => {
     return filteredCountries.map((countryCode) => {
       return {
         value: countryCode,
-        label: `${getUnicodeFlagIcon(countryCode)} ${t(`countries:${countryCode}`)}`,
+        label: `${t(`countries:${countryCode}`)}`,
+        icon: getUnicodeFlagIcon(countryCode),
       };
     });
   }, [t]);

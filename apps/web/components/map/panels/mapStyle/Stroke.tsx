@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import BasicAccordion from "@p4b/ui/components/BasicAccordion";
 import {
+  Box,
   Divider,
   Select,
   Slider,
@@ -8,7 +9,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import Box from "@p4b/ui/components/Box";
 
 const Stroke = () => {
   const [width, setWidth] = useState<number>(20);
