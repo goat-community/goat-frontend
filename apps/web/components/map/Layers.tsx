@@ -7,7 +7,6 @@ import { FILTERING } from "@/lib/api/apiConstants";
 import { and_operator, or_operator } from "@/lib/utils/filtering/filtering_cql";
 import type { LayerProps } from "react-map-gl";
 import { v4 } from "uuid";
-import { useFilterQueries } from "@/lib/api/filter";
 
 interface LayersProps {
   layers: XYZ_Layer[];

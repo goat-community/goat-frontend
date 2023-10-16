@@ -4,7 +4,7 @@ import type { XYZ_Layer } from "@/types/map/layer";
 import { MAPBOX_TOKEN } from "@/lib/constants";
 import { Box, useTheme } from "@mui/material";
 import "mapbox-gl/dist/mapbox-gl.css";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import Map, { MapProvider, Layer, Source } from "react-map-gl";
 import Layers from "@/components/map/Layers";
 import MobileDrawer from "@/components/map/panels/MobileDrawer";

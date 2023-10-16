@@ -3,7 +3,7 @@ import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";
-import { ContentActions } from "@/types/common";
+import type { ContentActions } from "@/types/common";
 import {
   Box,
   Grid,

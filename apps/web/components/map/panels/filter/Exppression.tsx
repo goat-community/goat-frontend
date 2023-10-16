@@ -179,7 +179,7 @@ const Exppression = (props: ExpressionProps) => {
             label="Select an expression"
             disabled={!keys.length}
             defaultValue={comparerSelected ? comparerSelected : ""}
-            disabled={attributeSelected.length ? false : true}
+            // disabled={attributeSelected.length ? false : true}
             onChange={handleComparerSelect}
           >
             {keys.length ? attributeSelected.length &&
