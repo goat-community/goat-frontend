@@ -17,7 +17,6 @@ const Teams = () => {
   const [searchWord, setSearchWord] = useState<string>("");
 
   const theme = useTheme();
-  console.log(theme);
 
   function addTeam(team: ITeam) {
     setTeams([...teams, team]);

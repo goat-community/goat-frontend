@@ -1,7 +1,8 @@
 import type { ComparerMode } from "@/types/map/filtering";
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { addExpression, addFilter } from "@/lib/store/mapFilters/slice";
+import { useDispatch, useSelector } from "react-redux";
+import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
+import { usePathname } from "next/navigation";
 import {
   is,
   is_not, // includes,
@@ -19,7 +20,7 @@ import {
   is_less_than,
   is_greater_than,
   is_between,
-} from "@/lib/utils/filtering_cql";
+} from "@/lib/utils/filtering/filtering_cql";
 import { NumberOption, TextOption } from "./FilterOption";
 import { debounce } from "@mui/material/utils";
 import type { Expression } from "@/types/map/filtering";
@@ -32,16 +33,25 @@ interface FilterResultProps {
 }
 
 const FilterOptionField = (props: FilterResultProps) => {
-  const { comparer, prop, expression } = props;
+  const { comparer, prop, expression, expressionId } = props;
   const newExpressionToModify = { ...expression };
+  const { layerToBeFiltered } = useSelector(
+    (state: IStore) => state.mapFilters,
+  );
   const [firstInput, setFirstInput] = useState<string>(
-    newExpressionToModify.firstInput,
+    newExpressionToModify.firstInput
+      ? newExpressionToModify.firstInput
+      : newExpressionToModify.value,
   );
   const [secondInput, setSecondInput] = useState<string>(
-    newExpressionToModify.secondInput,
+    newExpressionToModify.secondInput ? newExpressionToModify.secondInput : "",
   );
 
+  const {getLayerQueries, updateProjectLayerQuery} = useFilterExpressions()
+
   const dispatch = useDispatch();
+  const pathname = usePathname();
+  const projectId = pathname.split("/")[pathname.split("/").length - 1];
 
   const sendQuery = React.useMemo(
     () =>
@@ -57,11 +67,9 @@ const FilterOptionField = (props: FilterResultProps) => {
             ].includes(comparer.value))
         ) {
           newExpressionToModify.firstInput = request.input;
-          dispatch(addExpression(newExpressionToModify));
           setFirstInput(request.input);
           if (request.input2) {
             newExpressionToModify.secondInput = request.input2;
-            dispatch(addExpression(newExpressionToModify));
             setSecondInput(request.input2);
           }
 
@@ -175,10 +183,16 @@ const FilterOptionField = (props: FilterResultProps) => {
           return;
       }
     } else {
-      query = "";
+      query = "{}";
     }
-
-    dispatch(addFilter({ query, expression: expression.id }));
+    getLayerQueries(projectId, layerToBeFiltered).then((queryData)=>{
+      queryData[expressionId] = query;
+      updateProjectLayerQuery(
+        layerToBeFiltered,
+        projectId,
+        `{ "query": ${JSON.stringify(queryData)} }`,
+      );
+    });
   };
 
   if (!comparer) return null;

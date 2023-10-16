@@ -44,8 +44,13 @@ export interface Layer {
   id: string;
   name: string;
   size: number;
-  style: Record<string, unknown>; // Empty object for now, but you can define a more specific type if needed
+  style?: Record<string, unknown>; // Empty object for now, but you can define a more specific type if needed
   type: string;
   updated_at: string;
   user_id: string;
+  group?: string;
+  query?: string;
+  description?: string;
+  thumbnail_url?: string;
+  data_reference_year?: number;
 }

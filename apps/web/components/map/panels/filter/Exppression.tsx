@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import type { Expression } from "@/types/map/filtering";
 import { useDispatch } from "react-redux";
-import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
+// import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
 import type { LayerPropsMode } from "@/types/map/filtering";
 import type { SelectChangeEvent } from "@mui/material";
 
@@ -36,10 +36,17 @@ interface ExpressionProps {
 }
 
 const Exppression = (props: ExpressionProps) => {
-  const { isLast, expression, logicalOperator, id, keys, deleteOneExpression, duplicateExpression } =
-    props;
+  const {
+    isLast,
+    expression,
+    logicalOperator,
+    id,
+    keys,
+    deleteOneExpression,
+    duplicateExpression,
+  } = props;
   const [attributeSelected, setAttributeSelected] = useState<string | string[]>(
-    expression.attribute ? expression.attribute.name : "",
+    expression.attribute ? expression.attribute : "",
   );
   const [comparerSelected, setComparerSelected] = useState<string | string[]>(
     expression.expression ? expression.expression.value : "",
@@ -55,7 +62,7 @@ const Exppression = (props: ExpressionProps) => {
     if (valueToFilter.length && valueToFilter[0].type === "string") {
       return "text";
     }
-    return valueToFilter[0].type;
+    return valueToFilter.length && valueToFilter[0].type;
   }
 
   function handleAttributeSelect(event: SelectChangeEvent<string>) {
@@ -65,7 +72,6 @@ const Exppression = (props: ExpressionProps) => {
       name: event.target.value,
     };
     setAttributeSelected(event.target.value);
-    dispatch(addExpression(newExpression));
   }
 
   function handleComparerSelect(event: SelectChangeEvent<string>) {
@@ -74,14 +80,16 @@ const Exppression = (props: ExpressionProps) => {
     newExpression.firstInput = "";
     newExpression.secondInput = "";
     setComparerSelected(event.target.value);
-    dispatch(addExpression(newExpression));
-    dispatch(removeFilter(newExpression.id));
   }
 
   function getComparer(type: string | string[]) {
-    return comparerModes[getFeatureAttribute(attributeSelected)].filter(
-      (compAttribute) => type === compAttribute.value,
-    );
+    if (attributeSelected && keys.length) {
+      return comparerModes[getFeatureAttribute(attributeSelected)].filter(
+        (compAttribute) => type === compAttribute.value,
+      );
+    }
+
+    return [];
   }
 
   function toggleMorePopover() {
@@ -126,7 +134,9 @@ const Exppression = (props: ExpressionProps) => {
                   <MenuItem onClick={() => deleteOneExpression(expression.id)}>
                     Delete Expression
                   </MenuItem>
-                  <MenuItem onClick={() => duplicateExpression(expression.id)}>Duplicate</MenuItem>
+                  <MenuItem onClick={() => duplicateExpression(expression.id)}>
+                    Duplicate
+                  </MenuItem>
                 </MenuList>
               </CustomMenu>
             ) : null}
@@ -144,14 +154,15 @@ const Exppression = (props: ExpressionProps) => {
           </InputLabel>
           <Select
             label="Select attribute"
+            disabled={!keys.length}
             defaultValue={attributeSelected ? attributeSelected : ""}
             onChange={handleAttributeSelect}
           >
-            {keys.map((key) => (
+            {keys.length ? keys.map((key) => (
               <MenuItem key={v4()} value={key.name}>
                 {key.name}
               </MenuItem>
-            ))}
+            )) : null}
           </Select>
         </FormControl>
         <FormControl
@@ -166,18 +177,19 @@ const Exppression = (props: ExpressionProps) => {
           </InputLabel>
           <Select
             label="Select an expression"
+            disabled={!keys.length}
             defaultValue={comparerSelected ? comparerSelected : ""}
             disabled={attributeSelected.length ? false : true}
             onChange={handleComparerSelect}
           >
-            {attributeSelected.length &&
+            {keys.length ? attributeSelected.length &&
               comparerModes[getFeatureAttribute(attributeSelected)].map(
                 (key) => (
                   <MenuItem key={v4()} value={key.value}>
                     {key.label}
                   </MenuItem>
                 ),
-              )}
+              ) : null}
           </Select>
         </FormControl>
         {attributeSelected.length ? (

@@ -79,6 +79,7 @@ export const options: NextAuthOptions = {
       return session;
     },
     async jwt({ token, account, user }) {
+
       if (account && user) {
         if (!account.access_token)
           throw Error("Auth Provider missing access token");

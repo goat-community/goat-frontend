@@ -4,7 +4,7 @@ import type { XYZ_Layer } from "@/types/map/layer";
 import { MAPBOX_TOKEN } from "@/lib/constants";
 import { Box, useTheme } from "@mui/material";
 import "mapbox-gl/dist/mapbox-gl.css";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import Map, { MapProvider, Layer, Source } from "react-map-gl";
 import Layers from "@/components/map/Layers";
 import MobileDrawer from "@/components/map/panels/MobileDrawer";
@@ -15,6 +15,7 @@ import { selectMapLayer } from "@/lib/store/styling/selectors";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 import Header from "@/components/header/Header";
 import { useProject } from "@/lib/api/projects";
+import { useFilterQueries } from "@/lib/api/filter";
 
 const sidebarWidth = 48;
 const toolbarHeight = 52;
@@ -25,6 +26,10 @@ export default function MapPage({ params: { projectId } }) {
   );
   const { project } = useProject(projectId);
   const mapLayer = useSelector(selectMapLayer);
+  const { layerToBeFiltered } = useSelector(
+    (state: IStore) => state.mapFilters,
+  );
+  const { data: filters } = useFilterQueries(projectId, layerToBeFiltered);
 
   const [layers, setLayers] = useState<XYZ_Layer[] | []>([
     {
@@ -39,7 +44,7 @@ export default function MapPage({ params: { projectId } }) {
 
   const addLayer = useCallback((newLayer: XYZ_Layer[]) => {
     setLayers(newLayer);
-  }, []);
+  }, [filters]);
 
   return (
     <MapProvider>
@@ -91,7 +96,7 @@ export default function MapPage({ params: { projectId } }) {
               </Source>
             ) : null}
             {/* todo check */}
-            <Layers layers={layers} addLayer={addLayer} />
+            <Layers layers={layers} filters={filters} addLayer={addLayer} projectId={projectId} />
           </Map>
         </Box>
       </Box>

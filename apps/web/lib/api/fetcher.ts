@@ -24,6 +24,7 @@ export const fetcher = async (params) => {
     : url;
   const options = {};
   const session = await getSession();
+
   if (session?.access_token) {
     options["headers"] = {
       Authorization: `Bearer ${session.access_token}`,

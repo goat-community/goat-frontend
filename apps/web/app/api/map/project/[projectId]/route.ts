@@ -16,12 +16,10 @@ export async function GET(
   const {
     params: { projectId },
   } = routeContextSchema.parse(context);
-  console.log(projectId);
   try {
     const res = await fetch(`${url}/${projectId}`);
 
     const project = await res.json();
-    console.log(project);
 
     return NextResponse.json(project);
   } catch (error) {

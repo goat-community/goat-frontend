@@ -16,8 +16,8 @@ export interface Expression {
   attribute: LayerPropsMode | null;
   expression: ComparerMode | null;
   value: (string | number | number[]) | null;
-  firstInput: string;
-  secondInput: string;
+  firstInput?: string;
+  secondInput?: string;
 }
 
 export interface LayerData {
