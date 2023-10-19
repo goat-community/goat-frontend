@@ -24,9 +24,14 @@ import type { IUser } from "@/types/dashboard/organization";
 import Modal from "@/components/common/Modal";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import InviteUser from "@/components/dashboard/settings/organization/InviteUser";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 
 const ManageUsers = () => {
   const theme = useTheme();
+
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split("/")[1], "dashboard");
 
   const [searchWord, setSearchWord] = useState<string>("");
   const { rawRows, setRawRows, setRows, rows, isLoading, error } =
@@ -45,27 +50,27 @@ const ManageUsers = () => {
     {
       id: "name",
       numeric: false,
-      label: "Name",
+      label: t("organization.manage_users.table_headers.name"),
     },
     {
       id: "email",
       numeric: false,
-      label: "E-mail",
+      label: t("organization.manage_users.table_headers.email"),
     },
     {
       id: "role",
       numeric: false,
-      label: "Role",
+      label: t("organization.manage_users.table_headers.role"),
     },
     {
       id: "status",
       numeric: false,
-      label: "Status",
+      label: t("organization.manage_users.table_headers.status"),
     },
     {
       id: "added",
       numeric: false,
-      label: "Added",
+      label: t("organization.manage_users.table_headers.added"),
     },
   ];
 
@@ -73,8 +78,8 @@ const ManageUsers = () => {
     const newUserInvite: IUser = {
       name: "Luca William Silva",
       email,
-      role: "Admin",
-      status: "Invite sent",
+      role: t("organization.manage_users.roles.admin"),
+      status: "invite_sent",
       Added: "23 Jun 19",
     };
     setRawRows([...rawRows, newUserInvite]);
@@ -107,9 +112,9 @@ const ManageUsers = () => {
     if (isLoading) {
       return <Skeleton variant="rounded" width="100%" height={440} />
     } else if (error) {
-      return "There is an error with the connection, make sure to be connected to a valid network!";
+      return t("organization.connection_error");
     } else {
-      return "No Result";
+      return t("no_result");
     }
   }
 
@@ -119,7 +124,7 @@ const ManageUsers = () => {
       const label =
         typeof user.status !== "string" && user.status?.props
           ? user.status.props.label
-          : user.status;
+          : t(`organization.manage_users.status.${user.status}`);
       let color: "primary" | "secondary" | "warning" | undefined = undefined;
       let icon: ICON_NAME | undefined = undefined;
 
@@ -214,7 +219,7 @@ const ManageUsers = () => {
                 },
               }}
               type="text"
-              label="Search"
+              label={t("organization.search")}
               size="small"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setSearchWord(event.target.value);
@@ -236,6 +241,7 @@ const ManageUsers = () => {
               onClick={openInviteDialog}
               sx={{ width: "131px" }}
             >
+              {t('organization.manage_users.invite_user')}
               Invite user
             </Button>
             {/* Invite User Dialog */}

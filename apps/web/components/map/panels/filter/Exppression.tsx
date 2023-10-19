@@ -22,6 +22,8 @@ import { useDispatch } from "react-redux";
 // import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
 import type { LayerPropsMode } from "@/types/map/filtering";
 import type { SelectChangeEvent } from "@mui/material";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 
 import CustomMenu from "@/components/common/CustomMenu";
 
@@ -56,6 +58,8 @@ const Exppression = (props: ExpressionProps) => {
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
   const theme = useTheme();
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split("/")[1], "maps");
 
   function getFeatureAttribute(type: string | string[]) {
     const valueToFilter = keys.filter((key) => key.name === type);
@@ -115,7 +119,7 @@ const Exppression = (props: ExpressionProps) => {
               fontWeight: "600",
             }}
           >
-            Expression
+            {t("panels.filter.expression")}
           </Typography>
           <Box sx={{ position: "relative" }}>
             <Button
@@ -132,10 +136,10 @@ const Exppression = (props: ExpressionProps) => {
               <CustomMenu close={toggleMorePopover}>
                 <MenuList>
                   <MenuItem onClick={() => deleteOneExpression(expression.id)}>
-                    Delete Expression
+                    {t("panels.filter.delete_expression")}
                   </MenuItem>
                   <MenuItem onClick={() => duplicateExpression(expression.id)}>
-                    Duplicate
+                    {t("panels.filter.duplicate")}
                   </MenuItem>
                 </MenuList>
               </CustomMenu>
@@ -150,19 +154,21 @@ const Exppression = (props: ExpressionProps) => {
           }}
         >
           <InputLabel id="demo-simple-select-label">
-            Select attribute
+          {t("panels.filter.select_attribute")}
           </InputLabel>
           <Select
-            label="Select attribute"
+            label={t("panels.filter.select_attribute")}
             disabled={!keys.length}
             defaultValue={attributeSelected ? attributeSelected : ""}
             onChange={handleAttributeSelect}
           >
-            {keys.length ? keys.map((key) => (
-              <MenuItem key={v4()} value={key.name}>
-                {key.name}
-              </MenuItem>
-            )) : null}
+            {keys.length
+              ? keys.map((key) => (
+                  <MenuItem key={v4()} value={key.name}>
+                    {key.name}
+                  </MenuItem>
+                ))
+              : null}
           </Select>
         </FormControl>
         <FormControl
@@ -173,23 +179,25 @@ const Exppression = (props: ExpressionProps) => {
           }}
         >
           <InputLabel id="demo-simple-select-label">
-            Select an expression
+          {t("panels.filter.select_an_expression")}
           </InputLabel>
           <Select
-            label="Select an expression"
+            label={t("panels.filter.select_an_expression")}
             disabled={!keys.length}
             defaultValue={comparerSelected ? comparerSelected : ""}
             // disabled={attributeSelected.length ? false : true}
             onChange={handleComparerSelect}
           >
-            {keys.length ? attributeSelected.length &&
-              comparerModes[getFeatureAttribute(attributeSelected)].map(
-                (key) => (
-                  <MenuItem key={v4()} value={key.value}>
-                    {key.label}
-                  </MenuItem>
-                ),
-              ) : null}
+            {keys.length
+              ? attributeSelected.length &&
+                comparerModes[getFeatureAttribute(attributeSelected)].map(
+                  (key) => (
+                    <MenuItem key={v4()} value={key.value}>
+                      {key.label}
+                    </MenuItem>
+                  ),
+                )
+              : null}
           </Select>
         </FormControl>
         {attributeSelected.length ? (
@@ -220,7 +228,7 @@ const Exppression = (props: ExpressionProps) => {
           }}
         >
           <Chip
-            label={logicalOperator === "match_all_expressions" ? "And" : "Or"}
+            label={logicalOperator === "match_all_expressions" ? t("panels.filter.and") : t("panels.filter.or")}
           />
         </Box>
       ) : null}

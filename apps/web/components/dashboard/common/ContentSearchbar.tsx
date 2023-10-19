@@ -18,6 +18,7 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useState } from "react";
 import type { GetLayersQueryParams, LayerType } from "@/lib/validations/layer";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
+import { useTranslation } from "@/i18n/client";
 
 export interface ContentSearchBarProps {
   contentType: "project" | "layer";
@@ -27,11 +28,13 @@ export interface ContentSearchBarProps {
   queryParams: GetLayersQueryParams | GetProjectsQueryParams;
   view?: "list" | "grid";
   setView?: (view: "list" | "grid") => void;
+  lng: string;
 }
 
 export default function ContentSearchBar(props: ContentSearchBarProps) {
-  const { setQueryParams, queryParams, view, setView } = props;
+  const { setQueryParams, queryParams, view, setView, lng } = props;
   const theme = useTheme();
+  const { t } = useTranslation(lng, "dashboard");
 
   const handleViewToggle = () => {
     const newView = view === "list" ? "grid" : "list";
@@ -41,22 +44,22 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
   const sortByItems: PopperMenuItem[] = [
     {
       id: "sort-by-alpha-asc",
-      label: "A-Z (Asc)",
+      label: `A-Z ${t("projects.sort.asc")}`,
       icon: ICON_NAME.SORT_ALPHA_ASC,
     },
     {
       id: "sort-by-alpha-desc",
-      label: "A-Z (Desc)",
+      label: `A-Z ${t("projects.sort.desc")}`,
       icon: ICON_NAME.SORT_ALPHA_DESC,
     },
     {
       id: "sort-by-last-updated",
-      label: "Last updated",
+      label: t("projects.sort.last_updated"),
       icon: ICON_NAME.CLOCK,
     },
     {
       id: "sort-by-last-created",
-      label: "Last created",
+      label: t("projects.sort.last_created"),
       icon: ICON_NAME.CLOCK,
     },
   ];
@@ -98,8 +101,8 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
           sx={{ ml: 3, flex: 1 }}
           placeholder={
             props.contentType === "project"
-              ? "Search projects"
-              : "Search layers"
+              ? t("projects.search_projects")
+              : t("projects.search_layers")
           }
           inputProps={{ "aria-label": "search projects" }}
           onChange={(e) =>

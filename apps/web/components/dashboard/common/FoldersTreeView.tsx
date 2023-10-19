@@ -18,6 +18,7 @@ import MoreMenu from "@/components/common/PopperMenu";
 import type { GetLayersQueryParams } from "@/lib/validations/layer";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
 import FolderModal from "@/components/modals/Folder";
+import { useTranslation } from "@/i18n/client";
 
 type EditModal = {
   type: "create" | "update" | "delete";
@@ -48,11 +49,14 @@ interface FoldersTreeViewProps {
     params: GetLayersQueryParams | GetProjectsQueryParams,
   ) => void;
   queryParams: GetLayersQueryParams | GetProjectsQueryParams;
+  lng: string;
 }
 
 export default function FoldersTreeView(props: FoldersTreeViewProps) {
-  const { setQueryParams, queryParams } = props;
+  const { setQueryParams, queryParams, lng } = props;
   const [open, setOpen] = useState<boolean[]>([true, false, false]);
+  const { t } = useTranslation(lng, "dashboard");
+
   const handleListItemClick = (
     _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     item: SelectedFolder,
@@ -89,17 +93,17 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
   const theme = useTheme();
 
   const folderTypes = ["folder", "team", "organization"];
-  const folderTypeTitles = ["My Content", "Teams", "Organizations"];
+  const folderTypeTitles = [t("projects.my_content"), t("projects.teams"), t("projects.organizations")];
 
   const moreMenuItems: PopperMenuItem[] = [
     {
       id: "rename",
-      label: "Rename",
+      label: t("projects.rename"),
       icon: ICON_NAME.EDIT,
     },
     {
       id: "delete",
-      label: "Delete",
+      label: t("projects.delete"),
       icon: ICON_NAME.TRASH,
       color: theme.palette.error.main,
     },
@@ -202,7 +206,7 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
                   }
                 />
                 {typeIndex === 0 && (
-                  <Tooltip title="New Folder" placement="top">
+                  <Tooltip title={t("projects.new_folder")} placement="top">
                     <IconButton
                       size="small"
                       onClick={(event) => {

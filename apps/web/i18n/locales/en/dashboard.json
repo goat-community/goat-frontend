@@ -9,5 +9,132 @@
     "light": "Light",
     "measurement_unit": "Measurement Unit",
     "metric": "Metric",
-    "imperial": "Imperial"
+    "imperial": "Imperial",
+    "no_result": "No Result",
+    "logout": "Logout",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "add": "Add",
+    "save": "Save",
+    "next": "Next",
+    "back": "Back",
+    "home": {
+        "recent_project": "Recent Projects",
+        "recent_datasets": "Recent Datasets",
+        "explore": "Explore",
+        "visit_blog": "Visit Blog",
+        "see_all": "See All",
+        "create_new_project": "Create New Project",
+        "create_new_dataset": "Create New Dataset"
+    },
+    "projects": {
+        "projects": "Projects",
+        "new_project": "New Project",
+        "my_content": "My Content",
+        "teams": "Teams",
+        "organizations": "Organizations",
+        "new_folder": "New Folder",
+        "filters": {
+            "filter": "Filter",
+            "clear_all": "Clear All",
+            "layer_types": "Layer Types"
+        },
+        "folder": {
+            "create_folder": "Create Folder",
+            "delete_folder": "Delete Folder",
+            "update_folder": "Update Folder",
+            "folder_name": "Folder Name",
+            "folder_exists": "Folder name already exists",
+            "folder_rule": "Folder name must be less than 30 characters",
+            "are_you_sure": "Are you sure you want to delete",
+            "created_successfully": "Folder created successfully",
+            "updated_successfully": "Folder updated successfully",
+            "deleted_successfully": "Folder deleted successfully"
+        },
+        "dataset": {
+            "upload_dataset": "Upload Dataset",
+            "select_file": "Select File",
+            "destination_and_metadata": "Destination & Metadata",
+            "confirmation": "Confirmation",
+            "select_file_to_upload": "Select a file to upload from your device.",
+            "eg": "E.g",
+            "supported": "Supported files are:",
+            "name": "Name",
+            "select_folder_destination": "Select Folder Destination",
+            "description": "Description",
+            "review": "Please review the details below before uploading the dataset.",
+            "file": "File",
+            "destination": "Destination",
+            "upload": "Upload"
+        },
+        "rename": "Rename",
+        "delate": "Delete",
+        "sort": {
+            "asc": "Asc",
+            "desc": "Desc",
+            "last_updated": "Last Updated",
+            "last_created": "Last Created"
+        },
+        "no_projects_found": "No projects found",
+        "no_datasets_found": "No datasets found",
+        "search_projects": "Search projects",
+        "search_layers": "Search Layers",
+        "add_dataset": "Add Dataset"
+    },
+    "settings": {
+        "settings": "Settings",
+        "account": "Account",
+        "organizations": "Organizations",
+        "subscriptions": "Subscriptions",
+        "profile": {
+            "title": "Profile",
+            "first_name": "First Name",
+            "last_name": "Last Name",
+            "email": "Email",
+            "phone_number": "Phone Number",
+            "country": "Country",
+            "timezone": "Timezone",
+            "participant_in_organizations": "Participant In Organizations",
+            "deactivate": "Deactivate",
+            "delete": "Delete"
+        }
+    },
+    "organization": {
+        "overview": "Overview",
+        "search": "Search",
+        "connection_error": "There is an error with the connection, make sure to be connected to a valid network!",
+        "manage_users": {
+            "manage_users": "Manage Users",
+            "invite_user": "Invite User",
+            "table_headers": {
+                "name": "Name",
+                "email": "E-mail",
+                "role": "Role",
+                "status": "Status",
+                "added": "Added"
+            },
+            "roles": {
+                "admin": "Admin",
+                "editor": "Editor",
+                "user": "User"
+            },
+            "status": {
+                "active": "Active",
+                "invite_sent": "Invite Sent",
+                "expired": "Expired"
+            }
+        },
+        "teams": {
+            "teams": "Teams",
+            "new_team": "New Team",
+            "create_message": "Create teams to easily manage your projects"
+        }
+    },
+    "subscriptions": {
+        "add_seat": "Add Seat",
+        "no_result_found": "No Results Found!",
+        "error": "Error"
+    }
 }

@@ -4,6 +4,8 @@ import React from "react";
 import { Box } from "@mui/material";
 import { v4 } from "uuid";
 import { TextField, Grid, Button, useTheme, Card } from "@mui/material";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 
 interface tempProfileInfoType {
   label: string;
@@ -13,48 +15,50 @@ interface tempProfileInfoType {
 
 const Profile = () => {
   const theme = useTheme();
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split('/')[1], "dashboard");
 
   const informatoryData: tempProfileInfoType[] = [
     {
-      label: "First Name",
+      label: t("settings.profile.first_name"),
       value: "User",
       editable: true,
     },
     {
-      label: "Last Name",
+      label: t("settings.profile.last_name"),
       value: "Costumer",
       editable: true,
     },
     {
-      label: "Email",
+      label: t("settings.profile.email"),
       value: "user@gmail.com",
       editable: true,
     },
     {
-      label: "Phone Number",
+      label: t("settings.profile.phone_number"),
       value: "User",
       editable: true,
     },
     {
-      label: "Country",
+      label: t("settings.profile.country"),
       value: "Germany",
       editable: true,
     },
     {
-      label: "Timezone",
+      label: t("settings.profile.timezone"),
       value: "(GMT-12:00) International Date Line West",
       editable: true,
     },
     {
-      label: "Participant in organizations",
+      label: t("settings.profile.participant_in_organizations"),
       value: "LocalMapping, GOAT, Map4Ci...",
       editable: true,
     },
   ];
 
   return (
-    <Box sx={{marginBottom: "100px" }}>
-      <Card sx={{padding: `${theme.spacing(6)} ${theme.spacing(3)}`}}>
+    <Box sx={{ marginBottom: "100px" }}>
+      <Card sx={{ padding: `${theme.spacing(6)} ${theme.spacing(3)}` }}>
         <Grid container spacing={2}>
           {informatoryData.map((infoData) => (
             <Grid key={v4()} item xs={12} sm={6}>
@@ -75,40 +79,40 @@ const Profile = () => {
             </Grid>
           ))}
         </Grid>
-        </Card>
-        <Box
+      </Card>
+      <Box
+        sx={{
+          margin: `0px ${theme.spacing(3)}px`,
+          marginTop: "100px",
+        }}
+      >
+        <Button
+          variant="outlined"
+          color="error"
           sx={{
-            margin: `0px ${theme.spacing(3)}px`,
-            marginTop: "100px",
+            display: "block",
+            width: "100%",
+            padding: "10px",
+            borderRadius: 1,
+            margin: `${theme.spacing(3)} 0px`,
           }}
         >
-          <Button
-            variant="outlined"
-            color="error"
-            sx={{
-              display: "block",
-              width: "100%",
-              padding: "10px",
-              borderRadius: 1,
-              margin: `${theme.spacing(3)} 0px`,
-            }}
-          >
-            Deactivate
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            sx={{
-              display: "block",
-              width: "100%",
-              padding: "10px",
-              margin: `${theme.spacing(3)} 0px`,
-              borderRadius: 1,
-            }}
-          >
-            Delete
-          </Button>
-        </Box>
+          {t("settings.profile.deactivate")}
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          sx={{
+            display: "block",
+            width: "100%",
+            padding: "10px",
+            margin: `${theme.spacing(3)} 0px`,
+            borderRadius: 1,
+          }}
+        >
+          {t("settings.profile.delete")}
+        </Button>
+      </Box>
     </Box>
   );
 };

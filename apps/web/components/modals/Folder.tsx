@@ -15,6 +15,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { mutate } from "swr";
@@ -41,22 +43,24 @@ const FolderModal: React.FC<FolderDialogProps> = ({
   onEdit,
 }) => {
   const [folderName, setFolderName] = useState<string>("");
-
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split("/")[1], "dashboard");
+  
   const handleFolderEdit = async () => {
     try {
       if (type === "create") {
         await createFolder(folderName);
-        toast.success("Folder created successfully");
+        toast.success(t("projects.folder.created_successfully"));
       }
       if (selectedFolder?.id) {
         if (type === "delete") {
           await deleteFolder(selectedFolder?.id);
-          toast.success("Folder deleted successfully");
+          toast.success(t("projects.folder.deleted_successfully"));
         }
 
         if (type === "update") {
           await updateFolder(selectedFolder.id, folderName);
-          toast.success("Folder updated successfully");
+          toast.success(t("projects.folder.updated_successfully"));
         }
       }
 
@@ -81,9 +85,9 @@ const FolderModal: React.FC<FolderDialogProps> = ({
         <Typography variant="h6">
           {
             {
-              create: "Create Folder",
-              update: "Update Folder",
-              delete: "Delete Folder",
+              create: t("projects.folder.create_folder"),
+              update: t("projects.folder.update_folder"),
+              delete: t("projects.folder.delete_folder"),
             }[type]
           }
         </Typography>
@@ -97,7 +101,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
             id="folder-name"
             defaultValue={selectedFolder?.name || folderName}
             inputProps={{ maxLength: 30 }}
-            label="Folder Name"
+            label={t("projects.folder.folder_name")}
             variant="outlined"
             error={
               folderName.length > 29 ||
@@ -105,9 +109,9 @@ const FolderModal: React.FC<FolderDialogProps> = ({
             }
             helperText={
               folderName.length > 29
-                ? "Folder name must be less than 30 characters"
+                ? t("projects.folder.folder_rule")
                 : existingFolderNames?.includes(folderName)
-                ? "Folder name already exists"
+                ? t("projects.folder.folder_exists")
                 : ""
             }
             onChange={(e) => setFolderName(e.target.value)}
@@ -116,7 +120,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
 
         {type === "delete" && (
           <DialogContentText>
-            Are you sure you want to delete <b>{selectedFolder?.name}</b>?
+            {t("projects.folder.are_you_sure")} <b>{selectedFolder?.name}</b>?
           </DialogContentText>
         )}
       </DialogContent>
@@ -135,7 +139,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
           sx={{ borderRadius: 0 }}
         >
           <Typography variant="body2" fontWeight="bold">
-            Cancel
+            {t("cancel")}
           </Typography>
         </Button>
         <Button
@@ -148,9 +152,9 @@ const FolderModal: React.FC<FolderDialogProps> = ({
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {
               {
-                create: "Create",
-                update: "Update",
-                delete: "Delete",
+                create: t("create"),
+                update: t("update"),
+                delete: t("delete"),
               }[type]
             }
           </Typography>

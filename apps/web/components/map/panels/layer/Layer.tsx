@@ -24,7 +24,8 @@ import FilterList from "./FilterList";
 import type { ChangeEvent } from "react";
 import type { MapSidebarItem } from "@/types/map/sidebar";
 import type { Layer } from "@/types/map/project";
-
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 interface LoaderCheckerProps {
   children: React.ReactNode;
   projectLayers: Layer[] | null;
@@ -62,6 +63,9 @@ const LayerPanel = ({
 
   const [activeFilter, setActiveFilter] = useState<string>("All");
   const [searchString, setSearchString] = useState<string>("");
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split("/")[1], "maps");
+
   const [resultProjectLayers, setResultProjectLayers] = useState<
     Layer[] | null
   >(projectLayers);
@@ -112,7 +116,7 @@ const LayerPanel = ({
                 size="small"
               >
                 <InputLabel htmlFor="outlined-adornment-password">
-                  Search
+                  {t("search")}
                 </InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-password"
@@ -130,7 +134,7 @@ const LayerPanel = ({
                   onChange={(
                     e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
                   ) => changeSearch(e.target.value)}
-                  label="Search"
+                  label={t("search")}
                 />
               </FormControl>
               <Box sx={{ display: "flex", gap: theme.spacing(2) }}>

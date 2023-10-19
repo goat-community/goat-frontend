@@ -19,6 +19,8 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setActiveBasemapIndex } from "@/lib/store/styling/slice";
 import { setLayers } from "@/lib/store/layer/slice";
 import { getProjectLayers } from "@/lib/api/projects";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 
 import { Box, useTheme, Stack, Collapse } from "@mui/material";
 
@@ -35,6 +37,8 @@ const defaultSelectedLayer = "765caa7e-1fbf-4ef8-9e13-9ea55f8a9479"
 const ProjectNavigation = ({ projectId }) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split("/")[1], "maps");
 
   const { basemaps, activeBasemapIndex } = useSelector(
     (state: IStore) => state.styling,
@@ -63,7 +67,7 @@ const ProjectNavigation = ({ projectId }) => {
     topItems: [
       {
         icon: ICON_NAME.LAYERS,
-        name: "Layers",
+        name: t("panels.layers.layers"),
         component: (
           <LayerPanel
             projectLayers={
@@ -77,19 +81,19 @@ const ProjectNavigation = ({ projectId }) => {
       },
       {
         icon: ICON_NAME.LEGEND,
-        name: "Legend",
+        name: t("panels.legend.legend"),
         component: <Legend setActiveLeft={setActiveLeft} />,
       },
       {
         icon: ICON_NAME.CHART,
-        name: "Charts",
+        name: t("panels.charts.charts"),
         component: <Charts setActiveLeft={setActiveLeft} />,
       },
     ],
     bottomItems: [
       {
         icon: ICON_NAME.HELP,
-        name: "Help",
+        name: t("help"),
         link: "https://docs.plan4better.de",
       },
     ],
@@ -101,22 +105,22 @@ const ProjectNavigation = ({ projectId }) => {
     topItems: [
       {
         icon: ICON_NAME.TOOLBOX,
-        name: "Tools",
+        name: t("panels.tools.tools"),
         component: <Toolbox setActiveRight={setActiveRight} />,
       },
       {
         icon: ICON_NAME.FILTER,
-        name: "Filter",
+        name: t("panels.filter.filter"),
         component: <Filter setActiveRight={setActiveRight} layerToFilter={defaultSelectedLayer} projectId={projectId}/>
       },
       {
         icon: ICON_NAME.SCENARIO,
-        name: "Scenario",
+        name: t("panels.scenario.scenario"),
         component: <Scenario setActiveRight={setActiveRight} />,
       },
       {
         icon: ICON_NAME.STYLE,
-        name: "Map Style",
+        name: t("panels.layer_design.layer_design"),
         component: (
           <MapStyle setActiveRight={setActiveRight} projectId={projectId} />
         ),

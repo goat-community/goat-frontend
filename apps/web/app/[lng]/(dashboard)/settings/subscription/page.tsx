@@ -7,9 +7,13 @@ import SubscriptionStatusCard from "./SubscriptionStatusCard";
 
 import type { ISubscriptionStatusCardDataType } from "@/types/dashboard/subscription";
 import type { ISubscriptionCard } from "@/types/dashboard/subscription";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 
 const Subscription = () => {
   const theme = useTheme();
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split("/")[1], "dashboard");
 
   const { Subscriptions, isError, isLoading } = useSubscription();
 
@@ -39,7 +43,7 @@ const Subscription = () => {
             }}
             color="primary"
           >
-            Add seats
+            {t("subscriptions.add_seat")}
           </Button>
         </Box>
       ),
@@ -57,9 +61,9 @@ const Subscription = () => {
         </>
       );
     } else if (isError) {
-      return "Error";
+      return t("subscriptions.error");
     } else {
-      return "No results found!";
+      return t("subscriptions.no_result_found");
     }
   }
 

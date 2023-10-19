@@ -30,6 +30,8 @@ import { histogramData } from "@/public/assets/data/histogramSample";
 import { useGetLayerKeys } from "@/lib/api/filter";
 import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
 import { useFilterQueryExpressions } from "@/lib/api/filter";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 
 interface FilterPanelProps {
   setActiveRight: (item: MapSidebarItem | undefined) => void;
@@ -38,6 +40,8 @@ interface FilterPanelProps {
 
 const FilterPanel = (props: FilterPanelProps) => {
   const { setActiveRight, projectId } = props;
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split("/")[1], "maps");
 
   const {
     getLayerFilterExpressionsById,
@@ -77,11 +81,11 @@ const FilterPanel = (props: FilterPanelProps) => {
 
   const logicalOperatorOptions: { label: React.ReactNode; value: string }[] = [
     {
-      label: "Match all expressions",
+      label: t("panels.filter.match_all_expressions"),
       value: "match_all_expressions",
     },
     {
-      label: "Match at least one expression",
+      label: t("panels.filter.match_at_least_one_expressions"),
       value: "match_at_least_one_expression",
     },
   ];
@@ -116,7 +120,7 @@ const FilterPanel = (props: FilterPanelProps) => {
 
   return (
     <Container
-      title="Filter"
+      title={t("panels.filter.filter")}
       close={setActiveRight}
       body={
         <>
@@ -170,7 +174,7 @@ const FilterPanel = (props: FilterPanelProps) => {
                     fontWeight: "600",
                   }}
                 >
-                  Filter
+                  {t("panels.filter.filter")}
                 </Typography>
                 <Select
                   sx={{
@@ -219,7 +223,7 @@ const FilterPanel = (props: FilterPanelProps) => {
                       padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
                     }}
                   >
-                    <Typography variant="body1">Filter your data</Typography>
+                    <Typography variant="body1">{t("panels.filter.filter_your_data")}</Typography>
                     <Typography
                       sx={{
                         letterSpacing: "0.15px",
@@ -232,9 +236,7 @@ const FilterPanel = (props: FilterPanelProps) => {
                       }}
                       variant="subtitle2"
                     >
-                      Perform targeted data analysis. Filter layers, apply an
-                      expression and narrow down data displayed. Sort data and
-                      hide data that does not match your criteria. Learn more
+                      {t("panels.filter.message")}
                     </Typography>
                   </Box>
                 </Card>
@@ -263,7 +265,7 @@ const FilterPanel = (props: FilterPanelProps) => {
               }}
               onClick={createAnExpression}
             >
-              Add Expression
+              {t("panels.filter.add_expression")}
             </Button>
           </div>
           {updatedData && updatedData.length ? (
@@ -275,7 +277,7 @@ const FilterPanel = (props: FilterPanelProps) => {
               }}
               onClick={cleanExpressions}
             >
-              Clear Filter
+              {t("panels.filter.clear_filter")}
             </Button>
           ) : null}
         </>

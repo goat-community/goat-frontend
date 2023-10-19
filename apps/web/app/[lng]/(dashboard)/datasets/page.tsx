@@ -9,14 +9,17 @@ import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import type { GetLayersQueryParams } from "@/lib/validations/layer";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import DatasetUploadModal from "@/components/modals/DatasetUpload";
+import { useTranslation } from "@/i18n/client";
 
-const Datasets = () => {
+const Datasets = ({ params: { lng } }) => {
   const [queryParams, setQueryParams] = useState<GetLayersQueryParams>({
     order: "descendent",
     order_by: "updated_at",
   });
   const [view, setView] = useState<"list" | "grid">("grid");
   const [openDatasetUploadModal, setOpenDatasetUploadModal] = useState(false);
+
+  const { t } = useTranslation(lng, "dashboard");
 
   const {
     layers: datasets,
@@ -46,7 +49,7 @@ const Datasets = () => {
           }
           onClick={() => setOpenDatasetUploadModal(true)}
         >
-          Add Dataset
+          {t("projects.add_dataset")}
         </Button>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>
@@ -54,6 +57,7 @@ const Datasets = () => {
           <ContentSearchBar
             contentType="layer"
             view={view}
+            lng={lng}
             setView={setView}
             queryParams={queryParams}
             setQueryParams={setQueryParams}
@@ -62,6 +66,7 @@ const Datasets = () => {
         <Grid item xs={3}>
           <Paper elevation={3} sx={{ backgroundImage: "none" }}>
             <FoldersTreeView
+              lng={lng}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
             />
@@ -69,6 +74,7 @@ const Datasets = () => {
         </Grid>
         <Grid item xs={9}>
           <TileGrid
+            lng={lng}
             view={view}
             items={datasets?.items ?? []}
             isLoading={isDatasetLoading}

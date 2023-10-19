@@ -10,11 +10,16 @@ import Image from "next/image";
 import type { ITeam } from "@/types/dashboard/organization";
 import { useTheme } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
 
 const Teams = () => {
   const [ismodalVisible, setModalVisible] = useState<boolean>(false);
   const [teams, setTeams] = useState<ITeam[]>([]);
   const [searchWord, setSearchWord] = useState<string>("");
+  
+  const pathname = usePathname();
+  const { t } = useTranslation(pathname.split("/")[1], "dashboard");
 
   const theme = useTheme();
 
@@ -91,7 +96,7 @@ const Teams = () => {
                 },
               }}
               type="text"
-              label="Search"
+              label={t('organization.search')}
               size="small"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setSearchWord(event.target.value);
@@ -113,7 +118,7 @@ const Teams = () => {
               sx={{ width: "131px" }}
               onClick={() => setModalVisible(true)}
             >
-              New Team
+              {t('organization.teams.new_team')}
             </Button>
           </div>
         </Box>
@@ -158,7 +163,7 @@ const Teams = () => {
               },
             }}
           >
-            Create teams to easily manage your projects
+            {t('organization.teams.create_message')}
           </Typography>
         </Box>
       )}

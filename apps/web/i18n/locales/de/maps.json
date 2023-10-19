@@ -1,0 +1,56 @@
+{
+  "last_saved": "Last Saved",
+  "search": "Search",
+  "close": "Close",
+  "controls": {
+    "enter_an_address": "Enter an address or coordinates"
+  },
+  "panels": {
+    "layers": {
+      "layers": "Layers",
+      "add_layer": "Add Layer",
+      "all": "All",
+      "add_new_layer": "Add New Layer",
+      "latest_layers": "Latest Layers",
+      "catalogue": "Catalogue",
+      "apply": "Apply",
+      "purchase_and_apply": "Purchase And Apply"
+    },
+    "legend": {
+      "legend": "Legend"
+    },
+    "charts": {
+      "charts": "Charts"
+    },
+    "tools": {
+      "tools": "Toolbox"
+    },
+    "filter": {
+      "filter": "Filter",
+      "match_all_expressions": "Match all expressions",
+      "match_at_least_one_expressions": "Match at least one expressions",
+      "expression": "Expression",
+      "select_attribute": "Select Attribute",
+      "select_an_expression": "Select an expression",
+      "and": "And",
+      "or": "Or",
+      "delete_expression": "Delete Expression",
+      "duplicate": "Duplicate",
+      "add_expression": "Add Expression",
+      "clear_filter": "Clear Filter"
+    },
+    "scenario": {
+      "scenario": "Scenario"
+    },
+    "layer_design": {
+      "layer_design": "Layer design",
+      "simple": "Simple",
+      "smart": "Smart",
+      "reset": "Reset",
+      "save_as": "Save as",
+      "field": "Field",
+      "select_field": "Select a field containing the data of interest to display",
+      "select_option": "Select Option"
+    }
+  }
+}

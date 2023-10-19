@@ -13,17 +13,20 @@ import {
   useTheme,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useTranslation } from "@/i18n/client";
 
 interface TileGridProps {
   view: "list" | "grid";
   type: "project" | "layer";
   items: Project[] | Layer[];
   isLoading: boolean;
+  lng: string;
 }
 
 const TileGrid = (props: TileGridProps) => {
-  const { items, isLoading } = props;
+  const { items, isLoading, lng } = props;
   const theme = useTheme();
+  const { t } = useTranslation(lng, "dashboard");
   const listProps = {
     xs: 12,
   };
@@ -87,8 +90,8 @@ const TileGrid = (props: TileGridProps) => {
                 />
                 <Typography variant="h6" color={theme.palette.text.secondary}>
                   {props.type === "project"
-                    ? "No projects found"
-                    : "No datasets found"}
+                    ? t("projects.no_projects_found")
+                    : t("projects.no_datasets_found")}
                 </Typography>
               </Stack>
             </Grid>
