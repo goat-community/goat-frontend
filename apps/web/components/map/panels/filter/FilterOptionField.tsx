@@ -1,5 +1,5 @@
 import type { ComparerMode } from "@/types/map/filtering";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { addExpression, addFilter } from "@/lib/store/mapFilters/slice";
 import {
@@ -33,7 +33,10 @@ interface FilterResultProps {
 
 const FilterOptionField = (props: FilterResultProps) => {
   const { comparer, prop, expression } = props;
-  const newExpressionToModify = { ...expression };
+  const newExpressionToModify = useMemo(
+    () => ({ ...expression }),
+    [expression],
+  );
   const [firstInput, setFirstInput] = useState<string>(
     newExpressionToModify.firstInput,
   );
@@ -43,36 +46,7 @@ const FilterOptionField = (props: FilterResultProps) => {
 
   const dispatch = useDispatch();
 
-  const sendQuery = React.useMemo(
-    () =>
-      debounce((request: { input: string; input2?: string }) => {
-        if (
-          request.input ||
-          (comparer &&
-            ![
-              "is_blank",
-              "is_not_blank",
-              "is_empty_string",
-              "is_not_empty_string",
-            ].includes(comparer.value))
-        ) {
-          newExpressionToModify.firstInput = request.input;
-          dispatch(addExpression(newExpressionToModify));
-          setFirstInput(request.input);
-          if (request.input2) {
-            newExpressionToModify.secondInput = request.input2;
-            dispatch(addExpression(newExpressionToModify));
-            setSecondInput(request.input2);
-          }
 
-          handleFilter(request.input, request.input2);
-        } else {
-          handleFilter("excludes");
-        }
-      }, 1000),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [comparer],
-  );
 
   useEffect(() => {
     if (secondInput !== newExpressionToModify.secondInput) {
@@ -103,84 +77,117 @@ const FilterOptionField = (props: FilterResultProps) => {
     setSecondInput(newValue);
   }
 
-  const handleFilter = (value: string, value2?: string) => {
-    if (!comparer) return;
-    let query;
-    if (value) {
-      switch (comparer.value) {
-        case "is":
-          query = is(
-            prop,
-            comparer.type === "number" ? parseInt(value) : value,
-          );
-          break;
-        case "is_not":
-          query = is_not(prop, value);
-          break;
-        case "includes":
-        case "excludes":
-          query = excludes(prop, ["playground", "bus_stop"]);
-          break;
-        case "starts_with":
-          if (typeof value === "string") {
-            query = starts_with(prop, value);
-          }
-          break;
-        case "ends_with":
-          if (typeof value === "string") {
-            query = ends_with(prop, value);
-          }
-          break;
-        case "contains_the_text":
-          if (typeof value === "string") {
-            query = contains_the_text(prop, value);
-          }
-          break;
-        case "does_not_contains_the_text":
-          if (typeof value === "string") {
-            query = does_not_contains_the_text(prop, value);
-          }
-          break;
-        case "is_blank":
-          query = is_blank(prop);
-          break;
-        case "is_not_blank":
-          query = is_not_blank(prop);
-          break;
-        case "is_empty_string":
-          query = is_empty_string(prop);
-          break;
-        case "is_not_empty_string":
-          query = is_not_empty_string(prop);
-          break;
-        case "is_at_least":
-          query = is_at_least(prop, parseInt(value));
-          break;
-        case "is_at_most":
-          query = is_at_most(prop, parseInt(value));
-          break;
-        case "is_less_than":
-          query = is_less_than(prop, parseInt(value));
-          break;
-        case "is_greater_than":
-          query = is_greater_than(prop, parseInt(value));
-          break;
-        case "is_between":
-          query = is_between(
-            prop,
-            parseInt(value),
-            parseInt(value2 ? value2 : "0"),
-          );
-          break;
-        default:
-          return;
+  const handleFilter = useCallback(
+    (value: string, value2?: string) => {
+      if (!comparer) return;
+      let query;
+      if (value) {
+        switch (comparer.value) {
+          case "is":
+            query = is(
+              prop,
+              comparer.type === "number" ? parseInt(value) : value,
+            );
+            break;
+          case "is_not":
+            query = is_not(prop, value);
+            break;
+          case "includes":
+          case "excludes":
+            query = excludes(prop, ["playground", "bus_stop"]);
+            break;
+          case "starts_with":
+            if (typeof value === "string") {
+              query = starts_with(prop, value);
+            }
+            break;
+          case "ends_with":
+            if (typeof value === "string") {
+              query = ends_with(prop, value);
+            }
+            break;
+          case "contains_the_text":
+            if (typeof value === "string") {
+              query = contains_the_text(prop, value);
+            }
+            break;
+          case "does_not_contains_the_text":
+            if (typeof value === "string") {
+              query = does_not_contains_the_text(prop, value);
+            }
+            break;
+          case "is_blank":
+            query = is_blank(prop);
+            break;
+          case "is_not_blank":
+            query = is_not_blank(prop);
+            break;
+          case "is_empty_string":
+            query = is_empty_string(prop);
+            break;
+          case "is_not_empty_string":
+            query = is_not_empty_string(prop);
+            break;
+          case "is_at_least":
+            query = is_at_least(prop, parseInt(value));
+            break;
+          case "is_at_most":
+            query = is_at_most(prop, parseInt(value));
+            break;
+          case "is_less_than":
+            query = is_less_than(prop, parseInt(value));
+            break;
+          case "is_greater_than":
+            query = is_greater_than(prop, parseInt(value));
+            break;
+          case "is_between":
+            query = is_between(
+              prop,
+              parseInt(value),
+              parseInt(value2 ? value2 : "0"),
+            );
+            break;
+          default:
+            return;
+        }
+      } else {
+        query = "";
       }
-    } else {
-      query = "";
-    }
 
-    dispatch(addFilter({ query, expression: expression.id }));
-  };
+      dispatch(addFilter({ query, expression: expression.id }));
+    },
+    [comparer, dispatch, expression.id, prop],
+  );
+
+  const sendQuery = React.useMemo(
+    () =>
+      debounce((request: { input: string; input2?: string }) => {
+        if (
+          request.input ||
+          (comparer &&
+            ![
+              "is_blank",
+              "is_not_blank",
+              "is_empty_string",
+              "is_not_empty_string",
+            ].includes(comparer.value))
+        ) {
+          newExpressionToModify.firstInput = request.input;
+          dispatch(addExpression(newExpressionToModify));
+          setFirstInput(request.input);
+          if (request.input2) {
+            newExpressionToModify.secondInput = request.input2;
+            dispatch(addExpression(newExpressionToModify));
+            setSecondInput(request.input2);
+          }
+
+          handleFilter(request.input, request.input2);
+        } else {
+          handleFilter("excludes");
+        }
+      }, 1000),
+    [comparer, dispatch, handleFilter, newExpressionToModify],
+  );
 
   if (!comparer) return null;
 

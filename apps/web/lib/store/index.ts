@@ -11,6 +11,9 @@ const store = configureStore({
     mapFilters: filtersReducer,
     layers: layerReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: false
+  })
 });
 
 export type AppDispatch = typeof store.dispatch;
