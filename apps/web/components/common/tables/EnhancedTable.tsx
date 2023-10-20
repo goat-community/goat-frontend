@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
   Checkbox,
@@ -156,8 +157,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     checkbox,
     action = null,
   } = props;
-
-  const theme = useTheme();
 
   const createSortHandler =
     (property: any) => (event: React.MouseEvent<unknown>) => {

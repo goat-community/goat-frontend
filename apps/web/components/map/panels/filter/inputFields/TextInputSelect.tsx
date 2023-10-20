@@ -7,9 +7,15 @@ import {
   useTheme,
   Box,
 } from "@mui/material";
-import type { Option } from "@p4b/types/atomicComponents";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+
+export type Option = {
+  label: string;
+  value: string;
+} & {
+  [key: string]: string | number | boolean;
+};
 
 interface TextInputSelectProps {
   setInputValue: (value: string | number) => void;

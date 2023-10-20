@@ -242,7 +242,7 @@ const FilterPanel = (props: FilterPanelProps) => {
               min={histogramState.data.min}
               max={histogramState.data.max}
               step={histogramState.data.step}
-              value={histogramState.value}
+              value={histogramState.value as [number, number]}
               distance={histogramState.data.distance}
               data={histogramState.data.data}
               colors={{

@@ -1,4 +1,9 @@
-import type { Option } from "@p4b/types/atomicComponents"
+export type Option = {
+  label: string;
+  value: string;
+} & {
+  [key: string]: string | number | boolean;
+};
 
 export const dummyFilterDataText: Option[] = [
   {

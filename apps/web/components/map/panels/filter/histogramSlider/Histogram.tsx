@@ -39,7 +39,7 @@ const Histogram: React.FC<HistogramProps> = ({
 
   return (
     <ClassNames>
-      {({ css }) => (
+      {() => (
         <>
           <svg
             width="100%"

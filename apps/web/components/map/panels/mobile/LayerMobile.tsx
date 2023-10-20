@@ -7,7 +7,7 @@ const LayerMobile = () => {
     label: string;
   }
 
-  const [selectedOption, setSelectedOption] = useState<layerObject[]>([]);
+  const [selectedOption, _setSelectedOption] = useState<layerObject[]>([]);
 
   const sampleLayers = [
     {

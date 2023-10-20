@@ -7,8 +7,8 @@ import {
   IconButton,
 } from "@mui/material";
 import React from "react";
-import type { MapSidebarItem } from "@/components/map/Sidebar";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import type { MapSidebarItem } from "@/types/map/sidebar";
 
 interface ContainerProps {
   header?: React.ReactNode;

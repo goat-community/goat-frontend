@@ -6,10 +6,13 @@ import {
   type NextMiddleware,
 } from "next/server";
 import { fallbackLng, cookieName as lngCookieName } from "@/i18n/settings";
-import { USERS_API_BASE_URL } from "@/lib/api/users";
 import { getToken } from "next-auth/jwt";
 import { refreshAccessToken } from "@/app/api/auth/[...nextauth]/options";
 
+export const USERS_API_BASE_URL = new URL(
+  "api/v1/users",
+  process.env.NEXT_PUBLIC_ACCOUNTS_API_URL,
+).href;
 const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map"];
 
 export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {

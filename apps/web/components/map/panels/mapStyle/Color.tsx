@@ -1,4 +1,3 @@
-import BasicAccordion from "@p4b/ui/components/BasicAccordion";
 import { Divider, TextField, Typography, useTheme, Box } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +6,7 @@ import {
   setLayerFillOutLineColor,
 } from "@/lib/store/styling/slice";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
+import BasicAccordion from "@p4b/ui/components/BasicAccordion";
 
 const Color = () => {
   const mapLayer = useSelector(selectMapLayer);

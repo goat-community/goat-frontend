@@ -60,10 +60,11 @@ const Exppression = (props: ExpressionProps) => {
 
   function handleAttributeSelect(event: SelectChangeEvent<string>) {
     const newExpression = { ...expression };
-    newExpression.attribute = {
-      type: getFeatureAttribute(event.target.value),
-      name: event.target.value,
-    };
+    //todo: fix type error here
+    // newExpression.attribute = {
+    //   type: getFeatureAttribute(event.target.value),
+    //   name: event.target.value,
+    // };
     setAttributeSelected(event.target.value);
     dispatch(addExpression(newExpression));
   }

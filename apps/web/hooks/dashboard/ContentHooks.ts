@@ -1,4 +1,4 @@
-import { PopperMenuItem } from "@/components/common/PopperMenu";
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import { ContentActions } from "@/types/common";
 import type { Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";

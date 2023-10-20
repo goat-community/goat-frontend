@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function JobsPopper() {
   const [open, setOpen] = useState(false);

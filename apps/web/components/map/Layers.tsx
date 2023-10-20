@@ -58,6 +58,7 @@ const Layers = (props: LayersProps) => {
         },
       ]);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   useEffect(() => {

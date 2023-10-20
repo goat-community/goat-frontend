@@ -1,6 +1,6 @@
 import { MAPBOX_TOKEN } from "@/lib/constants";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import LayerPanel from "@/components/map/panels/layer/Layer";
 import Legend from "@/components/map/panels/Legend";
@@ -17,8 +17,8 @@ import { BasemapSelector } from "@/components/map/controls/BasemapSelector";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setActiveBasemapIndex } from "@/lib/store/styling/slice";
-import { setLayers } from "@/lib/store/layer/slice";
-import { getProjectLayers } from "@/lib/api/projects";
+// import { setLayers } from "@/lib/store/layer/slice";
+// import { getProjectLayers } from "@/lib/api/projects";
 
 import { Box, useTheme, Stack, Collapse } from "@mui/material";
 
@@ -132,15 +132,15 @@ const ProjectNavigation = ({ projectId }) => {
   //   prevActiveRightRef.current = activeRight;
   // }, [activeRight]);
 
-  useEffect(() => {
-    getProjectLayers(projectId).then((data) => {
-      const layers = data.map((layer) => ({ ...layer, active: false }))
-      setModifiedProjectLayers(
-        layers
-      );
-      dispatch(setLayers(layers))
-    });
-  }, []);
+  // useEffect(() => {
+  //   getProjectLayers(projectId).then((data) => {
+  //     const layers = data.map((layer) => ({ ...layer, active: false }))
+  //     setModifiedProjectLayers(
+  //       layers
+  //     );
+  //     dispatch(setLayers(layers))
+  //   });
+  // }, []);
 
   return (
     <>

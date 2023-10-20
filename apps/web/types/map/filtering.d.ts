@@ -11,6 +11,7 @@ interface Extent {
   };
 }
 
+
 export interface Expression {
   id: string,
   attribute: LayerPropsMode | null;

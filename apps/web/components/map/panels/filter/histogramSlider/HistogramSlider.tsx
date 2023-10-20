@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Histogram from './Histogram';
-import RangeSlider from './RangeSlider';
-import { ClassNames } from '@emotion/react';
+import React, { useState, useEffect } from "react";
+import Histogram from "./Histogram";
+import RangeSlider from "./RangeSlider";
+import { ClassNames } from "@emotion/react";
 
 interface HistogramSliderProps {
   data: number[];
@@ -20,21 +20,25 @@ interface HistogramSliderProps {
 }
 
 const HistogramSlider: React.FC<HistogramSliderProps> = (props) => {
-  const [value, setValue] = useState<[number, number]>([props.value[0], props.value[1]]);
+  const [value, setValue] = useState<[number, number]>([
+    props.value[0],
+    props.value[1],
+  ]);
   const [timeout, setTimeoutHandle] = useState<number | null>(null);
 
   useEffect(() => {
     if (props.value !== value) {
       setValue(props.value);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.value]);
 
   const reset = (e: React.MouseEvent) => {
     e.preventDefault();
     setValue([props.min, props.max]);
-    if (typeof props.onApply === 'function') {
+    if (typeof props.onApply === "function") {
       props.onApply([props.min, props.max]);
-    } else if (typeof props.onChange === 'function') {
+    } else if (typeof props.onChange === "function") {
       props.onChange([props.min, props.max]);
     }
   };
@@ -46,12 +50,12 @@ const HistogramSlider: React.FC<HistogramSliderProps> = (props) => {
   const handleSliderChange = (newValue: [number, number]) => {
     setValue(newValue);
 
-    if (typeof props.onChange === 'function') {
+    if (typeof props.onChange === "function") {
       if (timeout) {
         clearTimeout(timeout);
       }
       const newTimeout = window.setTimeout(() => {
-        props.onChange(newValue);
+        props?.onChange ? props.onChange(newValue) : null;
       }, props.debounceDelay || 500);
       setTimeoutHandle(newTimeout);
     }
@@ -59,7 +63,7 @@ const HistogramSlider: React.FC<HistogramSliderProps> = (props) => {
 
   const handleApply = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (typeof props.onApply === 'function') {
+    if (typeof props.onApply === "function") {
       props.onApply(value);
     }
   };
@@ -70,21 +74,23 @@ const HistogramSlider: React.FC<HistogramSliderProps> = (props) => {
   }
 
   if (props.value[0] >= props.value[1]) {
-    console.error(`The [0] of the prop "value" should not be greater than the [1].`);
+    console.error(
+      `The [0] of the prop "value" should not be greater than the [1].`,
+    );
     return null;
   }
 
   const isComponentDisabled = isDisabled();
-  
+
   return (
     <ClassNames>
       {({ css }) => (
         <div
           className={css({
-            maxWidth: '240px',
-            minWidth: '240px',
-            padding: '10px',
-            boxSizing: 'border-box',
+            maxWidth: "240px",
+            minWidth: "240px",
+            padding: "10px",
+            boxSizing: "border-box",
           })}
         >
           <Histogram
@@ -94,30 +100,32 @@ const HistogramSlider: React.FC<HistogramSliderProps> = (props) => {
             min={props.min}
             max={props.max}
           />
-          <div className={css({ marginTop: '-5px' })}>
+          <div className={css({ marginTop: "-5px" })}>
             <RangeSlider
               {...props}
               value={value}
               onChange={handleSliderChange}
             />
           </div>
-          <div className={css({ marginTop: '20px' })}>
+          <div className={css({ marginTop: "20px" })}>
             <div
               className={css({
-                marginBottom: '10px',
-                fontSize: '12px',
-                color: '#666666',
+                marginBottom: "10px",
+                fontSize: "12px",
+                color: "#666666",
               })}
             >
               ${value[0]} AUD - ${value[1]} AUD
             </div>
 
-            {typeof props.onApply === 'function' && (
+            {typeof props.onApply === "function" && (
               <div
                 className={css({
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: isComponentDisabled ? 'flex-end' : 'space-between',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: isComponentDisabled
+                    ? "flex-end"
+                    : "space-between",
                 })}
               >
                 {!isComponentDisabled && (

@@ -28,7 +28,7 @@ const RangeSlider: React.FC<RangeSliderProps> = ({
   const range = max - min;
 
   const getKeyboardStep = () => {
-    let keyboardStep = Math.floor(max / 100);
+    const keyboardStep = Math.floor(max / 100);
     return keyboardStep < step ? step : keyboardStep;
   };
 

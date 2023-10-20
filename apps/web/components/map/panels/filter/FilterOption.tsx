@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Dayjs } from "dayjs";
 import React from "react";
 import TextInputSelect from "./inputFields/TextInputSelect";
@@ -50,8 +51,7 @@ interface SelectOptionProps {
   label: string;
 }
 
-export const SelectOption = (props: SelectOptionProps) => {
-  const { options, label } = props;
+export const SelectOption = (_props: SelectOptionProps) => {
 
   return (
     <div>
@@ -70,32 +70,32 @@ export const DualNumberOption = () => {
 };
 
 export const YearFilterOption = () => {
-  const options = [
-    {
-      name: "minutes",
-      value: "minutes",
-    },
-    {
-      name: "hours",
-      value: "hours",
-    },
-    {
-      name: "days",
-      value: "days",
-    },
-    {
-      name: "weeks",
-      value: "weeks",
-    },
-    {
-      name: "months",
-      value: "months",
-    },
-    {
-      name: "years",
-      value: "years",
-    },
-  ];
+  // const _options = [
+  //   {
+  //     name: "minutes",
+  //     value: "minutes",
+  //   },
+  //   {
+  //     name: "hours",
+  //     value: "hours",
+  //   },
+  //   {
+  //     name: "days",
+  //     value: "days",
+  //   },
+  //   {
+  //     name: "weeks",
+  //     value: "weeks",
+  //   },
+  //   {
+  //     name: "months",
+  //     value: "months",
+  //   },
+  //   {
+  //     name: "years",
+  //     value: "years",
+  //   },
+  // ];
 
   return (
     <div>

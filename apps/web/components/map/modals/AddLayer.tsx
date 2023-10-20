@@ -20,8 +20,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { filterSearch } from "@/lib/utils/helpers";
 
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-
 import type { ChangeEvent } from "react";
 
 const ModalBox = styled(Box)(({ theme }) => ({
@@ -37,7 +35,6 @@ const ModalBox = styled(Box)(({ theme }) => ({
 }));
 
 const AddLayer = () => {
-  const dispatch = useAppDispatch();
   const theme = useTheme();
 
   const [open, setOpen] = useState(false);

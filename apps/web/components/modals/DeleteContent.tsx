@@ -1,6 +1,6 @@
 import { LAYERS_API_BASE_URL, deleteLayer } from "@/lib/api/layers";
 import { PROJECTS_API_BASE_URL, deleteProject } from "@/lib/api/projects";
-import { ContentDialogBaseProps } from "@/types/dashboard/content";
+import type { ContentDialogBaseProps } from "@/types/dashboard/content";
 import {
   Button,
   Dialog,

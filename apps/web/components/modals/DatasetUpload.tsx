@@ -61,7 +61,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
     user_id: "0",
   };
   const [activeStep, setActiveStep] = useState(0);
-  const [fileValue, setFileValue] = useState(null);
+  const [fileValue, setFileValue] = useState<File>();
   const [fileUploadError, setFileUploadError] = useState<string>();
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(
     homeFolder,
@@ -71,8 +71,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   );
   const [isBusy, setIsBusy] = useState(false);
 
-  const [featureLayerType, setFeatureLayerType] =
-    useState<FeatureLayerType>("standard");
+  const [featureLayerType] = useState<FeatureLayerType>("standard");
 
   const {
     register,
@@ -102,7 +101,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   ];
   const handleChange = (file) => {
     setFileUploadError(undefined);
-    setFileValue(null);
+    setFileValue(undefined);
     if (file && file.name) {
       const isAcceptedType = acceptedFileTypes.some((type) =>
         file.name.endsWith(type),
@@ -130,7 +129,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   };
 
   const handleOnClose = () => {
-    setFileValue(null);
+    setFileValue(undefined);
     setActiveStep(0);
     setSelectedFolder(homeFolder);
     setFileUploadError(undefined);
@@ -167,7 +166,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
       console.log("jobDetails", jobDetails);
     } catch (error) {
       toast.error("Error uploading dataset");
-      console.error("error", error); 
+      console.error("error", error);
       handleOnClose();
     } finally {
       setIsBusy(false);

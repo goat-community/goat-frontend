@@ -2,7 +2,6 @@ import { ArrowPopper } from "@/components/ArrowPoper";
 import { layerTypesArray, type LayerType } from "@/lib/validations/layer";
 import {
   Badge,
-  Button,
   Checkbox,
   FormControlLabel,
   Grid,

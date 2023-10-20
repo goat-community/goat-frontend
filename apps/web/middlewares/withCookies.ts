@@ -10,7 +10,11 @@ import { cookieName as lngCookieName } from "@/i18n/settings";
 import { THEME_COOKIE_NAME as themeCookieName } from "@/lib/constants";
 import { getToken } from "next-auth/jwt";
 import { refreshAccessToken } from "@/app/api/auth/[...nextauth]/options";
-import { SYSTEM_API_BASE_URL } from "@/lib/api/system";
+
+export const SYSTEM_API_BASE_URL = new URL(
+  "api/v2/system",
+  process.env.NEXT_PUBLIC_API_URL,
+).href;
 
 const excluded = [
   "/api",
