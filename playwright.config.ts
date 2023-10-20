@@ -41,7 +41,7 @@ export default defineConfig({
   projects: [
     {
       name: "@p4b/goat",
-      testDir: "./apps/goat/playwright",
+      testDir: "./apps/web/playwright",
       testMatch: /.*\.e2e\.tsx?/,
       expect: {
         timeout: DEFAULT_EXPECT_TIMEOUT,

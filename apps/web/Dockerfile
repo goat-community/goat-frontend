@@ -7,7 +7,7 @@ RUN apk update
 WORKDIR /app
 RUN npm install -g turbo
 COPY . .
-COPY .env.docker /app/apps/goat/.env
+COPY .env.docker /app/apps/web/.env
 RUN turbo prune --scope=@p4b/web --docker
 
 # Add lockfile and package.json's of isolated subworkspace
@@ -34,15 +34,15 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/goat/next.config.js .
-COPY --from=installer /app/apps/goat/package.json .
+COPY --from=installer /app/apps/web/next.config.js .
+COPY --from=installer /app/apps/web/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/goat/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/goat/.next/static ./apps/goat/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/goat/public ./apps/goat/public
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
 ENV HOSTNAME localhost
 
-CMD node apps/goat/server.js
+CMD node apps/web/server.js
