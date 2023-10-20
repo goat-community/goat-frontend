@@ -28,13 +28,10 @@ import { useOrganizationSetup } from "@/hooks/onboarding/OrganizationCreate";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useRouter } from "next/navigation";
 import { createOrganization } from "@/lib/api/organizations";
+import type { ResponseResult } from "@/types/common";
 
 type FormData = z.infer<typeof postOrganizationSchema>;
 
-type ResponseResult = {
-  message: string;
-  status?: "error" | "success";
-};
 const STEPS = [
   "new_organization",
   "organization_profile",
@@ -123,7 +120,6 @@ export default function OrganizationOnBoarding({ params: { lng } }) {
   }, [watchFormValues]);
 
   async function onSubmit(data: FormData) {
-    console.log(data);
     setResponseResult({ message: "", status: undefined });
     setIsBusy(true);
     try {

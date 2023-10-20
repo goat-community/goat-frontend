@@ -109,6 +109,9 @@ export const options: NextAuthOptions = {
   jwt: {
     maxAge: 1 * 60, // 1 minute, same as in Keycloak
   },
+  pages: {
+    signIn: "/auth/login",
+  },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days : 2592000, same as in Keycloak

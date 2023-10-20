@@ -11,9 +11,16 @@ export default function Login() {
     status === "unauthenticated" ||
     session?.error === "RefreshAccessTokenError"
   ) {
+    const currentUrl = new URL(window.location.href);
+    const searchParams = new URLSearchParams(currentUrl.search);
+    const path = searchParams.get("callbackUrl");
+    const origin = currentUrl.origin;
+
     signIn(
       "keycloak",
-      {},
+      {
+        callbackUrl: `${origin}${path ?? "/"}`,
+      },
       {
         theme: theme.palette.mode,
       },

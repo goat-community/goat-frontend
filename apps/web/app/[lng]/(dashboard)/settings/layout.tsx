@@ -37,6 +37,12 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
       current: pathname?.includes("/account"),
     },
     {
+      link: "/settings/teams",
+      icon: ICON_NAME.USERS,
+      label: "Teams",
+      current: pathname?.includes("/teams"),
+    },
+    {
       link: "/settings/organization",
       icon: ICON_NAME.ORGANIZATION,
       label: "Organization",

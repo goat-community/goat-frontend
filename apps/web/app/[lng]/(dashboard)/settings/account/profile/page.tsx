@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { v4 } from "uuid";
 import { TextField, Grid, Button, useTheme, Card } from "@mui/material";
+import { useTranslation } from "@/i18n/client";
 
 interface tempProfileInfoType {
   label: string;
@@ -11,8 +12,9 @@ interface tempProfileInfoType {
   editable: boolean;
 }
 
-const Profile = () => {
+const Profile = ({ params: { lng } }) => {
   const theme = useTheme();
+  const { t } = useTranslation(lng, "dashboard");
 
   const informatoryData: tempProfileInfoType[] = [
     {
@@ -53,8 +55,20 @@ const Profile = () => {
   ];
 
   return (
-    <Box sx={{marginBottom: "100px" }}>
-      <Card sx={{padding: `${theme.spacing(6)} ${theme.spacing(3)}`}}>
+    <Box sx={{ p: 4 }}>
+      <Box component="form">
+        <Stack spacing={theme.spacing(6)}>
+          <Box>
+            <Typography variant="body1" fontWeight="bold">
+              {t("personal_information")}
+            </Typography>
+            <Typography variant="caption">
+              {t("update_personal_information")}
+            </Typography>
+          </Box>
+        </Stack>
+      </Box>
+      <Card sx={{ padding: `${theme.spacing(6)} ${theme.spacing(3)}` }}>
         <Grid container spacing={2}>
           {informatoryData.map((infoData) => (
             <Grid key={v4()} item xs={12} sm={6}>
@@ -75,40 +89,40 @@ const Profile = () => {
             </Grid>
           ))}
         </Grid>
-        </Card>
-        <Box
+      </Card>
+      <Box
+        sx={{
+          margin: `0px ${theme.spacing(3)}px`,
+          marginTop: "100px",
+        }}
+      >
+        <Button
+          variant="outlined"
+          color="error"
           sx={{
-            margin: `0px ${theme.spacing(3)}px`,
-            marginTop: "100px",
+            display: "block",
+            width: "100%",
+            padding: "10px",
+            borderRadius: 1,
+            margin: `${theme.spacing(3)} 0px`,
           }}
         >
-          <Button
-            variant="outlined"
-            color="error"
-            sx={{
-              display: "block",
-              width: "100%",
-              padding: "10px",
-              borderRadius: 1,
-              margin: `${theme.spacing(3)} 0px`,
-            }}
-          >
-            Deactivate
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            sx={{
-              display: "block",
-              width: "100%",
-              padding: "10px",
-              margin: `${theme.spacing(3)} 0px`,
-              borderRadius: 1,
-            }}
-          >
-            Delete
-          </Button>
-        </Box>
+          Deactivate
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          sx={{
+            display: "block",
+            width: "100%",
+            padding: "10px",
+            margin: `${theme.spacing(3)} 0px`,
+            borderRadius: 1,
+          }}
+        >
+          Delete
+        </Button>
+      </Box>
     </Box>
   );
 };

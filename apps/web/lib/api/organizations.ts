@@ -24,3 +24,4 @@ export const createOrganization = async (
   }
   return await response.json();
 };
+

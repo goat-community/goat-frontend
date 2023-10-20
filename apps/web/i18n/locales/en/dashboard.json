@@ -9,5 +9,8 @@
     "light": "Light",
     "measurement_unit": "Measurement Unit",
     "metric": "Metric",
-    "imperial": "Imperial"
+    "imperial": "Imperial",
+    "personal_information": "Personal Information",
+    "update_personal_information": "Update personal information"
+
 }
