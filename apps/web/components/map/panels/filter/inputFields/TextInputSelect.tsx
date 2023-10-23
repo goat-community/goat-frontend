@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { useSelector } from "react-redux";
 
 export type Option = {
   label: string;
@@ -29,6 +30,8 @@ const TextInputSelect = (props: TextInputSelectProps) => {
   const input = useRef<HTMLInputElement | null>(null);
 
   const theme = useTheme();
+
+  const { loading: mapLoading } = useSelector((state) => state.map);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -71,6 +74,7 @@ const TextInputSelect = (props: TextInputSelectProps) => {
           },
         }}
         size="small"
+        disabled={mapLoading}
         inputRef={input}
         value={inputValue}
         onChange={handleInputChange}
@@ -117,6 +121,7 @@ const TextInputSelect = (props: TextInputSelectProps) => {
           <Select
             size="small"
             value=""
+            disabled={mapLoading}
             onChange={handleSelectChange}
             input={<InputBase />}
             sx={{

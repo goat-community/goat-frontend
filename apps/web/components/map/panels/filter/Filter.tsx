@@ -19,7 +19,7 @@ import {
   Radio,
 } from "@mui/material";
 import Exppression from "./Exppression";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { v4 } from "uuid";
 import type { IStore } from "@/types/store";
 import type { SelectChangeEvent } from "@mui/material";
@@ -32,6 +32,7 @@ import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
 import { useFilterQueryExpressions } from "@/lib/api/filter";
 import { useTranslation } from "@/i18n/client";
 import { usePathname } from "next/navigation";
+import { setMapLoading } from "@/lib/store/map/slice";
 
 interface FilterPanelProps {
   setActiveRight: (item: MapSidebarItem | undefined) => void;
@@ -43,8 +44,9 @@ const FilterPanel = (props: FilterPanelProps) => {
   const pathname = usePathname();
   const { t } = useTranslation(pathname.split("/")[1], "maps");
 
+  const dispatch = useDispatch();
+
   const {
-    getLayerFilterExpressionsById,
     createExpression,
     updateProjectLayerQuery,
     deleteAnExpression,
@@ -93,6 +95,7 @@ const FilterPanel = (props: FilterPanelProps) => {
   const createAnExpression = async () => {
     await createExpression(projectId, layerToBeFiltered);
     mutate();
+    // dispatch(setMapLoading(true))
   }
 
   function handleOperatorChange(event: SelectChangeEvent<string>) {
@@ -106,16 +109,19 @@ const FilterPanel = (props: FilterPanelProps) => {
       `{"query": {} }`,
     );
     mutate();
+    dispatch(setMapLoading(true))
   };
 
   const deleteOneExpression = async (id: string) => {
     await deleteAnExpression(id, projectId, layerToBeFiltered);
     mutate();
+    dispatch(setMapLoading(true))
   };
 
   const duplicateOneExpression = async (id: string) => {
     await duplicateAnExpression(id, projectId, layerToBeFiltered);
     mutate();
+    dispatch(setMapLoading(true))
   }
 
   return (

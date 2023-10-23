@@ -1,6 +1,6 @@
 import { MAPBOX_TOKEN } from "@/lib/constants";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import LayerPanel from "@/components/map/panels/layer/Layer";
 import Legend from "@/components/map/panels/Legend";
@@ -17,10 +17,18 @@ import { BasemapSelector } from "@/components/map/controls/BasemapSelector";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setActiveBasemapIndex } from "@/lib/store/styling/slice";
+import { setLayers } from "@/lib/store/layer/slice";
+import { getProjectLayers } from "@/lib/api/projects";
 import { useTranslation } from "@/i18n/client";
 import { usePathname } from "next/navigation";
 
-import { Box, useTheme, Stack, Collapse } from "@mui/material";
+import {
+  Box,
+  useTheme,
+  Stack,
+  Collapse,
+  CircularProgress,
+} from "@mui/material";
 
 import type { MapSidebarItem } from "@/types/map/sidebar";
 import type { MapSidebarProps } from "../Sidebar";
@@ -40,6 +48,10 @@ const ProjectNavigation = ({ projectId }) => {
 
   const { basemaps, activeBasemapIndex } = useSelector(
     (state: IStore) => state.styling,
+  );
+
+  const { loading: mapLoading } = useSelector(
+    (state: IStore) => state.map
   );
 
   const [activeLeft, setActiveLeft] = useState<MapSidebarItem | undefined>(
@@ -134,23 +146,13 @@ const ProjectNavigation = ({ projectId }) => {
     position: "right",
   };
 
-  // useEffect(() => {
-  //   prevActiveLeftRef.current = activeLeft;
-  // }, [activeLeft]);
-
-  // useEffect(() => {
-  //   prevActiveRightRef.current = activeRight;
-  // }, [activeRight]);
-
-  // useEffect(() => {
-  //   getProjectLayers(projectId).then((data) => {
-  //     const layers = data.map((layer) => ({ ...layer, active: false }))
-  //     setModifiedProjectLayers(
-  //       layers
-  //     );
-  //     dispatch(setLayers(layers))
-  //   });
-  // }, []);
+  useEffect(() => {
+    getProjectLayers(projectId).then((data) => {
+      const layers = data.map((layer) => ({ ...layer, active: false }));
+      setModifiedProjectLayers(layers);
+      dispatch(setLayers(layers));
+    });
+  }, []);
 
   return (
     <>
@@ -256,9 +258,27 @@ const ProjectNavigation = ({ projectId }) => {
             padding: theme.spacing(4),
           }}
         >
+          {/* <Stack direction="column" sx={{ pointerEvents: "all" }}>
+          </Stack> */}
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
-            <Zoom />
-            <Fullscren />
+            <Stack direction="row" sx={{ pointerEvents: "all" }}>
+              {
+                mapLoading ? (
+                  <CircularProgress
+                    size={35}
+                    sx={{
+                      color: theme.palette.primary.main,
+                      marginRight: theme.spacing(5),
+                      marginTop: theme.spacing(3),
+                    }}
+                  />
+                ) : null
+              }
+              <Stack direction="column" sx={{ pointerEvents: "all" }}>
+                <Zoom />
+                <Fullscren />
+              </Stack>
+            </Stack>
           </Stack>
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
             <BasemapSelector

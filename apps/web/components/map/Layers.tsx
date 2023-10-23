@@ -17,11 +17,7 @@ interface LayersProps {
 
 const Layers = (props: LayersProps) => {
   const sampleLayerID = "user_data.e66f60f87ec248faaebb8a8c64c29990";
-  const { layers, addLayer, projectId, filters } = props;
-
-  const { layerToBeFiltered } = useSelector(
-    (state: IStore) => state.mapFilters,
-  );
+  const { layers, addLayer, filters } = props;
 
   const availableFilters = filters.filter(
     (filterQuery) => filterQuery !== "{}",
@@ -29,7 +25,6 @@ const Layers = (props: LayersProps) => {
 
   const { logicalOperator } = useSelector((state: IStore) => state.mapFilters);
 
-  const projectLayers = useSelector((state: IStore) => state.layers.layers);
   const getQuery = useCallback(() => {
     if (availableFilters.length) {
       if (availableFilters.length === 1) {

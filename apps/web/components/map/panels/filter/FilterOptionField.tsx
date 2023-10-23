@@ -1,7 +1,8 @@
 import type { ComparerMode } from "@/types/map/filtering";
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { addExpression, addFilter } from "@/lib/store/mapFilters/slice";
+import { useDispatch, useSelector } from "react-redux";
+import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
+import { usePathname } from "next/navigation";
 import {
   is,
   is_not, // includes,
@@ -23,6 +24,7 @@ import {
 import { NumberOption, TextOption } from "./FilterOption";
 import { debounce } from "@mui/material/utils";
 import type { Expression } from "@/types/map/filtering";
+import { setMapLoading } from "@/lib/store/map/slice";
 
 interface FilterResultProps {
   comparer: ComparerMode | null;
@@ -32,18 +34,22 @@ interface FilterResultProps {
 }
 
 const FilterOptionField = (props: FilterResultProps) => {
-  const { comparer, prop, expression } = props;
-  const newExpressionToModify = { ...expression };
-  const [firstInput, setFirstInput] = useState<string>(
-    newExpressionToModify.firstInput
-      ? newExpressionToModify.firstInput
-      : newExpressionToModify.value,
+  const { comparer, prop, expression, expressionId } = props;
+  const [newExpressionToModify, setNewExpressionToModify] = useState({
+    ...expression,
+  });
+  // const newExpressionToModify = { ...expression };
+  const { layerToBeFiltered } = useSelector(
+    (state: IStore) => state.mapFilters,
   );
-  const [secondInput, setSecondInput] = useState<string>(
-    newExpressionToModify.secondInput ? newExpressionToModify.secondInput : "",
-  );
+  const { loading: mapLoading } = useSelector((state) => state.map);
 
-  const {getLayerQueries, updateProjectLayerQuery} = useFilterExpressions()
+  const [firstInput, setFirstInput] = useState<string | undefined>(undefined);
+  const [secondInput, setSecondInput] = useState<string | undefined>(undefined);
+
+  // console.log(firstInput, tempExpression);
+
+  const { getLayerQueries, updateProjectLayerQuery } = useFilterExpressions();
 
   const dispatch = useDispatch();
   const pathname = usePathname();
@@ -62,36 +68,56 @@ const FilterOptionField = (props: FilterResultProps) => {
               "is_not_empty_string",
             ].includes(comparer.value))
         ) {
-          newExpressionToModify.firstInput = request.input;
-          dispatch(addExpression(newExpressionToModify));
+          newExpressionToModify.value = request.input;
+          setNewExpressionToModify(newExpressionToModify);
           setFirstInput(request.input);
           if (request.input2) {
-            newExpressionToModify.secondInput = request.input2;
-            dispatch(addExpression(newExpressionToModify));
+            newExpressionToModify.value2 = request.input2;
+            setNewExpressionToModify(newExpressionToModify);
             setSecondInput(request.input2);
           }
 
+          handleFilter(request.input, request.input2);
+        } else {
+          handleFilter("excludes");
+        }
+      }, 1000),
+    [],
+  );
 
   useEffect(() => {
-    if (secondInput !== newExpressionToModify.secondInput) {
-      sendQuery({
-        input: firstInput,
-        input2: secondInput,
-      });
-    } else if (firstInput !== newExpressionToModify.firstInput) {
-      sendQuery({ input: firstInput });
-    } else if (
-      comparer &&
-      [
-        "is_blank",
-        "is_not_blank",
-        "is_empty_string",
-        "is_not_empty_string",
-      ].includes(comparer.value)
-    ) {
-      sendQuery({ input: firstInput });
+    if (!mapLoading && firstInput) {
+      if (secondInput !== newExpressionToModify.secondInput) {
+        sendQuery({
+          input: firstInput,
+          input2: secondInput,
+        });
+      } else if (firstInput !== newExpressionToModify.firstInput) {
+        sendQuery({ input: firstInput });
+      } else if (
+        comparer &&
+        [
+          "is_blank",
+          "is_not_blank",
+          "is_empty_string",
+          "is_not_empty_string",
+        ].includes(comparer.value)
+      ) {
+        sendQuery({ input: firstInput });
+      }
     }
-  });
+  }, [firstInput]);
+
+  useEffect(() => {
+    setFirstInput(
+      newExpressionToModify.value
+        ? newExpressionToModify.value
+        : newExpressionToModify.value,
+    );
+    setSecondInput(
+      newExpressionToModify.value2 ? newExpressionToModify.value2 : "",
+    );
+  }, []);
 
   function handleInputChange(newValue: string) {
     setFirstInput(newValue);
@@ -174,10 +200,19 @@ const FilterOptionField = (props: FilterResultProps) => {
           return;
       }
     } else {
-      query = "";
+      query = "{}";
     }
-
-    dispatch(addFilter({ query, expression: expression.id }));
+    getLayerQueries(projectId, layerToBeFiltered).then((queryData) => {
+      if (queryData[expressionId] !== query) {
+        queryData[expressionId] = query;
+        updateProjectLayerQuery(
+          layerToBeFiltered,
+          projectId,
+          `{ "query": ${JSON.stringify(queryData)} }`,
+        );
+        dispatch(setMapLoading(true));
+      }
+    });
   };
 
   if (!comparer) return null;

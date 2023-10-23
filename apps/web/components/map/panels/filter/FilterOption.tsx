@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Dayjs } from "dayjs";
 import React from "react";
 import TextInputSelect from "./inputFields/TextInputSelect";
@@ -7,7 +6,7 @@ import { DatePicker } from "@mui/lab";
 import { TextField } from "@mui/material";
 
 interface simpleInput {
-  value: string;
+  value: string | undefined;
   setChange: (value: string) => void;
 }
 
@@ -16,7 +15,7 @@ export const NumberOption = (props: simpleInput) => {
 
   return (
     <div style={{marginBottom: "8px"}}>
-      <TextInputSelect setInputValue={setChange} inputValue={value} options={dummyFilterDataNumber} type="number"/>
+      <TextInputSelect setInputValue={setChange} inputValue={value ? value : ""} options={dummyFilterDataNumber} type="number"/>
     </div>
   );
 };
@@ -41,7 +40,7 @@ export const TextOption = (props: simpleInput) => {
 
   return (
     <div>
-      <TextInputSelect setInputValue={setChange} inputValue={value} options={dummyFilterDataText}/>
+      <TextInputSelect setInputValue={setChange} inputValue={value ? value : ""} options={dummyFilterDataText}/>
     </div>
   );
 };
@@ -51,7 +50,8 @@ interface SelectOptionProps {
   label: string;
 }
 
-export const SelectOption = (_props: SelectOptionProps) => {
+export const SelectOption = (props: SelectOptionProps) => {
+  const { options, label } = props;
 
   return (
     <div>
@@ -70,7 +70,7 @@ export const DualNumberOption = () => {
 };
 
 export const YearFilterOption = () => {
-  // const _options = [
+  // const options = [
   //   {
   //     name: "minutes",
   //     value: "minutes",

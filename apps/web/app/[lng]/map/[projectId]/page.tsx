@@ -9,13 +9,14 @@ import Map, { MapProvider, Layer, Source } from "react-map-gl";
 import Layers from "@/components/map/Layers";
 import MobileDrawer from "@/components/map/panels/MobileDrawer";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { IStore } from "@/types/store";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 import Header from "@/components/header/Header";
 import { useProject } from "@/lib/api/projects";
 import { useFilterQueries } from "@/lib/api/filter";
+import { setMapLoading } from "@/lib/store/map/slice";
 
 const sidebarWidth = 48;
 const toolbarHeight = 52;
@@ -26,6 +27,8 @@ export default function MapPage({ params: { projectId } }) {
   );
   const { project } = useProject(projectId);
   const mapLayer = useSelector(selectMapLayer);
+  const dispatch = useDispatch();
+  // const mapLoading = useSelector(state=> console.log(state));
   const { layerToBeFiltered } = useSelector(
     (state: IStore) => state.mapFilters,
   );
@@ -43,6 +46,7 @@ export default function MapPage({ params: { projectId } }) {
   const theme = useTheme();
 
   const addLayer = useCallback((newLayer: XYZ_Layer[]) => {
+    dispatch(setMapLoading(false))
     setLayers(newLayer);
   }, [filters]);
 

@@ -9,7 +9,7 @@ export const PROJECTS_API_BASE_URL = new URL(
 ).href;
 
 export const useGetLayerKeys = (layerId) => {
-  const { data, isLoading, error } = useSWR(
+  const { data, isLoading } = useSWR(
     `${GEO_API_ROOT}/collections/${layerId}/queryables`,
     fetcher,
   );
@@ -47,6 +47,7 @@ export const useFilterQueries = (projectId: string, layerId: string) => {
     fetcher,
     { onSuccess: (data) => Object.keys(data).map((queries)=>data[queries]).reverse() },
   );
+  
   if (!isLoading && !error) {
     const queries = Object.keys(data).map((queries)=>data[queries]).reverse();
     return { data: queries, mutate };
