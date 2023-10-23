@@ -15,6 +15,7 @@ const CustomMenu = (props: CustomMenuProps) => {
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside, true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleClickOutside(e: Event) {

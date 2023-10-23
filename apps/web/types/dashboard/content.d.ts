@@ -1,4 +1,3 @@
-import type React from "react";
 
 export interface ContentDialogBaseProps extends DialogBaseProps {
   open: boolean;

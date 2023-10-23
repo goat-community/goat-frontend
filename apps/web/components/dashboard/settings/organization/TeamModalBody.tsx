@@ -1,4 +1,3 @@
-import type { Option } from "@p4b/types/atomicComponents";
 import type { ITeam } from "@/types/dashboard/organization";
 import React, { useState } from "react";
 import { v4 } from "uuid";
@@ -12,6 +11,13 @@ import {
   Box,
 } from "@mui/material";
 
+export type Option = {
+  label: string;
+  value: string;
+} & {
+  [key: string]: string | number | boolean;
+};
+
 interface TeamModalBodyProps {
   selectedEditRow?: ITeam;
   setSelectedOption?: (value: Option[]) => void;
@@ -20,7 +26,7 @@ interface TeamModalBodyProps {
 }
 
 const TeamModalBody = (props: TeamModalBodyProps) => {
-  const [selected, setSelected] = useState<Option[]>([]);
+  const [selected, _setSelected] = useState<Option[]>([]);
   const { selectedEditRow, setSelectedOption, selectedOption, setTeamName } =
     props;
 
@@ -172,7 +178,7 @@ const TeamModalBody = (props: TeamModalBodyProps) => {
                           ? option.selected
                           : false
                       }
-                      onChange={(_: React.SyntheticEvent, value: boolean) =>
+                      onChange={(_: React.SyntheticEvent) =>
                         changeStatusOfUser(option, false)
                       }
                     />

@@ -40,8 +40,8 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "@p4b/goat",
-      testDir: "./apps/goat/playwright",
+      name: "@p4b/web",
+      testDir: "./apps/web/playwright",
       testMatch: /.*\.e2e\.tsx?/,
       expect: {
         timeout: DEFAULT_EXPECT_TIMEOUT,

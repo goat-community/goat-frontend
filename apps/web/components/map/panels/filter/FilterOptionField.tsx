@@ -1,8 +1,7 @@
 import type { ComparerMode } from "@/types/map/filtering";
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
-import { usePathname } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { addExpression, addFilter } from "@/lib/store/mapFilters/slice";
 import {
   is,
   is_not, // includes,
@@ -33,11 +32,8 @@ interface FilterResultProps {
 }
 
 const FilterOptionField = (props: FilterResultProps) => {
-  const { comparer, prop, expression, expressionId } = props;
+  const { comparer, prop, expression } = props;
   const newExpressionToModify = { ...expression };
-  const { layerToBeFiltered } = useSelector(
-    (state: IStore) => state.mapFilters,
-  );
   const [firstInput, setFirstInput] = useState<string>(
     newExpressionToModify.firstInput
       ? newExpressionToModify.firstInput
@@ -67,19 +63,14 @@ const FilterOptionField = (props: FilterResultProps) => {
             ].includes(comparer.value))
         ) {
           newExpressionToModify.firstInput = request.input;
+          dispatch(addExpression(newExpressionToModify));
           setFirstInput(request.input);
           if (request.input2) {
             newExpressionToModify.secondInput = request.input2;
+            dispatch(addExpression(newExpressionToModify));
             setSecondInput(request.input2);
           }
 
-          handleFilter(request.input, request.input2);
-        } else {
-          handleFilter("excludes");
-        }
-      }, 1000),
-    [comparer],
-  );
 
   useEffect(() => {
     if (secondInput !== newExpressionToModify.secondInput) {
@@ -183,16 +174,10 @@ const FilterOptionField = (props: FilterResultProps) => {
           return;
       }
     } else {
-      query = "{}";
+      query = "";
     }
-    getLayerQueries(projectId, layerToBeFiltered).then((queryData)=>{
-      queryData[expressionId] = query;
-      updateProjectLayerQuery(
-        layerToBeFiltered,
-        projectId,
-        `{ "query": ${JSON.stringify(queryData)} }`,
-      );
-    });
+
+    dispatch(addFilter({ query, expression: expression.id }));
   };
 
   if (!comparer) return null;

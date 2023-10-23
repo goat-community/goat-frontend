@@ -23,7 +23,6 @@ import {
 import { useSelector } from "react-redux";
 import type { IStore } from "@/types/store";
 import { saveStyles, setTabValue } from "@/lib/store/styling/slice";
-import type { MapSidebarItem } from "@/components/map/Sidebar";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import React from "react";
 import SelectStrokeOptionFill from "@/components/map/panels/mapStyle/SelectStrokeOptionFill";
@@ -40,6 +39,7 @@ import { selectMapLayer } from "@/lib/store/styling/selectors";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
 import { usePathname } from "next/navigation";
+import type { MapSidebarItem } from "@/types/map/sidebar";
 
 interface MapStyleProps {
   setActiveRight: (item: MapSidebarItem | undefined) => void;

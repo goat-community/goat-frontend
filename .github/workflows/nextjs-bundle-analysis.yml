@@ -36,14 +36,14 @@ jobs:
           
       - name: 📊 Analyze bundle 
         run: |
-          cd apps/goat
+          cd apps/web
           npx -p nextjs-bundle-analysis@0.5.0 report
 
       - name: 📤 Upload bundle
         uses: actions/upload-artifact@v3
         with:
           name: bundle
-          path: ${{ github.workspace }}/apps/goat/.next/analyze/__bundle_analysis.json
+          path: ${{ github.workspace }}/apps/web/.next/analyze/__bundle_analysis.json
 
       - name: 📥 Download base branch bundle stats
         uses: dawidd6/action-download-artifact@v2
@@ -51,7 +51,7 @@ jobs:
         with:
           workflow: nextjs-bundle-analysis.yml
           branch: ${{ github.event.pull_request.base.ref }}
-          path: ${{ github.workspace }}/apps/goat/.next/analyze/base
+          path: ${{ github.workspace }}/apps/web/.next/analyze/base
 
       # And here's the second place - this runs after we have both the current and
       # base branch bundle stats, and will compare them to determine what changed.
@@ -69,14 +69,14 @@ jobs:
       - name: 🔄 Compare with base branch bundle
         if: success() && github.event.number
         run: |
-          cd apps/goat
+          cd apps/web
           ls -laR .next/analyze/base && npx -p nextjs-bundle-analysis compare
 
       - name: 💬 Get comment body
         id: get-comment-body
         if: success() && github.event.number
         run: |
-          cd apps/goat
+          cd apps/web
           body=$(cat .next/analyze/__bundle_analysis_comment.txt)
           body="${body//'%'/'%25'}"
           body="${body//$'\n'/'%0A'}"

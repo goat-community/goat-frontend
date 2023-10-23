@@ -136,5 +136,7 @@
         "add_seat": "Add Seat",
         "no_result_found": "No Results Found!",
         "error": "Error"
-    }
+    },
+    "personal_information": "Personal Information",
+    "update_personal_information": "Update personal information"
 }

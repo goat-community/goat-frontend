@@ -11,8 +11,9 @@ interface Extent {
   };
 }
 
+
 export interface Expression {
-  id: string,
+  id: string;
   attribute: LayerPropsMode | null;
   expression: ComparerMode | null;
   value: (string | number | number[]) | null;
@@ -60,7 +61,7 @@ export type KeyDataType = {
 };
 
 export interface LayerPropsMode {
-  type: "number" | "date" | "string";
+  type: "number" | "date" | "string" | "text";
   name: string;
 }
 

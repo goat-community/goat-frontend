@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "copy-keycloak-resources-to-public",
     "dev": "craco start",
-    "build": "craco build",
+    "build": "DISABLE_ESLINT_PLUGIN=true craco build",
     "clean": "rimraf node_modules public/keycloak-resources",
     "build-keycloak-theme": "pnpm build && keycloakify"
   },
@@ -46,5 +46,8 @@
     ">0.2%",
     "not dead",
     "not op_mini all"
-  ]
+  ],
+  "resolutions": {
+    "eslint-config-react-app": "^7.0.1"
+  }
 }

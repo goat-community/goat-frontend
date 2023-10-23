@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { v4 } from "uuid";
 import { TextField, Grid, Button, useTheme, Card } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
@@ -13,7 +13,7 @@ interface tempProfileInfoType {
   editable: boolean;
 }
 
-const Profile = () => {
+const Profile = ({ params: { lng } }) => {
   const theme = useTheme();
   const pathname = usePathname();
   const { t } = useTranslation(pathname.split('/')[1], "dashboard");
@@ -57,7 +57,19 @@ const Profile = () => {
   ];
 
   return (
-    <Box sx={{ marginBottom: "100px" }}>
+    <Box sx={{ p: 4 }}>
+      <Box component="form">
+        <Stack spacing={theme.spacing(6)}>
+          <Box>
+            <Typography variant="body1" fontWeight="bold">
+              {t("personal_information")}
+            </Typography>
+            <Typography variant="caption">
+              {t("update_personal_information")}
+            </Typography>
+          </Box>
+        </Stack>
+      </Box>
       <Card sx={{ padding: `${theme.spacing(6)} ${theme.spacing(3)}` }}>
         <Grid container spacing={2}>
           {informatoryData.map((infoData) => (

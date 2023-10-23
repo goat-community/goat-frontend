@@ -33,6 +33,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({
   open,
   onClose,
 }) => {
+  console.log(type);
   const queryParams: GetContentQueryParams = {
     order: "descendent",
     order_by: "updated_at",

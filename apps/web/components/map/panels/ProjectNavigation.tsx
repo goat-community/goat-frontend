@@ -1,6 +1,6 @@
 import { MAPBOX_TOKEN } from "@/lib/constants";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import LayerPanel from "@/components/map/panels/layer/Layer";
 import Legend from "@/components/map/panels/Legend";
@@ -17,8 +17,6 @@ import { BasemapSelector } from "@/components/map/controls/BasemapSelector";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setActiveBasemapIndex } from "@/lib/store/styling/slice";
-import { setLayers } from "@/lib/store/layer/slice";
-import { getProjectLayers } from "@/lib/api/projects";
 import { useTranslation } from "@/i18n/client";
 import { usePathname } from "next/navigation";
 
@@ -32,7 +30,7 @@ import type { Layer } from "@/types/map/project";
 const sidebarWidth = 48;
 const toolbarHeight = 52;
 
-const defaultSelectedLayer = "765caa7e-1fbf-4ef8-9e13-9ea55f8a9479"
+const defaultSelectedLayer = "765caa7e-1fbf-4ef8-9e13-9ea55f8a9479";
 
 const ProjectNavigation = ({ projectId }) => {
   const theme = useTheme();
@@ -111,7 +109,13 @@ const ProjectNavigation = ({ projectId }) => {
       {
         icon: ICON_NAME.FILTER,
         name: t("panels.filter.filter"),
-        component: <Filter setActiveRight={setActiveRight} layerToFilter={defaultSelectedLayer} projectId={projectId}/>
+        component: (
+          <Filter
+            setActiveRight={setActiveRight}
+            layerToFilter={defaultSelectedLayer}
+            projectId={projectId}
+          />
+        ),
       },
       {
         icon: ICON_NAME.SCENARIO,
@@ -138,15 +142,15 @@ const ProjectNavigation = ({ projectId }) => {
   //   prevActiveRightRef.current = activeRight;
   // }, [activeRight]);
 
-  useEffect(() => {
-    getProjectLayers(projectId).then((data) => {
-      const layers = data.map((layer) => ({ ...layer, active: false }))
-      setModifiedProjectLayers(
-        layers
-      );
-      dispatch(setLayers(layers))
-    });
-  }, []);
+  // useEffect(() => {
+  //   getProjectLayers(projectId).then((data) => {
+  //     const layers = data.map((layer) => ({ ...layer, active: false }))
+  //     setModifiedProjectLayers(
+  //       layers
+  //     );
+  //     dispatch(setLayers(layers))
+  //   });
+  // }, []);
 
   return (
     <>

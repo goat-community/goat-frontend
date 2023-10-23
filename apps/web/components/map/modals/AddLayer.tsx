@@ -22,8 +22,6 @@ import { filterSearch } from "@/lib/utils/helpers";
 import { useTranslation } from "@/i18n/client";
 import { usePathname } from "next/navigation";
 
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-
 import type { ChangeEvent } from "react";
 
 const ModalBox = styled(Box)(({ theme }) => ({
@@ -39,7 +37,6 @@ const ModalBox = styled(Box)(({ theme }) => ({
 }));
 
 const AddLayer = () => {
-  const dispatch = useAppDispatch();
   const theme = useTheme();
   const pathname = usePathname();
   const { t } = useTranslation(pathname.split("/")[1], "maps");

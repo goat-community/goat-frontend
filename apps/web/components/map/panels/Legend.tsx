@@ -1,6 +1,6 @@
 import Container from "@/components/map/panels/Container";
 import { Typography, Button } from "@mui/material";
-import type { MapSidebarItem } from "../Sidebar";
+import type { MapSidebarItem } from "@/types/map/sidebar";
 
 interface LegendPanelProps {
   setActiveLeft: (item: MapSidebarItem | undefined) => void;

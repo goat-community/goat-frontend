@@ -1,5 +1,6 @@
 import {
   Box,
+  Checkbox,
   Link,
   MenuItem,
   TextField,
@@ -11,8 +12,6 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import type { Attribute } from "keycloakify/login/kcContext/KcContext";
 import { useFormValidation } from "keycloakify/login/lib/useFormValidation";
 import { useMemo, useEffect, Fragment } from "react";
-
-import { Checkbox } from "@p4b/ui/components/Checkbox";
 
 import type { I18n } from "../../i18n";
 import { getCountries } from "../../i18n";

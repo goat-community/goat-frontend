@@ -17,7 +17,7 @@
       "name": "GOAT Debug (Server-Side)",
       "type": "node-terminal",
       "request": "launch",
-      "command": "pnpm run goat"
+      "command": "pnpm run web"
     },
     {
       "name": "GOAT Debug (Client)",
@@ -29,7 +29,7 @@
       "name": "GOAT Debug (Full Stack)",
       "type": "node-terminal",
       "request": "launch",
-      "command": "pnpm run goat",
+      "command": "pnpm run web",
       "serverReadyAction": {
         "pattern": "started server on .+, url: (https?://.+)",
         "uriFormat": "%s",
