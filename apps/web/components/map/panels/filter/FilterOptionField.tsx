@@ -40,16 +40,18 @@ const FilterOptionField = (props: FilterResultProps) => {
   const [newExpressionToModify, setNewExpressionToModify] = useState({
     ...expression,
   });
-  // const newExpressionToModify = { ...expression };
+  
   const { layerToBeFiltered } = useSelector(
     (state: IStore) => state.mapFilters,
   );
   const { loading: mapLoading } = useSelector((state: IStore) => state.map);
 
-  const [firstInput, setFirstInput] = useState<string | undefined>(undefined);
-  const [secondInput, setSecondInput] = useState<string | undefined>(undefined);
-
-  // console.log(firstInput, tempExpression);
+  const [firstInput, setFirstInput] = useState<string | undefined>(
+    newExpressionToModify.firstInput ? newExpressionToModify.firstInput : "",
+  );
+  const [secondInput, setSecondInput] = useState<string | undefined>(
+    newExpressionToModify.secondInput ? newExpressionToModify.secondInput : "",
+  );
 
   const { getLayerQueries, updateProjectLayerQuery } = useFilterExpressions();
 
@@ -108,17 +110,6 @@ const FilterOptionField = (props: FilterResultProps) => {
         sendQuery({ input: firstInput });
       }
     }
-  }, [firstInput]);
-
-  useEffect(() => {
-    setFirstInput(
-      newExpressionToModify.firstInput
-        ? newExpressionToModify.firstInput
-        : ""
-    );
-    setSecondInput(
-      newExpressionToModify.secondInput ? newExpressionToModify.secondInput : "",
-    );
   }, []);
 
   function handleInputChange(newValue: string) {
