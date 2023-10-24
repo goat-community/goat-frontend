@@ -150,7 +150,7 @@ const ProjectNavigation = ({ projectId }) => {
       setModifiedProjectLayers(layers);
       dispatch(setLayers(layers));
     });
-  });
+  }, []);
 
   return (
     <>
