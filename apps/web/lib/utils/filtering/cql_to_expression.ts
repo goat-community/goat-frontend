@@ -22,9 +22,6 @@ export function parseCQLQueryToObject(
         ? "text"
         : typeof parsedCondition.args[1];
 
-    const modeKey = comparerModes[comparerType].filter(
-      (key) => key.value === parsedCondition.op,
-    );
     if (parsedCondition.op === "like") {
       const value = parsedCondition.args[1];
       proccessedExpression.attribute = parsedCondition.args[0].property;

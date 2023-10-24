@@ -13,7 +13,7 @@ interface tempProfileInfoType {
   editable: boolean;
 }
 
-const Profile = ({ params: { lng } }) => {
+const Profile = () => {
   const theme = useTheme();
   const pathname = usePathname();
   const { t } = useTranslation(pathname.split('/')[1], "dashboard");

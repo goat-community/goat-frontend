@@ -42,15 +42,40 @@ export interface Layer {
   feature_layer_type: string;
   folder_id: string;
   id: string;
-  name: string;
+  name?: string;
   size: number;
   style?: Record<string, unknown>; // Empty object for now, but you can define a more specific type if needed
   type: string;
   updated_at: string;
   user_id: string;
   group?: string;
-  query?: string;
+  query?: {
+    [key]: string;
+  };
   description?: string;
-  thumbnail_url?: string;
+  thumbnail_url?: string | undefined;
   data_reference_year?: number;
+  tags?: string[] | undefined;
 }
+
+// export interface Layer {
+//   active?: boolean;
+//   created_at: string;
+//   data_source: string;
+//   extent: string;
+//   feature_layer_type: string;
+//   folder_id: string;
+//   id: string;
+//   name?: string; // Making name property optional with the `?` symbol
+//   size: number;
+//   style?: Record<string, unknown>;
+//   type: string;
+//   updated_at: string;
+//   user_id: string;
+//   group?: string;
+//   query?: string;
+//   description?: string;
+//   thumbnail_url?: string | undefined;
+//   data_reference_year?: number;
+//   tags?: string[];
+// }

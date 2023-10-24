@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { EmptyObject, PayloadAction } from "@reduxjs/toolkit";
+import type { EmptyObject } from "@reduxjs/toolkit";
 import type { Expression } from "@/types/map/filtering";
-import { v4 } from "uuid";
-import { updateProjectLayerQuery } from "@/lib/api/projects";
+// import { v4 } from "uuid";
+// import { updateProjectLayerQuery } from "@/lib/api/projects";
 
 interface FilterState {
   filters: { [key: string]: string } | EmptyObject;
@@ -15,7 +15,7 @@ const initialState = {
   filters: {},
   logicalOperator: "",
   expressions: [],
-  layerToBeFiltered: "765caa7e-1fbf-4ef8-9e13-9ea55f8a9479",
+  layerToBeFiltered: "0b1f28c2-1b99-49a8-975e-062d019ec6a2",
 } as FilterState;
 
 const filterSlice = createSlice({

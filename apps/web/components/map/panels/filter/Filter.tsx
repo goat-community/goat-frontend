@@ -61,6 +61,8 @@ const FilterPanel = (props: FilterPanelProps) => {
     projectId,
     layerToBeFiltered,
   );
+  
+  console.log(updatedData)
 
   const [logicalOperator, setLogicalOperatorVal] = useState<string>(
     "match_all_expressions",
@@ -76,8 +78,8 @@ const FilterPanel = (props: FilterPanelProps) => {
       distance: 1200,
     },
   });
-  const sampleLayerID = "user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e";
-
+  const sampleLayerID = "user_data.4d76705b973643a393dffd14e10f6604";
+  // 4d76705b-9736-43a3-93df-fd14e10f6604
   const { keys } = useGetLayerKeys(sampleLayerID);
   const theme = useTheme();
 

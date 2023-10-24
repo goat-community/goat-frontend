@@ -38,8 +38,6 @@ import type { Layer } from "@/types/map/project";
 const sidebarWidth = 48;
 const toolbarHeight = 52;
 
-const defaultSelectedLayer = "765caa7e-1fbf-4ef8-9e13-9ea55f8a9479";
-
 const ProjectNavigation = ({ projectId }) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
@@ -124,7 +122,6 @@ const ProjectNavigation = ({ projectId }) => {
         component: (
           <Filter
             setActiveRight={setActiveRight}
-            layerToFilter={defaultSelectedLayer}
             projectId={projectId}
           />
         ),
@@ -148,6 +145,7 @@ const ProjectNavigation = ({ projectId }) => {
 
   useEffect(() => {
     getProjectLayers(projectId).then((data) => {
+      console.log(data)
       const layers = data.map((layer) => ({ ...layer, active: false }));
       setModifiedProjectLayers(layers);
       dispatch(setLayers(layers));

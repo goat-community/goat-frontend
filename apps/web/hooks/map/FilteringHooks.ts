@@ -79,6 +79,7 @@ export const useFilterExpressions = () => {
 
   const createExpression = async (projectId, id) => {
     const data = await getProjectLayers(projectId);
+
     const temporaryLayer = data
       ? data.find((layer) => layer.id === id)
       : undefined;

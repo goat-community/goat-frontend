@@ -29,6 +29,7 @@ export const projectLayerSchema = projectBaseSchema.extend({
   style: z.record(z.unknown()), // You can specify the style schema if needed.
   type: z.string(),
   user_id: z.string(),
+  query: z.record(z.string()),
 });
 
 export const projectInitialViewStateSchema = z.object({

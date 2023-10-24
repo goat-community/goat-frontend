@@ -23,8 +23,10 @@ import {
 } from "@/lib/utils/filtering/filtering_cql";
 import { NumberOption, TextOption } from "./FilterOption";
 import { debounce } from "@mui/material/utils";
-import type { Expression } from "@/types/map/filtering";
 import { setMapLoading } from "@/lib/store/map/slice";
+
+import type { Expression } from "@/types/map/filtering";
+import type { IStore } from "@/types/store";
 
 interface FilterResultProps {
   comparer: ComparerMode | null;
@@ -42,7 +44,7 @@ const FilterOptionField = (props: FilterResultProps) => {
   const { layerToBeFiltered } = useSelector(
     (state: IStore) => state.mapFilters,
   );
-  const { loading: mapLoading } = useSelector((state) => state.map);
+  const { loading: mapLoading } = useSelector((state: IStore) => state.map);
 
   const [firstInput, setFirstInput] = useState<string | undefined>(undefined);
   const [secondInput, setSecondInput] = useState<string | undefined>(undefined);
@@ -68,11 +70,11 @@ const FilterOptionField = (props: FilterResultProps) => {
               "is_not_empty_string",
             ].includes(comparer.value))
         ) {
-          newExpressionToModify.value = request.input;
+          newExpressionToModify.firstInput = request.input;
           setNewExpressionToModify(newExpressionToModify);
           setFirstInput(request.input);
           if (request.input2) {
-            newExpressionToModify.value2 = request.input2;
+            newExpressionToModify.secondInput = request.input2;
             setNewExpressionToModify(newExpressionToModify);
             setSecondInput(request.input2);
           }
@@ -110,12 +112,12 @@ const FilterOptionField = (props: FilterResultProps) => {
 
   useEffect(() => {
     setFirstInput(
-      newExpressionToModify.value
-        ? newExpressionToModify.value
-        : newExpressionToModify.value,
+      newExpressionToModify.firstInput
+        ? newExpressionToModify.firstInput
+        : ""
     );
     setSecondInput(
-      newExpressionToModify.value2 ? newExpressionToModify.value2 : "",
+      newExpressionToModify.secondInput ? newExpressionToModify.secondInput : "",
     );
   }, []);
 

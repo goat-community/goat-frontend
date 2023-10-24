@@ -3,7 +3,9 @@ import type { Expression } from "./map/filtering";
 import type { LayerState } from "@/lib/store/layer/slice";
 
 export interface IStore {
-  map: object;
+  map: {
+    loading: boolean;
+  };
   content: {
     folders: [];
     getFoldersStatus: string;
@@ -14,6 +16,7 @@ export interface IStore {
     filters: { [key: string]: string };
     logicalOperator: string;
     expressions: Expression[];
+    layerToBeFiltered: string;
   };
   layers: LayerState;
 }

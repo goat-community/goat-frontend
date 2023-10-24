@@ -1,4 +1,4 @@
-// import { NavItem } from "@/types/common/navigation";
+import type { NavItem } from "@/types/common/navigation";
 import type { CSSObject, Theme } from "@mui/material";
 import {
   Link,

@@ -45,13 +45,13 @@ export const TextOption = (props: simpleInput) => {
   );
 };
 
-interface SelectOptionProps {
-  options: { name: React.ReactNode; value: string }[];
-  label: string;
-}
+// interface SelectOptionProps {
+//   options: { name: React.ReactNode; value: string }[];
+//   label: string;
+// }
 
-export const SelectOption = (props: SelectOptionProps) => {
-  const { options, label } = props;
+export const SelectOption = () => {
+  // const { options, label } = props;
 
   return (
     <div>

@@ -21,13 +21,13 @@ import {
 } from "@mui/material";
 import type { Expression } from "@/types/map/filtering";
 import { useSelector } from "react-redux";
+import { useTranslation } from "@/i18n/client";
+import { usePathname } from "next/navigation";
+import CustomMenu from "@/components/common/CustomMenu";
 // import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
 import type { LayerPropsMode } from "@/types/map/filtering";
 import type { SelectChangeEvent } from "@mui/material";
-import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
-
-import CustomMenu from "@/components/common/CustomMenu";
+import type { IStore } from "@/types/store";
 
 interface ExpressionProps {
   isLast: boolean;
@@ -63,7 +63,7 @@ const ExpressionAttributes = (props: ExpressionAttributesProps) => {
     deleteOneExpression,
     duplicateExpression,
   } = props;
-  const { loading: mapLoading } = useSelector((state) => state.map);
+  const { loading: mapLoading } = useSelector((state: IStore) => state.map);
   const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
 
   const theme = useTheme();
@@ -76,7 +76,7 @@ const ExpressionAttributes = (props: ExpressionAttributesProps) => {
     if (valueToFilter.length && valueToFilter[0].type === "string") {
       return "text";
     }
-    return valueToFilter.length && valueToFilter[0].type;
+    return valueToFilter[0].type;
   }
 
   function handleComparerSelect(event: SelectChangeEvent<string>) {
@@ -98,11 +98,11 @@ const ExpressionAttributes = (props: ExpressionAttributesProps) => {
   }
 
   function handleAttributeSelect(event: SelectChangeEvent<string>) {
-    const newExpression = { ...expression };
-    newExpression.attribute = {
-      type: getFeatureAttribute(event.target.value),
-      name: event.target.value,
-    };
+    // const newExpression = { ...expression };
+    // newExpression.attribute = {
+    //   type: getFeatureAttribute(event.target.value),
+    //   name: event.target.value,
+    // };
     setAttributeSelected(event.target.value);
   }
 
@@ -231,6 +231,7 @@ const Exppression = (props: ExpressionProps) => {
   const [attributeSelected, setAttributeSelected] = useState<string | string[]>(
     memoExpression.attribute ? memoExpression.attribute : "",
   );
+  console.log(memoExpression.attribute);
   const [comparerSelected, setComparerSelected] = useState<string | string[]>(
     memoExpression.expression ? memoExpression.expression.value : "",
   );

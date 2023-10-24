@@ -12,12 +12,13 @@ interface LayersProps {
   layers: XYZ_Layer[];
   addLayer: (newLayer) => void;
   projectId: string;
-  filters: any;
+  filters: string[];
 }
 
 const Layers = (props: LayersProps) => {
-  const sampleLayerID = "user_data.e66f60f87ec248faaebb8a8c64c29990";
+  const sampleLayerID = "user_data.84ca9acb3f30491d82ce938334164496";
   const { layers, addLayer, filters } = props;
+  console.log(filters)
 
   const availableFilters = filters.filter(
     (filterQuery) => filterQuery !== "{}",

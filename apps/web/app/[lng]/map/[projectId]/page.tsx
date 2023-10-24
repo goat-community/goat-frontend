@@ -38,7 +38,7 @@ export default function MapPage({ params: { projectId } }) {
     {
       id: "layer1",
       sourceUrl:
-        "https://geoapi.goat.dev.plan4better.de/collections/user_data.e66f60f87ec248faaebb8a8c64c29990/tiles/{z}/{x}/{y}",
+        "https://geoapi.goat.dev.plan4better.de/collections/user_data.84ca9acb3f30491d82ce938334164496/tiles/{z}/{x}/{y}",
       color: "#FF0000",
     },
   ]);
