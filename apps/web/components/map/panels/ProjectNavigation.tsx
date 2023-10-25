@@ -142,7 +142,6 @@ const ProjectNavigation = ({ projectId }) => {
     width: sidebarWidth,
     position: "right",
   };
-
   useEffect(() => {
     getProjectLayers(projectId).then((data) => {
       console.log(data)
@@ -150,6 +149,7 @@ const ProjectNavigation = ({ projectId }) => {
       setModifiedProjectLayers(layers);
       dispatch(setLayers(layers));
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

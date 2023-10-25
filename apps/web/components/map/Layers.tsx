@@ -78,6 +78,7 @@ const Layers = (props: LayersProps) => {
 
   useEffect(() => {
     modifyLayer();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterJson]);
 
   const clusterLayer: LayerProps = {

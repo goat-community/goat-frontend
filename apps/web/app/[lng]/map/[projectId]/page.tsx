@@ -48,6 +48,7 @@ export default function MapPage({ params: { projectId } }) {
   const addLayer = useCallback((newLayer: XYZ_Layer[]) => {
     dispatch(setMapLoading(false))
     setLayers(newLayer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   return (

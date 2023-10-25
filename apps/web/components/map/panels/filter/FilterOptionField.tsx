@@ -86,6 +86,7 @@ const FilterOptionField = (props: FilterResultProps) => {
           handleFilter("excludes");
         }
       }, 1000),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -110,6 +111,7 @@ const FilterOptionField = (props: FilterResultProps) => {
         sendQuery({ input: firstInput });
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleInputChange(newValue: string) {
