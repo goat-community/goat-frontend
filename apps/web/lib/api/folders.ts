@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { GetContentQueryParams } from "@/lib/validations/common";
-import type { FolderPaginated } from "@/lib/validations/folder";
+import type { FolderResponse } from "@/lib/validations/folder";
 
 export const FOLDERS_API_BASE_URL = new URL(
   "api/v2/folder",
@@ -10,7 +10,7 @@ export const FOLDERS_API_BASE_URL = new URL(
 
 export const useFolders = (queryParams?: GetContentQueryParams) => {
   const { data, isLoading, error, mutate, isValidating } =
-    useSWR<FolderPaginated>([`${FOLDERS_API_BASE_URL}`, queryParams], fetcher);
+    useSWR<FolderResponse>([`${FOLDERS_API_BASE_URL}`, queryParams], fetcher);
   return {
     folders: data,
     isLoading: isLoading,

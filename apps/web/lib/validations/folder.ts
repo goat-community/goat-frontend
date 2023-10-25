@@ -1,5 +1,4 @@
 import * as z from "zod";
-import { responseSchema } from "@/lib/validations/response";
 
 export const folderSchema = z.object({
   name: z.string(),
@@ -7,9 +6,9 @@ export const folderSchema = z.object({
   user_id: z.string().uuid()
 });
 
+export const folderResponse = z.array(folderSchema);
 
 
-export const folderResponseSchema = responseSchema(folderSchema);
 
 export type Folder = z.infer<typeof folderSchema>;
-export type FolderPaginated = z.infer<typeof folderResponseSchema>;
+export type FolderResponse = z.infer<typeof folderResponse>;

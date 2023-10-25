@@ -99,7 +99,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({
   };
 
   const folderOptions = useMemo(() => {
-    return folders?.items.map((folder) => {
+    return folders?.map((folder) => {
       return {
         value: folder.id,
         label: folder.name,

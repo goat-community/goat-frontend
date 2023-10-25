@@ -129,7 +129,7 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
 
           setEditModal(undefined);
         }}
-        existingFolderNames={folders?.items?.map((folder) => folder.name)}
+        existingFolderNames={folders?.map((folder) => folder.name)}
         selectedFolder={editModal?.selectedFolder}
       />
 
@@ -138,7 +138,7 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
         component="nav"
         aria-labelledby="content-tree-view"
       >
-        {[folders?.items ?? [], teams ?? [], organizations ?? []].map(
+        {[folders ?? [], teams ?? [], organizations ?? []].map(
           (folder, typeIndex) => (
             <div key={typeIndex}>
               <ListItemButton

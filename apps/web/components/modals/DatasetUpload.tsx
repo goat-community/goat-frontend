@@ -63,9 +63,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   const [activeStep, setActiveStep] = useState(0);
   const [fileValue, setFileValue] = useState<File>();
   const [fileUploadError, setFileUploadError] = useState<string>();
-  const [selectedFolder, setSelectedFolder] = useState<Folder | null>(
-    homeFolder,
-  );
+  const [selectedFolder, setSelectedFolder] = useState<Folder | null>();
   const [datasetType, setDatasetType] = useState<"feature_layer" | "table">(
     "feature_layer",
   );
@@ -226,9 +224,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
                 }}
                 autoHighlight
                 id="folder-select"
-                options={
-                  folders?.items ? [homeFolder, ...folders.items] : [homeFolder]
-                }
+                options={folders ? [homeFolder, ...folders] : [homeFolder]}
                 getOptionLabel={(option) => {
                   if (typeof option === "string") {
                     return option;
