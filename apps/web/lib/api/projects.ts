@@ -1,3 +1,5 @@
+"use client";
+
 import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type {
