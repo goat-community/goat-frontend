@@ -11,6 +11,7 @@ import {
   TextField,
   InputAdornment,
   Link,
+  Divider,
 } from "@mui/material";
 import Cookies from "js-cookie";
 import { THEME_COOKIE_NAME as themeCookieName } from "@/lib/constants";
@@ -74,12 +75,14 @@ const AccountPreferences = ({ params: { lng } }) => {
     <Box sx={{ p: 4 }}>
       <Box component="form">
         <Stack spacing={theme.spacing(6)}>
+          <Divider />
           <Box>
             <Typography variant="body1" fontWeight="bold">
               {t("preferences")}
             </Typography>
             <Typography variant="caption">{t("manage_preferences")}</Typography>
           </Box>
+          <Divider />
           <TextField
             select
             defaultValue={lng}

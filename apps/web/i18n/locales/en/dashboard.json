@@ -11,6 +11,10 @@
     "metric": "Metric",
     "imperial": "Imperial",
     "personal_information": "Personal Information",
-    "update_personal_information": "Update personal information"
-
+    "update_personal_information": "Update your personal information",
+    "danger_zone": "Danger Zone",
+    "danger_zone_description": "Delete your account with all of your personal information and data",
+    "danger_zone_body": "Delete your account with all personal data. <b>This action cannot be undone!</b>",
+    "delete_account_confirmation_title": "Delete Account",
+    "delete_account_confirmation_body": "<p>Before deleting your account, ensure you download any data you want to keep, and note that the following will occur:</p><ul><li>Your content data will be <strong>permanently removed</strong>.</li><li>If you co-own an organization or team with other administrators, the ownership of that team will be transferred to another admin.</li><li>In the absence of fellow administrators or if you are the sole member of a team or organization, it will undergo an <strong>irreversible deletion</strong> along with all associated data.</li><li>Remember, <strong>this action cannot be undone;</strong> once it's executed, it's done for good.</li></ul><p>Please enter <strong>{{email}}</strong> to confirm the deletion of your account.</p>"
 }
