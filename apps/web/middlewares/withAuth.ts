@@ -8,7 +8,14 @@ import {
 } from "next/server";
 import { fallbackLng, cookieName } from "@/i18n/settings";
 
-const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map", "/onboarding"];
+const protectedPaths = [
+  "/home",
+  "/projects",
+  "datasets",
+  "/settings",
+  "/map",
+  "/onboarding",
+];
 
 export const withAuth: MiddlewareFactory = (next: NextMiddleware) => {
   return async (request: NextRequest, _next: NextFetchEvent) => {
@@ -43,8 +50,7 @@ export const withAuth: MiddlewareFactory = (next: NextMiddleware) => {
       req: request,
       secret: nextAuthSecret,
     });
-
-    const isAuthorized = !!token;
+    const isAuthorized = !!token && token.error !== "RefreshAccessTokenError";
 
     // the user is authorized, let the middleware handle the rest
     if (isAuthorized) return await next(request, _next);

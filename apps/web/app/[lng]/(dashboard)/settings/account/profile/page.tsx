@@ -199,7 +199,7 @@ const Profile = ({ params: { lng } }) => {
           {/* Delete Account Confirmation */}
           <ConfirmModal
             open={confirmDeleteAccountDialogOpen}
-            title={t("dashboard:delete_account_confirmation_title")}
+            title={t("dashboard:delete_account")}
             body={
               <Trans
                 i18nKey="dashboard:delete_account_confirmation_body"
@@ -256,7 +256,7 @@ const Profile = ({ params: { lng } }) => {
               disabled={isProfileUpdateBusy}
             >
               <Typography variant="body1" fontWeight="bold" color="inherit">
-                Delete Account
+                {t("dashboard:delete_account")}
               </Typography>
             </LoadingButton>
           </Stack>
