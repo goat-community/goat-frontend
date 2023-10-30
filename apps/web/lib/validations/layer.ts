@@ -24,6 +24,7 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
 });
 
 export const layerSchema = layerMetadataSchema.extend({
+  active: z.boolean().optional(),
   updated_at: z.string(),
   created_at: z.string(),
   extent: z.string(),

@@ -32,9 +32,9 @@ export default function MapPage({ params: { projectId } }) {
     (state: IStore) => state.mapFilters,
   );
 
-  const { getFilterQueryExpressions } = useFilterExpressions(projectId);
+  const { getFilterQueries } = useFilterExpressions(projectId);
 
-  const { data: filters } = getFilterQueryExpressions(layerToBeFiltered);
+  const { data: filters } = getFilterQueries(layerToBeFiltered);
 
   const [layers, setLayers] = useState<XYZ_Layer[] | []>([
     {

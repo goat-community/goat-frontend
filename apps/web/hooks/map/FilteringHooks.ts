@@ -5,7 +5,7 @@ import { useFilterQueryExpressions } from "@/lib/api/filter";
 import { useDispatch } from "react-redux";
 import { setMapLoading } from "../../lib/store/map/slice";
 
-export const useFilterExpressions = (projectId: string) => {
+export const useFilterExpressions = (projectId?: string) => {
   const PROJECTS_API_BASE_URL = new URL(
     "api/v2/project",
     process.env.NEXT_PUBLIC_API_URL,
@@ -16,7 +16,7 @@ export const useFilterExpressions = (projectId: string) => {
     mutate,
     isLoading,
     error,
-  } = useFilterQueryExpressions(projectId);
+  } = useFilterQueryExpressions(projectId ? projectId : "");
 
   const getLayerFilterParsedExpressions = (queries) => {
     const expressions = Object.keys(queries).map((query) =>
@@ -63,6 +63,7 @@ export const useFilterExpressions = (projectId: string) => {
         };
       }
     }
+    return {data: [], mutate}
   };
 
   const getFilterQueryExpressions = (layerId: string) => {
