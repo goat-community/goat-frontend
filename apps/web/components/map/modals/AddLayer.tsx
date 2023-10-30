@@ -20,8 +20,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { filterSearch } from "@/lib/utils/helpers";
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
-
 import type { ChangeEvent } from "react";
 
 const ModalBox = styled(Box)(({ theme }) => ({
@@ -38,8 +36,7 @@ const ModalBox = styled(Box)(({ theme }) => ({
 
 const AddLayer = () => {
   const theme = useTheme();
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "maps");
+  const { t } = useTranslation("maps");
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState<string>("");

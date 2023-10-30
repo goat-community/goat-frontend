@@ -1,4 +1,8 @@
 {
     "next": "Next",
-    "back": "Back"
+    "back": "Back",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "close": "Close"
 }

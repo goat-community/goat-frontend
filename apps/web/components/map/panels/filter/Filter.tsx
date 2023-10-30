@@ -27,11 +27,9 @@ import type { MapSidebarItem } from "@/types/map/sidebar";
 
 import HistogramSlider from "./histogramSlider/HistogramSlider";
 import { histogramData } from "@/public/assets/data/histogramSample";
-import { useGetLayerKeys } from "@/lib/api/filter";
+import { useLayerHook } from "@/hooks/map/LayerHooks";
 import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
-import { useFilterQueryExpressions } from "@/lib/api/filter";
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
 import { setMapLoading } from "@/lib/store/map/slice";
 
 interface FilterPanelProps {
@@ -41,8 +39,7 @@ interface FilterPanelProps {
 
 const FilterPanel = (props: FilterPanelProps) => {
   const { setActiveRight, projectId } = props;
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "maps");
+  const { t } = useTranslation("maps");
 
   const dispatch = useDispatch();
 
@@ -51,14 +48,14 @@ const FilterPanel = (props: FilterPanelProps) => {
     updateProjectLayerQuery,
     deleteAnExpression,
     duplicateAnExpression,
-  } = useFilterExpressions();
+    getFilterQueryExpressions
+  } = useFilterExpressions(projectId);
 
   const { layerToBeFiltered } = useSelector(
     (state: IStore) => state.mapFilters,
   );
 
-  const { data: updatedData, mutate } = useFilterQueryExpressions(
-    projectId,
+  const { data: updatedData, mutate } = getFilterQueryExpressions(
     layerToBeFiltered,
   );
   
@@ -79,8 +76,9 @@ const FilterPanel = (props: FilterPanelProps) => {
     },
   });
   const sampleLayerID = "user_data.4d76705b973643a393dffd14e10f6604";
-  // 4d76705b-9736-43a3-93df-fd14e10f6604
-  const { keys } = useGetLayerKeys(sampleLayerID);
+  
+  const { getLayerKeys } = useLayerHook(sampleLayerID);
+  const { keys } = getLayerKeys();
   const theme = useTheme();
 
   const logicalOperatorOptions: { label: React.ReactNode; value: string }[] = [

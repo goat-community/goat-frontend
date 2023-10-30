@@ -1,6 +1,6 @@
 import { MAPBOX_TOKEN } from "@/lib/constants";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import LayerPanel from "@/components/map/panels/layer/Layer";
 import Legend from "@/components/map/panels/Legend";
@@ -17,10 +17,8 @@ import { BasemapSelector } from "@/components/map/controls/BasemapSelector";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { setActiveBasemapIndex } from "@/lib/store/styling/slice";
-import { setLayers } from "@/lib/store/layer/slice";
-import { getProjectLayers } from "@/lib/api/projects";
+
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
 
 import {
   Box,
@@ -33,7 +31,6 @@ import {
 import type { MapSidebarItem } from "@/types/map/sidebar";
 import type { MapSidebarProps } from "../Sidebar";
 import type { IStore } from "@/types/store";
-import type { Layer } from "@/types/map/project";
 
 const sidebarWidth = 48;
 const toolbarHeight = 52;
@@ -41,8 +38,7 @@ const toolbarHeight = 52;
 const ProjectNavigation = ({ projectId }) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "maps");
+  const { t } = useTranslation("maps");
 
   const { basemaps, activeBasemapIndex } = useSelector(
     (state: IStore) => state.styling,
@@ -60,10 +56,6 @@ const ProjectNavigation = ({ projectId }) => {
     undefined,
   );
 
-  const [modifiedProjectLayers, setModifiedProjectLayers] = useState<
-    Layer[] | undefined
-  >(undefined);
-
   const prevActiveLeftRef = useRef<MapSidebarItem | undefined>(undefined);
   const prevActiveRightRef = useRef<MapSidebarItem | undefined>(undefined);
 
@@ -78,10 +70,7 @@ const ProjectNavigation = ({ projectId }) => {
         name: t("panels.layers.layers"),
         component: (
           <LayerPanel
-            projectLayers={
-              !modifiedProjectLayers ? null : modifiedProjectLayers
-            }
-            modifyProjectLayers={setModifiedProjectLayers}
+            projectId={projectId} 
             onCollapse={handleCollapse}
             setActiveLeft={setActiveLeft}
           />
@@ -142,15 +131,7 @@ const ProjectNavigation = ({ projectId }) => {
     width: sidebarWidth,
     position: "right",
   };
-  useEffect(() => {
-    getProjectLayers(projectId).then((data) => {
-      console.log(data)
-      const layers = data.map((layer) => ({ ...layer, active: false }));
-      setModifiedProjectLayers(layers);
-      dispatch(setLayers(layers));
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  
 
   return (
     <>

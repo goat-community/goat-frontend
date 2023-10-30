@@ -1,12 +1,22 @@
 import { getProjectLayers } from "@/lib/api/projects";
 import { parseCQLQueryToObject } from "@/lib/utils/filtering/cql_to_expression";
 import { v4 } from "uuid";
+import { useFilterQueryExpressions } from "@/lib/api/filter";
+import { useDispatch } from "react-redux";
+import { setMapLoading } from "../../lib/store/map/slice";
 
-export const useFilterExpressions = () => {
+export const useFilterExpressions = (projectId: string) => {
   const PROJECTS_API_BASE_URL = new URL(
     "api/v2/project",
     process.env.NEXT_PUBLIC_API_URL,
   ).href;
+  const dispatch = useDispatch();
+  const {
+    data: filterData,
+    mutate,
+    isLoading,
+    error,
+  } = useFilterQueryExpressions(projectId);
 
   const getLayerFilterParsedExpressions = (queries) => {
     const expressions = Object.keys(queries).map((query) =>
@@ -14,17 +24,6 @@ export const useFilterExpressions = () => {
     );
 
     return expressions;
-    // try {
-    //   const queries = await getLayerQueries(projectId, id);
-    //   return Object.keys(queries).map((expression) =>
-    //     parseCQLQueryToObject(queries[expression], expression),
-    //   );
-    // } catch (error) {
-    //   console.error(error);
-    //   throw Error(
-    //     `error: make sure you are connected to an internet connection!`,
-    //   );
-    // }
   };
 
   const getLayerQueries = async (projectId, id) => {
@@ -49,6 +48,32 @@ export const useFilterExpressions = () => {
         `error: make sure you are connected to an internet connection!`,
       );
     }
+  };
+
+  const getFilterQueries = (layerId: string) => {
+    if (!isLoading && !error) {
+      const queries = filterData.filter((layer) => layer.id === layerId)[0]
+        .query;
+      if (queries && Object.keys(queries).length) {
+        return {
+          data: Object.keys(queries)
+            .map((queries) => filterData[queries])
+            .reverse(),
+          mutate,
+        };
+      }
+    }
+  };
+
+  const getFilterQueryExpressions = (layerId: string) => {
+    if (!isLoading && !error && filterData.length) {
+      const queries = filterData.filter((layer) => layer.id === layerId)[0]
+        .query;
+      dispatch(setMapLoading(false));
+
+      return { data: getLayerFilterParsedExpressions(queries), mutate };
+    }
+    return { data: [], mutate };
   };
 
   const updateProjectLayerQuery = async (layerId, projectId, filterQuery) => {
@@ -106,9 +131,11 @@ export const useFilterExpressions = () => {
   return {
     getLayerFilterParsedExpressions,
     getLayerQueries,
+    getFilterQueryExpressions,
     updateProjectLayerQuery,
     deleteAnExpression,
     createExpression,
     duplicateAnExpression,
+    getFilterQueries,
   };
 };

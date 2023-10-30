@@ -16,7 +16,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { mutate } from "swr";
@@ -43,8 +42,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
   onEdit,
 }) => {
   const [folderName, setFolderName] = useState<string>("");
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "dashboard");
+  const { t } = useTranslation("dashboard");
   
   const handleFolderEdit = async () => {
     try {

@@ -1,14 +1,13 @@
 import { DataType } from "@/types/map/common";
 import type {
   GroupedLayer,
-  LayerProps,
-  MapboxOverlayProps,
   SourceProps,
 } from "@/types/map/layers";
 import { Layer, Source } from "react-map-gl";
+import type { Layer as ZodLayer } from "@/lib/validations/layer";
 
 export function groupBySource(
-  layers: (SourceProps & LayerProps)[]
+  layers: (SourceProps & ZodLayer)[]
 ): GroupedLayer[] {
   const groupedLayers = layers.reduce((acc, layer) => {
     const { url, data_type, data_source_name, data_reference_year, ...rest } =
@@ -32,7 +31,7 @@ export function groupBySource(
   return groupedLayers;
 }
 
-export default function MapboxOverlay({ layers }: MapboxOverlayProps) {
+export default function MapboxOverlay(layers: (SourceProps & ZodLayer)[]) {
   const groupedLayers = groupBySource(layers);
   const overlays = groupedLayers.map((group) => {
     const {

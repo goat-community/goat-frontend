@@ -7,7 +7,6 @@ RUN apk update
 WORKDIR /app
 RUN npm install -g turbo
 COPY . .
-COPY .env.docker /app/apps/web/.env
 RUN turbo prune --scope=@p4b/web --docker
 
 # Add lockfile and package.json's of isolated subworkspace
@@ -24,9 +23,18 @@ RUN pnpm install --frozen-lockfile
 
 # Build the project
 COPY --from=builder /app/out/full/ .
+
+ARG NEXT_PUBLIC_APP_URL=APP_NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_MAP_TOKEN=APP_NEXT_PUBLIC_MAP_TOKEN
+ARG NEXT_PUBLIC_ACCOUNTS_API_URL=APP_NEXT_PUBLIC_ACCOUNTS_API_URL
+ARG NEXT_PUBLIC_GEOAPI_URL=APP_NEXT_PUBLIC_GEOAPI_URL
+ARG NEXT_PUBLIC_API_URL=APP_NEXT_PUBLIC_API_URL
+
 RUN pnpm dlx turbo run build --filter=web
 
 FROM base AS runner
+RUN apk add bash
+
 WORKDIR /app
 
 # Don't run production as root
@@ -45,4 +53,6 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/publ
 
 ENV HOSTNAME localhost
 
+COPY ./apps/web/entrypoint.sh /app/apps/web/entrypoint.sh
+ENTRYPOINT ["/app/apps/web/entrypoint.sh"]
 CMD node apps/web/server.js

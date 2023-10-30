@@ -51,15 +51,10 @@ const blogPosts: BlogPost[] = [
   },
 ];
 
-interface BlogSectionProps {
-  lng: string;
-}
-
-const BlogSection = (props: BlogSectionProps) => {
+const BlogSection = () => {
   const isLoading = false;
   const theme = useTheme();
-  const {lng} = props;
-  const { t } = useTranslation(lng, "dashboard");
+  const { t } = useTranslation("dashboard");
 
   return (
     <Box>

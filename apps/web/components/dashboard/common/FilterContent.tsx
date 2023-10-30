@@ -15,7 +15,6 @@ import {
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
 
 export interface FilterContentMenuProps {
   type: "project" | "layer";
@@ -28,8 +27,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
   const [layerTypes, setLayerTypes] = useState<LayerType[]>([]);
   const [filterContentMenuOpen, setFilterContentMenuOpen] =
     useState<boolean>(false);
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "dashboard");
+  const { t } = useTranslation("dashboard");
 
   //todo get tags from api
   const [tags, setTags] = useState<string[]>([]);

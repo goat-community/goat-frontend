@@ -17,14 +17,11 @@ import { useState } from "react";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useOrganization } from "@/lib/api/users";
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
 
 export default function UserInfoMenu() {
   const { data: session } = useSession();
   const theme = useTheme();
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "dashboard");
-
+  const { t } = useTranslation("dashboard");
   const [open, setOpen] = useState(false);
   const { organization } = useOrganization();
   return (

@@ -22,7 +22,6 @@ import {
 import type { Expression } from "@/types/map/filtering";
 import { useSelector } from "react-redux";
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
 import CustomMenu from "@/components/common/CustomMenu";
 // import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
 import type { LayerPropsMode } from "@/types/map/filtering";
@@ -67,8 +66,7 @@ const ExpressionAttributes = (props: ExpressionAttributesProps) => {
   const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
 
   const theme = useTheme();
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "maps");
+  const { t } = useTranslation("maps");
   const open = Boolean(anchorEl);
 
   function getFeatureAttribute(type: string | string[]) {
@@ -237,8 +235,7 @@ const Exppression = (props: ExpressionProps) => {
   );
 
   const theme = useTheme();
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "maps");
+  const { t } = useTranslation("maps");
 
   function getFeatureAttribute(type: string | string[]) {
     const valueToFilter = keys.filter((key) => key.name === type);

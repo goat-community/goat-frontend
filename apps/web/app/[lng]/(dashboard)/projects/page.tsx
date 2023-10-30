@@ -10,13 +10,13 @@ import type { GetProjectsQueryParams } from "@/lib/validations/project";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import { useTranslation } from "@/i18n/client";
 
-const Projects = ({ params: { lng } }) => {
+const Projects = () => {
   const [queryParams, setQueryParams] = useState<GetProjectsQueryParams>({
     order: "descendent",
     order_by: "updated_at",
   });
   const [view, setView] = useState<"list" | "grid">("grid");
-  const { t } = useTranslation(lng, "dashboard");
+  const { t } = useTranslation("dashboard");
 
   const {
     projects,
@@ -50,7 +50,6 @@ const Projects = ({ params: { lng } }) => {
           <ContentSearchBar
             contentType="project"
             view={view}
-            lng={lng}
             setView={setView}
             queryParams={queryParams}
             setQueryParams={setQueryParams}
@@ -59,7 +58,6 @@ const Projects = ({ params: { lng } }) => {
         <Grid item xs={3}>
           <Paper elevation={3}>
             <FoldersTreeView
-              lng={lng}
               queryParams={queryParams}
               setQueryParams={setQueryParams}
             />
@@ -68,7 +66,6 @@ const Projects = ({ params: { lng } }) => {
         <Grid item xs={9}>
           <TileGrid
             view={view}
-            lng={lng}
             items={projects?.items ?? []}
             isLoading={isProjectLoading}
             type="project"

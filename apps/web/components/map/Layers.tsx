@@ -3,7 +3,6 @@ import { Source, Layer as MapLayer } from "react-map-gl";
 import type { XYZ_Layer } from "@/types/map/layer";
 import { useSelector } from "react-redux";
 import type { IStore } from "@/types/store";
-import { FILTERING } from "@/lib/api/apiConstants";
 import { and_operator, or_operator } from "@/lib/utils/filtering/filtering_cql";
 import type { LayerProps } from "react-map-gl";
 import { v4 } from "uuid";
@@ -18,7 +17,8 @@ interface LayersProps {
 const Layers = (props: LayersProps) => {
   const sampleLayerID = "user_data.84ca9acb3f30491d82ce938334164496";
   const { layers, addLayer, filters } = props;
-  console.log(filters)
+
+  const layerUrl = `${process.env.NEXT_PUBLIC_GEOAPI_URL}/collections/${sampleLayerID}/tiles/{z}/{x}/{y}`;
 
   const availableFilters = filters.filter(
     (filterQuery) => filterQuery !== "{}",
@@ -45,9 +45,9 @@ const Layers = (props: LayersProps) => {
   function modifyLayer() {
     const filterJson = getQuery();
     if (filterJson) {
-      const filteredLayerSource = `${FILTERING(
-        sampleLayerID,
-      )}?filter=${encodeURIComponent(filterJson)}`;
+      const filteredLayerSource = `${layerUrl}?filter=${encodeURIComponent(
+        filterJson,
+      )}`;
       addLayer([
         {
           id: "layer1",
@@ -59,7 +59,7 @@ const Layers = (props: LayersProps) => {
       addLayer([
         {
           id: "layer1",
-          sourceUrl: FILTERING(sampleLayerID),
+          sourceUrl: layerUrl,
           color: "#FF0000",
         },
       ]);
@@ -69,7 +69,7 @@ const Layers = (props: LayersProps) => {
       addLayer([
         {
           id: "layer1",
-          sourceUrl: FILTERING(sampleLayerID),
+          sourceUrl: layerUrl,
           color: "#FF0000",
         },
       ]);
@@ -78,7 +78,7 @@ const Layers = (props: LayersProps) => {
 
   useEffect(() => {
     modifyLayer();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterJson]);
 
   const clusterLayer: LayerProps = {

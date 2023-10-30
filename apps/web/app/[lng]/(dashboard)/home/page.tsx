@@ -18,8 +18,8 @@ import type { GetContentQueryParams } from "@/lib/validations/common";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 
-const Home = ({ params: { lng } }) => {
-  const { t } = useTranslation(lng, "dashboard");
+const Home = () => {
+  const { t } = useTranslation("dashboard");
 
   const queryParams: GetContentQueryParams = {
     order: "descendent",
@@ -72,17 +72,12 @@ const Home = ({ params: { lng } }) => {
           </Box>
           <Divider sx={{ mb: 4 }} />
           <ProjectSection
-            lng={lng}
             projects={projects?.items ?? []}
             isLoading={isProjectLoading}
           />
         </Stack>
-        <DataSection
-          lng={lng}
-          layers={layers?.items ?? []}
-          isLoading={isLayerLoading}
-        />
-        <BlogSection lng={lng}/>
+        <DataSection layers={layers?.items ?? []} isLoading={isLayerLoading} />
+        <BlogSection />
       </Stack>
     </Container>
   );

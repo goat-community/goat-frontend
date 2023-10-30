@@ -39,7 +39,6 @@ import { createLayer } from "@/lib/api/layers";
 import { toast } from "react-toastify";
 import { getJob } from "@/lib/api/jobs";
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
 
 interface DatasetUploadDialogProps {
   open: boolean;
@@ -50,8 +49,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   open,
   onClose,
 }) => {
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "dashboard");
+  const { t } = useTranslation("dashboard");
 
   const steps = [
     t("projects.dataset.select_file"),
@@ -72,9 +70,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   const [activeStep, setActiveStep] = useState(0);
   const [fileValue, setFileValue] = useState<File>();
   const [fileUploadError, setFileUploadError] = useState<string>();
-  const [selectedFolder, setSelectedFolder] = useState<Folder | null>(
-    homeFolder,
-  );
+  const [selectedFolder, setSelectedFolder] = useState<Folder | null>();
   const [datasetType, setDatasetType] = useState<"feature_layer" | "table">(
     "feature_layer",
   );
@@ -238,9 +234,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
                 }}
                 autoHighlight
                 id="folder-select"
-                options={
-                  folders?.items ? [homeFolder, ...folders.items] : [homeFolder]
-                }
+                options={folders ? [homeFolder, ...folders] : [homeFolder]}
                 getOptionLabel={(option) => {
                   if (typeof option === "string") {
                     return option;

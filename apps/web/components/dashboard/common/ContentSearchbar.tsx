@@ -28,13 +28,12 @@ export interface ContentSearchBarProps {
   queryParams: GetLayersQueryParams | GetProjectsQueryParams;
   view?: "list" | "grid";
   setView?: (view: "list" | "grid") => void;
-  lng: string;
 }
 
 export default function ContentSearchBar(props: ContentSearchBarProps) {
-  const { setQueryParams, queryParams, view, setView, lng } = props;
+  const { setQueryParams, queryParams, view, setView } = props;
   const theme = useTheme();
-  const { t } = useTranslation(lng, "dashboard");
+  const { t } = useTranslation("dashboard");
 
   const handleViewToggle = () => {
     const newView = view === "list" ? "grid" : "list";

@@ -2,7 +2,11 @@ import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { Organization } from "@/lib/validations/organization";
 import type { InvitationPaginated } from "@/lib/validations/invitation";
-import type { GetInvitationsQueryParams } from "@/lib/validations/user";
+import type {
+  GetInvitationsQueryParams,
+  User,
+  UserUpdate,
+} from "@/lib/validations/user";
 
 export const USERS_API_BASE_URL = new URL(
   "api/v1/users",
@@ -21,6 +25,32 @@ export const useOrganization = () => {
     mutate,
     isValidating,
   };
+};
+
+export const useUserProfile = () => {
+  const { data, isLoading, error, mutate, isValidating } = useSWR<User>(
+    `${USERS_API_BASE_URL}/profile`,
+    fetcher,
+  );
+  return {
+    userProfile: data,
+    isLoading: isLoading,
+    isError: error,
+    mutate,
+    isValidating,
+  };
+};
+
+export const updateUserProfile = async (user: UserUpdate) => {
+  const response = await fetchWithAuth(`${USERS_API_BASE_URL}/profile`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
+  if (!response.ok) throw await response.json();
+  return response;
 };
 
 export const useInvitations = (queryParams?: GetInvitationsQueryParams) => {

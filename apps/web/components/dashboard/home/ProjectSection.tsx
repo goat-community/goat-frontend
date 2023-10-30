@@ -12,13 +12,12 @@ import { useTranslation } from "@/i18n/client";
 
 interface ProjectSectionProps {
   projects: Project[];
-  lng: string;
   isLoading: boolean;
 }
 
 const ProjectSection = (props: ProjectSectionProps) => {
   const router = useRouter();
-  const { projects, isLoading, lng } = props;
+  const { projects, isLoading } = props;
   const {
     moreMenuOptions,
     activeContent,
@@ -27,7 +26,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
     openMoreMenu,
   } = useContentMoreMenu();
 
-  const {t} = useTranslation(lng, "dashboard");
+  const {t} = useTranslation("dashboard");
   const [openProjectModal, setOpenProjectModal] = useState(false);
   return (
     <Box>

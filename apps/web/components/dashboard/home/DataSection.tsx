@@ -20,12 +20,11 @@ import { useTranslation } from "@/i18n/client";
 interface DataSectionProps {
   layers: Layer[];
   isLoading: boolean;
-  lng: string;
 }
 
 const DataSection = (props: DataSectionProps) => {
-  const { layers, isLoading, lng } = props;
-  const {t} = useTranslation(lng, "dashboard");
+  const { layers, isLoading } = props;
+  const {t} = useTranslation("dashboard");
 
   const {
     moreMenuOptions,

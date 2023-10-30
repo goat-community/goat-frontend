@@ -15,7 +15,7 @@ import { selectMapLayer } from "@/lib/store/styling/selectors";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 import Header from "@/components/header/Header";
 import { useProject } from "@/lib/api/projects";
-import { useFilterQueries } from "@/lib/api/filter";
+import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
 import { setMapLoading } from "@/lib/store/map/slice";
 
 const sidebarWidth = 48;
@@ -28,11 +28,13 @@ export default function MapPage({ params: { projectId } }) {
   const { project } = useProject(projectId);
   const mapLayer = useSelector(selectMapLayer);
   const dispatch = useDispatch();
-  // const mapLoading = useSelector(state=> console.log(state));
   const { layerToBeFiltered } = useSelector(
     (state: IStore) => state.mapFilters,
   );
-  const { data: filters } = useFilterQueries(projectId, layerToBeFiltered);
+
+  const { getFilterQueryExpressions } = useFilterExpressions(projectId);
+
+  const { data: filters } = getFilterQueryExpressions(layerToBeFiltered);
 
   const [layers, setLayers] = useState<XYZ_Layer[] | []>([
     {
@@ -45,11 +47,14 @@ export default function MapPage({ params: { projectId } }) {
 
   const theme = useTheme();
 
-  const addLayer = useCallback((newLayer: XYZ_Layer[]) => {
-    dispatch(setMapLoading(false))
-    setLayers(newLayer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
+  const addLayer = useCallback(
+    (newLayer: XYZ_Layer[]) => {
+      dispatch(setMapLoading(false));
+      setLayers(newLayer);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filters],
+  );
 
   return (
     <MapProvider>
@@ -101,7 +106,12 @@ export default function MapPage({ params: { projectId } }) {
               </Source>
             ) : null}
             {/* todo check */}
-            <Layers layers={layers} filters={filters} addLayer={addLayer} projectId={projectId} />
+            <Layers
+              layers={layers}
+              filters={filters}
+              addLayer={addLayer}
+              projectId={projectId}
+            />
           </Map>
         </Box>
       </Box>

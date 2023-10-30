@@ -38,7 +38,6 @@ import SizeOptionSymbol from "@/components/map/panels/mapStyle/SizeOptionSymbol"
 import { selectMapLayer } from "@/lib/store/styling/selectors";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
-import { usePathname } from "next/navigation";
 import type { MapSidebarItem } from "@/types/map/sidebar";
 
 interface MapStyleProps {
@@ -60,8 +59,7 @@ const layerTypes = [
 const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
   const { tabValue } = useSelector((state: IStore) => state.styling);
   const mapLayer = useSelector(selectMapLayer);
-  const pathname = usePathname();
-  const { t } = useTranslation(pathname.split("/")[1], "maps");
+  const { t } = useTranslation("maps");
 
   const dispatch = useAppDispatch();
 

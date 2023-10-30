@@ -20,13 +20,12 @@ interface TileGridProps {
   type: "project" | "layer";
   items: Project[] | Layer[];
   isLoading: boolean;
-  lng: string;
 }
 
 const TileGrid = (props: TileGridProps) => {
-  const { items, isLoading, lng } = props;
+  const { items, isLoading } = props;
   const theme = useTheme();
-  const { t } = useTranslation(lng, "dashboard");
+  const { t } = useTranslation("dashboard");
   const listProps = {
     xs: 12,
   };

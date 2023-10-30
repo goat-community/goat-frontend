@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { Layer } from "@/types/map/project";
+import type { Layer } from "@/lib/validations/layer";
 
 export interface LayerState {
   layers: Layer[];
