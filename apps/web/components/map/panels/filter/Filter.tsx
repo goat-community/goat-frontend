@@ -58,8 +58,6 @@ const FilterPanel = (props: FilterPanelProps) => {
   const { data: updatedData, mutate } = getFilterQueryExpressions(
     layerToBeFiltered,
   );
-  
-  console.log(updatedData)
 
   const [logicalOperator, setLogicalOperatorVal] = useState<string>(
     "match_all_expressions",

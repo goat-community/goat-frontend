@@ -65,8 +65,8 @@ const LayerPanel = ({
   const { t } = useTranslation("maps");
 
   const [resultProjectLayers, setResultProjectLayers] = useState<
-    Layer[] | null
-  >(null);
+    Layer[]
+  >([]);
 
   function filterConditionals(layer: Layer) {
     if (["none", "All"].includes(activeFilter)) {
@@ -100,7 +100,7 @@ const LayerPanel = ({
   useEffect(() => {
     getProjectLayers(projectId).then((data) => {
       console.log(data)
-      const layers = data.map((layer) => ({ ...layer, active: false }));
+      const layers = data.map((layer: Layer) => ({ ...layer, active: false }));
       setResultProjectLayers(layers);
       dispatch(setLayers(layers));
     });
