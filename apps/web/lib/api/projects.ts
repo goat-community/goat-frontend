@@ -75,18 +75,6 @@ export const getProjectLayers = async (id: string) => {
   }
 };
 
-export const getProjectLayerById = async (projectId: string, id: string) => {
-  try {
-    const data = await getProjectLayers(projectId)
-    const temporaryLayer = data ? data.filter(layer => layer.id === id )[0] : undefined;
-    return temporaryLayer;
-  }
-  catch (error) {
-    console.error(error);
-    throw Error(`error: make sure you are connected to an internet connection!`)
-  }
-}
-
 export const deleteProject = async (id: string) => {
   try {
     await fetchWithAuth(`${PROJECTS_API_BASE_URL}/${id}`, {
