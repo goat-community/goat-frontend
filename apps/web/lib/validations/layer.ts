@@ -29,6 +29,7 @@ export const layerSchema = layerMetadataSchema.extend({
   updated_at: z.string(),
   created_at: z.string(),
   extent: z.string(),
+  query: z.object({}),
   folder_id: z.string(),
   id: z.string().uuid(),
   user_id: z.string().uuid(),
