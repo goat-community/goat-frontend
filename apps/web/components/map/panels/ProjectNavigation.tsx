@@ -5,7 +5,7 @@ import { ICON_NAME } from "@p4b/ui/components/Icon";
 import LayerPanel from "@/components/map/panels/layer/Layer";
 import Legend from "@/components/map/panels/Legend";
 import Charts from "@/components/map/panels/Charts";
-import Toolbox from "@/components/map/panels/Toolbox";
+import Toolbox from "@/components/map/panels/toolbox/Toolbox";
 import Filter from "@/components/map/panels/filter/Filter";
 import Scenario from "@/components/map/panels/Scenario";
 import MapStyle from "@/components/map/panels/mapStyle/MapStyle";

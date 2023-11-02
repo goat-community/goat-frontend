@@ -1,5 +1,5 @@
 import LayerMetadataForm from "@/components/common/LayerMetadataForm";
-import type { Layer } from "@/lib/validations/layer";
+import type { LayerMetadata } from "@/lib/validations/layer";
 import type { ContentDialogBaseProps } from "@/types/dashboard/content";
 import {
   Dialog,
@@ -17,7 +17,7 @@ const Metadata: React.FC<MetadataDialogProps> = ({
   onClose,
   content,
 }) => {
-  const onSubmit = (data: Layer) => {
+  const onSubmit = (data: LayerMetadata) => {
     console.log(data);
   };
 
