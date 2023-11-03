@@ -5,7 +5,7 @@ import Color from "color";
 export function filterSearch<T extends Record<string, any>>(
   allArray: T[],
   searchKey: keyof T,
-  searchText: string
+  searchText: string,
 ) {
   if (searchText !== "") {
     return allArray.filter((item) => {
@@ -71,7 +71,10 @@ export const supportedFileTypes = [
   "json",
 ];
 
-export const calculateLayersCountByKey = (data: [] | undefined, keyToCount: string) => {
+export const calculateLayersCountByKey = (
+  data: [] | undefined,
+  keyToCount: string,
+) => {
   let count = 0;
 
   data?.forEach((obj) => {
@@ -86,7 +89,7 @@ export const calculateLayersCountByKey = (data: [] | undefined, keyToCount: stri
 export const calculateLayersCountByKeyAndValue = (
   data: [] | undefined,
   keyToCount: string,
-  value: string
+  value: string,
 ) => {
   let count = 0;
 
@@ -99,14 +102,17 @@ export const calculateLayersCountByKeyAndValue = (
   return count;
 };
 
-export function changeColorOpacity(params: { color: string; opacity: number }): string {
+export function changeColorOpacity(params: {
+  color: string;
+  opacity: number;
+}): string {
   const { color, opacity } = params;
   return new Color(color).rgb().alpha(opacity).string();
 }
 
 export function getFrequentValuesOnProperty<T>(
   arrayGiven: T[],
-  property: keyof T
+  property: keyof T,
 ): string[] {
   const typeCounts: Record<string, number> = arrayGiven.reduce(
     (counts, currObject) => {
@@ -114,10 +120,8 @@ export function getFrequentValuesOnProperty<T>(
       counts[propertyValue] = (counts[propertyValue] || 0) + 1;
       return counts;
     },
-    {}
+    {},
   );
 
-  return Object.keys(typeCounts).sort(
-    (a, b) => typeCounts[b] - typeCounts[a]
-  );
+  return Object.keys(typeCounts).sort((a, b) => typeCounts[b] - typeCounts[a]);
 }

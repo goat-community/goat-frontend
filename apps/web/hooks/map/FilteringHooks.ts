@@ -43,7 +43,6 @@ export const useFilterExpressions = (projectId?: string) => {
         return {};
       }
     } catch (error) {
-      console.error(error);
       throw Error(
         `error: make sure you are connected to an internet connection!`,
       );
@@ -51,7 +50,6 @@ export const useFilterExpressions = (projectId?: string) => {
   };
 
   const getFilterQueries = (layerId: string) => {
-    console.log(filterData)
     if (!isLoading && !error) {
       const queries = filterData.filter((layer) => layer.id === layerId)[0].query;
       if (queries && Object.keys(queries).length) {
@@ -88,7 +86,6 @@ export const useFilterExpressions = (projectId?: string) => {
         },
       );
     } catch (error) {
-      console.error(error);
       throw Error(`error: unable to update the project`);
     }
   };

@@ -52,7 +52,7 @@ const ToolTabs = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{maxHeight: "100%"}}>
       {!value &&
         tabs.map((tab) => (
           <Box
@@ -82,10 +82,10 @@ const ToolTabs = () => {
           </Box>
         ))}
       {value ? (
-        <Box>
-          <Box onClick={() => handleChange(undefined)}>Back</Box>
+        <>
+          {/* <Box onClick={() => handleChange(undefined)}>Back</Box> */}
           {value.element}
-        </Box>
+        </>
       ) : null}
     </Box>
   );

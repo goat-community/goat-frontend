@@ -11,7 +11,6 @@ export const useGetLayerKeys = (layerId) => {
     `${process.env.NEXT_PUBLIC_GEOAPI_URL}/collections/${`user_data.${layerId.replace(/-/g, "")}`}/queryables`,
     fetcher,
     );
-    console.log(data, `user_data.${layerId.replace(/-/g, "")}`)
 
   return {data, isLoading}
 };

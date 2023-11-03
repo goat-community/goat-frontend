@@ -5,7 +5,6 @@ export const useLayerHook = (layerId: string) => {
   const { data, isLoading } = useGetLayerKeys(layerId);
 
   const getLayerKeys = () => {
-    console.log(data)
     if(layerId){
       return {
         keys: isLoading

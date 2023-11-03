@@ -3,6 +3,9 @@ import InputLayer from "@/components/map/panels/toolbox/tools/join/InputLayer";
 import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
 import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
 import { Divider, useTheme, Box, Button } from "@mui/material";
+import { SendJoinFeatureRequest } from "@/lib/api/join";
+
+import type { PostJoin } from "@/lib/validations/join";
 
 type ColumStatisticsOperation =
   | "count"
@@ -26,9 +29,55 @@ const Join = () => {
 
   const theme = useTheme();
 
+  const handleReset = () => {
+    setInputValues(["", ""]);
+    setFirstField(undefined);
+    setSecondField(undefined);
+    setMethod(undefined);
+    setStatisticField(undefined);
+    setLabel(undefined);
+  };
+
+  const handleRun = () => {
+    if (
+      inputValues[0].length &&
+      inputValues[1].length &&
+      firstField &&
+      secondField &&
+      method &&
+      statisticField &&
+      label
+    ) {
+      const requestBody: PostJoin = {
+        target_layer_id: inputValues[0],
+        target_field: firstField,
+        join_layer_id: inputValues[1],
+        join_field: secondField,
+        column_statistics: {
+          operation: method,
+          field: statisticField,
+        },
+        result_target: {
+          layer_name: label,
+          folder_id: "159cc0f9-81e9-497d-8823-d9d37507ed54",
+        },
+      };
+
+      console.log(requestBody);
+      SendJoinFeatureRequest(requestBody);
+    } else {
+      console.log("Error: Not all fields are filled");
+    }
+  };
+
   return (
-    <Box display="flex" flexDirection="column" justifyContent="space-between" sx={{maxHeight: "100%", flexGrow: "1"}}>
-      <Box sx={{overflow: "scroll", maxHeight: `90%`}}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
+      sx={{ height: "100%" }}
+    >
+      <Box sx={{ maxHeight: "95%", overflow: "scroll" }}>
         <InputLayer
           multiple
           inputValues={inputValues}
@@ -59,8 +108,19 @@ const Join = () => {
           label={label}
         />
       </Box>
-      <Box sx={{height: theme.spacing(4)}}>
-        <Button>Reset</Button>
+      <Box
+        sx={{
+          display: "flex",
+          gap: theme.spacing(2),
+          alignItems: "center",
+        }}
+      >
+        <Button variant="outlined" sx={{ flexGrow: "1" }} onClick={handleReset}>
+          Reset
+        </Button>
+        <Button sx={{ flexGrow: "1" }} onClick={handleRun}>
+          Run
+        </Button>
       </Box>
     </Box>
   );

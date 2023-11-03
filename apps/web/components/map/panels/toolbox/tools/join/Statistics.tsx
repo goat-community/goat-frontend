@@ -75,6 +75,18 @@ const Statistics = (props: StatisticsProps) => {
 
   const saveFieldKeys = useLayerHook(secondLayerId);
 
+  function checkType() {
+    return saveFieldKeys.getLayerKeys().keys.map((key) =>
+      methods
+        .filter((meth) => meth.name === method)[0]
+        .types.includes(key.type) ? (
+        <MenuItem value={key.name} key={v4()}>
+          {key.name}
+        </MenuItem>
+      ) : null,
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -118,13 +130,7 @@ const Statistics = (props: StatisticsProps) => {
                 setStatisticField(event.target.value as string);
               }}
             >
-              {secondLayerId.length
-                ? saveFieldKeys.getLayerKeys().keys.map((key) => (
-                    <MenuItem value={key.name} key={v4()}>
-                      {key.name}
-                    </MenuItem>
-                  ))
-                : null}
+              {secondLayerId.length ? checkType() : null}
             </Select>
           </FormControl>
         </Box>
