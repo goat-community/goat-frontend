@@ -10,6 +10,7 @@ import { initReactI18next, useTranslation as useTranslationOrg } from "react-i18
 import { getOptions, languages } from "./settings";
 
 const runsOnServerSide = typeof window === "undefined";
+import { useParams } from "next/navigation";
 
 //
 i18next
@@ -28,7 +29,11 @@ i18next
   });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useTranslation(lng?: string, ns?: string | string[], options?: UseTranslationOptions<any>) {
+export function useTranslation(ns?: string | string[], options?: UseTranslationOptions<any>) {
+  
+  const params = useParams();
+  const lng = typeof params.lng === "string" ? params.lng : "en";
+  
   const ret = useTranslationOrg(ns, options);
   const { i18n } = ret;
   if (runsOnServerSide && lng && i18n.resolvedLanguage !== lng) {

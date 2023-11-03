@@ -38,7 +38,7 @@ const STEPS = [
   "organization_contact",
 ];
 
-export default function OrganizationOnBoarding({ params: { lng } }) {
+export default function OrganizationOnBoarding() {
   const theme = useTheme();
   const { status, update } = useSession();
   const router = useRouter();
@@ -50,7 +50,7 @@ export default function OrganizationOnBoarding({ params: { lng } }) {
     orgIndustryOptions,
     orgSizeOptions,
     orgUseCaseOptions,
-  } = useOrganizationSetup(lng);
+  } = useOrganizationSetup();
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [responseResult, setResponseResult] = useState<ResponseResult>({

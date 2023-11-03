@@ -8,6 +8,7 @@ import type { ContentActions } from "@/types/common";
 import { Box, Grid, Skeleton } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslation } from "@/i18n/client";
 
 interface ProjectSectionProps {
   projects: Project[];
@@ -24,6 +25,8 @@ const ProjectSection = (props: ProjectSectionProps) => {
     closeMoreMenu,
     openMoreMenu,
   } = useContentMoreMenu();
+
+  const {t} = useTranslation("dashboard");
   const [openProjectModal, setOpenProjectModal] = useState(false);
   return (
     <Box>
@@ -85,7 +88,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
               onClick={() => {
                 setOpenProjectModal(true);
               }}
-              tooltip="Create New Project"
+              tooltip={t("home.create_new_project")}
               backgroundImage="https://assets.plan4better.de/img/goat_new_project_artwork.png"
             />
           )}

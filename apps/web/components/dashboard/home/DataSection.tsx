@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
+import { useTranslation } from "@/i18n/client";
 
 interface DataSectionProps {
   layers: Layer[];
@@ -23,6 +24,7 @@ interface DataSectionProps {
 
 const DataSection = (props: DataSectionProps) => {
   const { layers, isLoading } = props;
+  const {t} = useTranslation("dashboard");
 
   const {
     moreMenuOptions,
@@ -58,7 +60,7 @@ const DataSection = (props: DataSectionProps) => {
           mb: 2,
         }}
       >
-        <Typography variant="h6">Recent Datasets</Typography>
+        <Typography variant="h6">{t("home.recent_datasets")}</Typography>
         <Button
           variant="text"
           size="small"
@@ -70,7 +72,7 @@ const DataSection = (props: DataSectionProps) => {
             borderRadius: 0,
           }}
         >
-          See All
+          {t("home.see_all")}
         </Button>
       </Box>
       <Divider sx={{ mb: 4 }} />
@@ -109,7 +111,7 @@ const DataSection = (props: DataSectionProps) => {
           ) : (
             <EmptyCard
               onClick={() => setOpenDatasetUploadModal(true)}
-              tooltip="Add new dataset"
+              tooltip={t("home.create_new_dataset")}
               backgroundImage="https://assets.plan4better.de/img/grid_thumbnail.png"
             />
           )}

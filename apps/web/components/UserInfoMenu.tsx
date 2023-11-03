@@ -16,10 +16,12 @@ import { useState } from "react";
 
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useOrganization } from "@/lib/api/users";
+import { useTranslation } from "@/i18n/client";
 
 export default function UserInfoMenu() {
   const { data: session } = useSession();
   const theme = useTheme();
+  const { t } = useTranslation("dashboard");
   const [open, setOpen] = useState(false);
   const { organization } = useOrganization();
   return (
@@ -97,7 +99,7 @@ export default function UserInfoMenu() {
                       color="inherit"
                       fontWeight="bold"
                     >
-                      Logout
+                      {t("logout")}
                     </Typography>
                   }
                 />

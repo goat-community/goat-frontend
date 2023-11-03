@@ -1,37 +1,53 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Source, Layer as MapLayer } from "react-map-gl";
 import type { XYZ_Layer } from "@/types/map/layer";
 import { useSelector } from "react-redux";
 import type { IStore } from "@/types/store";
-import { FILTERING } from "@/lib/api/apiConstants";
-import { and_operator, or_operator } from "@/lib/utils/filtering_cql";
+import { and_operator, or_operator } from "@/lib/utils/filtering/filtering_cql";
 import type { LayerProps } from "react-map-gl";
 import { v4 } from "uuid";
 
 interface LayersProps {
   layers: XYZ_Layer[];
   addLayer: (newLayer) => void;
+  projectId: string;
+  filters: string[];
 }
 
 const Layers = (props: LayersProps) => {
-  const sampleLayerID = "user_data.e66f60f87ec248faaebb8a8c64c29990";
+  const sampleLayerID = "user_data.84ca9acb3f30491d82ce938334164496";
+  const { layers, addLayer, filters } = props;
 
-  const { filters, logicalOperator } = useSelector(
-    (state: IStore) => state.mapFilters,
+  const layerUrl = `${process.env.NEXT_PUBLIC_GEOAPI_URL}/collections/${sampleLayerID}/tiles/{z}/{x}/{y}`;
+
+  const availableFilters = filters.filter(
+    (filterQuery) => filterQuery !== "{}",
   );
 
-  const projectLayers = useSelector(
-    (state: IStore) => state.layers.layers
-  )
+  const { logicalOperator } = useSelector((state: IStore) => state.mapFilters);
 
-  const { layers, addLayer } = props;
+  const getQuery = useCallback(() => {
+    if (availableFilters.length) {
+      if (availableFilters.length === 1) {
+        return availableFilters[0];
+      } else {
+        if (logicalOperator === "match_all_expressions") {
+          return and_operator(availableFilters);
+        } else {
+          return or_operator(availableFilters);
+        }
+      }
+    }
+  }, [availableFilters, logicalOperator]);
 
-  useEffect(() => {
+  const filterJson = getQuery();
+
+  function modifyLayer() {
     const filterJson = getQuery();
     if (filterJson) {
-      const filteredLayerSource = `${FILTERING(
-        sampleLayerID,
-      )}?filter=${encodeURIComponent(filterJson)}`;
+      const filteredLayerSource = `${layerUrl}?filter=${encodeURIComponent(
+        filterJson,
+      )}`;
       addLayer([
         {
           id: "layer1",
@@ -43,42 +59,27 @@ const Layers = (props: LayersProps) => {
       addLayer([
         {
           id: "layer1",
-          sourceUrl: FILTERING(sampleLayerID),
+          sourceUrl: layerUrl,
           color: "#FF0000",
         },
       ]);
     }
 
-    if (!Object.keys(filters).length) {
+    if (!availableFilters.length) {
       addLayer([
         {
           id: "layer1",
-          sourceUrl: FILTERING(sampleLayerID),
+          sourceUrl: layerUrl,
           color: "#FF0000",
         },
       ]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
+  }
 
   useEffect(() => {
-    console.log(projectLayers)
-  }, [projectLayers])
-  
-
-  function getQuery() {
-    if (Object.keys(filters).length) {
-      if (Object.keys(filters).length === 1) {
-        return filters[Object.keys(filters)[0]];
-      } else {
-        if (logicalOperator === "match_all_expressions") {
-          return and_operator(Object.keys(filters).map((key) => filters[key]));
-        } else {
-          return or_operator(Object.keys(filters).map((key) => filters[key]));
-        }
-      }
-    }
-  }
+    modifyLayer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterJson]);
 
   const clusterLayer: LayerProps = {
     id: "clusters",

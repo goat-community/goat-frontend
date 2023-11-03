@@ -1,0 +1,59 @@
+{
+  "last_saved": "Zuletzt gespeichert",
+  "search": "Suche",
+  "close": "Schließen",
+  "help": "Hilfe",
+  "controls": {
+    "enter_an_address": "Geben Sie eine Adresse oder Koordinaten ein"
+  },
+  "panels": {
+    "layers": {
+      "layers": "Ebenen",
+      "add_layer": "Ebene hinzufügen",
+      "all": "Alle",
+      "add_new_layer": "Neue Ebene hinzufügen",
+      "latest_layers": "Neueste Ebenen",
+      "catalogue": "Katalog",
+      "apply": "Anwenden",
+      "purchase_and_apply": "Kaufen und Anwenden"
+    },
+    "legend": {
+      "legend": "Legende"
+    },
+    "charts": {
+      "charts": "Diagramme"
+    },
+    "tools": {
+      "tools": "Werkzeuge"
+    },
+    "filter": {
+      "filter": "Filter",
+      "match_all_expressions": "Alle Ausdrücke abgleichen",
+      "match_at_least_one_expressions": "Mindestens einen Ausdruck abgleichen",
+      "expression": "Ausdruck",
+      "select_attribute": "Attribut auswählen",
+      "select_an_expression": "Einen Ausdruck auswählen",
+      "and": "Und",
+      "or": "Oder",
+      "delete_expression": "Ausdruck löschen",
+      "duplicate": "Duplizieren",
+      "add_expression": "Ausdruck hinzufügen",
+      "clear_filter": "Filter zurücksetzen",
+      "message": "Führen Sie gezielte Datenanalysen durch. Filtern Sie Ebenen, wenden Sie einen Ausdruck an und beschränken Sie die angezeigten Daten. Sortieren Sie Daten und verbergen Sie Daten, die nicht Ihren Kriterien entsprechen. Erfahren Sie mehr",
+      "filter_your_data": "Ihre Daten filtern"
+    },
+    "scenario": {
+      "scenario": "Szenario"
+    },
+    "layer_design": {
+      "layer_design": "Ebenen-Design",
+      "simple": "Einfach",
+      "smart": "Intelligent",
+      "reset": "Zurücksetzen",
+      "save_as": "Speichern als",
+      "field": "Feld",
+      "select_field": "Wählen Sie ein Feld aus, das die anzuzeigenden Daten enthält",
+      "select_option": "Option auswählen"
+    }
+  }
+}

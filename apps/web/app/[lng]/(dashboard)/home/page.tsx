@@ -16,8 +16,11 @@ import DataSection from "@/components/dashboard/home/DataSection";
 import { useLayers } from "@/lib/api/layers";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useTranslation } from "@/i18n/client";
 
 const Home = () => {
+  const { t } = useTranslation("dashboard");
+
   const queryParams: GetContentQueryParams = {
     order: "descendent",
     order_by: "updated_at",
@@ -49,7 +52,7 @@ const Home = () => {
               alignItems: "center",
             }}
           >
-            <Typography variant="h6">Recent Projects</Typography>
+            <Typography variant="h6">{t("home.recent_project")}</Typography>
             <Button
               variant="text"
               size="small"
@@ -64,7 +67,7 @@ const Home = () => {
                 borderRadius: 0,
               }}
             >
-              See All
+              {t("home.see_all")}
             </Button>
           </Box>
           <Divider sx={{ mb: 4 }} />

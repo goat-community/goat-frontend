@@ -9,12 +9,14 @@ import Map, { MapProvider, Layer, Source } from "react-map-gl";
 import Layers from "@/components/map/Layers";
 import MobileDrawer from "@/components/map/panels/MobileDrawer";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { IStore } from "@/types/store";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 import Header from "@/components/header/Header";
 import { useProject } from "@/lib/api/projects";
+import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
+import { setMapLoading } from "@/lib/store/map/slice";
 
 const sidebarWidth = 48;
 const toolbarHeight = 52;
@@ -25,21 +27,34 @@ export default function MapPage({ params: { projectId } }) {
   );
   const { project } = useProject(projectId);
   const mapLayer = useSelector(selectMapLayer);
+  const dispatch = useDispatch();
+  const { layerToBeFiltered } = useSelector(
+    (state: IStore) => state.mapFilters,
+  );
+
+  const { getFilterQueries } = useFilterExpressions(projectId);
+
+  const { data: filters } = getFilterQueries(layerToBeFiltered);
 
   const [layers, setLayers] = useState<XYZ_Layer[] | []>([
     {
       id: "layer1",
       sourceUrl:
-        "https://geoapi.goat.dev.plan4better.de/collections/user_data.e66f60f87ec248faaebb8a8c64c29990/tiles/{z}/{x}/{y}",
+        "https://geoapi.goat.dev.plan4better.de/collections/user_data.84ca9acb3f30491d82ce938334164496/tiles/{z}/{x}/{y}",
       color: "#FF0000",
     },
   ]);
 
   const theme = useTheme();
 
-  const addLayer = useCallback((newLayer: XYZ_Layer[]) => {
-    setLayers(newLayer);
-  }, []);
+  const addLayer = useCallback(
+    (newLayer: XYZ_Layer[]) => {
+      dispatch(setMapLoading(false));
+      setLayers(newLayer);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filters],
+  );
 
   return (
     <MapProvider>
@@ -91,7 +106,12 @@ export default function MapPage({ params: { projectId } }) {
               </Source>
             ) : null}
             {/* todo check */}
-            <Layers layers={layers} addLayer={addLayer} />
+            <Layers
+              layers={layers}
+              filters={filters}
+              addLayer={addLayer}
+              projectId={projectId}
+            />
           </Map>
         </Box>
       </Box>

@@ -3,8 +3,6 @@
 import Container from "@/components/map/panels/Container";
 import { useState } from "react";
 
-import { useGetKeys } from "@/hooks/map/FilteringHooks";
-
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Icon } from "@p4b/ui/components/Icon";
 import {
@@ -21,16 +19,7 @@ import {
   Radio,
 } from "@mui/material";
 import Exppression from "./Exppression";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setLogicalOperator,
-  setFilters,
-  addExpression,
-  clearExpression,
-  removeFilter,
-  removeExpressionById,
-  duplicateExpression,
-} from "@/lib/store/mapFilters/slice";
+import { useSelector, useDispatch } from "react-redux";
 import { v4 } from "uuid";
 import type { IStore } from "@/types/store";
 import type { SelectChangeEvent } from "@mui/material";
@@ -38,16 +27,38 @@ import type { MapSidebarItem } from "@/types/map/sidebar";
 
 import HistogramSlider from "./histogramSlider/HistogramSlider";
 import { histogramData } from "@/public/assets/data/histogramSample";
+import { useLayerHook } from "@/hooks/map/LayerHooks";
+import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
+import { useTranslation } from "@/i18n/client";
+import { setMapLoading } from "@/lib/store/map/slice";
 
 interface FilterPanelProps {
   setActiveRight: (item: MapSidebarItem | undefined) => void;
+  projectId: string;
 }
 
 const FilterPanel = (props: FilterPanelProps) => {
-  const { setActiveRight } = props;
+  const { setActiveRight, projectId } = props;
+  const { t } = useTranslation("maps");
 
   const dispatch = useDispatch();
-  const { expressions } = useSelector((state: IStore) => state.mapFilters);
+
+  const {
+    createExpression,
+    updateProjectLayerQuery,
+    deleteAnExpression,
+    duplicateAnExpression,
+    getFilterQueryExpressions
+  } = useFilterExpressions(projectId);
+
+  const { layerToBeFiltered } = useSelector(
+    (state: IStore) => state.mapFilters,
+  );
+
+  const { data: updatedData, mutate } = getFilterQueryExpressions(
+    layerToBeFiltered,
+  );
+
   const [logicalOperator, setLogicalOperatorVal] = useState<string>(
     "match_all_expressions",
   );
@@ -62,58 +73,58 @@ const FilterPanel = (props: FilterPanelProps) => {
       distance: 1200,
     },
   });
-  const sampleLayerID = "user_data.8c4ad0c86a2d4e60b42ad6fb8760a76e";
-
-  const { keys } = useGetKeys({ layer_id: sampleLayerID });
+  const sampleLayerID = "user_data.4d76705b973643a393dffd14e10f6604";
+  
+  const { getLayerKeys } = useLayerHook(sampleLayerID);
+  const { keys } = getLayerKeys();
   const theme = useTheme();
 
   const logicalOperatorOptions: { label: React.ReactNode; value: string }[] = [
     {
-      label: "Match all expressions",
+      label: t("panels.filter.match_all_expressions"),
       value: "match_all_expressions",
     },
     {
-      label: "Match at least one expression",
+      label: t("panels.filter.match_at_least_one_expressions"),
       value: "match_at_least_one_expression",
     },
   ];
 
-  function createExpression() {
-    dispatch(setLogicalOperator("match_all_expressions"));
-    dispatch(
-      addExpression({
-        id: v4(),
-        attribute: null,
-        expression: null,
-        value: null,
-        firstInput: "",
-        secondInput: "",
-      }),
-    );
+  const createAnExpression = async () => {
+    await createExpression(projectId, layerToBeFiltered);
+    mutate();
+    // dispatch(setMapLoading(true))
   }
 
   function handleOperatorChange(event: SelectChangeEvent<string>) {
     setLogicalOperatorVal(event.target.value);
-    dispatch(setLogicalOperator(event.target.value));
   }
 
-  function cleanExpressions() {
-    dispatch(clearExpression());
-    dispatch(setFilters({}));
-  }
+  const cleanExpressions = async () => {
+    await updateProjectLayerQuery(
+      layerToBeFiltered,
+      projectId,
+      `{"query": {} }`,
+    );
+    mutate();
+    dispatch(setMapLoading(true))
+  };
 
-  function deleteOneExpression(id: string) {
-    dispatch(removeExpressionById(id));
-    dispatch(removeFilter(id));
-  }
+  const deleteOneExpression = async (id: string) => {
+    await deleteAnExpression(id, projectId, layerToBeFiltered);
+    mutate();
+    dispatch(setMapLoading(true))
+  };
 
-  function duplicateOneExpression(id: string) {
-    dispatch(duplicateExpression(id));
+  const duplicateOneExpression = async (id: string) => {
+    await duplicateAnExpression(id, projectId, layerToBeFiltered);
+    mutate();
+    dispatch(setMapLoading(true))
   }
 
   return (
     <Container
-      title="Filter"
+      title={t("panels.filter.filter")}
       close={setActiveRight}
       body={
         <>
@@ -157,7 +168,7 @@ const FilterPanel = (props: FilterPanelProps) => {
               </RadioGroup>
             </Card>
 
-            {expressions && expressions.length > 1 ? (
+            {updatedData && updatedData.length > 1 ? (
               <>
                 <Typography
                   variant="body2"
@@ -167,7 +178,7 @@ const FilterPanel = (props: FilterPanelProps) => {
                     fontWeight: "600",
                   }}
                 >
-                  Filter
+                  {t("panels.filter.filter")}
                 </Typography>
                 <Select
                   sx={{
@@ -187,13 +198,12 @@ const FilterPanel = (props: FilterPanelProps) => {
                 </Select>
               </>
             ) : null}
-
-            {expressions.length ? (
-              expressions.map((expression, indx) => (
+            {updatedData && updatedData.length ? (
+              updatedData.map((expression, indx) => (
                 <Exppression
-                  isLast={indx + 1 !== expressions.length}
+                  isLast={indx + 1 !== updatedData.length}
                   logicalOperator={logicalOperator}
-                  id={`${indx + 1}`}
+                  id={expression.id}
                   expression={expression}
                   deleteOneExpression={deleteOneExpression}
                   duplicateExpression={duplicateOneExpression}
@@ -217,7 +227,7 @@ const FilterPanel = (props: FilterPanelProps) => {
                       padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
                     }}
                   >
-                    <Typography variant="body1">Filter your data</Typography>
+                    <Typography variant="body1">{t("panels.filter.filter_your_data")}</Typography>
                     <Typography
                       sx={{
                         letterSpacing: "0.15px",
@@ -230,9 +240,7 @@ const FilterPanel = (props: FilterPanelProps) => {
                       }}
                       variant="subtitle2"
                     >
-                      Perform targeted data analysis. Filter layers, apply an
-                      expression and narrow down data displayed. Sort data and
-                      hide data that does not match your criteria. Learn more
+                      {t("panels.filter.message")}
                     </Typography>
                   </Box>
                 </Card>
@@ -246,11 +254,10 @@ const FilterPanel = (props: FilterPanelProps) => {
               distance={histogramState.data.distance}
               data={histogramState.data.data}
               colors={{
-                in: '#99ccc7',
-                out: '#cceae8',
+                in: "#99ccc7",
+                out: "#cceae8",
               }}
               onChange={(value: [number, number]) => {
-                console.log(value)
                 histogramState.value = value;
                 setHistogramState(histogramState);
               }}
@@ -260,12 +267,12 @@ const FilterPanel = (props: FilterPanelProps) => {
                 width: "100%",
                 marginTop: theme.spacing(4),
               }}
-              onClick={createExpression}
+              onClick={createAnExpression}
             >
-              Add Expression
+              {t("panels.filter.add_expression")}
             </Button>
           </div>
-          {expressions && expressions.length ? (
+          {updatedData && updatedData.length ? (
             <Button
               color="secondary"
               sx={{
@@ -274,7 +281,7 @@ const FilterPanel = (props: FilterPanelProps) => {
               }}
               onClick={cleanExpressions}
             >
-              Clear Filter
+              {t("panels.filter.clear_filter")}
             </Button>
           ) : null}
         </>

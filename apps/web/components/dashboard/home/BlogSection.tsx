@@ -12,6 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useTranslation } from "@/i18n/client";
 
 type BlogPost = {
   title: string;
@@ -53,6 +54,8 @@ const blogPosts: BlogPost[] = [
 const BlogSection = () => {
   const isLoading = false;
   const theme = useTheme();
+  const { t } = useTranslation("dashboard");
+
   return (
     <Box>
       <Box
@@ -63,7 +66,7 @@ const BlogSection = () => {
           mb: 2,
         }}
       >
-        <Typography variant="h6">Explore</Typography>
+        <Typography variant="h6">{t("home.explore")}</Typography>
         <Button
           variant="text"
           size="small"
@@ -77,7 +80,7 @@ const BlogSection = () => {
             borderRadius: 0,
           }}
         >
-          Visit Blog
+          {t("home.visit_blog")}
         </Button>
       </Box>
       <Divider sx={{ mb: 4 }} />

@@ -19,7 +19,7 @@ import { v4 } from "uuid";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { filterSearch } from "@/lib/utils/helpers";
-
+import { useTranslation } from "@/i18n/client";
 import type { ChangeEvent } from "react";
 
 const ModalBox = styled(Box)(({ theme }) => ({
@@ -36,6 +36,7 @@ const ModalBox = styled(Box)(({ theme }) => ({
 
 const AddLayer = () => {
   const theme = useTheme();
+  const { t } = useTranslation("maps");
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState<string>("");
@@ -114,7 +115,7 @@ const AddLayer = () => {
         onClick={() => setOpen(true)}
         sx={{ width: "100%", marginBottom: theme.spacing(4) }}
       >
-        + Add layer
+        + {t("panels.layers.add_layer")}
       </Button>
       <Modal
         open={open}
@@ -125,7 +126,7 @@ const AddLayer = () => {
         <Fade in={open}>
           <ModalBox>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Add New Layer
+            {t("panels.layers.add_new_layer")}
             </Typography>
             <FormControl
               sx={{ width: "100%", marginBottom: theme.spacing(3) }}
@@ -133,7 +134,7 @@ const AddLayer = () => {
               size="small"
             >
               <InputLabel htmlFor="outlined-adornment-password">
-                Search
+              {t("search")}
               </InputLabel>
               <OutlinedInput
                 id="outlined-adornment-password"
@@ -151,14 +152,14 @@ const AddLayer = () => {
                 onChange={(
                   e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
                 ) => setSearch(e.target.value)}
-                label="Search"
+                label={t("search")}
               />
             </FormControl>
             {search === "" ? (
               <>
                 <Box>
                   <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Latest Layers
+                  {t("panels.layers.latest_layers")}
                   </Typography>
                   <Box>
                     <Swiper
@@ -210,7 +211,7 @@ const AddLayer = () => {
                                   fontSize: "10px",
                                 }}
                               >
-                                Apply
+                                {t("panels.layers.apply")}
                               </Button>
                             </CardContent>
                           </Card>
@@ -221,7 +222,7 @@ const AddLayer = () => {
                 </Box>
                 <Box>
                   <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    Catalogue
+                  {t("panels.layers.catalogue")}
                   </Typography>
                 </Box>
                 <Box>
@@ -355,7 +356,7 @@ const AddLayer = () => {
                             fontSize: "10px",
                           }}
                         >
-                          Apply
+                          {t("panels.layers.apply")}
                         </Button>
                       ) : (
                         <Button
@@ -364,7 +365,7 @@ const AddLayer = () => {
                             fontSize: "10px",
                           }}
                         >
-                          Purchase & Apply
+                          {t("panels.layers.purchase_and_apply")}
                         </Button>
                       )}
                     </CardContent>
@@ -377,7 +378,7 @@ const AddLayer = () => {
               onClick={() => setOpen(false)}
               sx={{ marginTop: "20px", float: "right" }}
             >
-              Close
+              {t("close")}
             </Button>
           </ModalBox>
         </Fade>

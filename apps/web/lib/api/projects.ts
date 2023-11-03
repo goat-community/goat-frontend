@@ -1,12 +1,14 @@
+"use client";
+
 import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type {
   ProjectPaginated,
-  ProjectLayers,
   Project,
   PostProject,
 } from "@/lib/validations/project";
 import type { GetContentQueryParams } from "@/lib/validations/common";
+import type { Layer } from "@/lib/validations/layer";
 
 export const PROJECTS_API_BASE_URL = new URL(
   "api/v2/project",
@@ -61,7 +63,7 @@ export const createProject = async (
 
 export const getProjectLayers = async (id: string) => {
   try {
-    const data: Promise<ProjectLayers[]> = (
+    const data: Promise<Layer[]> = (
       await fetchWithAuth(`${PROJECTS_API_BASE_URL}/${id}/layer`)
     ).json();
     return data;

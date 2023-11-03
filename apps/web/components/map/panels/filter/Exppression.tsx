@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useMemo } from "react";
 import { comparerModes } from "@/public/assets/data/comparers_filter";
 
 import FilterOptionField from "./FilterOptionField";
@@ -18,12 +20,13 @@ import {
   InputLabel,
 } from "@mui/material";
 import type { Expression } from "@/types/map/filtering";
-import { useDispatch } from "react-redux";
-import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
+import { useSelector } from "react-redux";
+import { useTranslation } from "@/i18n/client";
+import CustomMenu from "@/components/common/CustomMenu";
+// import { addExpression, removeFilter } from "@/lib/store/mapFilters/slice";
 import type { LayerPropsMode } from "@/types/map/filtering";
 import type { SelectChangeEvent } from "@mui/material";
-
-import CustomMenu from "@/components/common/CustomMenu";
+import type { IStore } from "@/types/store";
 
 interface ExpressionProps {
   isLast: boolean;
@@ -35,20 +38,36 @@ interface ExpressionProps {
   keys: LayerPropsMode[];
 }
 
-const Exppression = (props: ExpressionProps) => {
-  const { isLast, expression, logicalOperator, id, keys, deleteOneExpression, duplicateExpression } =
-    props;
-  const [attributeSelected, setAttributeSelected] = useState<string | string[]>(
-    expression.attribute ? expression.attribute.name : "",
-  );
-  const [comparerSelected, setComparerSelected] = useState<string | string[]>(
-    expression.expression ? expression.expression.value : "",
-  );
+interface ExpressionAttributesProps {
+  keys: LayerPropsMode[];
+  attributeSelected: string | string[];
+  setAttributeSelected: (value: string | string[]) => void;
+  comparerSelected: string | string[];
+  setComparerSelected: (value: string | string[]) => void;
+  expression: Expression;
+  children: React.ReactNode;
+  deleteOneExpression: (value: string) => void;
+  duplicateExpression: (value: string) => void;
+}
+
+const ExpressionAttributes = (props: ExpressionAttributesProps) => {
+  const {
+    keys,
+    attributeSelected,
+    setComparerSelected,
+    comparerSelected,
+    expression,
+    setAttributeSelected,
+    children,
+    deleteOneExpression,
+    duplicateExpression,
+  } = props;
+  const { loading: mapLoading } = useSelector((state: IStore) => state.map);
   const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
 
-  const open = Boolean(anchorEl);
-  const dispatch = useDispatch();
   const theme = useTheme();
+  const { t } = useTranslation("maps");
+  const open = Boolean(anchorEl);
 
   function getFeatureAttribute(type: string | string[]) {
     const valueToFilter = keys.filter((key) => key.name === type);
@@ -58,31 +77,31 @@ const Exppression = (props: ExpressionProps) => {
     return valueToFilter[0].type;
   }
 
-  function handleAttributeSelect(event: SelectChangeEvent<string>) {
-    const newExpression = { ...expression };
-    //todo: fix type error here
-    // newExpression.attribute = {
-    //   type: getFeatureAttribute(event.target.value),
-    //   name: event.target.value,
-    // };
-    setAttributeSelected(event.target.value);
-    dispatch(addExpression(newExpression));
-  }
-
   function handleComparerSelect(event: SelectChangeEvent<string>) {
     const newExpression = { ...expression };
     newExpression.expression = getComparer(event.target.value)[0];
     newExpression.firstInput = "";
     newExpression.secondInput = "";
     setComparerSelected(event.target.value);
-    dispatch(addExpression(newExpression));
-    dispatch(removeFilter(newExpression.id));
   }
 
   function getComparer(type: string | string[]) {
-    return comparerModes[getFeatureAttribute(attributeSelected)].filter(
-      (compAttribute) => type === compAttribute.value,
-    );
+    if (attributeSelected && keys.length) {
+      return comparerModes[getFeatureAttribute(attributeSelected)].filter(
+        (compAttribute) => type === compAttribute.value,
+      );
+    }
+
+    return [];
+  }
+
+  function handleAttributeSelect(event: SelectChangeEvent<string>) {
+    // const newExpression = { ...expression };
+    // newExpression.attribute = {
+    //   type: getFeatureAttribute(event.target.value),
+    //   name: event.target.value,
+    // };
+    setAttributeSelected(event.target.value);
   }
 
   function toggleMorePopover() {
@@ -108,7 +127,7 @@ const Exppression = (props: ExpressionProps) => {
               fontWeight: "600",
             }}
           >
-            Expression
+            {t("panels.filter.expression")}
           </Typography>
           <Box sx={{ position: "relative" }}>
             <Button
@@ -118,6 +137,7 @@ const Exppression = (props: ExpressionProps) => {
               aria-expanded={open ? "true" : undefined}
               onClick={toggleMorePopover}
               variant="text"
+              disabled={mapLoading}
             >
               <Icon iconName={ICON_NAME.ELLIPSIS} />
             </Button>
@@ -125,9 +145,11 @@ const Exppression = (props: ExpressionProps) => {
               <CustomMenu close={toggleMorePopover}>
                 <MenuList>
                   <MenuItem onClick={() => deleteOneExpression(expression.id)}>
-                    Delete Expression
+                    {t("panels.filter.delete_expression")}
                   </MenuItem>
-                  <MenuItem onClick={() => duplicateExpression(expression.id)}>Duplicate</MenuItem>
+                  <MenuItem onClick={() => duplicateExpression(expression.id)}>
+                    {t("panels.filter.duplicate")}
+                  </MenuItem>
                 </MenuList>
               </CustomMenu>
             ) : null}
@@ -141,18 +163,21 @@ const Exppression = (props: ExpressionProps) => {
           }}
         >
           <InputLabel id="demo-simple-select-label">
-            Select attribute
+            {t("panels.filter.select_attribute")}
           </InputLabel>
           <Select
-            label="Select attribute"
+            label={t("panels.filter.select_attribute")}
+            disabled={!keys.length || mapLoading}
             defaultValue={attributeSelected ? attributeSelected : ""}
             onChange={handleAttributeSelect}
           >
-            {keys.map((key) => (
-              <MenuItem key={v4()} value={key.name}>
-                {key.name}
-              </MenuItem>
-            ))}
+            {keys.length
+              ? keys.map((key) => (
+                  <MenuItem key={v4()} value={key.name}>
+                    {key.name}
+                  </MenuItem>
+                ))
+              : null}
           </Select>
         </FormControl>
         <FormControl
@@ -163,24 +188,85 @@ const Exppression = (props: ExpressionProps) => {
           }}
         >
           <InputLabel id="demo-simple-select-label">
-            Select an expression
+            {t("panels.filter.select_an_expression")}
           </InputLabel>
           <Select
-            label="Select an expression"
+            label={t("panels.filter.select_an_expression")}
+            disabled={!keys.length || mapLoading}
             defaultValue={comparerSelected ? comparerSelected : ""}
-            disabled={attributeSelected.length ? false : true}
             onChange={handleComparerSelect}
           >
-            {attributeSelected.length &&
-              comparerModes[getFeatureAttribute(attributeSelected)].map(
-                (key) => (
-                  <MenuItem key={v4()} value={key.value}>
-                    {key.label}
-                  </MenuItem>
-                ),
-              )}
+            {keys.length
+              ? attributeSelected.length &&
+                comparerModes[getFeatureAttribute(attributeSelected)].map(
+                  (key) => (
+                    <MenuItem key={v4()} value={key.value}>
+                      {key.label}
+                    </MenuItem>
+                  ),
+                )
+              : null}
           </Select>
         </FormControl>
+        {children}
+      </Box>
+    </>
+  );
+};
+
+const Exppression = (props: ExpressionProps) => {
+  const {
+    isLast,
+    expression,
+    logicalOperator,
+    id,
+    keys,
+    deleteOneExpression,
+    duplicateExpression,
+  } = props;
+  console.log(expression);
+  const memoExpression = useMemo(() => expression, [expression]);
+  const [attributeSelected, setAttributeSelected] = useState<string | string[]>(
+    memoExpression.attribute ? memoExpression.attribute : "",
+  );
+  console.log(memoExpression.attribute);
+  const [comparerSelected, setComparerSelected] = useState<string | string[]>(
+    memoExpression.expression ? memoExpression.expression.value : "",
+  );
+
+  const theme = useTheme();
+  const { t } = useTranslation("maps");
+
+  function getFeatureAttribute(type: string | string[]) {
+    const valueToFilter = keys.filter((key) => key.name === type);
+    if (valueToFilter.length && valueToFilter[0].type === "string") {
+      return "text";
+    }
+    return valueToFilter.length && valueToFilter[0].type;
+  }
+
+  function getComparer(type: string | string[]) {
+    if (attributeSelected && keys.length) {
+      return comparerModes[getFeatureAttribute(attributeSelected)].filter(
+        (compAttribute) => type === compAttribute.value,
+      );
+    }
+
+    return [];
+  }
+
+  return (
+    <>
+      <ExpressionAttributes
+        keys={keys}
+        attributeSelected={attributeSelected}
+        setComparerSelected={setComparerSelected}
+        comparerSelected={comparerSelected}
+        expression={expression}
+        setAttributeSelected={setAttributeSelected}
+        deleteOneExpression={deleteOneExpression}
+        duplicateExpression={duplicateExpression}
+      >
         {attributeSelected.length ? (
           <>
             {comparerSelected.length ? (
@@ -194,12 +280,12 @@ const Exppression = (props: ExpressionProps) => {
                   typeof attributeSelected === "string" ? attributeSelected : ""
                 }
                 expressionId={id}
-                expression={expression}
+                expression={memoExpression}
               />
             ) : null}
           </>
         ) : null}
-      </Box>
+      </ExpressionAttributes>
       {isLast ? (
         <Box
           sx={{
@@ -209,7 +295,11 @@ const Exppression = (props: ExpressionProps) => {
           }}
         >
           <Chip
-            label={logicalOperator === "match_all_expressions" ? "And" : "Or"}
+            label={
+              logicalOperator === "match_all_expressions"
+                ? t("panels.filter.and")
+                : t("panels.filter.or")
+            }
           />
         </Box>
       ) : null}

@@ -14,11 +14,11 @@ interface Extent {
 
 export interface Expression {
   id: string;
-  attribute: LayerPropsMode | null;
+  attribute: string | null;
   expression: ComparerMode | null;
   value: (string | number | number[]) | null;
-  firstInput: string;
-  secondInput: string;
+  firstInput?: string;
+  secondInput?: string;
 }
 
 export interface LayerData {

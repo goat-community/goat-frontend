@@ -67,8 +67,8 @@ const orgUseCase = [
   "other",
 ];
 
-export const useOrganizationSetup = (lng: string) => {
-  const { t } = useTranslation(lng, ["onboarding", "countries", "common"]);
+export const useOrganizationSetup = () => {
+  const { t } = useTranslation(["onboarding", "countries", "common"]);
 
   const countriesOptions = useMemo(() => {
     const filtered = ["EU"];

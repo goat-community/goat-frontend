@@ -8,6 +8,7 @@ import TileGrid from "@/components/dashboard/common/TileGrid";
 import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
+import { useTranslation } from "@/i18n/client";
 
 const Projects = () => {
   const [queryParams, setQueryParams] = useState<GetProjectsQueryParams>({
@@ -15,6 +16,7 @@ const Projects = () => {
     order_by: "updated_at",
   });
   const [view, setView] = useState<"list" | "grid">("grid");
+  const { t } = useTranslation("dashboard");
 
   const {
     projects,
@@ -32,7 +34,7 @@ const Projects = () => {
           mb: 8,
         }}
       >
-        <Typography variant="h6">Projects</Typography>
+        <Typography variant="h6">{t("projects.projects")}</Typography>
         <Button
           disableElevation={true}
           startIcon={
@@ -40,7 +42,7 @@ const Projects = () => {
           }
           href="/projects"
         >
-          New project
+          {t("projects.new_project")}
         </Button>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>

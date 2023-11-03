@@ -32,7 +32,7 @@ import NextLink from "next/link";
 import { useTranslation } from "@/i18n/client";
 
 const AccountPreferences = ({ params: { lng } }) => {
-  const { t } = useTranslation(lng, "dashboard");
+  const { t } = useTranslation("dashboard");
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const theme = useTheme();
 

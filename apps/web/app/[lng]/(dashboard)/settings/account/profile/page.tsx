@@ -24,9 +24,9 @@ import { toast } from "react-toastify";
 import ConfirmModal from "@/components/modals/Confirm";
 import { signOut } from "next-auth/react";
 
-const Profile = ({ params: { lng } }) => {
+const Profile = () => {
   const theme = useTheme();
-  const { t } = useTranslation(lng, ["dashboard", "common"]);
+  const { t } = useTranslation(["dashboard", "common"]);
   const { userProfile, isLoading } = useUserProfile();
   const [isProfileUpdateBusy, setIsProfileUpdateBusy] =
     useState<boolean>(false);

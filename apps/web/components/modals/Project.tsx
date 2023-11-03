@@ -81,12 +81,10 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({
   }, [watchFormValues]);
   const onSubmit = async () => {
     const values= getValues();
-    console.log(values);
     try {
       const project = await createProject(values);
       const { id } = project;
       if (id) {
-        console.log(id);
         router.push(`/map/${id}`);
       }
     } catch (_error) {

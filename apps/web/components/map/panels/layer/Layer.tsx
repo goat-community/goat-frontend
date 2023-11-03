@@ -1,6 +1,6 @@
 import Container from "@/components/map/panels/Container";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import {
   Card,
@@ -20,11 +20,13 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { activateLayer, deactivateLayer } from "@/lib/store/layer/slice";
 import AddLayer from "../../modals/AddLayer";
 import FilterList from "./FilterList";
+import { useTranslation } from "@/i18n/client";
+import { setLayers } from "@/lib/store/layer/slice";
+import { getProjectLayers } from "@/lib/api/projects";
 
 import type { ChangeEvent } from "react";
 import type { MapSidebarItem } from "@/types/map/sidebar";
-import type { Layer } from "@/types/map/project";
-
+import type { Layer } from "@/lib/validations/layer";
 interface LoaderCheckerProps {
   children: React.ReactNode;
   projectLayers: Layer[] | null;
@@ -46,25 +48,25 @@ const LoaderChecker = (props: LoaderCheckerProps) => {
 };
 
 interface PanelProps {
-  projectLayers: Layer[] | null;
   onCollapse?: () => void;
-  modifyProjectLayers: (value: Layer[] | undefined) => void;
   setActiveLeft: (item: MapSidebarItem | undefined) => void;
+  projectId: string;
 }
 
 const LayerPanel = ({
   setActiveLeft,
-  projectLayers,
-  modifyProjectLayers,
+  projectId
 }: PanelProps) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
 
   const [activeFilter, setActiveFilter] = useState<string>("All");
   const [searchString, setSearchString] = useState<string>("");
+  const { t } = useTranslation("maps");
+
   const [resultProjectLayers, setResultProjectLayers] = useState<
-    Layer[] | null
-  >(projectLayers);
+    Layer[]
+  >([]);
 
   function filterConditionals(layer: Layer) {
     if (["none", "All"].includes(activeFilter)) {
@@ -78,23 +80,32 @@ const LayerPanel = ({
   function changeSearch(text: string) {
     setSearchString(text);
     setResultProjectLayers(
-      filterSearch(projectLayers ? projectLayers : [], "name", text),
+      filterSearch(resultProjectLayers ? resultProjectLayers : [], "name", text),
     );
   }
 
   function toggleLayerView(checked: boolean, layer: Layer) {
-    const updatedLayers = projectLayers?.map((projLayer) =>
+    const updatedLayers = resultProjectLayers?.map((projLayer) =>
       projLayer.name === layer.name
         ? { ...projLayer, active: checked }
         : projLayer,
     );
 
     if (updatedLayers) {
-      modifyProjectLayers(updatedLayers);
       setResultProjectLayers(updatedLayers);
       dispatch(checked ? activateLayer(layer) : deactivateLayer(layer));
     }
   }
+
+  useEffect(() => {
+    getProjectLayers(projectId).then((data) => {
+      console.log(data)
+      const layers = data.map((layer: Layer) => ({ ...layer, active: false }));
+      setResultProjectLayers(layers);
+      dispatch(setLayers(layers));
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Container
@@ -112,7 +123,7 @@ const LayerPanel = ({
                 size="small"
               >
                 <InputLabel htmlFor="outlined-adornment-password">
-                  Search
+                  {t("search")}
                 </InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-password"
@@ -130,7 +141,7 @@ const LayerPanel = ({
                   onChange={(
                     e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
                   ) => changeSearch(e.target.value)}
-                  label="Search"
+                  label={t("search")}
                 />
               </FormControl>
               <Box sx={{ display: "flex", gap: theme.spacing(2) }}>
@@ -138,7 +149,7 @@ const LayerPanel = ({
                   chips={[
                     "All",
                     ...getFrequentValuesOnProperty(
-                      projectLayers ? projectLayers : [],
+                      resultProjectLayers ? resultProjectLayers : [],
                       "type",
                     ),
                   ]}
@@ -147,7 +158,7 @@ const LayerPanel = ({
                 />
               </Box>
             </Box>
-            <LoaderChecker projectLayers={projectLayers}>
+            <LoaderChecker projectLayers={resultProjectLayers}>
               {resultProjectLayers?.map((layer) =>
                 filterConditionals(layer) ? (
                   <Card

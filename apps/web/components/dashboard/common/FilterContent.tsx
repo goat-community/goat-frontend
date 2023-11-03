@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
+import { useTranslation } from "@/i18n/client";
 
 export interface FilterContentMenuProps {
   type: "project" | "layer";
@@ -26,6 +27,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
   const [layerTypes, setLayerTypes] = useState<LayerType[]>([]);
   const [filterContentMenuOpen, setFilterContentMenuOpen] =
     useState<boolean>(false);
+  const { t } = useTranslation("dashboard");
 
   //todo get tags from api
   const [tags, setTags] = useState<string[]>([]);
@@ -49,7 +51,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
         >
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body1" sx={{ pb: 4 }}>
-              Filters
+              {t("projects.filters.filter")}
             </Typography>
             {/* Clear all */}
             {tags.length > 0 ||
@@ -65,7 +67,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
                   }}
                   sx={{ cursor: "pointer", color: theme.palette.primary.main }}
                 >
-                  Clear all
+                  {t("projects.filters.clear_all")}
                 </Link>
               ))}
           </Stack>
@@ -74,7 +76,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
               <Grid item xs={12}>
                 <Stack direction="column">
                   <Typography variant="body2" gutterBottom>
-                    Layer Types
+                  {t("projects.filters.layer_types")}
                   </Typography>
                   {layerTypesArray.map((layerType, index) => (
                     <FormControlLabel

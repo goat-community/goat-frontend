@@ -98,8 +98,6 @@ const TeamModalBody = (props: TeamModalBodyProps) => {
         selectedOption &&
         selectedOption.some((vendor) => vendor.label === option.label),
     );
-
-    console.log(selectedOptions, selectedOption);
     return selectedOptions;
   };
 

@@ -37,6 +37,7 @@ import StrokeOptionSymbol from "@/components/map/panels/mapStyle/StrokeOptionSym
 import SizeOptionSymbol from "@/components/map/panels/mapStyle/SizeOptionSymbol";
 import { selectMapLayer } from "@/lib/store/styling/selectors";
 import { v4 } from "uuid";
+import { useTranslation } from "@/i18n/client";
 import type { MapSidebarItem } from "@/types/map/sidebar";
 
 interface MapStyleProps {
@@ -58,6 +59,7 @@ const layerTypes = [
 const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
   const { tabValue } = useSelector((state: IStore) => state.styling);
   const mapLayer = useSelector(selectMapLayer);
+  const { t } = useTranslation("maps");
 
   const dispatch = useAppDispatch();
 
@@ -129,13 +131,13 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
               aria-label="basic tabs example"
             >
               <Tab
-                label="SIMPLE"
+                label={t("panels.layer_design.simple")}
                 sx={{
                   width: "50%",
                 }}
               />
               <Tab
-                label="SMART"
+                label={t("panels.layer_design.smart")}
                 sx={{
                   width: "50%",
                 }}
@@ -235,7 +237,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                   width: "100%",
                 }}
               >
-                <Typography variant="body2">Field</Typography>
+                <Typography variant="body2">{t("panels.layer_design.field")}</Typography>
                 <Typography
                   color="secondary"
                   variant="caption"
@@ -244,11 +246,11 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                     paddingBottom: theme.spacing(2)
                   }}
                 >
-                  Select a field containing the data of interest to display
+                  {t("panels.layer_design.select_field")}
                 </Typography>
                 <FormControl fullWidth size="small">
-                  <InputLabel id="demo-simple-select-label">Select Option</InputLabel>
-                  <Select label="Select Option">
+                  <InputLabel id="demo-simple-select-label">{t("panels.layer_design.select_option")}</InputLabel>
+                  <Select label={t("panels.layer_design.select_option")}>
                     {layerTypes.map((type) => (
                       <MenuItem key={v4()} value={type.value}>
                         {type.label}
@@ -299,7 +301,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
             variant="outlined"
             onClick={resetStylesHandler}
           >
-            Reset
+            {t("panels.layer_design.reset")}
           </Button>
           <Button
             sx={{
@@ -319,7 +321,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
               <Icon iconName={ICON_NAME.CHEVRON_DOWN} fontSize="small" />
             }
           >
-            Save As
+            {t("panels.layer_design.save_as")}
           </Button>
         </Box>
       }

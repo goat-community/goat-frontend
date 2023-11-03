@@ -26,7 +26,7 @@ import type { ResponseResult } from "@/types/common";
 import { useTranslation } from "@/i18n/client";
 import { LoadingButton } from "@mui/lab";
 
-export default function OrganizationInviteJoin({ params: { lng, inviteId } }) {
+export default function OrganizationInviteJoin({ params: { inviteId } }) {
   const theme = useTheme();
   const [queryParams, _setQueryParams] = useState<GetInvitationsQueryParams>({
     type: "organization",
@@ -37,7 +37,7 @@ export default function OrganizationInviteJoin({ params: { lng, inviteId } }) {
   const { status, data: session, update } = useSession();
   const router = useRouter();
   const [isBusy, setIsBusy] = useState(false);
-  const { t } = useTranslation(lng, ["onboarding", "common"]);
+  const { t } = useTranslation(["onboarding", "common"]);
   const [responseResult, setResponseResult] = useState<ResponseResult>({
     message: "",
     status: undefined,
