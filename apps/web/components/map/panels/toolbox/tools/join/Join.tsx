@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import InputLayer from "@/components/map/panels/toolbox/tools/join/InputLayer";
+import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
 import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
 import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
 import { Divider, useTheme, Box, Button } from "@mui/material";
-import { SendJoinFeatureRequest } from "@/lib/api/join";
+import { SendJoinFeatureRequest } from "@/lib/api/tools";
+import { useTranslation } from "@/i18n/client";
+import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
 
-import type { PostJoin } from "@/lib/validations/join";
+import type { PostJoin } from "@/lib/validations/tools";
 
 type ColumStatisticsOperation =
   | "count"
@@ -15,7 +17,13 @@ type ColumStatisticsOperation =
   | "min"
   | "max";
 
-const Join = () => {
+interface JoinProps {
+  projectId: string;
+}
+
+const Join = (props: JoinProps) => {
+  const { projectId } = props;
+
   const [inputValues, setInputValues] = useState<string | string[]>(["", ""]);
   const [firstField, setFirstField] = useState<string | undefined>(undefined);
   const [secondField, setSecondField] = useState<string | undefined>(undefined);
@@ -26,8 +34,13 @@ const Join = () => {
     undefined,
   );
   const [label, setLabel] = useState<string | undefined>(undefined);
+  const [outputName, setOutputName] = useState<string | undefined>(undefined);
+  const [folderSaveID, setFolderSaveID] = useState<string | undefined>(
+    undefined,
+  );
 
   const theme = useTheme();
+  const { t } = useTranslation("maps");
 
   const handleReset = () => {
     setInputValues(["", ""]);
@@ -58,8 +71,9 @@ const Join = () => {
           field: statisticField,
         },
         result_target: {
-          layer_name: label,
+          layer_name: outputName ? outputName : `${statisticField}_${method}`,
           folder_id: "159cc0f9-81e9-497d-8823-d9d37507ed54",
+          project_id: projectId
         },
       };
 
@@ -79,6 +93,7 @@ const Join = () => {
     >
       <Box sx={{ maxHeight: "95%", overflow: "scroll" }}>
         <InputLayer
+          layerTypes={[]}
           multiple
           inputValues={inputValues}
           setInputValues={setInputValues}
@@ -103,10 +118,19 @@ const Join = () => {
           setMethod={setMethod}
           method={method}
           setStatisticField={setStatisticField}
+          setOutputName={setOutputName}
           statisticField={statisticField}
           setLabel={setLabel}
           label={label}
         />
+        {secondField && method ? (
+          <SaveResult
+            outputName={outputName}
+            setOutputName={setOutputName}
+            folderSaveId={folderSaveID}
+            setFolderSaveID={setFolderSaveID}
+          />
+        ) : null}
       </Box>
       <Box
         sx={{
@@ -116,10 +140,10 @@ const Join = () => {
         }}
       >
         <Button variant="outlined" sx={{ flexGrow: "1" }} onClick={handleReset}>
-          Reset
+          {t("panels.tools.reset")}
         </Button>
         <Button sx={{ flexGrow: "1" }} onClick={handleRun}>
-          Run
+          {t("panels.tools.run")}
         </Button>
       </Box>
     </Box>

@@ -24,8 +24,47 @@
       "charts": "Diagramme"
     },
     "tools": {
-      "tools": "Werkzeuge"
-    },
+      "tools": "Werkzeugen",
+      "select_layer": "Layer auswählen",
+      "statistics": "Statistiken",
+      "select_field": "Feld auswählen",
+      "select_method": "Methode auswählen",
+      "select_option": "Option auswählen",
+      "reset": "Zurücksetzen",
+      "run": "Ausführen",
+      "label": "Label",
+      "result": "Ergebnis",
+      "output_name": "Ausgabename",
+      "save_in_folder": "Im Ordner speichern",
+      "join": {
+      "join": "Verbinden",
+      "pick_target_layer": "Zielschicht auswählen",
+      "target_layer_text": "Wählen Sie die Schicht aus, zu der Sie Daten hinzufügen möchten",
+      "pick_join_layer": "Verbindungsschicht auswählen",
+      "join_layer_text": "Wählen Sie die Schicht aus, die die interessierenden Daten enthält",
+      "set_field_to_match": "Felder zum Abgleich festlegen",
+      "field_to_match_text": "Wählen Sie die Schicht aus, zu der Sie Daten hinzufügen möchten",
+      "target_field": "Zielfeld auswählen",
+      "join_field": "Verbindungsfeld auswählen",
+      "statistics_text": "Wählen Sie die Methode aus, die zur Verbindung der Daten verwendet wird"
+      },
+      "aggregate": {
+      "aggregate": "Funktionen aggregieren",
+      "pick_layer": "Schicht auswählen",
+      "pick_layer_text": "Wählen Sie die Schicht aus, zu der Sie Daten hinzufügen möchten",
+      "select_area": "Bereich auswählen",
+      "select_area_text": "Wählen Sie einen Eingangsbereich für die Aggregation aus",
+      "statistics_text": "Wählen Sie die Methode aus, die zur Aggregation der Daten verwendet wird",
+      "field": "Feld",
+      "field_group": "Feldgruppe",
+      "field_group_text": "Sie können mehrere Felder auswählen, um Ihre Ergebnisse zu gruppieren",
+      "hexagon_size": "Sechseck-Größe",
+      "select_fields": "Felder auswählen",
+      "hexagon_bin": "Sechseck-Bin",
+      "polygon_layer": "Polygon-Schicht",
+      "unit": "Einheit"
+      }
+      },
     "filter": {
       "filter": "Filter",
       "match_all_expressions": "Alle Ausdrücke abgleichen",

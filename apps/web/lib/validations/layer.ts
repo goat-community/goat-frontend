@@ -37,6 +37,7 @@ export const layerSchema = layerMetadataSchema.extend({
   size: z.number().optional(),
   style: z.object({}).optional(),
   url: z.string().optional(),
+  feature_layer_geometry_type: z.string(),
   data_type: data_type.optional(),
   legend_urls: z.array(z.string()).optional(),
 });

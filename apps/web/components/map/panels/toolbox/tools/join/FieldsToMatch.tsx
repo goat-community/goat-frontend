@@ -11,6 +11,7 @@ import React from "react";
 import { useLayerHook } from "@/hooks/map/LayerHooks";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { useTranslation } from "@/i18n/client";
 
 import type { SelectChangeEvent } from "@mui/material";
 
@@ -32,6 +33,7 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
     firstField,
     secondField,
   } = props;
+  const { t } = useTranslation("maps");
 
   const theme = useTheme();
 
@@ -41,10 +43,10 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
   return (
     <Box>
       <Typography variant="body1" sx={{ color: "black" }}>
-        Set fields to match
+        {t("panels.tools.join.set_field_to_match")}
       </Typography>
       <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-        Select the layer you want to add data
+        {t("panels.tools.join.field_to_match_text")}
       </Typography>
       <Box
         sx={{
@@ -58,13 +60,15 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
             variant="body1"
             sx={{ color: "black", marginBottom: theme.spacing(2) }}
           >
-            Pick a target field
+            {t("panels.tools.join.target_field")}
           </Typography>
           <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">Select Option</InputLabel>
+            <InputLabel id="demo-simple-select-label">
+              {t("panels.tools.select_field")}
+            </InputLabel>
             <Select
               disabled={!firstLayerId.length}
-              label="Select Option"
+              label={t("panels.tools.select_field")}
               value={firstField}
               onChange={(event: SelectChangeEvent) => {
                 setFirstField(event.target.value as string);
@@ -97,13 +101,15 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
             variant="body1"
             sx={{ color: "black", marginBottom: theme.spacing(2) }}
           >
-            Pick a target field
+            {t("panels.tools.join.join_field")}
           </Typography>
           <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">Select Option</InputLabel>
+            <InputLabel id="demo-simple-select-label">
+              {t("panels.tools.select_field")}
+            </InputLabel>
             <Select
               disabled={!secondLayerId.length}
-              label="Select Option"
+              label={t("panels.tools.select_field")}
               value={secondField}
               onChange={(event: SelectChangeEvent) => {
                 setSecondField(event.target.value as string);

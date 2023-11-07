@@ -3,6 +3,8 @@ import { Box, useTheme, Typography } from "@mui/material";
 import { v4 } from "uuid";
 import Join from "@/components/map/panels/toolbox/tools/join/Join";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
+import { useParams } from "next/navigation";
 
 interface ToolTabType {
   name: string;
@@ -15,21 +17,22 @@ const ToolTabs = () => {
   const [value, setValue] = useState<ToolTabType | undefined>(undefined);
 
   const theme = useTheme();
-
+  const params = useParams();
+  
   const tabs: ToolTabType[] = [
     {
       name: "Join",
       tooltip:
         "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
       value: "join",
-      element: <Join />,
+      element: <Join projectId={typeof params.projectId === "string" ? params.projectId : ""}/>,
     },
     {
       name: "Aggregate features",
       tooltip:
         "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
       value: "aggregate_features",
-      element: <p>aggregate</p>,
+      element: <Aggregate projectId={typeof params.projectId === "string" ? params.projectId : ""}/>,
     },
     {
       name: "Summarize features",

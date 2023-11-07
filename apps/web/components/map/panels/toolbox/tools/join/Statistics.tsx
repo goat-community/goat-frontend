@@ -10,16 +10,11 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
 import { useLayerHook } from "@/hooks/map/LayerHooks";
+import { useTranslation } from "@/i18n/client";
 
-type ColumStatisticsOperation =
-  | "count"
-  | "sum"
-  | "mean"
-  | "median"
-  | "min"
-  | "max";
+import type { SelectChangeEvent } from "@mui/material";
+import type { ColumStatisticsOperation } from "@/types/map/toolbox";
 
 interface StatisticsProps {
   secondLayerId: string;
@@ -30,6 +25,7 @@ interface StatisticsProps {
   statisticField: string | undefined;
   setLabel: (value: string) => void;
   label: string | undefined;
+  setOutputName: (value: string) => void;
 }
 
 const Statistics = (props: StatisticsProps) => {
@@ -42,9 +38,11 @@ const Statistics = (props: StatisticsProps) => {
     statisticField,
     setLabel,
     label,
+    setOutputName
   } = props;
 
   const theme = useTheme();
+  const { t } = useTranslation("maps");
 
   const methods = [
     {
@@ -95,17 +93,19 @@ const Statistics = (props: StatisticsProps) => {
       }}
     >
       <Typography variant="body1" sx={{ color: "black" }}>
-        Statistics
+        {t("panels.tools.statistics")}
       </Typography>
       <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-        Select the method used to join the data
+        {t("panels.tools.join.statistics_text")}
       </Typography>
       <Box sx={{ marginTop: theme.spacing(2) }}>
         <FormControl fullWidth size="small">
-          <InputLabel id="demo-simple-select-label">Select Option</InputLabel>
+          <InputLabel id="demo-simple-select-label">
+            {t("panels.tools.select_method")}
+          </InputLabel>
           <Select
             disabled={!secondField}
-            label="Select Option"
+            label={t("panels.tools.select_method")}
             value={method ? method : ""}
             onChange={(event: SelectChangeEvent) => {
               setMethod(event.target.value as ColumStatisticsOperation);
@@ -122,12 +122,15 @@ const Statistics = (props: StatisticsProps) => {
       {method ? (
         <Box sx={{ marginTop: theme.spacing(2) }}>
           <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">Select Option</InputLabel>
+            <InputLabel id="demo-simple-select-label">
+              {t("panels.tools.select_field")}
+            </InputLabel>
             <Select
-              label="Select Option"
+              label={t("panels.tools.select_field")}
               value={statisticField}
               onChange={(event: SelectChangeEvent) => {
                 setStatisticField(event.target.value as string);
+                setOutputName(`${method}_${event.target.value as string}`);
               }}
             >
               {secondLayerId.length ? checkType() : null}
@@ -140,7 +143,7 @@ const Statistics = (props: StatisticsProps) => {
           <TextField
             fullWidth
             value={label ? label : ""}
-            label="Label"
+            label={t("panels.tools.label")}
             size="small"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setLabel(event.target.value as string)
