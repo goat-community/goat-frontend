@@ -13,7 +13,7 @@ const initialState = {
   filters: {},
   logicalOperator: "",
   expressions: [],
-  layerToBeFiltered: "4d76705b-9736-43a3-93df-fd14e10f6604",
+  layerToBeFiltered: "ac9cdd4f-8712-459b-bfb8-3e4664c48abb",
 } as FilterState;
 
 const filterSlice = createSlice({
