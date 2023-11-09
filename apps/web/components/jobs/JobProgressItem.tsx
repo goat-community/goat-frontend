@@ -18,6 +18,7 @@ interface JobProgressItemProps {
 
 const statusIcons: Record<JobStatusType, ICON_NAME> = {
   running: ICON_NAME.CLOSE,
+  killed: ICON_NAME.CIRCLEINFO,
   finished: ICON_NAME.CIRCLECHECK,
   pending: ICON_NAME.CLOCK,
   failed: ICON_NAME.CIRCLEINFO,
@@ -28,12 +29,12 @@ export default function JobProgressItem(props: JobProgressItemProps) {
   const { type, status, name } = props;
 
   const statusColors: Record<JobStatusType, string> = {
+    killed: theme.palette.error.main,
     running: theme.palette.primary.main,
     finished: theme.palette.success.main,
     pending: theme.palette.grey[500],
     failed: theme.palette.error.main,
   };
-
   return (
     <Box
       display="flex"
@@ -55,7 +56,7 @@ export default function JobProgressItem(props: JobProgressItemProps) {
             </Typography>
           </Box>
           <LinearProgress
-            {...(status === "failed" || status === "finished"
+            {...(status === "failed" || status === "finished" || status === "killed"
               ? { variant: "determinate", value: 100 }
               : {})}
             sx={{
@@ -75,6 +76,7 @@ export default function JobProgressItem(props: JobProgressItemProps) {
                 finished: "Finished successfully",
                 pending: "Pending",
                 failed: "Failed",
+                killed: "Killed",
               }[status]
             }
           </Typography>

@@ -44,3 +44,16 @@ export const createLayer = async (data: CreateNewDatasetLayer) => {
   }
   return await response.json();
 };
+
+export const layerUploadValidateFile = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/file-validate`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error("Failed to upload folder");
+  }
+  return await response.json();
+}

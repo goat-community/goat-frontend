@@ -135,6 +135,7 @@ const Profile = () => {
               <RhfAvatar
                 name="avatar"
                 control={control}
+                title={t("user_avatar")}
                 avatar={userProfile?.avatar ?? ""}
               />
 
@@ -229,14 +230,14 @@ const Profile = () => {
               {t("dashboard:danger_zone")}
             </Typography>
             <Typography variant="caption">
-              {t("dashboard:danger_zone_description")}
+              {t("dashboard:danger_zone_account_description")}
             </Typography>
           </Box>
           <Divider />
           <Stack>
             <Typography variant="body1">
               <Trans
-                i18nKey="dashboard:danger_zone_body"
+                i18nKey="dashboard:danger_zone_account_body"
                 components={{ b: <b /> }}
               />
             </Typography>

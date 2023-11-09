@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function JobsPopper() {
   const [open, setOpen] = useState(false);
@@ -19,38 +19,37 @@ export default function JobsPopper() {
     read: false,
   });
 
-  //todo: uncomment this when api is ready
-  // const [intervalId, setIntervalId] = useState<number | null>(null);
+  const [intervalId, setIntervalId] = useState<number | null>(null);
+  console.log("jobs", jobs);
+  useEffect(() => {
+    console.log("jobs", jobs);
+    if (!jobs?.items) return;
+    const runningJobs = jobs.items.length;
+    if (runningJobs === 0) {
+      // no running jobs, clear interval and return
+      if (intervalId) {
+        clearInterval(intervalId);
+        setIntervalId(null);
+      }
+      return;
+    }
 
-  // useEffect(() => {
-  //   if (!jobs?.items) return;
+    // at least one running job, set interval if not already set
+    if (!intervalId) {
+      const id = setInterval(() => {
+        mutate();
+      }, 5000) as unknown as number;
+      setIntervalId(id);
+    }
 
-  //   const runningJobs = jobs.items.length;
-  //   if (runningJobs === 0) {
-  //     // no running jobs, clear interval and return
-  //     if (intervalId) {
-  //       clearInterval(intervalId);
-  //       setIntervalId(null);
-  //     }
-  //     return;
-  //   }
-
-  //   // at least one running job, set interval if not already set
-  //   if (!intervalId) {
-  //     const id = setInterval(() => {
-  //       mutate();
-  //     }, 5000) as unknown as number;
-  //     setIntervalId(id);
-  //   }
-
-  //   // cleanup function
-  //   return () => {
-  //     if (intervalId) {
-  //       clearInterval(intervalId);
-  //       setIntervalId(null);
-  //     }
-  //   };
-  // }, [jobs?.items, intervalId]);
+    // cleanup function
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+        setIntervalId(null);
+      }
+    };
+  }, [jobs?.items, intervalId]);
 
   const [isBusy, setIsBusy] = useState(false);
 
@@ -105,7 +104,7 @@ export default function JobsPopper() {
                       <JobProgressItem
                         id={job.id}
                         type={job.type}
-                        status="running"
+                        status={job.status_simple}
                         name={job.id}
                       />
                       {index < jobs.items.length - 1 && <Divider />}

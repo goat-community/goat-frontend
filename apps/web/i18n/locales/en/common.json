@@ -4,5 +4,10 @@
     "delete": "Delete",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "close": "Close"
+    "close": "Close",
+    "save": "Save",
+    "edit": "Edit",
+    "remove": "Remove",
+    "upload": "Upload",
+    "update": "Update"
 }

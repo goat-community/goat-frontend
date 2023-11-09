@@ -1,3 +1,4 @@
+import { invitationStatusEnum } from "@/lib/validations/invitation";
 import * as z from "zod";
 
 const regionEnum = z.enum(["EU"]);
@@ -12,6 +13,7 @@ const organizationBaseSchema = z.object({
   phone_number: z.string().min(1).max(50),
   location: z.string().min(1).max(50),
   newsletter_subscribe: z.boolean(),
+  avatar: z.string(),
 });
 
 const organizationSchema = organizationBaseSchema.extend({
@@ -28,9 +30,31 @@ const organizationSchema = organizationBaseSchema.extend({
   suspended: z.boolean(),
 });
 
+const organizationMemberSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  roles: z.array(z.string()),
+  invitation_status: invitationStatusEnum,
+  avatar: z.string(),
+});
+
+
+export const invitationCreateSchema = z.object({
+  user_email: z.string().email(),
+  role: z.enum(["admin", "member"]),
+  subscription_id: z.string().uuid(),
+  expires: z.string().optional(),
+});
+
+
+export const organizationUpdateSchema = organizationBaseSchema.partial();
+
 export const postOrganizationSchema = organizationBaseSchema.extend({
   region: regionEnum,
 });
 
 export type Organization = z.infer<typeof organizationSchema>;
+export type OrganizationMember = z.infer<typeof organizationMemberSchema>;
+export type OrganizationUpdate = z.infer<typeof organizationUpdateSchema>;
+export type InvitationCreate = z.infer<typeof invitationCreateSchema>;
 export type PostOrganization = z.infer<typeof postOrganizationSchema>;

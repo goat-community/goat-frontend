@@ -29,10 +29,6 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
     if (!_protectedPaths.some((p) => pathname.startsWith(p)))
       return await next(request, _next);
 
-    const hasOrganization = !!request.cookies.get("organization");
-    if (hasOrganization || !process.env.NEXT_PUBLIC_ACCOUNTS_API_URL)
-      return await next(request, _next);
-
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,

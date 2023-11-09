@@ -27,6 +27,7 @@ export const inviationQueryParams = z.object({
     search: z.string().optional(),
 });
 
+
 export const invitationResponseSchema = responseSchema(invitationSchema);
 
 export type Invitation = z.infer<typeof invitationSchema>;

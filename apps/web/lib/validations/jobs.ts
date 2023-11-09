@@ -9,6 +9,7 @@ export const jobStatusTypeEnum = z.enum([
   "running",
   "finished",
   "failed",
+  "killed"
 ]);
 
 export const msgSchema = z.object({
@@ -35,6 +36,7 @@ export const jobSchema = z.object({
   id: z.string().uuid(),
   type: jobTypeEnum,
   status: jobStatusLayerUpload,
+  status_simple: jobStatusTypeEnum,
   payload: z.record(z.any()).optional(),
   read: z.boolean().optional(),
 });

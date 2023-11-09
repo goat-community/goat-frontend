@@ -5,7 +5,7 @@ import Color from "color";
 export function filterSearch<T extends Record<string, any>>(
   allArray: T[],
   searchKey: keyof T,
-  searchText: string
+  searchText: string,
 ) {
   if (searchText !== "") {
     return allArray.filter((item) => {
@@ -71,7 +71,10 @@ export const supportedFileTypes = [
   "json",
 ];
 
-export const calculateLayersCountByKey = (data: [] | undefined, keyToCount: string) => {
+export const calculateLayersCountByKey = (
+  data: [] | undefined,
+  keyToCount: string,
+) => {
   let count = 0;
 
   data?.forEach((obj) => {
@@ -86,7 +89,7 @@ export const calculateLayersCountByKey = (data: [] | undefined, keyToCount: stri
 export const calculateLayersCountByKeyAndValue = (
   data: [] | undefined,
   keyToCount: string,
-  value: string
+  value: string,
 ) => {
   let count = 0;
 
@@ -99,14 +102,17 @@ export const calculateLayersCountByKeyAndValue = (
   return count;
 };
 
-export function changeColorOpacity(params: { color: string; opacity: number }): string {
+export function changeColorOpacity(params: {
+  color: string;
+  opacity: number;
+}): string {
   const { color, opacity } = params;
   return new Color(color).rgb().alpha(opacity).string();
 }
 
 export function getFrequentValuesOnProperty<T>(
   arrayGiven: T[],
-  property: keyof T
+  property: keyof T,
 ): string[] {
   const typeCounts: Record<string, number> = arrayGiven.reduce(
     (counts, currObject) => {
@@ -114,10 +120,53 @@ export function getFrequentValuesOnProperty<T>(
       counts[propertyValue] = (counts[propertyValue] || 0) + 1;
       return counts;
     },
-    {}
+    {},
   );
 
-  return Object.keys(typeCounts).sort(
-    (a, b) => typeCounts[b] - typeCounts[a]
-  );
+  return Object.keys(typeCounts).sort((a, b) => typeCounts[b] - typeCounts[a]);
+}
+
+export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+export type Order = "asc" | "desc";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getComparator<Key extends keyof any>(
+  order: Order,
+  orderBy: Key,
+): (
+  a: { [key in Key]: number | string },
+  b: { [key in Key]: number | string },
+) => number {
+  return order === "desc"
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
+// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
+// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
+// with exampleArray.slice().sort(exampleComparator)
+export function stableSort<T>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  array: readonly any[],
+  comparator: (a, b) => number,
+) {
+  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
 }

@@ -7,6 +7,13 @@ export enum ContentActions {
   DELETE = "delete",
 }
 
+export enum OrgMemberActions {
+  EDIT = "edit",
+  DELETE = "delete",
+  TRANSFER_OWNERSHIP = "transferOwnership",
+  CANCEL_INVITATION = "cancelInvitation"
+}
+
 export type ResponseResult = {
   message: string;
   status?: "error" | "success";

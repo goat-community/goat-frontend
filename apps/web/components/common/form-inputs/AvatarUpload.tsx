@@ -3,8 +3,10 @@ import { Avatar, Button, Stack, Typography } from "@mui/material";
 import type { Control, Path, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { toast } from "react-toastify";
+import { useTranslation } from "@/i18n/client";
 
 interface RhfAvatarUploadProps<TField extends FieldValues> {
+  title: string;
   control: Control<TField>;
   name: Path<TField>;
   avatar: string;
@@ -13,8 +15,9 @@ interface RhfAvatarUploadProps<TField extends FieldValues> {
 export const RhfAvatar = <TField extends FieldValues>(
   props: RhfAvatarUploadProps<TField>,
 ) => {
-  const { control, name, avatar } = props;
+  const { control, name, avatar, title } = props;
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
+  const { t } = useTranslation(["common"]);
 
   return (
     <Controller
@@ -55,7 +58,7 @@ export const RhfAvatar = <TField extends FieldValues>(
               }}
             />
             <Stack direction="column" spacing={2}>
-              <Typography variant="body1">Profile Picture</Typography>
+              <Typography variant="body1">{title}</Typography>
               <Stack direction="row" spacing={2}>
                 <Button
                   variant="text"
@@ -64,7 +67,7 @@ export const RhfAvatar = <TField extends FieldValues>(
                     hiddenInputRef?.current?.click();
                   }}
                 >
-                  Upload Avatar
+                  {t("common:upload")}
                 </Button>
                 {value && avatar !== value && (
                   <Button
@@ -74,7 +77,7 @@ export const RhfAvatar = <TField extends FieldValues>(
                       onChange(avatar);
                     }}
                   >
-                    Remove
+                    {t("common:cancel")}
                   </Button>
                 )}
               </Stack>

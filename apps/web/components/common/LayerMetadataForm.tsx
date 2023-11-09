@@ -26,38 +26,12 @@ const LayerMetadataForm: React.FC<LayerMetadataFormProps> = ({
     defaultValues: { ...layer },
   });
 
+    const onSubmit = (data: LayerMetadata) => {
+    console.log(data);
+  };
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} {...props}>
-      <TextField
-        fullWidth
-        label="Name"
-        {...register("name")}
-        error={!!errors.name}
-        helperText={errors.name?.message}
-      />
-      <TextField
-        fullWidth
-        multiline
-        rows={4}
-        label="Description"
-        {...register("description")}
-        error={!!errors.description}
-        helperText={errors.description?.message}
-      />
-      <TextField
-        fullWidth
-        label="Data Source"
-        {...register("data_source")}
-        error={!!errors.data_source}
-        helperText={errors.data_source?.message}
-      />
-      <TextField
-        fullWidth
-        label="Data reference year"
-        {...register("data_reference_year")}
-        error={!!errors.data_reference_year}
-        helperText={errors.data_reference_year?.message}
-      />
+
     </Box>
   );
 };

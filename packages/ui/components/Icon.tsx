@@ -67,6 +67,7 @@ import {
   faCreditCard,
   faRulerCombined,
   faCirclePlus,
+  faCrown,
 } from "@fortawesome/free-solid-svg-icons";
 
 
@@ -157,6 +158,7 @@ export enum ICON_NAME {
   BARS_PROGRESS = "bar-progress",
   CREDIT_CARD = "credit-card",
   RULES_COMBINED = "rules-combined",
+  CROWN = "crown",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -240,6 +242,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.EXTERNAL_LINK]: faExternalLinkAlt,
   [ICON_NAME.CREDIT_CARD]: faCreditCard,
   [ICON_NAME.RULES_COMBINED]: faRulerCombined,
+  [ICON_NAME.CROWN]: faCrown,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

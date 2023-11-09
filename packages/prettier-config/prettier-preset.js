@@ -7,4 +7,7 @@ module.exports = {
   semi: true,
   printWidth: 110,
   arrowParens: "always",
+  importOrder: ["^@p4b/ui/(.*)$", "^@lib/(.*)$", "^@ui/(.*)$", "^[./]"],
+  importOrderSeparation: true,
+  importOrderSortSpecifiers: true,
 };
