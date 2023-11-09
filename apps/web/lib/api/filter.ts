@@ -8,9 +8,9 @@ export const PROJECTS_API_BASE_URL = new URL(
 
 export const useGetLayerKeys = (layerId) => {
   const { data, isLoading } = useSWR(
-    `${process.env.NEXT_PUBLIC_GEOAPI_URL}/collections/${layerId}/queryables`,
+    `${process.env.NEXT_PUBLIC_GEOAPI_URL}/collections/${`user_data.${layerId.replace(/-/g, "")}`}/queryables`,
     fetcher,
-  );
+    );
 
   return {data, isLoading}
 };

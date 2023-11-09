@@ -68,6 +68,7 @@ import {
   faRulerCombined,
   faCirclePlus,
   faCrown,
+  faArrowRightArrowLeft
 } from "@fortawesome/free-solid-svg-icons";
 
 
@@ -170,7 +171,8 @@ export enum ICON_NAME {
   LINKEDIN = "linkedin",
   INSTAGRAM = "instagram",
   BITBUCKET = "bitbucket",
-  PAYPAL = "paypal"
+  PAYPAL = "paypal",
+  REVERSE = "reverse",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -243,6 +245,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.CREDIT_CARD]: faCreditCard,
   [ICON_NAME.RULES_COMBINED]: faRulerCombined,
   [ICON_NAME.CROWN]: faCrown,
+  [ICON_NAME.REVERSE]: faArrowRightArrowLeft,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

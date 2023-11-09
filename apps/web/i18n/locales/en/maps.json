@@ -24,7 +24,46 @@
       "charts": "Charts"
     },
     "tools": {
-      "tools": "Toolbox"
+      "tools": "Toolbox",
+      "select_layer": "Select Layer",
+      "statistics": "Statistics",
+      "select_field": "Select Field",
+      "select_method": "Select Method",
+      "select_option": "Select Option",
+      "reset": "Reset",
+      "run": "Run",
+      "label": "Label",
+      "result": "Result",
+      "output_name": "Output name",
+      "save_in_folder": "Save in folder",
+      "join": {
+        "join": "Join",
+        "pick_target_layer": "Pick a target layer",
+        "target_layer_text": "Select the layer you want to add data",
+        "pick_join_layer": "Pick layer to join",
+        "join_layer_text": "Select the layer containing the data of interest",
+        "set_field_to_match": "Set fields to match",
+        "field_to_match_text": "Select the layer you want to add data",
+        "target_field": "Pick a target field",
+        "join_field": "Pick a Join field",
+        "statistics_text": "Select the method used to join the data"
+      },
+      "aggregate": {
+        "aggregate": "Aggregate features",
+        "pick_layer": "Pick a layer",
+        "pick_layer_text": "Select the layer you want to add data",
+        "select_area": "Select area",
+        "select_area_text": "Select an input area of aggregation",
+        "statistics_text": "Select the method used to aggregate the data",
+        "field": "Field",
+        "field_group": "Field group",
+        "field_group_text": "You can select multiple fields to group your results",
+        "hexagon_size": "Hexagon size",
+        "select_fields": "Select fields",
+        "hexagon_bin": "Hexagon bin",
+        "polygon_layer": "Polygon Layer",
+        "unit": "Unit"
+      }
     },
     "filter": {
       "filter": "Filter",

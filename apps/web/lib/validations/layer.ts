@@ -28,8 +28,8 @@ export const layerSchema = layerMetadataSchema.extend({
   name: z.string().optional(),
   updated_at: z.string(),
   created_at: z.string(),
-  extent: z.string(),
   query: z.object({}),
+  extent: z.string(),
   folder_id: z.string(),
   id: z.string().uuid(),
   user_id: z.string().uuid(),
@@ -37,6 +37,7 @@ export const layerSchema = layerMetadataSchema.extend({
   size: z.number().optional(),
   style: z.object({}).optional(),
   url: z.string().optional(),
+  feature_layer_geometry_type: z.string(),
   data_type: data_type.optional(),
   legend_urls: z.array(z.string()).optional(),
 });
