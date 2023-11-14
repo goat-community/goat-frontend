@@ -23,6 +23,41 @@
     "charts": {
       "charts": "Charts"
     },
+    "isochrone": {
+      "isochrone": "Isochrone",
+      "routing": {
+        "routing": "Routing",
+        "modes": {
+          "bus": "Bus",
+          "tram": "Tram",
+          "rail": "Rail",
+          "subway": "Subway",
+          "ferry": "Ferry",
+          "cable_car": "Cable Car",
+          "gondola": "Gondola",
+          "funicular": "Funicular",
+          "walk": "Walk",
+          "bicycle": "Bicycle",
+          "car": "Car"
+        }
+      },
+      "speed": "Speed",
+      "unity": "Unity",
+      "distance": "Distance",
+      "travelTime": "Travel Time",
+      "steps": "Steps",
+      "starting": {
+        "starting": "Starting",
+        "origin": "Origin",
+        "pick_layer": "Pick Layer",
+        "type": "Type",
+        "starting_point": "Starting Point",
+        "pick_on_map": "Pick on map",
+        "search_location": "Search Location",
+        "layer": "Layer",
+        "search_address": "Search Address"
+      }
+    },
     "tools": {
       "tools": "Toolbox",
       "select_layer": "Select Layer",

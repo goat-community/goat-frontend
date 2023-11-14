@@ -8,6 +8,7 @@ import Charts from "@/components/map/panels/Charts";
 import Toolbox from "@/components/map/panels/toolbox/Toolbox";
 import Filter from "@/components/map/panels/filter/Filter";
 import Scenario from "@/components/map/panels/Scenario";
+import Isochrone from "@/components/map/panels/isochrone/Isochrone";
 import MapStyle from "@/components/map/panels/mapStyle/MapStyle";
 import MapSidebar from "@/components/map/Sidebar";
 import { Zoom } from "@/components/map/controls/Zoom";
@@ -112,6 +113,15 @@ const ProjectNavigation = ({ projectId }) => {
           <Filter
             setActiveRight={setActiveRight}
             projectId={projectId}
+          />
+        ),
+      },
+      {
+        icon: ICON_NAME.BULLSEYE,
+        name: t("panels.isochrone.isochrone"),
+        component: (
+          <Isochrone
+            setActiveRight={setActiveRight}
           />
         ),
       },

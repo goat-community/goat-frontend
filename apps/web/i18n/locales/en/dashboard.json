@@ -20,6 +20,13 @@
     "save": "Save",
     "next": "Next",
     "back": "Back",
+    "sidebar": {
+        "home": "Home",
+        "projects": "Projects",
+        "datasets": "Datasets",
+        "catalog": "Catalog",
+        "settings": "Settings"
+    },
     "home": {
         "recent_project": "Recent Projects",
         "recent_datasets": "Recent Datasets",

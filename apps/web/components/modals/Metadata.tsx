@@ -1,4 +1,3 @@
-import LayerMetadataForm from "@/components/common/LayerMetadataForm";
 import {
   layerMetadataSchema,
   type LayerMetadata,

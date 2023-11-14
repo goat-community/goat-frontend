@@ -1,7 +1,7 @@
 import type { LayerMetadata } from "@/lib/validations/layer";
 import { layerMetadataSchema } from "@/lib/validations/layer";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, TextField } from "@mui/material";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 
 interface LayerMetadataFormProps {
@@ -18,8 +18,6 @@ const LayerMetadataForm: React.FC<LayerMetadataFormProps> = ({
 }) => {
   const {
     handleSubmit,
-    register,
-    formState: { errors },
   } = useForm<LayerMetadata>({
     mode: "onChange",
     resolver: zodResolver(layerMetadataSchema),
@@ -30,9 +28,7 @@ const LayerMetadataForm: React.FC<LayerMetadataFormProps> = ({
     console.log(data);
   };
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} {...props}>
-
-    </Box>
+    <Box component="form" onSubmit={handleSubmit(onSubmit)} {...props} />
   );
 };
 

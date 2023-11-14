@@ -50,7 +50,7 @@ export const useFilterExpressions = (projectId?: string) => {
   };
 
   const getFilterQueries = (layerId: string) => {
-    if (!isLoading && !error) {
+    if (!isLoading && !error && filterData.length) {
       const queries = filterData.filter((layer) => layer.id === layerId)[0].query;
       if (queries && Object.keys(queries).length) {
         return {
