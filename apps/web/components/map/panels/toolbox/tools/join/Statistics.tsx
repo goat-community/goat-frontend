@@ -10,7 +10,6 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import { useLayerHook } from "@/hooks/map/LayerHooks";
 import { useTranslation } from "@/i18n/client";
 
 import type { SelectChangeEvent } from "@mui/material";

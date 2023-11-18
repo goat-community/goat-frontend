@@ -32,7 +32,7 @@ import type { MapSidebarItem } from "@/types/map/sidebar";
 import type { MapSidebarProps } from "../Sidebar";
 import type { IStore } from "@/types/store";
 
-const sidebarWidth = 48;
+const sidebarWidth = 52;
 const toolbarHeight = 52;
 
 const ProjectNavigation = ({ projectId }) => {
@@ -191,7 +191,6 @@ const ProjectNavigation = ({ projectId }) => {
                 height: `calc(100% - ${toolbarHeight}px)`,
                 marginTop: `${toolbarHeight}px`,
                 width: 300,
-                borderLeft: `1px solid ${theme.palette.secondary.dark}}`,
                 pointerEvents: "all",
               }}
             >
@@ -237,8 +236,6 @@ const ProjectNavigation = ({ projectId }) => {
             padding: theme.spacing(4),
           }}
         >
-          {/* <Stack direction="column" sx={{ pointerEvents: "all" }}>
-          </Stack> */}
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
             <Stack direction="row" sx={{ pointerEvents: "all" }}>
               {

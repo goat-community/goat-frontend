@@ -1,105 +1,71 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useMemo } from "react";
 import { Source, Layer as MapLayer } from "react-map-gl";
-import type { XYZ_Layer } from "@/types/map/layer";
-import { useSelector } from "react-redux";
-import type { IStore } from "@/types/store";
-import { and_operator, or_operator } from "@/lib/utils/filtering/filtering_cql";
-import type { LayerProps } from "react-map-gl";
-import { v4 } from "uuid";
+import type { Layer as ProjectLayer } from "@/lib/validations/layer";
+import { GEOAPI_BASE_URL } from "@/lib/constants";
+import { useProject, useProjectLayers } from "@/lib/api/projects";
 
 interface LayersProps {
-  layers: XYZ_Layer[];
-  addLayer: (newLayer) => void;
   projectId: string;
-  filters: string[];
 }
 
 const Layers = (props: LayersProps) => {
-  const sampleLayerID = "user_data.84ca9acb3f30491d82ce938334164496";
-  const { layers, addLayer, filters } = props;
-
-  const layerUrl = `${process.env.NEXT_PUBLIC_GEOAPI_URL}/collections/${sampleLayerID}/tiles/{z}/{x}/{y}`;
-
-  const availableFilters = filters.filter(
-    (filterQuery) => filterQuery !== "{}",
-  );
-
-  const { logicalOperator } = useSelector((state: IStore) => state.mapFilters);
-
-  const getQuery = useCallback(() => {
-    if (availableFilters.length) {
-      if (availableFilters.length === 1) {
-        return availableFilters[0];
-      } else {
-        if (logicalOperator === "match_all_expressions") {
-          return and_operator(availableFilters);
-        } else {
-          return or_operator(availableFilters);
-        }
-      }
-    }
-  }, [availableFilters, logicalOperator]);
-
-  const filterJson = getQuery();
-
-  function modifyLayer() {
-    const filterJson = getQuery();
-    if (filterJson) {
-      const filteredLayerSource = `${layerUrl}?filter=${encodeURIComponent(
-        filterJson,
-      )}`;
-      addLayer([
-        {
-          id: "layer1",
-          sourceUrl: filteredLayerSource,
-          color: "#FF0000",
-        },
-      ]);
-    } else if (filterJson === "") {
-      addLayer([
-        {
-          id: "layer1",
-          sourceUrl: layerUrl,
-          color: "#FF0000",
-        },
-      ]);
-    }
-
-    if (!availableFilters.length) {
-      addLayer([
-        {
-          id: "layer1",
-          sourceUrl: layerUrl,
-          color: "#FF0000",
-        },
-      ]);
-    }
-  }
-
-  useEffect(() => {
-    modifyLayer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterJson]);
-
-  const clusterLayer: LayerProps = {
-    id: "clusters",
-    type: "circle",
-    source: "composite",
-    "source-layer": "default",
-    paint: {
-      "circle-color": "#51bbd6",
-      "circle-radius": 5,
-    },
-  };
+  const { layers: projectLayers } = useProjectLayers(props.projectId);
+  const { project } = useProject(props.projectId);
+  const sortedLayers = useMemo(() => {
+    if (!projectLayers || !project) return [];
+    return projectLayers.sort(
+      (a, b) =>
+        project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id),
+    );
+  }, [projectLayers, project]);
 
   return (
     <>
-      {layers.length
-        ? layers.map((layer: XYZ_Layer) => (
-            <Source key={v4()} type="vector" tiles={[layer.sourceUrl]}>
-              <MapLayer {...clusterLayer} />
-            </Source>
-          ))
+      {sortedLayers?.length
+        ? sortedLayers.map((layer: ProjectLayer) =>
+            (() => {
+              if (
+                ["feature", "external_vector_tile"].includes(layer.type) &&
+                layer.properties &&
+                ["circle", "fill", "line", "symbol"].includes(
+                  layer.properties.type,
+                )
+              ) {
+                return (
+                  <Source
+                    key={layer.updated_at}
+                    type="vector"
+                    tiles={[
+                      layer.url ??
+                        `${GEOAPI_BASE_URL}/collections/user_data.${layer.layer_id.replace(
+                          /-/g,
+                          "",
+                        )}/tiles/{z}/{x}/{y}${
+                          layer.query
+                            ? `?query=${JSON.stringify(layer.query)}`
+                            : ""
+                        }`,
+                    ]}
+                  >
+                    <MapLayer {...layer.properties} source-layer="default" />
+                  </Source>
+                );
+              } else if (layer.type === "external_imagery") {
+                return (
+                  <Source
+                    key={layer.updated_at}
+                    type="raster"
+                    tileSize={256}
+                    tiles={[layer.url ?? ""]}
+                  >
+                    <MapLayer type="raster" />
+                  </Source>
+                );
+              } else {
+                return null;
+              }
+            })(),
+          )
         : null}
     </>
   );

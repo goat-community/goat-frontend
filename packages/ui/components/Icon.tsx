@@ -68,9 +68,9 @@ import {
   faRulerCombined,
   faCirclePlus,
   faCrown,
-  faArrowRightArrowLeft
+  faArrowRightArrowLeft,
+  faCopy,
 } from "@fortawesome/free-solid-svg-icons";
-
 
 import {
   faGoogle,
@@ -151,7 +151,7 @@ export enum ICON_NAME {
   SAVE = "save",
   DATABASE = "database",
   SORT_ALPHA_ASC = "sort-alpha-asc",
-  SORT_ALPHA_DESC = "sort-alpha-desc",  
+  SORT_ALPHA_DESC = "sort-alpha-desc",
   CLOCK = "clock",
   DOWNLOAD = "download",
   UPLOAD = "upload",
@@ -160,6 +160,7 @@ export enum ICON_NAME {
   CREDIT_CARD = "credit-card",
   RULES_COMBINED = "rules-combined",
   CROWN = "crown",
+  COPY = "copy",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -246,6 +247,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.RULES_COMBINED]: faRulerCombined,
   [ICON_NAME.CROWN]: faCrown,
   [ICON_NAME.REVERSE]: faArrowRightArrowLeft,
+  [ICON_NAME.COPY]: faCopy,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,
@@ -257,7 +259,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.LINKEDIN]: faLinkedin,
   [ICON_NAME.INSTAGRAM]: faInstagram,
   [ICON_NAME.BITBUCKET]: faBitbucket,
-  [ICON_NAME.PAYPAL]: faPaypal
+  [ICON_NAME.PAYPAL]: faPaypal,
 };
 
 interface BrandColors {

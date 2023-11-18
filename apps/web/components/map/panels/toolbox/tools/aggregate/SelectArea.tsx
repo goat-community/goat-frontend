@@ -9,7 +9,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { v4 } from "uuid";
-import { useProjectLayers } from "@/hooks/map/layersHooks";
 import { useTranslation } from "@/i18n/client";
 
 import type { SelectChangeEvent } from "@mui/material";
@@ -39,7 +38,6 @@ const SelectArea = (props: SelectAreaProps) => {
   const theme = useTheme();
   const { t } = useTranslation("maps");
 
-  const { projectLayers } = useProjectLayers();
 
   return (
     <Box>

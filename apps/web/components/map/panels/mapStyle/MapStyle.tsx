@@ -1,9 +1,5 @@
 import Container from "@/components/map/panels/Container";
 import {
-  // Checkbox,
-  // IconButton,
-  // CardContent,
-  // CardMedia,
   Button,
   Card,
   Divider,
@@ -30,7 +26,6 @@ import ColorOptionFill from "@/components/map/panels/mapStyle/ColorOptionFill";
 import ColorOptionLine from "@/components/map/panels/mapStyle/ColorOptionLine";
 import StrokeOptionLine from "@/components/map/panels/mapStyle/StrokeOptionLine";
 import MarkerOptionSymbol from "@/components/map/panels/mapStyle/MarkerOptionSymbol";
-import { fetchLayerData } from "@/lib/store/styling/actions";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import ColorOptionSymbol from "@/components/map/panels/mapStyle/ColorOptionSymbol";
 import StrokeOptionSymbol from "@/components/map/panels/mapStyle/StrokeOptionSymbol";
@@ -69,19 +64,13 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
     dispatch(setTabValue(newValue));
   };
 
-  const resetStylesHandler = () => {
-    if (projectId) {
-      dispatch(fetchLayerData(projectId));
-    }
-  };
-
   const saveStylesHandler = () => {
     dispatch(saveStyles());
   };
 
   return (
     <Container
-      title="Layer design"
+      title="Layer Style"
       close={setActiveRight}
       body={
         <Box
@@ -299,7 +288,6 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
             }}
             color="secondary"
             variant="outlined"
-            onClick={resetStylesHandler}
           >
             {t("panels.layer_design.reset")}
           </Button>

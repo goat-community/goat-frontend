@@ -11,7 +11,6 @@ import {
   Checkbox,
 } from "@mui/material";
 import { v4 } from "uuid";
-import { useLayerHook } from "@/hooks/map/LayerHooks";
 import { useTranslation } from "@/i18n/client";
 
 import type { SelectChangeEvent } from "@mui/material";

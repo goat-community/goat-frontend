@@ -8,7 +8,6 @@ import {
   InputLabel,
   MenuItem,
 } from "@mui/material";
-import { useProjectLayers } from "@/hooks/map/layersHooks";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
 
@@ -27,7 +26,6 @@ const InputLayer = (props: PickLayerProps) => {
   const theme = useTheme();
   const { t } = useTranslation("maps");
 
-  const { projectLayers } = useProjectLayers();
 
   const handleSingleChange = (event: SelectChangeEvent) => {
     setInputValues(event.target.value as string);

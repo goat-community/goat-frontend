@@ -8,7 +8,6 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
-import { useLayerHook } from "@/hooks/map/LayerHooks";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
