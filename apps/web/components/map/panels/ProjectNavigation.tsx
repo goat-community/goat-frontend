@@ -8,7 +8,6 @@ import Charts from "@/components/map/panels/Charts";
 import Toolbox from "@/components/map/panels/toolbox/Toolbox";
 import Filter from "@/components/map/panels/filter/Filter";
 import Scenario from "@/components/map/panels/Scenario";
-import Isochrone from "@/components/map/panels/isochrone/Isochrone";
 import MapStyle from "@/components/map/panels/mapStyle/MapStyle";
 import MapSidebar from "@/components/map/Sidebar";
 import { Zoom } from "@/components/map/controls/Zoom";
@@ -33,7 +32,7 @@ import type { MapSidebarItem } from "@/types/map/sidebar";
 import type { MapSidebarProps } from "../Sidebar";
 import type { IStore } from "@/types/store";
 
-const sidebarWidth = 48;
+const sidebarWidth = 52;
 const toolbarHeight = 52;
 
 const ProjectNavigation = ({ projectId }) => {
@@ -117,15 +116,6 @@ const ProjectNavigation = ({ projectId }) => {
         ),
       },
       {
-        icon: ICON_NAME.BULLSEYE,
-        name: t("panels.isochrone.isochrone"),
-        component: (
-          <Isochrone
-            setActiveRight={setActiveRight}
-          />
-        ),
-      },
-      {
         icon: ICON_NAME.SCENARIO,
         name: t("panels.scenario.scenario"),
         component: <Scenario setActiveRight={setActiveRight} />,
@@ -201,7 +191,6 @@ const ProjectNavigation = ({ projectId }) => {
                 height: `calc(100% - ${toolbarHeight}px)`,
                 marginTop: `${toolbarHeight}px`,
                 width: 300,
-                borderLeft: `1px solid ${theme.palette.secondary.dark}}`,
                 pointerEvents: "all",
               }}
             >
@@ -247,8 +236,6 @@ const ProjectNavigation = ({ projectId }) => {
             padding: theme.spacing(4),
           }}
         >
-          {/* <Stack direction="column" sx={{ pointerEvents: "all" }}>
-          </Stack> */}
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
             <Stack direction="row" sx={{ pointerEvents: "all" }}>
               {

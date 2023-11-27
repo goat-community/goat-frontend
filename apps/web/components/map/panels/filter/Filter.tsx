@@ -27,8 +27,6 @@ import type { MapSidebarItem } from "@/types/map/sidebar";
 
 import HistogramSlider from "./histogramSlider/HistogramSlider";
 import { histogramData } from "@/public/assets/data/histogramSample";
-import { useLayerHook } from "@/hooks/map/LayerHooks";
-import { useFilterExpressions } from "@/hooks/map/FilteringHooks";
 import { useTranslation } from "@/i18n/client";
 import { setMapLoading } from "@/lib/store/map/slice";
 

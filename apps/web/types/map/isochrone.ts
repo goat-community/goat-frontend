@@ -12,6 +12,17 @@ export type RoutingTypes =
   | "cable_car"
   | "gondola"
   | "funicular"
-  | "walk"
+  | "walking"
   | "bicycle"
-  | "car";
+  | "pedelec"
+  | "car_peak";
+
+export type PTModeTypes =
+  | "bus"
+  | "tram"
+  | "rail"
+  | "subway"
+  | "ferry"
+  | "cable_car"
+  | "gondola"
+  | "funicular";

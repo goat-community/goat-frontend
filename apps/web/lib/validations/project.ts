@@ -1,5 +1,8 @@
 import * as z from "zod";
-import { contentMetadataSchema, getContentQueryParamsSchema } from "@/lib/validations/common";
+import {
+  contentMetadataSchema,
+  getContentQueryParamsSchema,
+} from "@/lib/validations/common";
 import { responseSchema } from "@/lib/validations/response";
 
 export const projectSchema = contentMetadataSchema.extend({
@@ -7,7 +10,10 @@ export const projectSchema = contentMetadataSchema.extend({
   created_at: z.string(),
   folder_id: z.string(),
   id: z.string(),
+  layer_order: z.array(z.number()),
 });
+
+
 
 export const projectBaseSchema = z.object({
   folder_id: z.string(),
@@ -32,18 +38,18 @@ export const projectLayerSchema = projectBaseSchema.extend({
   query: z.record(z.string()),
 });
 
-export const projectInitialViewStateSchema = z.object({
-  latitude: z.number(),
-  longitude: z.number(),
-  zoom: z.number(),
-  min_zoom: z.number(),
-  max_zoom: z.number(),
-  bearing: z.number(),
-  pitch: z.number(),
+export const projectViewStateSchema = z.object({
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  zoom: z.number().min(0).max(24),
+  min_zoom: z.number().min(0).max(24),
+  max_zoom: z.number().min(0).max(24),
+  bearing: z.number().min(0).max(360),
+  pitch: z.number().min(0).max(60),
 });
 
 export const postProjectSchema = projectBaseSchema.extend({
-  initial_view_state: projectInitialViewStateSchema.optional(),
+  initial_view_state: projectViewStateSchema.optional(),
 });
 
 const getProjectsQueryParamsSchema = getContentQueryParamsSchema.extend({});
@@ -55,7 +61,10 @@ export type Project = z.infer<typeof projectSchema>;
 export type ProjectLayers = z.infer<typeof projectLayerSchema>;
 export type ProjectPaginated = z.infer<typeof projectResponseSchema>;
 export type PostProject = z.infer<typeof postProjectSchema>;
-export type ProjectLayersPaginated = z.infer<typeof projectLayersResponseSchema>;
+export type ProjectViewState = z.infer<typeof projectViewStateSchema>;
+export type ProjectLayersPaginated = z.infer<
+  typeof projectLayersResponseSchema
+>;
 export type GetProjectsQueryParams = z.infer<
   typeof getProjectsQueryParamsSchema
 >;

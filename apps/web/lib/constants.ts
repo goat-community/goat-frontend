@@ -4,3 +4,4 @@ export const MAPBOX_TOKEN =
 
 export const THEME_COOKIE_NAME = "client_theme";
 export const ORG_DEFAULT_AVATAR = "https://assets.plan4better.de/img/no-org-thumb.jpg";
+export const GEOAPI_BASE_URL = process.env.NEXT_PUBLIC_GEOAPI_URL;

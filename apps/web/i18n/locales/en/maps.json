@@ -27,6 +27,7 @@
       "isochrone": "Isochrone",
       "routing": {
         "routing": "Routing",
+        "pt_type": "PT type",
         "modes": {
           "bus": "Bus",
           "tram": "Tram",
@@ -38,7 +39,9 @@
           "funicular": "Funicular",
           "walk": "Walk",
           "bicycle": "Bicycle",
-          "car": "Car"
+          "pedelec": "Pedelec",
+          "car": "Car",
+          "pt": "PT"
         }
       },
       "speed": "Speed",
@@ -98,6 +101,10 @@
         "hexagon_bin": "Hexagon bin",
         "polygon_layer": "Polygon Layer",
         "unit": "Unit"
+      },
+      "accessibility_indicators": {
+        "accessibility_indicators": "Accessibility Indicators",
+        "isochrone": "Isochrone"
       }
     },
     "filter": {
@@ -129,5 +136,13 @@
       "select_field": "Select a field containing the data of interest to display",
       "select_option": "Select Option"
     }
-  }
+  },
+  "show_layer": "Show Layer",
+  "hide_layer": "Hide Layer",
+  "layer_more_options": "More Options",
+  "duplicate": "Duplicate",
+  "feature": "Feature",
+  "external_vector_tile": "External Vector Tile",
+  "table": "Table",
+  "external_imagery": "External Image"
 }

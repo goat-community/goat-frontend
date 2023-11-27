@@ -11,8 +11,8 @@ import {
   Checkbox,
 } from "@mui/material";
 import { v4 } from "uuid";
-import { useLayerHook } from "@/hooks/map/LayerHooks";
 import { useTranslation } from "@/i18n/client";
+import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
 import type { ColumStatisticsOperation } from "@/types/map/toolbox";
@@ -70,22 +70,22 @@ const Statistics = (props: StatisticsProps) => {
     },
   ];
 
-  const pointLayerKeys = useLayerHook(
-    typeof pointLayerId === "string" ? pointLayerId : "",
+  const pointLayerKeys = useGetLayerKeys(
+    `user_data.${
+      typeof pointLayerId === "string" ? pointLayerId.split("-").join("") : ""
+    }`,
   );
 
   function checkType() {
-      return methodsKeys.map((key) =>
-        key.types.includes(
-          pointLayerKeys
-            .getLayerKeys()
-            .keys.filter((layerKey) => layerKey.name === field)[0].type,
-        ) ? (
-          <MenuItem value={key.name} key={v4()}>
-            {key.name}
-          </MenuItem>
-        ) : null,
-      );
+    return methodsKeys.map((key) =>
+      key.types.includes(
+        pointLayerKeys.keys.filter((layerKey) => layerKey.name === field)[0].type,
+      ) ? (
+        <MenuItem value={key.name} key={v4()}>
+          {key.name}
+        </MenuItem>
+      ) : null,
+    );
   }
 
   return (
@@ -118,7 +118,7 @@ const Statistics = (props: StatisticsProps) => {
                 setFieldSelected(event.target.value as string)
               }
             >
-              {pointLayerKeys.getLayerKeys().keys.map((key) => (
+              {pointLayerKeys.keys.map((key) => (
                 <MenuItem value={key.name} key={v4()}>
                   {key.name}
                 </MenuItem>
@@ -169,7 +169,7 @@ const Statistics = (props: StatisticsProps) => {
                 setGroupedFields(event.target.value as string[])
               }
             >
-              {pointLayerKeys.getLayerKeys().keys.map((key) => (
+              {pointLayerKeys.keys.map((key) => (
                 <MenuItem value={key.name} key={v4()}>
                   <Checkbox
                     checked={

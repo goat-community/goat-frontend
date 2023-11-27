@@ -1,6 +1,5 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchLayerData } from "@/lib/store/styling/actions";
 import type { AnyLayer } from "react-map-gl";
 
 interface IViewState {
@@ -101,7 +100,7 @@ const initialState: IStylingState = {
   markers: [],
   //todo need get layer from db
   mapLayer: null as TLayer,
-  changeIcon: null
+  changeIcon: null,
 };
 
 const stylingSlice = createSlice({
@@ -109,7 +108,7 @@ const stylingSlice = createSlice({
   initialState,
   reducers: {
     setIcon: (state, action: PayloadAction<(src: string) => void>) => {
-      state.changeIcon = action.payload
+      state.changeIcon = action.payload;
     },
     setTabValue: (state, action: PayloadAction<number>) => {
       state.tabValue = action.payload;
@@ -119,6 +118,9 @@ const stylingSlice = createSlice({
     },
     addMarker: (state, action: PayloadAction<IMarker>) => {
       state.markers.push(action.payload);
+    },
+    removeMarker : (state) => {
+      state.markers = [];
     },
     editeMarkerPosition: (state, action: PayloadAction<IMarker>) => {
       state.markers = state.markers.map((item) => {
@@ -174,15 +176,12 @@ const stylingSlice = createSlice({
         }
       }
     },
-    setLayerSymbolSize: (
-      state,
-      action: PayloadAction<{ val: number }>,
-    ) => {
+    setLayerSymbolSize: (state, action: PayloadAction<{ val: number }>) => {
       const mapLayer = state.mapLayer as TLayer;
 
       if (mapLayer) {
         mapLayer.layout = mapLayer.layout ?? {};
-        mapLayer.layout['icon-size'] = action.payload.val;
+        mapLayer.layout["icon-size"] = action.payload.val;
       }
     },
     setIconFillColor: (state, action: PayloadAction<string>) => {
@@ -191,24 +190,7 @@ const stylingSlice = createSlice({
       if (mapLayer?.paint) {
         mapLayer.paint["icon-color"] = action.payload;
       }
-    }
-    // setLayerIconImage: (state, action: PayloadAction<string>) => {
-    //   state.mapLayer.layers[0].layout["icon-image"] = action.payload;
-    // },
-    // setLayerIconSize: (state, action: PayloadAction<number>) => {
-    //   state.mapLayer.layers[0].layout["icon-size"] = action.payload;
-    // },
-  },
-  extraReducers: (builder) => {
-    builder.addCase(fetchLayerData.pending, (state) => {
-      state.mapLayer = null;
-    });
-    builder.addCase(fetchLayerData.fulfilled, (state, { payload }) => {
-      state.mapLayer = payload;
-    });
-    builder.addCase(fetchLayerData.rejected, (state) => {
-      state.mapLayer = null;
-    });
+    },
   },
 });
 
@@ -218,6 +200,7 @@ export const {
   setTabValue,
   setActiveBasemapIndex,
   addMarker,
+  removeMarker,
   setLayerFillColor,
   setLayerFillOutLineColor,
   saveStyles,

@@ -10,8 +10,8 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import { useLayerHook } from "@/hooks/map/LayerHooks";
 import { useTranslation } from "@/i18n/client";
+import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
 import type { ColumStatisticsOperation } from "@/types/map/toolbox";
@@ -71,10 +71,10 @@ const Statistics = (props: StatisticsProps) => {
     },
   ];
 
-  const saveFieldKeys = useLayerHook(secondLayerId);
+  const saveFieldKeys = useGetLayerKeys(`user_data.${secondLayerId.split("-").join("")}`);
 
   function checkType() {
-    return saveFieldKeys.getLayerKeys().keys.map((key) =>
+    return saveFieldKeys.keys.map((key) =>
       methods
         .filter((meth) => meth.name === method)[0]
         .types.includes(key.type) ? (

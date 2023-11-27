@@ -8,10 +8,10 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
-import { useLayerHook } from "@/hooks/map/LayerHooks";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
+import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
 
@@ -37,9 +37,10 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
 
   const theme = useTheme();
 
-  const firstLayerKeys = useLayerHook(firstLayerId);
-  const secondLayerKeys = useLayerHook(firstLayerId);
-
+  
+  const firstLayerKeys = useGetLayerKeys(`user_data.${firstLayerId.split("-").join("")}`);
+  const secondLayerKeys = useGetLayerKeys(`user_data.${secondLayerId.split("-").join("")}`);
+  
   return (
     <Box>
       <Typography variant="body1" sx={{ color: "black" }}>
@@ -75,7 +76,7 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
               }}
             >
               {firstLayerId.length
-                ? firstLayerKeys.getLayerKeys().keys.map((key) => (
+                ? firstLayerKeys.keys.map((key) => (
                     <MenuItem value={key.name} key={v4()}>
                       {key.name}
                     </MenuItem>
@@ -116,7 +117,7 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
               }}
             >
               {secondLayerId.length
-                ? secondLayerKeys.getLayerKeys().keys.map((key) => (
+                ? secondLayerKeys.keys.map((key) => (
                     <MenuItem value={key.name} key={v4()}>
                       {key.name}
                     </MenuItem>

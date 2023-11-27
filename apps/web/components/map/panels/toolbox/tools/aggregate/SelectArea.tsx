@@ -9,8 +9,9 @@ import {
   useTheme,
 } from "@mui/material";
 import { v4 } from "uuid";
-import { useProjectLayers } from "@/hooks/map/layersHooks";
+import { useProjectLayers } from "@/lib/api/projects";
 import { useTranslation } from "@/i18n/client";
+import { useParams } from "next/navigation";
 
 import type { SelectChangeEvent } from "@mui/material";
 import type { areaSelectionTypes } from "@/types/map/toolbox";
@@ -39,7 +40,11 @@ const SelectArea = (props: SelectAreaProps) => {
   const theme = useTheme();
   const { t } = useTranslation("maps");
 
-  const { projectLayers } = useProjectLayers();
+  const { projectId } = useParams();
+
+  const { layers: projectLayers } = useProjectLayers(
+    typeof projectId === "string" ? projectId : "",
+  );
 
   return (
     <Box>
@@ -117,13 +122,15 @@ const SelectArea = (props: SelectAreaProps) => {
                   setPolygonLayer(event.target.value as areaSelectionTypes)
                 }
               >
-                {projectLayers.map((layer) =>
-                  layer.feature_layer_geometry_type === "polygon" ? (
-                    <MenuItem value={layer.id} key={v4()}>
-                      {layer.name}
-                    </MenuItem>
-                  ) : null,
-                )}
+                {projectLayers
+                  ? projectLayers.map((layer) =>
+                      layer.feature_layer_geometry_type === "polygon" ? (
+                        <MenuItem value={layer.id} key={v4()}>
+                          {layer.name}
+                        </MenuItem>
+                      ) : null,
+                    )
+                  : null}
               </Select>
             </FormControl>
           </Box>

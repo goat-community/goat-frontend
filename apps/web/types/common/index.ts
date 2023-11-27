@@ -7,6 +7,11 @@ export enum ContentActions {
   DELETE = "delete",
 }
 
+export enum MapLayerActions {
+  DUPLICATE = "duplicate",
+  RENAME = "rename",
+}
+
 export enum OrgMemberActions {
   EDIT = "edit",
   DELETE = "delete",

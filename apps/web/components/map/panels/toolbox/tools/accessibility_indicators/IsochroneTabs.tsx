@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { Box, useTheme, Typography } from "@mui/material";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useParams } from "next/navigation";
+// import { useParams } from "next/navigation";
 import { useTranslation } from "@/i18n/client";
 
-import Join from "@/components/map/panels/toolbox/tools/join/Join";
-import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
-import IsochroneTabs from "@/components/map/panels/toolbox/tools/accessibility_indicators/IsochroneTabs";
+import Isochrone from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/Isochrone";
 
 interface ToolTabType {
   name: string;
@@ -16,49 +14,21 @@ interface ToolTabType {
   element: React.ReactNode;
 }
 
-const ToolTabs = () => {
+const IsochroneTabs = () => {
   const [value, setValue] = useState<ToolTabType | undefined>(undefined);
 
   const {t} = useTranslation("maps");
 
   const theme = useTheme();
-  const params = useParams();
+  // const params = useParams();
   
   const tabs: ToolTabType[] = [
     {
-      name: t("panels.tools.join.join"),
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
-      value: "join",
-      element: <Join projectId={typeof params.projectId === "string" ? params.projectId : ""}/>,
-    },
-    {
-      name: t("panels.tools.aggregate.aggregate"),
+      name: t("panels.tools.accessibility_indicators.isochrone"),
       tooltip:
         "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
       value: "aggregate_features",
-      element: <Aggregate projectId={typeof params.projectId === "string" ? params.projectId : ""}/>,
-    },
-    {
-      name: t("panels.tools.accessibility_indicators.accessibility_indicators"),
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
-      value: "aggregate_features",
-      element: <IsochroneTabs />,
-    },
-    {
-      name: "Summarize features",
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
-      value: "summarize_features",
-      element: <p>summarize</p>,
-    },
-    {
-      name: "Origin to destination",
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
-      value: "origin_to_destination",
-      element: <p>origin</p>,
+      element: <Isochrone />,
     },
   ];
   
@@ -106,4 +76,4 @@ const ToolTabs = () => {
   );
 };
 
-export default ToolTabs;
+export default IsochroneTabs;

@@ -27,18 +27,13 @@ export type MapSidebarProps = {
 };
 
 const MapSidebarList = (props: MapSidebarListProps) => {
-  const { items, justifyContent, sidebarPosition, active, sidebarWidth } = props;
+  const { items, justifyContent, sidebarPosition, active, sidebarWidth } =
+    props;
   const theme = useTheme();
-
-  const htmlColor = (name: string) => {
-    if (name === active?.name) {
-      return theme.palette.primary.main;
-    }
-    return theme.palette.text.secondary
-  };
 
   return (
     <List
+      dense
       sx={{
         justifyContent,
         display: "flex",
@@ -57,18 +52,14 @@ const MapSidebarList = (props: MapSidebarListProps) => {
           <ListItem
             key={item.icon}
             disablePadding
-            disableGutters
             sx={{
               display: "block",
             }}
           >
             <ListItemButton
+              selected={item.name === active?.name}
               sx={{
-                minHeight: 60,
-                justifyContent: "center",
-                "&:hover": {
-                  backgroundColor: theme.palette.background.default,
-                },
+                minHeight: sidebarWidth,
               }}
               onClick={() => {
                 if (props.onClick) {
@@ -81,7 +72,11 @@ const MapSidebarList = (props: MapSidebarListProps) => {
               >
                 <Icon
                   iconName={item.icon}
-                  htmlColor={htmlColor(item.name)}
+                  htmlColor={
+                    item.name === active?.name
+                      ? theme.palette.primary.main
+                      : "inherit"
+                  }
                   fontSize="small"
                 />
               </ListItemIcon>
@@ -103,8 +98,7 @@ export type MapSidebarListProps = {
 };
 
 export default function MapSidebar(props: MapSidebarProps) {
-
-  const {width} = props;
+  const { width } = props;
 
   return (
     <Drawer
@@ -122,7 +116,7 @@ export default function MapSidebar(props: MapSidebarProps) {
           boxSizing: "border-box",
         },
       }}
-    > 
+    >
       <Box
         sx={{
           display: "grid",

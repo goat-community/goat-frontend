@@ -27,7 +27,7 @@ export default function Container(props: ContainerProps) {
   return (
     <Stack
       sx={{
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette.background.default,
         height: "100%",
       }}
     >
@@ -72,11 +72,6 @@ export default function Container(props: ContainerProps) {
               }}
             >
               {title}
-              <Icon
-                iconName={ICON_NAME.OUTILINEDINFO}
-                htmlColor={theme.palette.primary.main}
-                style={{ fontSize: "10px" }}
-              />
             </Typography>
             {direction === "left" ? (
               <IconButton onClick={() => close(undefined)}>
@@ -100,6 +95,7 @@ export default function Container(props: ContainerProps) {
             paddingLeft: theme.spacing(3),
             paddingRight: theme.spacing(3),
             overflowY: "auto",
+            height: "100%",
             scrollbarGutter: "stable both-edges",
             "&::-webkit-scrollbar": {
               width: "6px",

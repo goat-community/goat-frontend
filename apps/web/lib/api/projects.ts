@@ -6,6 +6,7 @@ import type {
   ProjectPaginated,
   Project,
   PostProject,
+  ProjectViewState,
 } from "@/lib/validations/project";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import type { Layer } from "@/lib/validations/layer";
@@ -30,9 +31,9 @@ export const useProjects = (queryParams?: GetContentQueryParams) => {
   };
 };
 
-export const useProject = (id: string) => {
+export const useProject = (projectId: string) => {
   const { data, isLoading, error, mutate, isValidating } = useSWR<Project>(
-    [`${PROJECTS_API_BASE_URL}/${id}`],
+    [`${PROJECTS_API_BASE_URL}/${projectId}`],
     fetcher,
   );
   return {
@@ -44,9 +45,141 @@ export const useProject = (id: string) => {
   };
 };
 
-export const createProject = async (
+export const useProjectLayers = (projectId: string) => {
+  const { data, isLoading, error, mutate, isValidating } = useSWR<Layer[]>(
+    [`${PROJECTS_API_BASE_URL}/${projectId}/layer`],
+    fetcher,
+  );
+  return {
+    layers: data,
+    isLoading: isLoading,
+    isError: error,
+    mutate,
+    isValidating,
+  };
+};
+
+export const useProjectInitialViewState = (projectId: string) => {
+  const { data, isLoading, error, mutate, isValidating } =
+    useSWR<ProjectViewState>(
+      [`${PROJECTS_API_BASE_URL}/${projectId}/initial-view-state`],
+      fetcher,
+    );
+  return {
+    initialView: data,
+    isLoading: isLoading,
+    isError: error,
+    mutate,
+    isValidating,
+  };
+};
+
+export const updateProjectInitialViewState = async (
+  projectId: string,
+  payload: ProjectViewState,
+) => {
+  const response = await fetchWithAuth(
+    `${PROJECTS_API_BASE_URL}/${projectId}/initial-view-state`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to update project initial view state");
+  }
+  return await response.json();
+};
+
+export const updateProjectLayer = async (
+  projectId: string,
+  layerId: number,
+  payload: Layer,
+) => {
+  const response = await fetchWithAuth(
+    `${PROJECTS_API_BASE_URL}/${projectId}/layer/${layerId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to update project layer");
+  }
+  return await response.json();
+};
+
+export const deleteProjectLayer = async (
+  projectId: string,
+  layerId: number,
+) => {
+  try {
+    await fetchWithAuth(
+      `${PROJECTS_API_BASE_URL}/${projectId}/layer/?layer_project_id=${layerId}`,
+      {
+        method: "DELETE",
+      },
+    );
+  } catch (error) {
+    console.error(error);
+    throw Error(
+      `deleteProjectLayer: unable to delete layer with id ${layerId}`,
+    );
+  }
+};
+
+export const addProjectLayers = async (
+  projectId: string,
+  layerIds: string[],
+) => {
+  //todo: fix the api for this. This structure doesn't make sense.
+  //layer_ids=1&layer_ids=2&layer_ids=3
+  const layerIdsParams = layerIds.map((layerId) => {
+    return `layer_ids=${layerId}`;
+  });
+
+  const response = await fetchWithAuth(
+    `${PROJECTS_API_BASE_URL}/${projectId}/layer?${layerIdsParams.join("&")}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to add layers to project");
+  }
+  return await response.json();
+};
+
+export const updateProject = async (
+  projectId: string,
   payload: PostProject,
-): Promise<Project> => {
+) => {
+  const response = await fetchWithAuth(
+    `${PROJECTS_API_BASE_URL}/${projectId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to update project");
+  }
+  return await response.json();
+};
+
+export const createProject = async (payload: PostProject): Promise<Project> => {
   const response = await fetchWithAuth(`${PROJECTS_API_BASE_URL}`, {
     method: "POST",
     headers: {
@@ -58,21 +191,6 @@ export const createProject = async (
     throw new Error("Failed to create project");
   }
   return await response.json();
-};
-
-
-export const getProjectLayers = async (id: string) => {
-  try {
-    const data: Promise<Layer[]> = (
-      await fetchWithAuth(`${PROJECTS_API_BASE_URL}/${id}/layer`)
-    ).json();
-    return data;
-  } catch (error) {
-    console.error(error);
-    throw Error(
-      `error: make sure you are connected to an internet connection!`,
-    );
-  }
 };
 
 export const deleteProject = async (id: string) => {

@@ -1,11 +1,15 @@
 import * as z from "zod";
 import { responseSchema } from "@/lib/validations/response";
-import { contentMetadataSchema, getContentQueryParamsSchema } from "@/lib/validations/common";
+import {
+  contentMetadataSchema,
+  getContentQueryParamsSchema,
+} from "@/lib/validations/common";
+import type { AnyLayer as MapLayerStyle } from "react-map-gl";
 
 export const layerType = z.enum([
-  "feature_layer",
-  "imagery_layer",
-  "tile_layer",
+  "feature",
+  "external_imagery",
+  "external_vector_tile",
   "table",
 ]);
 
@@ -24,19 +28,24 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
 });
 
 export const layerSchema = layerMetadataSchema.extend({
-  active: z.boolean().optional(),
-  name: z.string().optional(),
+  id: z.number(),
+  properties: z.object({}),
+  total_count: z.number(),
   updated_at: z.string(),
   created_at: z.string(),
-  query: z.object({}),
   extent: z.string(),
   folder_id: z.string(),
-  id: z.string().uuid(),
+  data_source: z.string().optional(),
+  query: z.object({}),
+  layer_id: z.string().uuid(),
+  project_id: z.string().uuid(),
   user_id: z.string().uuid(),
   type: layerType,
   size: z.number().optional(),
-  style: z.object({}).optional(),
+  z_index: z.number().min(0).optional(),
+  extra_properties: z.object({}).optional(),
   url: z.string().optional(),
+  feature_layer_type: featureLayerType.optional(),
   feature_layer_geometry_type: z.string(),
   data_type: data_type.optional(),
   legend_urls: z.array(z.string()).optional(),
@@ -86,17 +95,17 @@ export const createNewExternalTileLayerSchema = createLayerBaseSchema.extend({
 
 export const createNewDatasetLayerSchema = z.object({
   file: z.any(),
-  layer_in: z.union([
-    createNewTableLayerSchema,
-    createNewStandardLayerSchema
-  ]),
+  layer_in: z.union([createNewTableLayerSchema, createNewStandardLayerSchema]),
 });
 
 export const layerResponseSchema = responseSchema(layerSchema);
 export const layerTypesArray = Object.values(layerType.Values);
 export const featureLayerTypesArray = Object.values(featureLayerType.Values);
 
-export type Layer = z.infer<typeof layerSchema>;
+export type LayerZod = z.infer<typeof layerSchema>;
+export type Layer = Omit<LayerZod, "properties"> & {
+  properties: MapLayerStyle;
+};
 export type LayerPaginated = z.infer<typeof layerResponseSchema>;
 export type LayerType = z.infer<typeof layerType>;
 export type LayerMetadata = z.infer<typeof layerMetadataSchema>;
