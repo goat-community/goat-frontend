@@ -7,10 +7,7 @@ import React, { useMemo } from "react";
 import type { ViewStateChangeEvent } from "react-map-gl";
 import Map, { MapProvider } from "react-map-gl";
 import Layers from "@/components/map/Layers";
-import MobileDrawer from "@/components/map/panels/MobileDrawer";
 
-import { useSelector } from "react-redux";
-import type { IStore } from "@/types/store";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 import Header from "@/components/header/Header";
 import {
@@ -20,15 +17,16 @@ import {
   useProjectLayers,
 } from "@/lib/api/projects";
 import { LoadingPage } from "@/components/common/LoadingPage";
+import { useAppSelector } from "@/hooks/store/ContextHooks";
+import { selectActiveBasemap } from "@/lib/store/map/selectors";
 
 const sidebarWidth = 52;
 const toolbarHeight = 52;
 
 export default function MapPage({ params: { projectId } }) {
   const theme = useTheme();
-  const { basemaps, activeBasemapIndex } = useSelector(
-    (state: IStore) => state.styling,
-  );
+  const activeBasemap = useAppSelector(selectActiveBasemap);
+
   const {
     project,
     isLoading: isProjectLoading,
@@ -118,16 +116,15 @@ export default function MapPage({ params: { projectId } }) {
                     maxZoom: initialView?.max_zoom ?? 24,
                   },
                 }}
-                mapStyle={basemaps[activeBasemapIndex[0]].url}
+                mapStyle={
+                  activeBasemap?.url ?? "mapbox://styles/mapbox/streets-v11"
+                }
                 attributionControl={false}
                 mapboxAccessToken={MAPBOX_TOKEN}
               >
                 <Layers projectId={projectId} />
               </Map>
             </Box>
-          </Box>
-          <Box>
-            <MobileDrawer />
           </Box>
         </MapProvider>
       )}

@@ -20,6 +20,9 @@ interface TileGridProps {
   type: "project" | "layer";
   items: Project[] | Layer[];
   isLoading: boolean;
+  enableActions?: boolean;
+  onClick?: (item: Project | Layer) => void;
+  selected?: Project | Layer;
 }
 
 const TileGrid = (props: TileGridProps) => {
@@ -61,7 +64,7 @@ const TileGrid = (props: TileGridProps) => {
       <Box
         sx={{
           ...(props.view === "list" && {
-            boxShadow: 3,
+            boxShadow: props.enableActions ? 3 : 0,
           }),
         }}
       >
@@ -99,6 +102,11 @@ const TileGrid = (props: TileGridProps) => {
             (item: Project | Layer, index: number) => (
               <Grid
                 item
+                onClick={() => {
+                  if (props.onClick) {
+                    props.onClick(item);
+                  }
+                }}
                 key={item?.id ?? index}
                 {...(props.view === "list" ? listProps : gridProps)}
               >
@@ -109,6 +117,8 @@ const TileGrid = (props: TileGridProps) => {
                   />
                 ) : (
                   <TileCard
+                    selected={props.selected}
+                    enableActions={props.enableActions}
                     cardType={props.view}
                     item={item}
                     moreMenuOptions={moreMenuOptions}

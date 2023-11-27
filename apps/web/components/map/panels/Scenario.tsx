@@ -1,18 +1,14 @@
 import Container from "@/components/map/panels/Container";
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { Typography } from "@mui/material";
-import type { MapSidebarItem } from "@/types/map/sidebar";
 
-interface ScenarioPanelProps {
-  setActiveRight: (item: MapSidebarItem | undefined) => void;
-}
-
-const ScenarioPanel = (props: ScenarioPanelProps) => {
-  const { setActiveRight } = props;
-
+const ScenarioPanel = () => {
+  const dispatch = useAppDispatch();
   return (
     <Container
       title="Scenario"
-      close={setActiveRight}
+      close={() => dispatch(setActiveRightPanel(undefined))}
       body={<Typography variant="body1">Body</Typography>}
     />
   );

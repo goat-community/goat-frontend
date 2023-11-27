@@ -7,9 +7,9 @@ import type {
   Project,
   PostProject,
   ProjectViewState,
+  ProjectLayer,
 } from "@/lib/validations/project";
 import type { GetContentQueryParams } from "@/lib/validations/common";
-import type { Layer } from "@/lib/validations/layer";
 
 export const PROJECTS_API_BASE_URL = new URL(
   "api/v2/project",
@@ -46,10 +46,9 @@ export const useProject = (projectId: string) => {
 };
 
 export const useProjectLayers = (projectId: string) => {
-  const { data, isLoading, error, mutate, isValidating } = useSWR<Layer[]>(
-    [`${PROJECTS_API_BASE_URL}/${projectId}/layer`],
-    fetcher,
-  );
+  const { data, isLoading, error, mutate, isValidating } = useSWR<
+    ProjectLayer[]
+  >([`${PROJECTS_API_BASE_URL}/${projectId}/layer`], fetcher);
   return {
     layers: data,
     isLoading: isLoading,
@@ -97,7 +96,7 @@ export const updateProjectInitialViewState = async (
 export const updateProjectLayer = async (
   projectId: string,
   layerId: number,
-  payload: Layer,
+  payload: ProjectLayer,
 ) => {
   const response = await fetchWithAuth(
     `${PROJECTS_API_BASE_URL}/${projectId}/layer/${layerId}`,

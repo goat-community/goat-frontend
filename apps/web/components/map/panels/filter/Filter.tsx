@@ -23,39 +23,35 @@ import { useSelector, useDispatch } from "react-redux";
 import { v4 } from "uuid";
 import type { IStore } from "@/types/store";
 import type { SelectChangeEvent } from "@mui/material";
-import type { MapSidebarItem } from "@/types/map/sidebar";
 
 import HistogramSlider from "./histogramSlider/HistogramSlider";
 import { histogramData } from "@/public/assets/data/histogramSample";
 import { useTranslation } from "@/i18n/client";
-import { setMapLoading } from "@/lib/store/map/slice";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
 
 interface FilterPanelProps {
-  setActiveRight: (item: MapSidebarItem | undefined) => void;
   projectId: string;
 }
 
 const FilterPanel = (props: FilterPanelProps) => {
-  const { setActiveRight, projectId } = props;
-  const { t } = useTranslation("maps");
-
+  const { projectId } = props;
   const dispatch = useDispatch();
+  const { t } = useTranslation("maps");
 
   const {
     createExpression,
     updateProjectLayerQuery,
     deleteAnExpression,
     duplicateAnExpression,
-    getFilterQueryExpressions
+    getFilterQueryExpressions,
   } = useFilterExpressions(projectId);
 
   const { layerToBeFiltered } = useSelector(
     (state: IStore) => state.mapFilters,
   );
 
-  const { data: updatedData, mutate } = getFilterQueryExpressions(
-    layerToBeFiltered,
-  );
+  const { data: updatedData, mutate } =
+    getFilterQueryExpressions(layerToBeFiltered);
 
   const [logicalOperator, setLogicalOperatorVal] = useState<string>(
     "match_all_expressions",
@@ -72,7 +68,7 @@ const FilterPanel = (props: FilterPanelProps) => {
     },
   });
   const sampleLayerID = "user_data.4d76705b973643a393dffd14e10f6604";
-  
+
   const { getLayerKeys } = useLayerHook(sampleLayerID);
   const { keys } = getLayerKeys();
   const theme = useTheme();
@@ -92,7 +88,7 @@ const FilterPanel = (props: FilterPanelProps) => {
     await createExpression(projectId, layerToBeFiltered);
     mutate();
     // dispatch(setMapLoading(true))
-  }
+  };
 
   function handleOperatorChange(event: SelectChangeEvent<string>) {
     setLogicalOperatorVal(event.target.value);
@@ -105,25 +101,25 @@ const FilterPanel = (props: FilterPanelProps) => {
       `{"query": {} }`,
     );
     mutate();
-    dispatch(setMapLoading(true))
+    dispatch(setMapLoading(true));
   };
 
   const deleteOneExpression = async (id: string) => {
     await deleteAnExpression(id, projectId, layerToBeFiltered);
     mutate();
-    dispatch(setMapLoading(true))
+    dispatch(setMapLoading(true));
   };
 
   const duplicateOneExpression = async (id: string) => {
     await duplicateAnExpression(id, projectId, layerToBeFiltered);
     mutate();
-    dispatch(setMapLoading(true))
-  }
+    dispatch(setMapLoading(true));
+  };
 
   return (
     <Container
       title={t("panels.filter.filter")}
-      close={setActiveRight}
+      close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <>
           <div>
@@ -225,7 +221,9 @@ const FilterPanel = (props: FilterPanelProps) => {
                       padding: `${theme.spacing(2)} ${theme.spacing(3)}`,
                     }}
                   >
-                    <Typography variant="body1">{t("panels.filter.filter_your_data")}</Typography>
+                    <Typography variant="body1">
+                      {t("panels.filter.filter_your_data")}
+                    </Typography>
                     <Typography
                       sx={{
                         letterSpacing: "0.15px",

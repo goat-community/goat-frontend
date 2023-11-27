@@ -6,17 +6,12 @@ import {
   AccordionSummary,
   AccordionDetails,
   useTheme,
-  Box
+  Box,
 } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
-import {
-  setLayerFillColor,
-  setLayerFillOutLineColor,
-} from "@/lib/store/styling/slice";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { selectMapLayer } from "@/lib/store/styling/selectors";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
 
 const ColorOptionFill = () => {
   const mapLayer = useSelector(selectMapLayer);
@@ -116,11 +111,13 @@ const ColorOptionFill = () => {
                 {/*/>*/}
               </Box>
             </Box>
-            <Divider sx={{
-              width: "100%",
-              borderTop: "none",
-              borderBottom: `1px solid ${theme.palette.primary.main}`,
-            }} />
+            <Divider
+              sx={{
+                width: "100%",
+                borderTop: "none",
+                borderBottom: `1px solid ${theme.palette.primary.main}`,
+              }}
+            />
             <Box
               sx={{
                 display: "flex",

@@ -49,10 +49,11 @@ interface FoldersTreeViewProps {
     params: GetLayersQueryParams | GetProjectsQueryParams,
   ) => void;
   queryParams: GetLayersQueryParams | GetProjectsQueryParams;
+  enableActions?: boolean;
 }
 
 export default function FoldersTreeView(props: FoldersTreeViewProps) {
-  const { setQueryParams, queryParams } = props;
+  const { setQueryParams, queryParams, enableActions = true } = props;
   const [open, setOpen] = useState<boolean[]>([true, false, false]);
   const { t } = useTranslation("dashboard");
 
@@ -92,7 +93,11 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
   const theme = useTheme();
 
   const folderTypes = ["folder", "team", "organization"];
-  const folderTypeTitles = [t("projects.my_content"), t("projects.teams"), t("projects.organizations")];
+  const folderTypeTitles = [
+    t("projects.my_content"),
+    t("projects.teams"),
+    t("projects.organizations"),
+  ];
 
   const moreMenuItems: PopperMenuItem[] = [
     {
@@ -204,7 +209,7 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
                     </Typography>
                   }
                 />
-                {typeIndex === 0 && (
+                {typeIndex === 0 && enableActions && (
                   <Tooltip title={t("projects.new_folder")} placement="top">
                     <IconButton
                       size="small"
@@ -280,7 +285,8 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
                           }}
                         />
                         {folderTypes[typeIndex] === "folder" &&
-                          item?.id !== "0" && (
+                          item?.id !== "0" &&
+                          enableActions && (
                             <MoreMenu
                               menuItems={moreMenuItems}
                               menuButton={

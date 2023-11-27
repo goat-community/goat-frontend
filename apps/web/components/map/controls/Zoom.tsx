@@ -4,7 +4,7 @@ import { useMap } from "react-map-gl";
 
 export function Zoom() {
   const { map } = useMap();
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <>
@@ -26,13 +26,17 @@ export function Zoom() {
                   backgroundColor: theme.palette.background.paper,
                   marginTop: theme.spacing(1),
                   marginBottom: theme.spacing(1),
-                  color: theme.palette.secondary.light,
+                  color: theme.palette.text.secondary,
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
                 }}
               >
-                <Icon iconName={ICON_NAME.PLUS} fontSize="small" />
+                <Icon
+                  iconName={ICON_NAME.PLUS}
+                  htmlColor="inherit"
+                  fontSize="small"
+                />
               </Fab>
             </Tooltip>
             <Tooltip title="Zoom Out" arrow placement="left">
@@ -43,13 +47,17 @@ export function Zoom() {
                   backgroundColor: theme.palette.background.paper,
                   marginTop: theme.spacing(1),
                   marginBottom: theme.spacing(1),
-                  color: theme.palette.secondary.light,
+                  color: theme.palette.text.secondary,
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
                 }}
               >
-                <Icon iconName={ICON_NAME.MINUS} fontSize="small" />
+                <Icon
+                  iconName={ICON_NAME.MINUS}
+                  htmlColor="inherit"
+                  fontSize="small"
+                />
               </Fab>
             </Tooltip>
           </Stack>

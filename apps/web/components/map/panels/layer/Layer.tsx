@@ -1,14 +1,10 @@
 import Container from "@/components/map/panels/Container";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import {
   useTheme,
   Box,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
   Card,
   Grid,
   IconButton,
@@ -16,13 +12,18 @@ import {
   Typography,
   Stack,
   Tooltip,
+  TextField,
+  Button,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  MenuList,
+  ClickAwayListener,
 } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
-import type { ChangeEvent } from "react";
-import type { MapSidebarItem } from "@/types/map/sidebar";
 import {
   addProjectLayers,
   deleteProjectLayer,
@@ -33,7 +34,7 @@ import {
 } from "@/lib/api/projects";
 import React from "react";
 import { DragIndicator } from "@mui/icons-material";
-import type { Layer as MapLayer } from "@/lib/validations/layer";
+import type { ProjectLayer } from "@/lib/validations/project";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -43,12 +44,26 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { useLayerSettingsMoreMenu } from "@/hooks/map/LayerPanelHooks";
+import {
+  useLayerSettingsMoreMenu,
+  useSortedLayers,
+} from "@/hooks/map/LayerPanelHooks";
 import { toast } from "react-toastify";
+import { ContentActions, MapLayerActions } from "@/types/common";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+import { setActiveLayer } from "@/lib/store/layer/slice";
+import { wktToGeoJSON } from "@/lib/utils/map/wkt";
+import bbox from "@turf/bbox";
+import { useMap } from "react-map-gl";
+import { fitBounds } from "@/lib/utils/map/navigate";
+import { OverflowTypograpy } from "@/components/common/OverflowTypography";
+import { setActiveLeftPanel, setActiveRightPanel } from "@/lib/store/map/slice";
+import { MapSidebarItemID } from "@/types/map/common";
+import DatasetUploadModal from "@/components/modals/DatasetUpload";
+import DatasetExplorerModal from "@/components/modals/DatasetExplorer";
 
 interface PanelProps {
   onCollapse?: () => void;
-  setActiveLeft: (item: MapSidebarItem | undefined) => void;
   projectId: string;
 }
 
@@ -56,6 +71,9 @@ const StyledDragHandle = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   color: theme.palette.text.secondary,
+  transition: theme.transitions.create(["opacity"], {
+    duration: theme.transitions.duration.standard,
+  }),
   opacity: 0,
   ":hover": {
     cursor: "move",
@@ -75,31 +93,41 @@ export const DragHandle: React.FC<{
 
 type SortableLayerTileProps = {
   id: number;
-  layer: MapLayer;
+  layer: ProjectLayer;
+  active: boolean;
+  onClick: () => void;
   actions?: React.ReactNode;
+  body: React.ReactNode;
 };
 
 export function SortableLayerTile(props: SortableLayerTileProps) {
+  const theme = useTheme();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props.id });
-  const { t } = useTranslation("maps");
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: `${transition}, border-color 0.2s ease-in-out`,
   };
 
   return (
     <Card
+      onClick={props.onClick}
       sx={{
         cursor: "pointer",
         my: 2,
         pr: 0,
         pl: 1,
+        borderLeft: props.active
+          ? `5px ${theme.palette.primary.main} solid`
+          : "5px transparent solid",
         py: 2,
         ":hover": {
           boxShadow: 6,
-          "& div": {
+          ...(!props.active && {
+            borderLeft: `5px ${theme.palette.text.secondary} solid`,
+          }),
+          "& div, & button": {
             opacity: 1,
           },
         },
@@ -115,14 +143,7 @@ export function SortableLayerTile(props: SortableLayerTileProps) {
           </DragHandle>
         </Grid>
         <Grid item xs={8} zeroMinWidth>
-          <Stack spacing={1}>
-            <Typography variant="caption" noWrap>
-              {t(`maps:${props.layer.type}`)}
-            </Typography>
-            <Typography variant="body2" fontWeight="bold" noWrap>
-              {props.layer.name}
-            </Typography>
-          </Stack>
+          <Stack spacing={1}>{props.body}</Stack>
         </Grid>
         <Grid item xs={3}>
           {props.actions}
@@ -132,35 +153,147 @@ export function SortableLayerTile(props: SortableLayerTileProps) {
   );
 }
 
-const LayerPanel = ({ setActiveLeft, projectId }: PanelProps) => {
-  const theme = useTheme();
+enum AddLayerSourceType {
+  DatasourceExplorer,
+  DatasourceUpload,
+}
+
+const AddLayerSection = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation("maps");
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const [addLayerSourceOpen, setAddSourceOpen] =
+    useState<AddLayerSourceType | null>(null);
+  const openAddLayerSourceDialog = (addType: AddLayerSourceType) => {
+    handleClose();
+    setAddSourceOpen(addType);
+  };
+
+  const closeAddLayerSourceModal = () => {
+    setAddSourceOpen(null);
+  };
+
+  return (
+    <>
+      <Stack spacing={4} sx={{ width: "100%" }}>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Icon iconName={ICON_NAME.DATABASE} style={{ fontSize: "15px" }} />
+          <Typography variant="body2" fontWeight="bold" color="inherit">
+            {t("maps:source")}
+          </Typography>
+        </Stack>
+        <Button
+          onClick={handleClick}
+          fullWidth
+          size="small"
+          startIcon={
+            <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />
+          }
+        >
+          <Typography variant="body2" fontWeight="bold" color="inherit">
+            {t("maps:add_layer")}
+          </Typography>
+        </Button>
+        <Menu
+          anchorEl={anchorEl}
+          sx={{
+            "& .MuiPaper-root": {
+              boxShadow: "0px 0px 10px 0px rgba(58, 53, 65, 0.1)",
+            },
+          }}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+          open={open}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+            sx: { width: anchorEl && anchorEl.offsetWidth - 10, p: 0 },
+          }}
+          onClose={handleClose}
+        >
+          <Box>
+            <ClickAwayListener onClickAway={handleClose}>
+              <MenuList>
+                <MenuItem
+                  onClick={() =>
+                    openAddLayerSourceDialog(
+                      AddLayerSourceType.DatasourceExplorer,
+                    )
+                  }
+                >
+                  <ListItemIcon>
+                    <Icon
+                      iconName={ICON_NAME.DATABASE}
+                      style={{ fontSize: "15px" }}
+                    />
+                  </ListItemIcon>
+                  <Typography variant="body2">Dataset Explorer</Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    openAddLayerSourceDialog(
+                      AddLayerSourceType.DatasourceUpload,
+                    )
+                  }
+                >
+                  <ListItemIcon>
+                    <Icon
+                      iconName={ICON_NAME.UPLOAD}
+                      style={{ fontSize: "15px" }}
+                    />
+                  </ListItemIcon>
+                  <Typography variant="body2">Dataset Upload</Typography>
+                </MenuItem>
+              </MenuList>
+            </ClickAwayListener>
+          </Box>
+        </Menu>
+      </Stack>
+      {addLayerSourceOpen === AddLayerSourceType.DatasourceExplorer && (
+        <DatasetExplorerModal
+          open={true}
+          onClose={closeAddLayerSourceModal}
+          projectId={projectId}
+        />
+      )}
+      {addLayerSourceOpen === AddLayerSourceType.DatasourceUpload && (
+        <DatasetUploadModal open={true} onClose={closeAddLayerSourceModal} />
+      )}
+    </>
+  );
+};
+
+const LayerPanel = ({ projectId }: PanelProps) => {
+  const { t } = useTranslation("maps");
+  const { map } = useMap();
+  const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const [previousRightPanel, setPreviousRightPanel] = useState<
+    MapSidebarItemID | undefined
+  >(undefined);
   const { layers: projectLayers, mutate: mutateProjectLayers } =
     useProjectLayers(projectId);
 
+  const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
+  const activeRightPanel = useAppSelector(
+    (state) => state.map.activeRightPanel,
+  );
+
   const { project, mutate: mutateProject } = useProject(projectId);
-  const sortedLayers = useMemo(() => {
-    if (!projectLayers || !project) return [];
-    return projectLayers.sort(
-      (a, b) =>
-        project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id),
-    );
-  }, [projectLayers, project]);
+  const sortedLayers = useSortedLayers(projectId);
 
-  const [searchString, setSearchString] = useState<string>("");
-  function changeSearch(text: string) {
-    setSearchString(text);
-  }
-
-  const {
-    layerMoreMenuOptions,
-    // activeLayer,
-    // moreMenuState,
-    // closeMoreMenu,
-    openMoreMenu,
-  } = useLayerSettingsMoreMenu();
-
-  async function toggleLayerVisibility(layer: MapLayer) {
+  const [renameLayer, setRenameLayer] = useState<ProjectLayer | undefined>(
+    undefined,
+  );
+  const [newLayerName, setNewLayerName] = useState<string>("");
+  const { layerMoreMenuOptions, openMoreMenu } = useLayerSettingsMoreMenu();
+  async function toggleLayerVisibility(layer: ProjectLayer) {
     const layers = JSON.parse(JSON.stringify(projectLayers));
     const index = layers.findIndex((l) => l.id === layer.id);
     const layerToUpdate = layers[index];
@@ -212,16 +345,19 @@ const LayerPanel = ({ setActiveLeft, projectId }: PanelProps) => {
     }
   }
 
-  async function deleteLayer(layer: MapLayer) {
+  async function deleteLayer(layer: ProjectLayer) {
     try {
       await deleteProjectLayer(projectId, layer.id);
       mutateProjectLayers(projectLayers?.filter((l) => l.id !== layer.id));
+      if (layer.id === activeLayerId) {
+        dispatch(setActiveLayer(null));
+      }
     } catch (error) {
       toast.error("Error removing layer from project");
     }
   }
 
-  async function duplicateLayer(layer: MapLayer) {
+  async function duplicateLayer(layer: ProjectLayer) {
     try {
       await addProjectLayers(projectId, [layer.layer_id]);
       mutateProjectLayers();
@@ -230,42 +366,45 @@ const LayerPanel = ({ setActiveLeft, projectId }: PanelProps) => {
     }
   }
 
+  async function renameLayerName(layer: ProjectLayer) {
+    try {
+      setRenameLayer(undefined);
+      const udpatedProjectLayers = JSON.parse(JSON.stringify(projectLayers));
+      const index = udpatedProjectLayers.findIndex((l) => l.id === layer.id);
+      udpatedProjectLayers[index].name = newLayerName;
+      mutateProjectLayers(udpatedProjectLayers, false);
+      await updateProjectLayer(
+        projectId,
+        layer.id,
+        udpatedProjectLayers[index],
+      );
+    } catch (error) {
+      toast.error("Error renaming layer");
+    } finally {
+      setNewLayerName("");
+    }
+  }
+
+  function zoomToLayer(layer: ProjectLayer) {
+    const geojson = wktToGeoJSON(layer.extent);
+    const boundingBox = bbox(geojson);
+    fitBounds(map, boundingBox as [number, number, number, number]);
+  }
+
+  function openPropertiesPanel(layer: ProjectLayer) {
+    if (layer.id !== activeLayerId) {
+      dispatch(setActiveLayer(layer.id));
+    }
+    dispatch(setActiveRightPanel(MapSidebarItemID.PROPERTIES));
+  }
+
   return (
     <Container
       title="Layers"
-      close={setActiveLeft}
+      close={() => dispatch(setActiveLeftPanel(undefined))}
       direction="left"
       body={
         <>
-          <Box>
-            <FormControl
-              sx={{ width: "100%", marginBottom: theme.spacing(3) }}
-              variant="outlined"
-              size="small"
-            >
-              <InputLabel htmlFor="outlined-adornment-password">
-                {t("search")}
-              </InputLabel>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type="text"
-                endAdornment={
-                  <InputAdornment position="end">
-                    <Icon
-                      iconName={ICON_NAME.SEARCH}
-                      fontSize="small"
-                      htmlColor={`${theme.palette.secondary.light}aa`}
-                    />
-                  </InputAdornment>
-                }
-                value={searchString}
-                onChange={(
-                  e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-                ) => changeSearch(e.target.value)}
-                label={t("search")}
-              />
-            </FormControl>
-          </Box>
           <Box>
             {sortedLayers && sortedLayers?.length > 0 && (
               <DndContext
@@ -282,7 +421,86 @@ const LayerPanel = ({ setActiveLeft, projectId }: PanelProps) => {
                     <SortableLayerTile
                       key={layer.id}
                       id={layer.id}
+                      active={activeLayerId === layer.id}
+                      onClick={() => {
+                        const rightPanelIds = [
+                          MapSidebarItemID.PROPERTIES,
+                          MapSidebarItemID.FILTER,
+                          MapSidebarItemID.STYLE,
+                        ];
+                        const isActiveRightPanelInIds =
+                          activeRightPanel &&
+                          rightPanelIds.includes(activeRightPanel);
+
+                        dispatch(setActiveLayer(layer.id));
+                        setPreviousRightPanel(undefined);
+
+                        if (
+                          layer.id === activeLayerId &&
+                          isActiveRightPanelInIds
+                        ) {
+                          setPreviousRightPanel(activeRightPanel);
+                          dispatch(setActiveRightPanel(undefined));
+                        }
+
+                        if (layer.id !== activeLayerId) {
+                          if (activeRightPanel && !isActiveRightPanelInIds) {
+                            setActiveRightPanel(undefined);
+                          }
+
+                          if (previousRightPanel) {
+                            dispatch(setActiveRightPanel(previousRightPanel));
+                          }
+                        }
+                      }}
                       layer={layer}
+                      body={
+                        <>
+                          <Typography variant="caption" noWrap>
+                            {t(`maps:${layer.type}`)}
+                          </Typography>
+
+                          {renameLayer?.id === layer.id ? (
+                            <TextField
+                              autoFocus
+                              variant="standard"
+                              size="small"
+                              inputProps={{
+                                style: {
+                                  fontSize: "0.875rem",
+                                  fontWeight: "bold",
+                                },
+                              }}
+                              defaultValue={renameLayer.name}
+                              onChange={(e) => {
+                                setNewLayerName(e.target.value);
+                              }}
+                              onBlur={async () => {
+                                if (
+                                  newLayerName !== "" &&
+                                  layer.name !== newLayerName
+                                ) {
+                                  await renameLayerName(layer);
+                                } else {
+                                  setNewLayerName("");
+                                  setRenameLayer(undefined);
+                                }
+                              }}
+                            />
+                          ) : (
+                            <OverflowTypograpy
+                              variant="body2"
+                              fontWeight="bold"
+                              tooltipProps={{
+                                placement: "bottom",
+                                arrow: true,
+                              }}
+                            >
+                              {layer.name}
+                            </OverflowTypograpy>
+                          )}
+                        </>
+                      }
                       actions={
                         <Stack direction="row">
                           <Tooltip
@@ -297,7 +515,24 @@ const LayerPanel = ({ setActiveLeft, projectId }: PanelProps) => {
                           >
                             <IconButton
                               size="small"
-                              onClick={() => toggleLayerVisibility(layer)}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                toggleLayerVisibility(layer);
+                              }}
+                              sx={{
+                                transition: theme.transitions.create(
+                                  ["opacity"],
+                                  {
+                                    duration:
+                                      theme.transitions.duration.standard,
+                                  },
+                                ),
+                                opacity:
+                                  layer.properties?.layout?.visibility ===
+                                  "none"
+                                    ? 1
+                                    : 0,
+                              }}
                             >
                               <Icon
                                 iconName={
@@ -306,7 +541,9 @@ const LayerPanel = ({ setActiveLeft, projectId }: PanelProps) => {
                                     ? ICON_NAME.EYE_SLASH
                                     : ICON_NAME.EYE
                                 }
-                                style={{ fontSize: 15 }}
+                                style={{
+                                  fontSize: 15,
+                                }}
                               />
                             </IconButton>
                           </Tooltip>
@@ -327,12 +564,25 @@ const LayerPanel = ({ setActiveLeft, projectId }: PanelProps) => {
                               </Tooltip>
                             }
                             onSelect={async (menuItem: PopperMenuItem) => {
-                              if (menuItem.id === "delete") {
+                              if (menuItem.id === MapLayerActions.PROPERTIES) {
+                                openPropertiesPanel(layer);
+                              } else if (
+                                menuItem.id === ContentActions.DELETE
+                              ) {
                                 await deleteLayer(layer);
-                              } else if (menuItem.id === "duplicate") {
+                              } else if (
+                                menuItem.id === MapLayerActions.DUPLICATE
+                              ) {
                                 await duplicateLayer(layer);
+                              } else if (
+                                menuItem.id === MapLayerActions.RENAME
+                              ) {
+                                setRenameLayer(layer);
+                              } else if (
+                                menuItem.id === MapLayerActions.ZOOM_TO
+                              ) {
+                                zoomToLayer(layer);
                               } else {
-                                console.log("Selected menu item", menuItem);
                                 openMoreMenu(menuItem, layer);
                               }
                             }}
@@ -347,6 +597,7 @@ const LayerPanel = ({ setActiveLeft, projectId }: PanelProps) => {
           </Box>
         </>
       }
+      action={<AddLayerSection projectId={projectId} />}
     />
   );
 };

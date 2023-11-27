@@ -2,25 +2,12 @@ import * as z from "zod";
 import { responseSchema } from "@/lib/validations/response";
 import {
   contentMetadataSchema,
+  data_type,
+  featureLayerType,
   getContentQueryParamsSchema,
+  layerType,
 } from "@/lib/validations/common";
 import type { AnyLayer as MapLayerStyle } from "react-map-gl";
-
-export const layerType = z.enum([
-  "feature",
-  "external_imagery",
-  "external_vector_tile",
-  "table",
-]);
-
-export const featureLayerType = z.enum([
-  "standard",
-  "indicator",
-  "scenario",
-  "street_network",
-]);
-
-export const data_type = z.enum(["wms", "mvt"]);
 
 export const layerMetadataSchema = contentMetadataSchema.extend({
   data_source: z.string().optional(),
@@ -28,27 +15,23 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
 });
 
 export const layerSchema = layerMetadataSchema.extend({
-  id: z.number(),
+  id: z.string(),
   properties: z.object({}),
-  total_count: z.number(),
-  updated_at: z.string(),
-  created_at: z.string(),
+  total_count: z.number().optional(),
   extent: z.string(),
   folder_id: z.string(),
-  data_source: z.string().optional(),
-  query: z.object({}),
-  layer_id: z.string().uuid(),
-  project_id: z.string().uuid(),
   user_id: z.string().uuid(),
   type: layerType,
   size: z.number().optional(),
-  z_index: z.number().min(0).optional(),
-  extra_properties: z.object({}).optional(),
+  other_properties: z.object({}).optional(),
   url: z.string().optional(),
   feature_layer_type: featureLayerType.optional(),
   feature_layer_geometry_type: z.string(),
   data_type: data_type.optional(),
   legend_urls: z.array(z.string()).optional(),
+  attribute_mapping: z.object({}).optional(),
+  updated_at: z.string(),
+  created_at: z.string(),
 });
 
 export const getLayersQueryParamsSchema = getContentQueryParamsSchema.extend({

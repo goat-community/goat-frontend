@@ -70,6 +70,9 @@ import {
   faCrown,
   faArrowRightArrowLeft,
   faCopy,
+  faSliders,
+  faMagnifyingGlassPlus,
+  faMagnifyingGlassMinus,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -161,6 +164,9 @@ export enum ICON_NAME {
   RULES_COMBINED = "rules-combined",
   CROWN = "crown",
   COPY = "copy",
+  SLIDERS = "sliders",
+  ZOOM_IN = "zoom-in",
+  ZOOM_OUT = "zoom-out",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -248,6 +254,9 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.CROWN]: faCrown,
   [ICON_NAME.REVERSE]: faArrowRightArrowLeft,
   [ICON_NAME.COPY]: faCopy,
+  [ICON_NAME.SLIDERS]: faSliders,
+  [ICON_NAME.ZOOM_IN]: faMagnifyingGlassPlus,
+  [ICON_NAME.ZOOM_OUT]: faMagnifyingGlassMinus,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

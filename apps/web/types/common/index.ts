@@ -10,6 +10,8 @@ export enum ContentActions {
 export enum MapLayerActions {
   DUPLICATE = "duplicate",
   RENAME = "rename",
+  ZOOM_TO = "zoomTo",
+  PROPERTIES = "properties"
 }
 
 export enum OrgMemberActions {

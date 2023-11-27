@@ -1,8 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { setLayerFillColor } from "@/lib/store/styling/slice";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { selectMapLayer } from "@/lib/store/styling/selectors";
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
 import {
   TextField,
   Typography,

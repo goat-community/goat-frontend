@@ -7,9 +7,11 @@
     "close": "Close",
     "save": "Save",
     "edit": "Edit",
+    "reset": "Reset",
     "remove": "Remove",
     "upload": "Upload",
     "update": "Update",
     "info": "Info",
+    "properties": "Properties",
     "rename": "Rename"
 }

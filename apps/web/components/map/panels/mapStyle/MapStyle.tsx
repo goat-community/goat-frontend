@@ -2,7 +2,6 @@ import Container from "@/components/map/panels/Container";
 import {
   Button,
   Card,
-  Divider,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -14,29 +13,17 @@ import {
   Box,
   MenuItem,
   FormControl,
-  InputLabel
+  InputLabel,
 } from "@mui/material";
-import { useSelector } from "react-redux";
-import type { IStore } from "@/types/store";
-import { saveStyles, setTabValue } from "@/lib/store/styling/slice";
+import { useDispatch } from "react-redux";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import React from "react";
-import SelectStrokeOptionFill from "@/components/map/panels/mapStyle/SelectStrokeOptionFill";
-import ColorOptionFill from "@/components/map/panels/mapStyle/ColorOptionFill";
-import ColorOptionLine from "@/components/map/panels/mapStyle/ColorOptionLine";
-import StrokeOptionLine from "@/components/map/panels/mapStyle/StrokeOptionLine";
-import MarkerOptionSymbol from "@/components/map/panels/mapStyle/MarkerOptionSymbol";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import ColorOptionSymbol from "@/components/map/panels/mapStyle/ColorOptionSymbol";
-import StrokeOptionSymbol from "@/components/map/panels/mapStyle/StrokeOptionSymbol";
-import SizeOptionSymbol from "@/components/map/panels/mapStyle/SizeOptionSymbol";
-import { selectMapLayer } from "@/lib/store/styling/selectors";
+
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
-import type { MapSidebarItem } from "@/types/map/sidebar";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
+import { useState } from "react";
 
 interface MapStyleProps {
-  setActiveRight: (item: MapSidebarItem | undefined) => void;
   projectId: string;
 }
 
@@ -51,27 +38,16 @@ const layerTypes = [
   },
 ];
 
-const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
-  const { tabValue } = useSelector((state: IStore) => state.styling);
-  const mapLayer = useSelector(selectMapLayer);
-  const { t } = useTranslation("maps");
-
-  const dispatch = useAppDispatch();
-
+const MapStylePanel = ({ projectId }: MapStyleProps) => {
   const theme = useTheme();
-
-  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
-    dispatch(setTabValue(newValue));
-  };
-
-  const saveStylesHandler = () => {
-    dispatch(saveStyles());
-  };
+  const { t } = useTranslation(["maps", "common"]);
+  const dispatch = useDispatch();
+  const [tabValue, setTabValue] = useState(0);
 
   return (
     <Container
       title="Layer Style"
-      close={setActiveRight}
+      close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <Box
           sx={{
@@ -97,14 +73,14 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                       <Icon
                         iconName={ICON_NAME.STAR}
                         htmlColor={theme.palette.primary.dark}
-                        sx={{fontSize: "18px"}}
+                        sx={{ fontSize: "18px" }}
                       />
                     }
                     checkedIcon={
                       <Icon
                         iconName={ICON_NAME.STAR}
                         htmlColor={theme.palette.primary.main}
-                        sx={{fontSize: "18px"}}
+                        sx={{ fontSize: "18px" }}
                       />
                     }
                   />
@@ -114,11 +90,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
             </RadioGroup>
           </Card>
           <Box>
-            <Tabs
-              value={tabValue}
-              onChange={handleChange}
-              aria-label="basic tabs example"
-            >
+            <Tabs value={tabValue} aria-label="basic tabs example">
               <Tab
                 label={t("panels.layer_design.simple")}
                 sx={{
@@ -160,7 +132,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                   <Checkbox />
                 </CardContent>
               </Card> */}
-              {mapLayer?.type === "line" ? (
+              {/* {mapLayer?.type === "line" ? (
                 <>
                   <ColorOptionLine />
                   <Divider
@@ -214,7 +186,7 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                   />
                   <SizeOptionSymbol />
                 </>
-              ) : null}
+              ) : null} */}
             </>
           ) : (
             <>
@@ -226,19 +198,23 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                   width: "100%",
                 }}
               >
-                <Typography variant="body2">{t("panels.layer_design.field")}</Typography>
+                <Typography variant="body2">
+                  {t("panels.layer_design.field")}
+                </Typography>
                 <Typography
                   color="secondary"
                   variant="caption"
                   sx={{
                     fontStyle: "italic",
-                    paddingBottom: theme.spacing(2)
+                    paddingBottom: theme.spacing(2),
                   }}
                 >
                   {t("panels.layer_design.select_field")}
                 </Typography>
                 <FormControl fullWidth size="small">
-                  <InputLabel id="demo-simple-select-label">{t("panels.layer_design.select_option")}</InputLabel>
+                  <InputLabel id="demo-simple-select-label">
+                    {t("panels.layer_design.select_option")}
+                  </InputLabel>
                   <Select label={t("panels.layer_design.select_option")}>
                     {layerTypes.map((type) => (
                       <MenuItem key={v4()} value={type.value}>
@@ -286,10 +262,12 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
                 color: theme.palette.secondary.dark,
               },
             }}
-            color="secondary"
+            color="error"
             variant="outlined"
           >
-            {t("panels.layer_design.reset")}
+            <Typography variant="body2" fontWeight="bold" color="inherit">
+              {t("common:reset")}
+            </Typography>
           </Button>
           <Button
             sx={{
@@ -303,13 +281,12 @@ const MapStylePanel = ({ setActiveRight, projectId }: MapStyleProps) => {
               },
             }}
             color="primary"
+            size="small"
             variant="outlined"
-            onClick={saveStylesHandler}
-            endIcon={
-              <Icon iconName={ICON_NAME.CHEVRON_DOWN} fontSize="small" />
-            }
           >
-            {t("panels.layer_design.save_as")}
+            <Typography variant="body2" fontWeight="bold" color="inherit">
+              {t("common:save")}
+            </Typography>
           </Button>
         </Box>
       }

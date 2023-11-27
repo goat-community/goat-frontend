@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import Fab from "@mui/material/Fab";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMap } from "react-map-gl";
@@ -27,13 +27,16 @@ interface Item {
 
 interface BasemapSelectorProps {
   styles: Item[];
-  active: number[];
-  basemapChange: (styleIndex: number[]) => void;
+  active: string;
+  basemapChange: (style: string) => void;
 }
 
 export function BasemapSelector(props: BasemapSelectorProps) {
   const [open, setOpen] = useState(false);
   const { styles, active, basemapChange } = props;
+  const activeIndex = useMemo(() => {
+    return styles.findIndex((style) => style.value === active);
+  }, [styles, active]);
   const theme = useTheme();
   const { map } = useMap();
 
@@ -62,15 +65,20 @@ export function BasemapSelector(props: BasemapSelectorProps) {
                   </IconButton>
                 </Box>
 
-                <Typography variant="body2" sx={{ margin: theme.spacing(3) }}>
+                <Typography
+                  variant="body1"
+                  fontWeight="bold"
+                  sx={{ margin: theme.spacing(3) }}
+                >
                   Map Style
                 </Typography>
                 <ListTile
                   items={styles}
-                  selected={active}
+                  selected={[activeIndex]}
                   thumbnailBorder="rounded"
                   onChange={(selectedStyleIndex) => {
-                    basemapChange(selectedStyleIndex);
+                    const basemapValue = styles[selectedStyleIndex[0]].value;
+                    basemapChange(basemapValue);
                   }}
                 />
               </Paper>
@@ -85,13 +93,16 @@ export function BasemapSelector(props: BasemapSelectorProps) {
                 size="large"
                 sx={{
                   backgroundColor: theme.palette.background.paper,
-                  color: theme.palette.secondary.light,
+                  color: theme.palette.text.secondary,
+                  ...(open && {
+                    color: theme.palette.primary.main,
+                  }),
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
                 }}
               >
-                <Icon iconName={ICON_NAME.MAP} fontSize="small" />
+                <Icon iconName={ICON_NAME.MAP} fontSize="small" htmlColor="inherit" />
               </Fab>
             </Tooltip>
           </ArrowPopper>

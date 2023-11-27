@@ -22,4 +22,21 @@ export const contentMetadataSchema = z.object({
   thumbnail_url: z.string().url().optional(),
 });
 
+export const layerType = z.enum([
+  "feature",
+  "external_imagery",
+  "external_vector_tile",
+  "table",
+]);
+
+export const featureLayerType = z.enum([
+  "standard",
+  "indicator",
+  "scenario",
+  "street_network",
+]);
+
+export const data_type = z.enum(["wms", "mvt"]);
+
+
 export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;
