@@ -14,6 +14,7 @@ import type { CSSProperties } from "react";
 
 import { Icon } from "@p4b/ui/components/Icon";
 import type { MapSidebarItem } from "@/types/map/sidebar";
+import type { MapSidebarItemID } from "@/types/map/common";
 
 export type MapSidebarProps = {
   className?: string;
@@ -22,7 +23,7 @@ export type MapSidebarProps = {
   bottomItems?: MapSidebarItem[];
   width: number;
   position: "left" | "right";
-  active?: MapSidebarItem;
+  active?: MapSidebarItemID;
   onClick?: (active: MapSidebarItem) => void;
 };
 
@@ -57,7 +58,8 @@ const MapSidebarList = (props: MapSidebarListProps) => {
             }}
           >
             <ListItemButton
-              selected={item.name === active?.name}
+              disabled={item.disabled ?? false}
+              selected={item.id === active && !item.disabled}
               sx={{
                 minHeight: sidebarWidth,
               }}
@@ -73,7 +75,7 @@ const MapSidebarList = (props: MapSidebarListProps) => {
                 <Icon
                   iconName={item.icon}
                   htmlColor={
-                    item.name === active?.name
+                    item.id === active && !item.disabled
                       ? theme.palette.primary.main
                       : "inherit"
                   }
@@ -92,7 +94,7 @@ export type MapSidebarListProps = {
   items: MapSidebarItem[];
   justifyContent: CSSProperties["justifyContent"];
   sidebarPosition: MapSidebarProps["position"];
-  active?: MapSidebarItem;
+  active?: MapSidebarItemID;
   sidebarWidth: number;
   onClick?: (active: MapSidebarItem) => void;
 };

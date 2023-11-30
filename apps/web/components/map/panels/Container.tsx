@@ -5,6 +5,7 @@ import {
   Box,
   Typography,
   IconButton,
+  Paper,
 } from "@mui/material";
 import React from "react";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
@@ -17,10 +18,11 @@ interface ContainerProps {
   body?: React.ReactNode;
   action?: React.ReactNode;
   close: (item: MapSidebarItem | undefined) => void;
+  disablePadding?: boolean;
 }
 
 export default function Container(props: ContainerProps) {
-  const { header, body, action, close, title, direction = "right" } = props;
+  const { header, body, action, close, title } = props;
 
   const theme = useTheme();
 
@@ -48,40 +50,23 @@ export default function Container(props: ContainerProps) {
             sx={{
               display: "flex",
               alignItems: "center",
-              justifyContent:
-                direction === "left" ? "space-between" : undefined,
+              justifyContent: "space-between",
               gap: "20px",
               width: "100%",
             }}
           >
-            {direction === "right" ? (
-              <IconButton onClick={() => close(undefined)}>
-                <Icon
-                  iconName={ICON_NAME.CHEVRON_RIGHT}
-                  htmlColor={theme.palette.primary.main}
-                  style={{ fontSize: "12px" }}
-                />
-              </IconButton>
-            ) : null}
             <Typography
-              color={theme.palette.primary.main}
               variant="body1"
+              fontWeight="bold"
               sx={{
                 display: "flex",
-                gap: theme.spacing(2),
               }}
             >
               {title}
             </Typography>
-            {direction === "left" ? (
-              <IconButton onClick={() => close(undefined)}>
-                <Icon
-                  iconName={ICON_NAME.CHEVRON_LEFT}
-                  htmlColor={theme.palette.primary.main}
-                  style={{ fontSize: "12px" }}
-                />
-              </IconButton>
-            ) : null}
+            <IconButton onClick={() => close(undefined)}>
+              <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
+            </IconButton>
           </Box>
         )}
       </Stack>
@@ -92,8 +77,10 @@ export default function Container(props: ContainerProps) {
           sx={{
             paddingTop: theme.spacing(2),
             paddingBottom: theme.spacing(7),
-            paddingLeft: theme.spacing(3),
-            paddingRight: theme.spacing(3),
+            ...(!props.disablePadding && {
+              paddingLeft: theme.spacing(3),
+              paddingRight: theme.spacing(3),
+            }),
             overflowY: "auto",
             height: "100%",
             scrollbarGutter: "stable both-edges",
@@ -113,29 +100,37 @@ export default function Container(props: ContainerProps) {
         </Stack>
       )}
       {action && (
-        <Stack
-          direction="row"
+        <Paper
           sx={{
-            paddingTop: theme.spacing(2),
-            paddingBottom: theme.spacing(7),
-            paddingLeft: theme.spacing(3),
-            paddingRight: theme.spacing(3),
-            overflowY: "auto",
-            scrollbarGutter: "stable both-edges",
-            "&::-webkit-scrollbar": {
-              width: "6px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              background: "#2836484D",
-              borderRadius: "3px",
-              "&:hover": {
-                background: "#28364880",
-              },
-            },
+            borderRadius: "0",
+            boxShadow: "0px -5px 10px -5px rgba(58, 53, 65, 0.1)",
           }}
+          elevation={6}
         >
-          {action}
-        </Stack>
+          <Stack
+            direction="row"
+            sx={{
+              paddingTop: theme.spacing(4),
+              paddingBottom: theme.spacing(4),
+              paddingLeft: theme.spacing(3),
+              paddingRight: theme.spacing(3),
+              overflowY: "auto",
+              scrollbarGutter: "stable both-edges",
+              "&::-webkit-scrollbar": {
+                width: "6px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#2836484D",
+                borderRadius: "3px",
+                "&:hover": {
+                  background: "#28364880",
+                },
+              },
+            }}
+          >
+            {action}
+          </Stack>
+        </Paper>
       )}
     </Stack>
   );

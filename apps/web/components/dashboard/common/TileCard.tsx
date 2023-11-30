@@ -25,7 +25,12 @@ export interface TileCard {
   cardType: "list" | "grid";
   item: Project | Layer;
   moreMenuOptions?: PopperMenuItem[];
-  onMoreMenuSelect?: (menuItem: PopperMenuItem, contentItem: Project | Layer) => void;
+  onMoreMenuSelect?: (
+    menuItem: PopperMenuItem,
+    contentItem: Project | Layer,
+  ) => void;
+  enableActions?: boolean;
+  selected?: Project | Layer;
 }
 
 export interface ActiveCard {
@@ -75,7 +80,7 @@ const CardTags = ({ tags, maxTags = 5 }: CardTagsProps) => {
 };
 
 const TileCard = (props: TileCard) => {
-  const { cardType, item } = props;
+  const { cardType, item, enableActions = true } = props;
   const theme = useTheme();
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const moreMenu = (
@@ -173,7 +178,6 @@ const TileCard = (props: TileCard) => {
           position: "relative",
           height: "100%",
           display: "flex",
-          flexDirection: cardType === "grid" ? "column" : "row",
           ...(cardType === "list" && {
             p: 2,
             borderTop: `1px solid ${theme.palette.divider}`,
@@ -190,6 +194,12 @@ const TileCard = (props: TileCard) => {
               }),
             },
           },
+          ...(props.selected?.id === item?.id && {
+            backgroundColor: "rgba(43, 179, 129, 0.08)",
+            fontWeight: "bold",
+          }),
+          flexDirection: cardType === "grid" ? "column" : "row",
+    
         }}
       >
         {item?.thumbnail_url && cardType === "grid" && (
@@ -249,49 +259,58 @@ const TileCard = (props: TileCard) => {
           {cardType === "grid" && gridContent}
           {cardType === "list" && (
             <Grid container alignItems="center" justifyContent="space-between">
-              <Grid item xs={11} sm={5} md={4}>
-                {cardTitle}
-              </Grid>
-              <Grid
-                item
-                sm={4}
-                md={3}
-                sx={{
-                  display: { xs: "none", sm: "block" },
-                }}
-              >
-                <Box sx={{ px: 1, pb: 0 }} display="flex-start">
-                  {updatedAtText}
-                </Box>
-              </Grid>
-              <Grid
-                item
-                md={3}
-                sx={{
-                  display: { xs: "none", md: "block" },
-                }}
-              >
-                <Box sx={{ px: 1, pb: 0 }} display="flex-start">
-                  {createdAtText}
-                </Box>
-              </Grid>
-              <Grid
-                item
-                md={1}
-                sm={2}
-                sx={{
-                  display: { xs: "none", sm: "block" },
-                }}
-              >
-                <Box display="flex-start">
-                  <CardTags tags={item?.tags} maxTags={1} />
-                </Box>
-              </Grid>
-              <Grid item sm={1}>
-                <Box display="flex" justifyContent="flex-end">
-                  {moreMenu}
-                </Box>
-              </Grid>
+              {enableActions && (
+                <>
+                  <Grid item xs={11} sm={5} md={4}>
+                    {cardTitle}
+                  </Grid>
+                  <Grid
+                    item
+                    sm={4}
+                    md={3}
+                    sx={{
+                      display: { xs: "none", sm: "block" },
+                    }}
+                  >
+                    <Box sx={{ px: 1, pb: 0 }} display="flex-start">
+                      {updatedAtText}
+                    </Box>
+                  </Grid>
+                  <Grid
+                    item
+                    md={3}
+                    sx={{
+                      display: { xs: "none", md: "block" },
+                    }}
+                  >
+                    <Box sx={{ px: 1, pb: 0 }} display="flex-start">
+                      {createdAtText}
+                    </Box>
+                  </Grid>
+                  <Grid
+                    item
+                    md={1}
+                    sm={2}
+                    sx={{
+                      display: { xs: "none", sm: "block" },
+                    }}
+                  >
+                    <Box display="flex-start">
+                      <CardTags tags={item?.tags} maxTags={1} />
+                    </Box>
+                  </Grid>
+                  <Grid item sm={1}>
+                    <Box display="flex" justifyContent="flex-end">
+                      {moreMenu}
+                    </Box>
+                  </Grid>
+                </>
+              )}
+              {!enableActions && (
+                <Grid item xs={12}>
+                  {cardTitle}
+                </Grid>
+              )}
             </Grid>
           )}
         </CardContent>

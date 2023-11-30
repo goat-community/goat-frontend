@@ -16,7 +16,7 @@ import { TabContext, TabPanel, TabList } from "@mui/lab";
 import { useTranslation } from "@/i18n/client";
 import { v4 } from "uuid";
 import { useDispatch } from "react-redux";
-import { removeMarker } from "@/lib/store/styling/slice";
+import { removeMarker } from "@/lib/store/map/slice";
 import { ptModes, routingModes } from "@/public/assets/data/isochroneModes";
 
 import type { SelectChangeEvent } from "@mui/material";
@@ -53,8 +53,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
     setSteps,
   } = props;
   const [tab, setTab] = useState<"time" | "distance">("time");
-
-  const [ptOpen, setPtOpen] = useState<boolean>(false);
 
   const { t } = useTranslation("maps");
   const theme = useTheme();
@@ -93,7 +91,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
             size="small"
             disabled={!routing ? true : false}
             options={allowedNumbers}
-            value={speed ? speed : ""}
+            value={speed ? { label: speed } : { label: 1 }}
             sx={{
               margin: `${theme.spacing(1)} 0`,
               width: "45%",
@@ -202,7 +200,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
           id="combo-box-demo"
           size="small"
           disabled={!routing ? true : false}
-          value={travelTime ? travelTime : ""}
+          defaultValue={travelTime ? { label: travelTime } : { label: 1 }}
           options={allowedMaxTravelTimeNumbers}
           onChange={(_, value) => {
             setTravelTime(value ? value.label : 1);
@@ -211,9 +209,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
             margin: `${theme.spacing(1)} 0`,
             width: "100%",
           }}
-          renderInput={(params) => (
-            <TextField {...params} label="XX"  />
-          )}
+          renderInput={(params) => <TextField {...params} label="XX" />}
         />
       </Box>
     );
@@ -290,11 +286,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
             defaultValue={routing}
             value={routing ? routing : ""}
             onChange={(event: SelectChangeEvent<string>) => {
-              if (event.target.value === "pt") {
-                setPtOpen(true);
-              } else {
-                setPtOpen(false);
-              }
               setRouting(event.target.value as RoutingTypes);
               dispatch(removeMarker());
             }}
@@ -309,7 +300,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
         </FormControl>
       </Box>
       {/*--------------------------PT Options--------------------------*/}
-      {ptOpen ? (
+      {routing === ("pt" as RoutingTypes) ? (
         <Autocomplete
           multiple
           id="checkboxes-tags-demo"
@@ -323,6 +314,9 @@ const IsochroneSettings = (props: PickLayerProps) => {
             </li>
           )}
           fullWidth
+          defaultValue={ptModes.filter(
+            (mode) => getPtModes?.includes(mode.value as PTModeTypes),
+          )}
           size="small"
           renderInput={(params) => (
             <TextField
@@ -332,18 +326,20 @@ const IsochroneSettings = (props: PickLayerProps) => {
             />
           )}
           onChange={(_, value) => {
-            // setPtModes(value.map((val) => val.value).join(","));
             setPtModes(value.map((val) => val.value) as PTModeTypes[]);
           }}
         />
       ) : null}
       {/*--------------------------------------------------------------*/}
-      <TabContext value={ptOpen || routing === "car_peak" ? "time" : tab}>
+      <TabContext
+        value={
+          ["car_peak", "pt"].includes(routing ? routing : "") ? "time" : tab
+        }
+      >
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList
             onChange={(_: React.SyntheticEvent, newValue: string) => {
               setTab(newValue as "distance" | "time");
-              // ["distance", "time"].includes(newValue) ? newValue : "time"
             }}
             aria-label="lab API tabs example"
             variant="fullWidth"
@@ -352,7 +348,9 @@ const IsochroneSettings = (props: PickLayerProps) => {
             <Tab
               label="Distance"
               disabled={
-                !routing || ptOpen || routing === "car_peak" ? true : false
+                !routing || ["car_peak", "pt"].includes(routing ? routing : "")
+                  ? true
+                  : false
               }
               value="distance"
             />

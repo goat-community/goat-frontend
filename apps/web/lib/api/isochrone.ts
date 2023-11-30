@@ -1,4 +1,4 @@
-import type { PostIsochrone } from "@/lib/validations/isochrone";
+import type { PostIsochrone, PostPTIsochrone } from "@/lib/validations/isochrone";
 import { fetchWithAuth } from "@/lib/api/fetcher";
 
 const ACCESSIBILITY_ISOCHRONE_API_BASE_URL = new URL(
@@ -26,7 +26,7 @@ export const SendIsochroneRequest = async (body: PostIsochrone) => {
     .then((data) => console.log(data));
 };
 
-export const SendPTIsochroneRequest = async (body: PostIsochrone) => {
+export const SendPTIsochroneRequest = async (body: PostPTIsochrone) => {
   await fetchWithAuth(PT_ISOCHRONE_API_BASE_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

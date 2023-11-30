@@ -13,10 +13,6 @@ import {
 } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useDispatch } from "react-redux";
-import {
-  deleteLayerFillOutLineColor,
-  setLayerFillOutLineColor,
-} from "@/lib/store/styling/slice";
 
 const SelectStrokeOptionFill = () => {
   const theme = useTheme();

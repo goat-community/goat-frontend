@@ -1,13 +1,19 @@
 import * as z from "zod";
 
+const StartingPoint = z.object({
+  latitude: z.array(z.number()),
+  longitude: z.array(z.number())
+}).or(z.object({
+  layer_id: z.string()
+}))
+
 export const IsochroneBaseSchema = z.object({
-  starting_points: z.object({
-    latitude: z.array(z.number()),
-    longitude: z.array(z.number())
-  }).or(z.object({
-    layer_id: z.string()
+  starting_points: StartingPoint,
+  routing_type: z.string().or(z.object({
+    mode: z.array(z.string()),
+    egress_mode: z.string(),
+    access_mode: z.string()
   })),
-  routing_type: z.string(),
   travel_cost: z.object({
     max_traveltime: z.number(),
     traveltime_step: z.number(),
@@ -60,4 +66,7 @@ export const IsochronePTSchema = z.object({
   })
 });
 
+export type StartingPointType = z.infer<typeof StartingPoint>;
+
 export type PostIsochrone = z.infer<typeof IsochroneBaseSchema>;
+export type PostPTIsochrone = z.infer<typeof IsochroneBaseSchema>;

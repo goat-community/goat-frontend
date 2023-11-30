@@ -4,8 +4,10 @@ import { useSelector } from "react-redux/es/hooks/useSelector";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { Box, useTheme } from "@mui/material";
 
+import type { IStore } from "@/types/store";
+
 const Markers = () => {
-  const { markers } = useSelector((state) => state.styling);
+  const { markers } = useSelector((state: IStore) => state.map);
 
   const theme = useTheme();
 
@@ -23,7 +25,7 @@ const Markers = () => {
             <Box position="absolute" top="3px" left="50%" sx={{
               transform: "translateX(-50%)"
             }}>
-              <Icon iconName={marker.iconName} htmlColor={theme.palette.background.paper} sx={{
+              <Icon iconName={marker.iconName as ICON_NAME} htmlColor={theme.palette.background.paper} sx={{
                 fontSize: "17px"
               }}/>
             </Box>

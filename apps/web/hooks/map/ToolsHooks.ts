@@ -1,5 +1,3 @@
-import useSWR from "swr";
-import { fetcher } from "@/lib/api/fetcher";
 import { useLayerKeys } from "@/lib/api/layers";
 
 export const useGetLayerKeys = (layerId: string) => {

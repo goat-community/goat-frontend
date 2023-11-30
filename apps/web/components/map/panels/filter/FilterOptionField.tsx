@@ -22,7 +22,6 @@ import {
 } from "@/lib/utils/filtering/filtering_cql";
 import { NumberOption, TextOption } from "./FilterOption";
 import { debounce } from "@mui/material/utils";
-import { setMapLoading } from "@/lib/store/map/slice";
 
 import type { Expression } from "@/types/map/filtering";
 import type { IStore } from "@/types/store";

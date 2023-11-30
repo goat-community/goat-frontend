@@ -157,34 +157,37 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
             });
           }}
         />
-        <Divider orientation="vertical" flexItem />
-
-        <IconButton
-          onClick={handleViewToggle}
-          sx={{
-            ...(view === "grid" && {
-              color: theme.palette.primary.main,
-            }),
-            ml: 2,
-            p: 2,
-            borderRadius: 1,
-          }}
-        >
-          <GridViewIcon />
-        </IconButton>
-        <IconButton
-          onClick={handleViewToggle}
-          sx={{
-            ...(view === "list" && {
-              color: theme.palette.primary.main,
-            }),
-            ml: 0,
-            p: 2,
-            borderRadius: 1,
-          }}
-        >
-          <FormatListBulletedIcon />
-        </IconButton>
+        {setView && (
+          <>
+            <Divider orientation="vertical" flexItem />
+            <IconButton
+              onClick={handleViewToggle}
+              sx={{
+                ...(view === "grid" && {
+                  color: theme.palette.primary.main,
+                }),
+                ml: 2,
+                p: 2,
+                borderRadius: 1,
+              }}
+            >
+              <GridViewIcon />
+            </IconButton>
+            <IconButton
+              onClick={handleViewToggle}
+              sx={{
+                ...(view === "list" && {
+                  color: theme.palette.primary.main,
+                }),
+                ml: 0,
+                p: 2,
+                borderRadius: 1,
+              }}
+            >
+              <FormatListBulletedIcon />
+            </IconButton>
+          </>
+        )}
       </Paper>
     </Box>
   );

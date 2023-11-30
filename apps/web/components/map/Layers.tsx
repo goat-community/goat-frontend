@@ -1,23 +1,15 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Source, Layer as MapLayer } from "react-map-gl";
-import type { Layer as ProjectLayer } from "@/lib/validations/layer";
+import type { ProjectLayer } from "@/lib/validations/project";
 import { GEOAPI_BASE_URL } from "@/lib/constants";
-import { useProject, useProjectLayers } from "@/lib/api/projects";
+import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
 
 interface LayersProps {
   projectId: string;
 }
 
 const Layers = (props: LayersProps) => {
-  const { layers: projectLayers } = useProjectLayers(props.projectId);
-  const { project } = useProject(props.projectId);
-  const sortedLayers = useMemo(() => {
-    if (!projectLayers || !project) return [];
-    return projectLayers.sort(
-      (a, b) =>
-        project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id),
-    );
-  }, [projectLayers, project]);
+  const sortedLayers = useSortedLayers(props.projectId);
 
   return (
     <>

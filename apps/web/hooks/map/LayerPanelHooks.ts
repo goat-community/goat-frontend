@@ -1,17 +1,24 @@
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import { useAppSelector } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
-import type { Layer as ProjectLayer } from "@/lib/validations/layer";
+import { useProject, useProjectLayers } from "@/lib/api/projects";
+import type { ProjectLayer } from "@/lib/validations/project";
 import { ContentActions, MapLayerActions } from "@/types/common";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export const useLayerSettingsMoreMenu = () => {
-  const { t } = useTranslation(["map", "common"]);
+  const { t } = useTranslation(["maps", "common"]);
   const layerMoreMenuOptions: PopperMenuItem[] = [
     {
-      id: ContentActions.INFO,
-      label: t("common:info"),
+      id: MapLayerActions.PROPERTIES,
+      label: t("common:properties"),
       icon: ICON_NAME.CIRCLEINFO,
+    },
+    {
+      id: MapLayerActions.ZOOM_TO,
+      label: t("maps:zoom_to"),
+      icon: ICON_NAME.ZOOM_IN,
     },
     {
       id: MapLayerActions.DUPLICATE,
@@ -51,4 +58,28 @@ export const useLayerSettingsMoreMenu = () => {
     closeMoreMenu,
     openMoreMenu,
   };
+};
+
+export const useActiveLayer = (projectId: string) => {
+  const { layers: projectLayers } = useProjectLayers(projectId);
+  const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
+  const activeLayer = useMemo(
+    () =>
+      projectLayers?.find((layer) => layer.id === activeLayerId) ?? undefined,
+    [activeLayerId, projectLayers],
+  );
+  return activeLayer;
+};
+
+export const useSortedLayers = (projectId: string) => {
+  const { layers: projectLayers } = useProjectLayers(projectId);
+  const { project } = useProject(projectId);
+  const sortedLayers = useMemo(() => {
+    if (!projectLayers || !project) return [];
+    return projectLayers.sort(
+      (a, b) =>
+        project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id),
+    );
+  }, [projectLayers, project]);
+  return sortedLayers;
 };

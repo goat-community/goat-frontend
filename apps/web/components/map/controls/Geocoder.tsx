@@ -189,16 +189,13 @@ export default function Geocoder({
                 size="small"
                 sx={{
                   backgroundColor: theme.palette.background.paper,
+                  color: theme.palette.text.secondary,
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
                 }}
               >
-                <Icon
-                  iconName={ICON_NAME.SEARCH}
-                  htmlColor={theme.palette.secondary.light}
-                  fontSize="small"
-                />
+                <Icon iconName={ICON_NAME.SEARCH} htmlColor="inherit" fontSize="small" />
               </Fab>
             </Tooltip>
           )}

@@ -1,18 +1,15 @@
 import Container from "@/components/map/panels/Container";
 import { Typography, Button } from "@mui/material";
-import type { MapSidebarItem } from "@/types/map/sidebar";
+import { setActiveLeftPanel } from "@/lib/store/map/slice";
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
 
-interface LegendPanelProps {
-  setActiveLeft: (item: MapSidebarItem | undefined) => void;
-}
-
-const LegendPanel = (props: LegendPanelProps) => {
-  const { setActiveLeft } = props;
+const LegendPanel = () => {
+  const dispatch = useAppDispatch();
 
   return (
     <Container
       title="Legend"
-      close={setActiveLeft}
+      close={() => dispatch(setActiveLeftPanel(undefined))}
       direction="left"
       body={<Typography variant="body1">Body</Typography>}
       action={<Button variant="contained">Action</Button>}

@@ -10,9 +10,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
-import { setLayerFillOutLineColor } from "@/lib/store/styling/slice";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { selectMapLayer } from "@/lib/store/styling/selectors";
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 const ColorOptionSymbol = () => {

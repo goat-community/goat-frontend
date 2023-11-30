@@ -44,6 +44,7 @@ export function Fullscren() {
                   backgroundColor: theme.palette.background.paper,
                   marginTop: theme.spacing(1),
                   marginBottom: theme.spacing(1),
+                  color: theme.palette.text.secondary,
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
@@ -53,7 +54,7 @@ export function Fullscren() {
                   iconName={
                     fullscreen ? ICON_NAME.MINIMIZE : ICON_NAME.MAXIMIZE
                   }
-                  htmlColor={theme.palette.secondary.light}
+                  htmlColor="inherit"
                   fontSize="small"
                 />
               </Fab>

@@ -144,5 +144,9 @@
   "feature": "Feature",
   "external_vector_tile": "External Vector Tile",
   "table": "Table",
-  "external_imagery": "External Image"
+  "external_imagery": "External Image", 
+  "properties": "Properties",
+  "zoom_to": "Zoom to", 
+  "add_layer": "Add layer",
+  "source": "Source"
 }

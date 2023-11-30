@@ -1,19 +1,15 @@
 import Container from "@/components/map/panels/Container";
-import type { MapSidebarItem } from "@/types/map/sidebar";
 import ToolTabs from "@/components/map/panels/toolbox/tools/ToolTabs";
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
 
-interface ToolboxPanelProps {
-  setActiveRight: (item: MapSidebarItem | undefined) => void;
-}
-
-const ToolboxPanel = (props: ToolboxPanelProps) => {
-  const { setActiveRight } = props;
-
+const ToolboxPanel = () => {
+  const dispatch = useAppDispatch();
   return (
     <Container
       title="Toolbox"
-      close={setActiveRight}
-      body={<ToolTabs/>}
+      close={() => dispatch(setActiveRightPanel(undefined))}
+      body={<ToolTabs />}
     />
   );
 };

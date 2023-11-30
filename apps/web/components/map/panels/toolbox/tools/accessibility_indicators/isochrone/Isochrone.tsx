@@ -11,10 +11,11 @@ import {
 } from "@/lib/api/isochrone";
 import { v4 } from "uuid";
 import { useDispatch } from "react-redux";
-import { removeMarker } from "@/lib/store/styling/slice";
+import { removeMarker } from "@/lib/store/map/slice";
 
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { RoutingTypes, PTModeTypes } from "@/types/map/isochrone";
+import type { StartingPointType as StartingPointTypeForm } from "@/lib/validations/isochrone";
 
 const Isochrone = () => {
   // Isochrone Settings states
@@ -38,9 +39,7 @@ const Isochrone = () => {
   const [startingType, setStartingType] = useState<
     StartingPointType | undefined
   >(undefined);
-  const [startingPoint, setStartingPoint] = useState<string[] | undefined>(
-    undefined,
-  );
+  const [startingPoint, setStartingPoint] = useState<string[] | string>([]);
 
   // Save Result states
   const [outputName, setOutputName] = useState<string>(`isochrone-${v4()}`);
@@ -61,37 +60,43 @@ const Isochrone = () => {
     setOutputName(`isochrone-${v4()}`);
     setFolderSaveID(undefined);
     setStartingType(undefined);
-    setStartingPoint(undefined);
+    setStartingPoint([]);
     dispatch(removeMarker());
   };
 
-  const getStartingPoint = () => {
-    if (startingType && startingPoint) {
-      switch (startingType) {
-        case "place_on_map":
-          console.log(startingPoint)
-          return {
-            latitude: [
-              ...startingPoint.map((startPoint) =>
-                parseFloat(startPoint.split(",")[0]),
-              ),
-            ],
-            longitude: [
-              ...startingPoint.map((startPoint) =>
-                parseFloat(startPoint.split(",")[1]),
-              ),
-            ],
-          };
-        case "address_input":
-          return {
-            latitude: [parseFloat(startingPoint[1])],
-            longitude: [parseFloat(startingPoint[0])],
-          };
-        case "browse_layers":
-          return {
-            layer_id: startingPoint,
-          };
-      }
+  const getStartingPoint = (): StartingPointTypeForm => {
+    switch (startingType) {
+      case "place_on_map":
+        return {
+          latitude: [
+            ...(typeof startingPoint !== "string"
+              ? startingPoint.map((startPoint) =>
+                  parseFloat(startPoint.split(",")[0]),
+                )
+              : []),
+          ],
+          longitude: [
+            ...(typeof startingPoint !== "string"
+              ? startingPoint.map((startPoint) =>
+                  parseFloat(startPoint.split(",")[1]),
+                )
+              : []),
+          ],
+        };
+      case "address_input":
+        return {
+          latitude: [parseFloat(startingPoint[1])],
+          longitude: [parseFloat(startingPoint[0])],
+        };
+      case "browse_layers":
+        return {
+          layer_id: startingPoint === "string" ? startingPoint : "",
+        };
+      // never gonna happen, but just to remove the linting issue
+      default:
+        return {
+          layer_id: "",
+        };
     }
   };
 
@@ -99,56 +104,54 @@ const Isochrone = () => {
     if (
       routing &&
       startingPoint &&
+      startingPoint.length &&
       startingType &&
       steps &&
       outputName &&
       folderSaveID
     ) {
+
       const isochroneBody = {
         starting_points: getStartingPoint(),
-        routing_type: routing,
-        travel_cost: {},
         result_target: {
           layer_name: outputName,
           folder_id: folderSaveID,
         },
+        travel_cost: distance
+          ? {
+              max_distance: distance,
+              distance_step: steps,
+            }
+          : {
+              max_traveltime: travelTime,
+              traveltime_step: steps,
+              speed: speed ?? undefined,
+            },
+        ...(routing === "pt" && {
+          routing_type: {
+            mode: ptModes,
+            egress_mode: "walk",
+            access_mode: "walk",
+          },
+          time_window: {
+            weekday: "weekday",
+            from_time: 25200,
+            to_time: 32400,
+          },
+        }),
+        ...(routing !== "pt" && {
+          routing_type: routing,
+        }),
       };
 
-      if (!distance) {
-        isochroneBody.travel_cost = {
-          max_traveltime: travelTime,
-          traveltime_step: steps,
-          speed: speed ? speed : undefined,
-        };
-      }
-
-      if (!speed && !travelTime) {
-        isochroneBody.travel_cost = {
-          max_distance: distance,
-          distance_step: steps,
-        };
-      }
-
-      if (speed) {
-        isochroneBody.travel_cost["speed"] = speed;
-      }
-
-      if (routing.includes(",")) {
-        isochroneBody["routing_type"] = {
-          mode: routing.split(","),
-          egress_mode: "walk",
-          access_mode: "walk",
-        };
-
-        isochroneBody["time_window"] = {
-          weekday: "weekday",
-          from_time: 25200,
-          to_time: 32400,
-        };
+      if (routing === "pt") {
         SendPTIsochroneRequest(isochroneBody);
       } else if (routing === "car_peak") {
+        // isochroneBody["routing_type"] = routing;
         SendCarIsochroneRequest(isochroneBody);
       } else {
+        // isochroneBody["routing_type"] = routing;
+        console.log(isochroneBody);
         SendIsochroneRequest(isochroneBody);
       }
     }
@@ -162,7 +165,10 @@ const Isochrone = () => {
       sx={{ height: "100%" }}
     >
       <Box sx={{ maxHeight: "95%", overflow: "scroll" }}>
-        <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
+        <Typography
+          variant="body2"
+          sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
+        >
           Isochrones illustrate reachable areas within a set travel time or
           distance from a specific point, aiding in spatial analysis and route
           planning.

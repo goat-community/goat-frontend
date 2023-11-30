@@ -75,6 +75,9 @@ import {
   faPersonBiking,
   faBicycle,
   faCar,
+  faSliders,
+  faMagnifyingGlassPlus,
+  faMagnifyingGlassMinus,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -171,6 +174,9 @@ export enum ICON_NAME {
   PEDELEC = "pedelec",
   BICYCLE = "bicycle",
   CAR = "car",
+  SLIDERS = "sliders",
+  ZOOM_IN = "zoom-in",
+  ZOOM_OUT = "zoom-out",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -263,6 +269,9 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.PEDELEC]: faPersonBiking,
   [ICON_NAME.BICYCLE]: faBicycle,
   [ICON_NAME.CAR]: faCar,
+  [ICON_NAME.SLIDERS]: faSliders,
+  [ICON_NAME.ZOOM_IN]: faMagnifyingGlassPlus,
+  [ICON_NAME.ZOOM_OUT]: faMagnifyingGlassMinus,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,
