@@ -25,7 +25,6 @@ interface StatisticsProps {
   setMethod: (value: ColumStatisticsOperation) => void;
   setGroupedFields: (value: string[]) => void;
   groupedFields: string[] | undefined;
-  setOutputName: (value: string) => void;
 }
 
 const Statistics = (props: StatisticsProps) => {
@@ -37,7 +36,6 @@ const Statistics = (props: StatisticsProps) => {
     setMethod,
     groupedFields,
     setGroupedFields,
-    setOutputName,
   } = props;
 
   const theme = useTheme();
@@ -137,9 +135,6 @@ const Statistics = (props: StatisticsProps) => {
               value={method}
               onChange={(event: SelectChangeEvent) => {
                 setMethod(event.target.value as ColumStatisticsOperation);
-                setOutputName(
-                  `${field}_${event.target.value as ColumStatisticsOperation}`,
-                );
               }}
             >
               {field ? checkType() : null}

@@ -105,6 +105,15 @@
       "accessibility_indicators": {
         "accessibility_indicators": "Accessibility Indicators",
         "isochrone": "Isochrone"
+      },
+      "summarize_features": {
+        "summarize_features": "Summarize Features"
+      },
+      "origin_to_destination": {
+        "origin_to_destination": "Origin to  destination"
+      },
+      "summarize_data": {
+        "summarize_data": "Summarize data"
       }
     },
     "filter": {

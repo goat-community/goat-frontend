@@ -42,7 +42,7 @@ const Isochrone = () => {
   const [startingPoint, setStartingPoint] = useState<string[] | string>([]);
 
   // Save Result states
-  const [outputName, setOutputName] = useState<string>(`isochrone-${v4()}`);
+  const [outputName, setOutputName] = useState<string>(`isochrone`);
   const [folderSaveID, setFolderSaveID] = useState<string | undefined>(
     undefined,
   );

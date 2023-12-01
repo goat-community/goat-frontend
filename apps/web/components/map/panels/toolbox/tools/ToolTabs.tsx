@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { Box, useTheme, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  useTheme,
+  Typography,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+} from "@mui/material";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useParams } from "next/navigation";
@@ -7,101 +14,172 @@ import { useTranslation } from "@/i18n/client";
 
 import Join from "@/components/map/panels/toolbox/tools/join/Join";
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
-import IsochroneTabs from "@/components/map/panels/toolbox/tools/accessibility_indicators/IsochroneTabs";
+import Isochrone from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/Isochrone";
 
-interface ToolTabType {
-  name: string;
-  tooltip: string;
-  value: string;
-  element: React.ReactNode;
+const Tabs = ({ tab, handleChange }) => {
+  const { t } = useTranslation("maps");
+  const theme = useTheme();
+
+  return (
+    <>
+      {tab.children.map((childTab) => (
+        <Box
+          key={v4()}
+          sx={{
+            padding: "12px 0",
+            borderBottom: `1px solid ${theme.palette.primary.main}80`,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            cursor: "pointer",
+            transition: "all 0.3s ease-in-out",
+            "&:hover": {
+              bWackgroundColor: `${theme.palette.secondary.light}40`,
+            },
+          }}
+          onClick={() => handleChange(childTab)}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: theme.spacing(2),
+            }}
+          >
+            <Icon
+              iconName={ICON_NAME.CIRCLEINFO}
+              htmlColor={theme.palette.secondary.light}
+              sx={{ fontSize: "12px" }}
+            />
+            <Typography variant="body1">
+              {t(`panels.tools.${childTab}.${childTab}`)}
+            </Typography>
+          </Box>
+          <Icon iconName={ICON_NAME.CHEVRON_RIGHT} sx={{ fontSize: "12px" }} />
+        </Box>
+      ))}
+    </>
+  );
+};
+
+interface ToolTabsProps {
+  setTitle: (value: string) => void;
+  defaultRoute: "root" | undefined;
+  setDefaultRoute: (value: "root" | undefined) => void;
 }
 
-const ToolTabs = () => {
-  const [value, setValue] = useState<ToolTabType | undefined>(undefined);
+const ToolTabs = (props: ToolTabsProps) => {
+  const { setTitle, defaultRoute, setDefaultRoute } = props;
 
-  const {t} = useTranslation("maps");
+  const [value, setValue] = useState<string | undefined>(undefined);
+  const [expanded, setExpanded] = React.useState<string | false>(false);
 
-  const theme = useTheme();
+  const { t } = useTranslation("maps");
+
+  // const theme = useTheme();
   const params = useParams();
-  
-  const tabs: ToolTabType[] = [
+
+  const handleChangetry =
+    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
+  const main_accordions = [
     {
-      name: t("panels.tools.join.join"),
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
-      value: "join",
-      element: <Join projectId={typeof params.projectId === "string" ? params.projectId : ""}/>,
+      name: t("panels.tools.summarize_data.summarize_data"),
+      value: "summarize_data",
+      children: [
+        "join",
+        "aggregate",
+        "summarize_features",
+        "origin_to_destination",
+      ],
     },
     {
       name: t("panels.tools.aggregate.aggregate"),
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
       value: "aggregate_features",
-      element: <Aggregate projectId={typeof params.projectId === "string" ? params.projectId : ""}/>,
+      children: ["accessibility_indicators"],
     },
-    {
+  ];
+
+  // const allTabs
+
+  const tabs = {
+    join: {
+      name: t("panels.tools.join.join"),
+      value: "join",
+      element: (
+        <Join
+          projectId={
+            typeof params.projectId === "string" ? params.projectId : ""
+          }
+        />
+      ),
+    },
+    aggregate: {
+      name: t("panels.tools.aggregate.aggregate"),
+      value: "aggregate",
+      element: (
+        <Aggregate
+          projectId={
+            typeof params.projectId === "string" ? params.projectId : ""
+          }
+        />
+      ),
+    },
+    accessibility_indicators: {
       name: t("panels.tools.accessibility_indicators.accessibility_indicators"),
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
-      value: "aggregate_features",
-      element: <IsochroneTabs />,
+      value: "accessibility_indicators",
+      element: <Isochrone />,
     },
-    {
+    summarize_features: {
       name: "Summarize features",
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
       value: "summarize_features",
       element: <p>summarize</p>,
     },
-    {
+    origin_to_destination: {
       name: "Origin to destination",
-      tooltip:
-        "Utilize join tool to merge columns from different layers. Apply functions like count, sum, min, etc., for desired results.",
       value: "origin_to_destination",
       element: <p>origin</p>,
     },
-  ];
-  
-  const handleChange = (newValue: ToolTabType | undefined) => {
-    setValue(newValue);
   };
 
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+    setTitle(newValue as string);
+    setDefaultRoute(undefined);
+  };
+
+  useEffect(() => {
+    if (defaultRoute === "root") {
+      setValue(undefined);
+      setTitle("Toolbox");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultRoute]);
+
   return (
-    <Box sx={{maxHeight: "100%"}}>
+    <Box sx={{ maxHeight: "100%" }}>
       {!value &&
-        tabs.map((tab) => (
-          <Box
+        main_accordions.map((tab) => (
+          <Accordion
             key={v4()}
-            sx={{
-              padding: "12px 0",
-              borderBottom: `1px solid ${theme.palette.primary.main}80`,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              cursor: "pointer",
-              transition: "all 0.3s ease-in-out",
-              "&:hover": {
-                backgroundColor: `${theme.palette.secondary.light}40`
-              }
-            }}
-            onClick={() => handleChange(tab)}
+            expanded={expanded === tab.value}
+            onChange={handleChangetry(tab.value)}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}>
-              <Icon iconName={ICON_NAME.CIRCLEINFO} htmlColor={theme.palette.secondary.light} sx={{ fontSize: "12px" }} />
-              <Typography variant="body1">{tab.name}</Typography>
-            </Box>
-            <Icon
-              iconName={ICON_NAME.CHEVRON_RIGHT}
-              sx={{ fontSize: "12px" }}
-            />
-          </Box>
+            <AccordionSummary
+              expandIcon={<Icon iconName={ICON_NAME.CHEVRON_DOWN} />}
+              aria-controls="panel1bh-content"
+              id="panel1bh-header"
+            >
+              <Typography sx={{ flexShrink: 0 }}>{tab.name}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Tabs tab={tab} handleChange={handleChange} />
+            </AccordionDetails>
+          </Accordion>
         ))}
-      {value ? (
-        <>
-          {/* <Box onClick={() => handleChange(undefined)}>Back</Box> */}
-          {value.element}
-        </>
-      ) : null}
+      {value ? <>{tabs[value].element}</> : null}
     </Box>
   );
 };

@@ -34,8 +34,8 @@ interface PickLayerProps {
   routing: RoutingTypes | undefined;
   startingType: StartingPointType | undefined;
   setStartingType: (value: StartingPointType) => void;
-  startingPoint: string[] | undefined;
-  setStartingPoint: (value: string[]) => void;
+  startingPoint: string[] | string;
+  setStartingPoint: (value: string[] | string) => void;
 }
 
 const isochroneMarkerIcons = {
@@ -94,9 +94,7 @@ const StartingPoint = (props: PickLayerProps) => {
 
   useEffect(() => {
     const handleMapClick = (event) => {
-      if (getCoordinates) {
-        console.log("starting_point:", startingPoint);
-
+      if (getCoordinates && typeof startingPoint !== "string") {
         startingPoint?.push(`${event.lngLat.lat},${event.lngLat.lng}`);
         setStartingPoint(startingPoint);
         dispatch(
@@ -104,7 +102,7 @@ const StartingPoint = (props: PickLayerProps) => {
             id: `isochrone-${(startingPoint ? startingPoint?.length : 0) + 1}`,
             lat: event.lngLat.lat,
             long: event.lngLat.lng,
-            iconName: isochroneMarkerIcons[routing],
+            iconName: isochroneMarkerIcons[routing ? routing : "walking"],
           }),
         );
       }
@@ -260,13 +258,15 @@ const StartingPoint = (props: PickLayerProps) => {
                   setStartingPoint(event.target.value as string);
                 }}
               >
-                {projectLayers.map((layer) =>
-                  layer.feature_layer_geometry_type === "point" ? (
-                    <MenuItem value={layer.layer_id} key={v4()}>
-                      {layer.name}
-                    </MenuItem>
-                  ) : null,
-                )}
+                {projectLayers
+                  ? projectLayers.map((layer) =>
+                      layer.feature_layer_geometry_type === "point" ? (
+                        <MenuItem value={layer.layer_id} key={v4()}>
+                          {layer.name}
+                        </MenuItem>
+                      ) : null,
+                    )
+                  : null}
               </Select>
             </FormControl>
           </Box>
@@ -294,7 +294,11 @@ const StartingPoint = (props: PickLayerProps) => {
             }}
           >
             <TextField
-              value={startingPoint?.join(";")}
+              value={
+                typeof startingPoint !== "string"
+                  ? startingPoint?.join(";")
+                  : ""
+              }
               size="small"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setStartingPoint(event.target.value.split(";") as string[]);

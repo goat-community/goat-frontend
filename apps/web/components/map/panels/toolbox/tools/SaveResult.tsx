@@ -17,6 +17,7 @@ import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useFolders } from "@/lib/api/folders";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
+import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
 
@@ -34,6 +35,10 @@ const SaveResult = (props: SaveResultProps) => {
   const { t } = useTranslation("maps");
 
   const { folders } = useFolders();
+
+  const { uniqueName } = useGetUniqueLayerName(outputName ? outputName : "");
+
+  console.log("Unique Name is: ", uniqueName);
 
   return (
     <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
@@ -78,8 +83,11 @@ const SaveResult = (props: SaveResultProps) => {
           />
         </RadioGroup>
       </Card>
-      <Typography variant="body1" sx={{ color: "black", marginTop: theme.spacing(5)}}>
-      {t("panels.tools.output_name")}
+      <Typography
+        variant="body1"
+        sx={{ color: "black", marginTop: theme.spacing(5) }}
+      >
+        {t("panels.tools.output_name")}
       </Typography>
       <Box>
         <TextField
@@ -93,11 +101,13 @@ const SaveResult = (props: SaveResultProps) => {
         />
       </Box>
       <Typography variant="body1" sx={{ color: "black" }}>
-      {t("panels.tools.save_in_folder")}
+        {t("panels.tools.save_in_folder")}
       </Typography>
       <Box>
         <FormControl fullWidth size="small">
-          <InputLabel id="demo-simple-select-label">{t("panels.tools.select_option")}</InputLabel>
+          <InputLabel id="demo-simple-select-label">
+            {t("panels.tools.select_option")}
+          </InputLabel>
           <Select
             label={t("panels.tools.select_option")}
             value={folderSaveId}
