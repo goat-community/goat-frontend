@@ -180,6 +180,7 @@ const StartingPoint = (props: PickLayerProps) => {
     return () => {
       active = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, inputValue, fetch]);
 
   return (
