@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useForm } from "react-hook-form";
@@ -62,11 +62,6 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
     order_by: "updated_at",
   };
   const { folders } = useFolders(queryParams);
-  const homeFolder = {
-    id: "0",
-    name: "Home",
-    user_id: "0",
-  };
   const [activeStep, setActiveStep] = useState(0);
   const [fileValue, setFileValue] = useState<File>();
   const [fileUploadError, setFileUploadError] = useState<string>();
@@ -75,6 +70,12 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
     "feature_layer",
   );
   const [isBusy, setIsBusy] = useState(false);
+  useEffect(() => {
+    const homeFolder = folders?.find((folder) => folder.name === "home");
+    if (homeFolder) {
+      setSelectedFolder(homeFolder);
+    }
+  }, [folders]);
 
   const [featureLayerType] = useState<FeatureLayerType>("standard");
 
@@ -136,7 +137,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   const handleOnClose = () => {
     setFileValue(undefined);
     setActiveStep(0);
-    setSelectedFolder(homeFolder);
+    // setSelectedFolder(homeFolder);
     setFileUploadError(undefined);
     setIsBusy(false);
     reset();
@@ -234,7 +235,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
                 }}
                 autoHighlight
                 id="folder-select"
-                options={folders ? [homeFolder, ...folders] : [homeFolder]}
+                options={folders ? [...folders] : []}
                 getOptionLabel={(option) => {
                   if (typeof option === "string") {
                     return option;
@@ -346,7 +347,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         <Stack direction="row" spacing={2} justifyContent="flex-end">
           <Button onClick={handleOnClose} variant="text">
             <Typography variant="body2" fontWeight="bold">
-            {t("cancel")}
+              {t("cancel")}
             </Typography>
           </Button>
           {activeStep < steps.length - 1 && (
@@ -361,7 +362,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
               color="primary"
             >
               <Typography variant="body2" fontWeight="bold" color="inherit">
-              {t("next")}
+                {t("next")}
               </Typography>
             </Button>
           )}
@@ -374,7 +375,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
               color="primary"
             >
               <Typography variant="body2" fontWeight="bold" color="inherit">
-              {t("projects.dataset.upload")}
+                {t("projects.dataset.upload")}
               </Typography>
             </LoadingButton>
           )}

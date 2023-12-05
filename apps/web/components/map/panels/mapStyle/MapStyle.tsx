@@ -1,113 +1,82 @@
 import Container from "@/components/map/panels/Container";
 import {
   Button,
-  Card,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
   Typography,
   Tab,
   Tabs,
   useTheme,
-  Select,
   Box,
-  MenuItem,
   FormControl,
   InputLabel,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
-import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { useState } from "react";
+import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
+import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+import Marker from "@/components/map/panels/mapStyle/Marker";
 
 interface MapStyleProps {
   projectId: string;
 }
-
-const layerTypes = [
-  {
-    label: "@column_label",
-    value: "@column_label",
-  },
-  {
-    label: "@column_label1",
-    value: "@column_label1",
-  },
-];
 
 const MapStylePanel = ({ projectId }: MapStyleProps) => {
   const theme = useTheme();
   const { t } = useTranslation(["maps", "common"]);
   const dispatch = useDispatch();
   const [tabValue, setTabValue] = useState(0);
+  const activeLayer = useActiveLayer(projectId);
+
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   return (
     <Container
       title="Layer Style"
+      disablePadding={true}
       close={() => dispatch(setActiveRightPanel(undefined))}
       body={
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            rowGap: "24px",
-          }}
-        >
-          <Card sx={{ paddingLeft: theme.spacing(2) }}>
-            <RadioGroup aria-label="options" name="options">
-              <FormControlLabel
-                value="@content_label"
-                sx={{
-                  span: {
-                    fontSize: "12px",
-                    fontStyle: "italic",
-                  },
-                }}
-                control={
-                  <Radio
-                    color="default"
-                    icon={
-                      <Icon
-                        iconName={ICON_NAME.STAR}
-                        htmlColor={theme.palette.primary.dark}
-                        sx={{ fontSize: "18px" }}
-                      />
-                    }
-                    checkedIcon={
-                      <Icon
-                        iconName={ICON_NAME.STAR}
-                        htmlColor={theme.palette.primary.main}
-                        sx={{ fontSize: "18px" }}
-                      />
-                    }
-                  />
-                }
-                label="@content_label"
-              />
-            </RadioGroup>
-          </Card>
-          <Box>
-            <Tabs value={tabValue} aria-label="basic tabs example">
-              <Tab
-                label={t("panels.layer_design.simple")}
-                sx={{
-                  width: "50%",
-                }}
-              />
-              <Tab
-                label={t("panels.layer_design.smart")}
-                sx={{
-                  width: "50%",
-                }}
-              />
-            </Tabs>
-          </Box>
-          {tabValue === 0 ? (
-            <>
-              {/* <Card>
+        <>
+          {activeLayer && (
+            <ProjectLayerDropdown
+              projectId={projectId}
+              layerTypes={["feature"]}
+            />
+          )}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              rowGap: "24px",
+            }}
+          >
+            <Box>
+              <Tabs
+                value={tabValue}
+                aria-label="layer style"
+                onChange={handleChange}
+              >
+                <Tab
+                  label={t("panels.layer_design.simple")}
+                  sx={{
+                    width: "50%",
+                  }}
+                />
+                <Tab
+                  label={t("panels.layer_design.smart")}
+                  sx={{
+                    width: "50%",
+                  }}
+                />
+              </Tabs>
+            </Box>
+            {tabValue === 0 ? (
+              <>
+                <Marker />
+                {/* <Card>
                 <CardMedia
                   sx={{
                     height: "42px",
@@ -132,7 +101,7 @@ const MapStylePanel = ({ projectId }: MapStyleProps) => {
                   <Checkbox />
                 </CardContent>
               </Card> */}
-              {/* {mapLayer?.type === "line" ? (
+                {/* {mapLayer?.type === "line" ? (
                 <>
                   <ColorOptionLine />
                   <Divider
@@ -187,45 +156,45 @@ const MapStylePanel = ({ projectId }: MapStyleProps) => {
                   <SizeOptionSymbol />
                 </>
               ) : null} */}
-            </>
-          ) : (
-            <>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  rowGap: "8px",
-                  width: "100%",
-                }}
-              >
-                <Typography variant="body2">
-                  {t("panels.layer_design.field")}
-                </Typography>
-                <Typography
-                  color="secondary"
-                  variant="caption"
+              </>
+            ) : (
+              <>
+                <Box
                   sx={{
-                    fontStyle: "italic",
-                    paddingBottom: theme.spacing(2),
+                    display: "flex",
+                    flexDirection: "column",
+                    rowGap: "8px",
+                    width: "100%",
                   }}
                 >
-                  {t("panels.layer_design.select_field")}
-                </Typography>
-                <FormControl fullWidth size="small">
-                  <InputLabel id="demo-simple-select-label">
-                    {t("panels.layer_design.select_option")}
-                  </InputLabel>
-                  <Select label={t("panels.layer_design.select_option")}>
-                    {layerTypes.map((type) => (
-                      <MenuItem key={v4()} value={type.value}>
-                        {type.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box>
-                {/* <Typography
+                  <Typography variant="body2">
+                    {t("panels.layer_design.field")}
+                  </Typography>
+                  <Typography
+                    color="secondary"
+                    variant="caption"
+                    sx={{
+                      fontStyle: "italic",
+                      paddingBottom: theme.spacing(2),
+                    }}
+                  >
+                    {t("panels.layer_design.select_field")}
+                  </Typography>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="demo-simple-select-label">
+                      {t("panels.layer_design.select_option")}
+                    </InputLabel>
+                    {/* <Select label={t("panels.layer_design.select_option")}>
+                      {layerTypes.map((type) => (
+                        <MenuItem key={v4()} value={type.value}>
+                          {type.label}
+                        </MenuItem>
+                      ))}
+                    </Select> */}
+                  </FormControl>
+                </Box>
+                <Box>
+                  {/* <Typography
                   color="secondary"
                   variant="subtitle2"
                   sx={{
@@ -238,10 +207,11 @@ const MapStylePanel = ({ projectId }: MapStyleProps) => {
                   coding or symbol size variation for categorical and numerical
                   data.
                 </Typography> */}
-              </Box>
-            </>
-          )}
-        </Box>
+                </Box>
+              </>
+            )}
+          </Box>
+        </>
       }
       action={
         <Box

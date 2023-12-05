@@ -75,11 +75,10 @@ export default function Container(props: ContainerProps) {
         <Stack
           direction="column"
           sx={{
-            paddingTop: theme.spacing(2),
-            paddingBottom: theme.spacing(7),
+            pt: 2,
+            pb: 7,
             ...(!props.disablePadding && {
-              paddingLeft: theme.spacing(3),
-              paddingRight: theme.spacing(3),
+              px: 3,
             }),
             overflowY: "auto",
             height: "100%",

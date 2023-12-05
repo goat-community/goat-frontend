@@ -1,9 +1,9 @@
 import Container from "@/components/map/panels/Container";
+import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
-import { setActiveLayer } from "@/lib/store/layer/slice";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import type { ProjectLayer } from "@/lib/validations/project";
 import {
@@ -12,10 +12,6 @@ import {
   AccordionSummary,
   Box,
   Divider,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Slider,
   Stack,
   Typography,
@@ -31,39 +27,6 @@ const AccordionHeader = ({ title }: { title: string }) => {
         {title}
       </Typography>
     </Stack>
-  );
-};
-
-const LayerDropdown = ({ projectId }: { projectId: string }) => {
-  const { layers: projectLayers } = useProjectLayers(projectId);
-  const activeLayer = useActiveLayer(projectId);
-  const dispatch = useAppDispatch();
-  return (
-    <>
-      {projectLayers && projectLayers.length > 0 && activeLayer && (
-        <FormControl fullWidth sx={{ mb: 4 }}>
-          <InputLabel id="demo-simple-select-label">Active Layer</InputLabel>
-          <Select
-            labelId="select-active-layer"
-            id="select-active-layer"
-            value={activeLayer.id}
-            label="Active Layer"
-            onChange={(event) => {
-              const id = event.target.value as number;
-              dispatch(setActiveLayer(id));
-            }}
-          >
-            {projectLayers.map((layer) => {
-              return (
-                <MenuItem key={layer.id} value={layer.id}>
-                  {layer.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-        </FormControl>
-      )}
-    </>
   );
 };
 
@@ -259,7 +222,7 @@ const PropertiesPanel = ({ projectId }: { projectId: string }) => {
         <>
           {activeLayer && (
             <>
-              <LayerDropdown projectId={projectId} />
+              <ProjectLayerDropdown projectId={projectId} />
               <LayerInfo layer={activeLayer} />
               <Symbology layer={activeLayer} />
               <Visibility layer={activeLayer} projectId={projectId} />

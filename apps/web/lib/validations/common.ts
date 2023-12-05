@@ -39,4 +39,5 @@ export const featureLayerType = z.enum([
 export const data_type = z.enum(["wms", "mvt"]);
 
 
+export type LayerType = z.infer<typeof layerType>;
 export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;
