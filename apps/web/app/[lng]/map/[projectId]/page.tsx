@@ -7,7 +7,7 @@ import React, { useMemo } from "react";
 import type { ViewStateChangeEvent } from "react-map-gl";
 import Map, { MapProvider } from "react-map-gl";
 import Layers from "@/components/map/Layers";
-
+import Markers from "@/components/map/Markers";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 import Header from "@/components/header/Header";
 import {
@@ -123,6 +123,7 @@ export default function MapPage({ params: { projectId } }) {
                 mapboxAccessToken={MAPBOX_TOKEN}
               >
                 <Layers projectId={projectId} />
+                <Markers />
               </Map>
             </Box>
           </Box>

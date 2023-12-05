@@ -48,6 +48,7 @@ export default function JobsPopper() {
         setIntervalId(null);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobs?.items, intervalId]);
 
   const [isBusy, setIsBusy] = useState(false);

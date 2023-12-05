@@ -17,6 +17,7 @@ import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useFolders } from "@/lib/api/folders";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
+import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
 
@@ -35,6 +36,8 @@ const SaveResult = (props: SaveResultProps) => {
 
   const { folders } = useFolders();
 
+  const { uniqueName } = useGetUniqueLayerName(outputName ? outputName : "");
+
   return (
     <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
       <Typography variant="body1" sx={{ color: "black" }}>
@@ -48,7 +51,7 @@ const SaveResult = (props: SaveResultProps) => {
       >
         <RadioGroup aria-label="options" name="options">
           <FormControlLabel
-            value={outputName}
+            value={uniqueName}
             sx={{
               span: {
                 fontSize: "12px",
@@ -74,17 +77,20 @@ const SaveResult = (props: SaveResultProps) => {
                 }
               />
             }
-            label={outputName}
+            label={uniqueName}
           />
         </RadioGroup>
       </Card>
-      <Typography variant="body1" sx={{ color: "black", marginTop: theme.spacing(5)}}>
-      {t("panels.tools.output_name")}
+      <Typography
+        variant="body1"
+        sx={{ color: "black", marginTop: theme.spacing(5) }}
+      >
+        {t("panels.tools.output_name")}
       </Typography>
       <Box>
         <TextField
           fullWidth
-          value={outputName ? outputName : ""}
+          value={uniqueName ? uniqueName : ""}
           label="Name"
           size="small"
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -93,11 +99,13 @@ const SaveResult = (props: SaveResultProps) => {
         />
       </Box>
       <Typography variant="body1" sx={{ color: "black" }}>
-      {t("panels.tools.save_in_folder")}
+        {t("panels.tools.save_in_folder")}
       </Typography>
       <Box>
         <FormControl fullWidth size="small">
-          <InputLabel id="demo-simple-select-label">{t("panels.tools.select_option")}</InputLabel>
+          <InputLabel id="demo-simple-select-label">
+            {t("panels.tools.select_option")}
+          </InputLabel>
           <Select
             label={t("panels.tools.select_option")}
             value={folderSaveId}

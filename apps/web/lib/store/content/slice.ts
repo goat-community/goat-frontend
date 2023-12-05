@@ -3,13 +3,21 @@ import { LOADING_STATUSES } from "@/lib/utils/constants";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export interface ContentState {
+  folders: [];
+  getFoldersStatus: string;
+  previewMode: string;
+}
+
+const initialState = {
+  folders: [],
+  getFoldersStatus: LOADING_STATUSES.idle,
+  previewMode: "map",
+} as ContentState;
+
 const contentSlice = createSlice({
   name: "map",
-  initialState: {
-    folders: [],
-    getFoldersStatus: LOADING_STATUSES.idle,
-    previewMode: "map",
-  },
+  initialState: initialState,
   reducers: {
     setPreviewMode(state, action: PayloadAction<string>) {
       state.previewMode = action.payload;

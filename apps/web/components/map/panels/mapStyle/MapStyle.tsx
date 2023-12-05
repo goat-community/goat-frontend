@@ -17,15 +17,14 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { useState } from "react";
 
-interface MapStyleProps {
-  projectId: string;
-}
+// interface MapStyleProps {
+//   projectId: string;
+// }
 
 const layerTypes = [
   {
@@ -38,11 +37,11 @@ const layerTypes = [
   },
 ];
 
-const MapStylePanel = ({ projectId }: MapStyleProps) => {
+const MapStylePanel = () => {
   const theme = useTheme();
   const { t } = useTranslation(["maps", "common"]);
   const dispatch = useDispatch();
-  const [tabValue, setTabValue] = useState(0);
+  const [tabValue] = useState(0);
 
   return (
     <Container

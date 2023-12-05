@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
 

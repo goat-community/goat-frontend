@@ -1,3 +1,4 @@
+import { fetchWithAuth } from "@/lib/api/fetcher";
 import type { PostJoin, PostAggregate } from "@/lib/validations/tools";
 
 const PROJECTS_API_BASE_URL = new URL(
@@ -6,7 +7,7 @@ const PROJECTS_API_BASE_URL = new URL(
 ).href;
 
 export const SendJoinFeatureRequest = async (body: PostJoin) => {
-  await fetch(
+  await fetchWithAuth(
     `${PROJECTS_API_BASE_URL}/join`,
     {
       method: "POST",
@@ -17,7 +18,7 @@ export const SendJoinFeatureRequest = async (body: PostJoin) => {
 }
 
 export const SendAggregateFeatureRequest = async (body: PostAggregate) => {
-  await fetch(
+  await fetchWithAuth(
     `${PROJECTS_API_BASE_URL}/aggregate-points`,
     {
       method: "POST",

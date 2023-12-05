@@ -1,10 +1,12 @@
 import type { Basemap, MapSidebarItemID } from "@/types/map/common";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import type { IMarker } from "@/types/map/common";
 
 export interface MapState {
   basemaps: Basemap[];
   activeBasemap: string;
+  markers: IMarker[];
   activeLeftPanel: MapSidebarItemID | undefined;
   activeRightPanel: MapSidebarItemID | undefined;
 }
@@ -47,6 +49,7 @@ const initialState = {
       thumbnail: "https://i.imgur.com/lfcARxZm.png",
     },
   ],
+  markers: [],
   activeBasemap: "mapbox_streets",
   activeLeftPanel: undefined,
   activeRightPanel: undefined,
@@ -71,10 +74,16 @@ const mapSlice = createSlice({
     ) => {
       state.activeRightPanel = action.payload;
     },
+    addMarker: (state, action: PayloadAction<IMarker>) => {
+      state.markers.push(action.payload);
+    },
+    removeMarker : (state) => {
+      state.markers = [];
+    },
   },
 });
 
-export const { setActiveBasemap, setActiveLeftPanel, setActiveRightPanel } =
+export const { setActiveBasemap, setActiveLeftPanel, setActiveRightPanel, addMarker, removeMarker } =
   mapSlice.actions;
 
 export const mapReducer = mapSlice.reducer;

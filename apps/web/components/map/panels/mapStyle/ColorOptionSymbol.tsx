@@ -11,6 +11,7 @@ import {
 import React from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 const ColorOptionSymbol = () => {
   const mapLayer = useSelector(selectMapLayer);
