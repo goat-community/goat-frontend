@@ -31,7 +31,7 @@ const Aggregate = (props: AggregateProps) => {
   const [groupedFields, setGroupedFields] = useState<string[] | undefined>(
     undefined,
   );
-  const [outputName, setOutputName] = useState<string | undefined>(undefined);
+  const [outputName, setOutputName] = useState<string | undefined>("aggregate");
   const [folderSaveID, setFolderSaveID] = useState<string | undefined>(
     undefined,
   );
@@ -122,7 +122,6 @@ const Aggregate = (props: AggregateProps) => {
           setMethod={setMethod}
           groupedFields={groupedFields}
           setGroupedFields={setGroupedFields}
-          setOutputName={setOutputName}
         />
         {fieldSelected && method ? (
           <SaveResult

@@ -22,6 +22,14 @@ import search from "@/lib/services/geocoder";
 import type { FeatureCollection } from "geojson";
 import { match } from "@/lib/utils/match";
 
+import type {
+  Result,
+  // Feature,
+  // Context,
+  // Geometry,
+  // Properties,
+} from "@/types/map/controllers";
+
 type Props = {
   endpoint?: string;
   source?: string;
@@ -35,42 +43,6 @@ type Props = {
   language?: string;
   pointZoom?: number;
 };
-
-export interface Result {
-  feature: Feature;
-  label: string;
-}
-
-interface Feature {
-  id: string;
-  type: string;
-  place_type: string[];
-  relevance: number;
-  properties: Properties;
-  text: string;
-  place_name: string;
-  center: [number, number];
-  geometry: Geometry;
-  address: string;
-  context: Context[];
-}
-
-interface Context {
-  id: string;
-  text: string;
-  wikidata?: string;
-  short_code?: string;
-}
-
-interface Geometry {
-  type: string;
-  coordinates: [number, number];
-  interpolated: boolean;
-}
-
-interface Properties {
-  accuracy: string;
-}
 
 const COORDINATE_REGEX_STRING =
   "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)";
@@ -290,7 +262,7 @@ export default function Geocoder({
                       display: "flex",
                       alignItems: "center",
                       width: 350,
-                      [theme.breakpoints.down('sm')]: {
+                      [theme.breakpoints.down("sm")]: {
                         width: 270,
                       },
                     }}
@@ -300,9 +272,9 @@ export default function Geocoder({
                       fontSize="small"
                       sx={{
                         color: focused
-                              ? theme.palette.primary.main
-                              : theme.palette.text.secondary,
-                            margin: theme.spacing(2),
+                          ? theme.palette.primary.main
+                          : theme.palette.text.secondary,
+                        margin: theme.spacing(2),
                       }}
                     />
                     <Divider
@@ -385,8 +357,7 @@ export default function Geocoder({
                       sx={{
                         paddingLeft: theme.spacing(3),
                         "&:hover": {
-                          backgroundColor:
-                            theme.palette.background.default,
+                          backgroundColor: theme.palette.background.default,
                         },
                       }}
                     >

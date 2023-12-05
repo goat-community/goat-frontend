@@ -6,6 +6,13 @@ export interface Basemap {
   thumbnail: string;
 }
 
+export interface IMarker {
+  id: string;
+  lat: number;
+  long: number;
+  iconName: string;
+}
+
 export enum MapSidebarItemID {
   LAYERS = "layers",
   LEGEND = "legend",

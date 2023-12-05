@@ -14,6 +14,7 @@ import {
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "@/i18n/client";
 
 const openedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {
@@ -42,6 +43,8 @@ const DashboardSidebar = (props: Props) => {
   const theme = useTheme();
   const pathname = usePathname();
 
+  const {t} = useTranslation("dashboard");
+
   const MobileDrawerProps = {
     open: navVisible,
     onOpen: () => setNavVisible(true),
@@ -61,31 +64,31 @@ const DashboardSidebar = (props: Props) => {
     {
       link: "/home",
       icon: ICON_NAME.HOUSE,
-      label: "Home",
+      label: t("sidebar.home"),
       current: pathname?.includes("/home"),
     },
     {
       link: "/projects",
       icon: ICON_NAME.MAP,
-      label: "Projects",
+      label: t("sidebar.projects"),
       current: pathname?.includes("/projects"),
     },
     {
       link: "/datasets",
       icon: ICON_NAME.DATABASE,
-      label: "Datasets",
+      label: t("sidebar.datasets"),
       current: pathname?.includes("/data"),
     },
     {
       link: "/catalog",
       icon: ICON_NAME.GLOBE,
-      label: "Catalog",
+      label: t("sidebar.catalog"),
       current: pathname?.includes("/catalog"),
     },
     {
       link: "/settings",
       icon: ICON_NAME.SETTINGS,
-      label: "Settings",
+      label: t("sidebar.settings"),
       current: pathname?.includes("/settings"),
     },
   ];

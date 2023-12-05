@@ -44,7 +44,20 @@ export default function Container(props: ContainerProps) {
         direction="row"
       >
         {header ? (
-          header
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "20px",
+              width: "100%",
+            }}
+          >
+            {header}
+            <IconButton onClick={() => close(undefined)}>
+              <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
+            </IconButton>
+          </Box>
         ) : (
           <Box
             sx={{

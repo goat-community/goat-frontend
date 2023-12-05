@@ -200,7 +200,7 @@ const Visibility = ({
   );
 };
 
-const Symbology = ({ layer }: { layer: ProjectLayer }) => {
+const Symbology = () => {
   return (
     <AccordionWrapper
       header={<AccordionHeader title="Symbology" />}

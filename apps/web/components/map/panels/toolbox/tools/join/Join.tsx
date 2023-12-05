@@ -33,8 +33,7 @@ const Join = (props: JoinProps) => {
   const [statisticField, setStatisticField] = useState<string | undefined>(
     undefined,
   );
-  const [label, setLabel] = useState<string | undefined>(undefined);
-  const [outputName, setOutputName] = useState<string | undefined>(undefined);
+  const [outputName, setOutputName] = useState<string | undefined>("join");
   const [folderSaveID, setFolderSaveID] = useState<string | undefined>(
     undefined,
   );
@@ -48,7 +47,6 @@ const Join = (props: JoinProps) => {
     setSecondField(undefined);
     setMethod(undefined);
     setStatisticField(undefined);
-    setLabel(undefined);
   };
 
   const handleRun = () => {
@@ -58,8 +56,7 @@ const Join = (props: JoinProps) => {
       firstField &&
       secondField &&
       method &&
-      statisticField &&
-      label
+      statisticField
     ) {
       const requestBody: PostJoin = {
         target_layer_id: inputValues[0],
@@ -118,10 +115,7 @@ const Join = (props: JoinProps) => {
           setMethod={setMethod}
           method={method}
           setStatisticField={setStatisticField}
-          setOutputName={setOutputName}
           statisticField={statisticField}
-          setLabel={setLabel}
-          label={label}
         />
         {secondField && method ? (
           <SaveResult

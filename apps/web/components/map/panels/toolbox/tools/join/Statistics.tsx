@@ -8,9 +8,9 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  TextField,
 } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
+import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
 import type { ColumStatisticsOperation } from "@/types/map/toolbox";
@@ -22,9 +22,6 @@ interface StatisticsProps {
   method: ColumStatisticsOperation | undefined;
   setStatisticField: (value: string) => void;
   statisticField: string | undefined;
-  setLabel: (value: string) => void;
-  label: string | undefined;
-  setOutputName: (value: string) => void;
 }
 
 const Statistics = (props: StatisticsProps) => {
@@ -34,10 +31,7 @@ const Statistics = (props: StatisticsProps) => {
     setMethod,
     method,
     setStatisticField,
-    statisticField,
-    setLabel,
-    label,
-    setOutputName
+    statisticField
   } = props;
 
   const theme = useTheme();
@@ -70,10 +64,10 @@ const Statistics = (props: StatisticsProps) => {
     },
   ];
 
-  const saveFieldKeys = useLayerHook(secondLayerId);
+  const saveFieldKeys = useGetLayerKeys(`user_data.${secondLayerId.split("-").join("")}`);
 
   function checkType() {
-    return saveFieldKeys.getLayerKeys().keys.map((key) =>
+    return saveFieldKeys.keys.map((key) =>
       methods
         .filter((meth) => meth.name === method)[0]
         .types.includes(key.type) ? (
@@ -129,25 +123,11 @@ const Statistics = (props: StatisticsProps) => {
               value={statisticField}
               onChange={(event: SelectChangeEvent) => {
                 setStatisticField(event.target.value as string);
-                setOutputName(`${method}_${event.target.value as string}`);
               }}
             >
               {secondLayerId.length ? checkType() : null}
             </Select>
           </FormControl>
-        </Box>
-      ) : null}
-      {statisticField ? (
-        <Box sx={{ marginTop: theme.spacing(2) }}>
-          <TextField
-            fullWidth
-            value={label ? label : ""}
-            label={t("panels.tools.label")}
-            size="small"
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setLabel(event.target.value as string)
-            }
-          />
         </Box>
       ) : null}
     </Box>

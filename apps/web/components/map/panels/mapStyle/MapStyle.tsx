@@ -10,7 +10,6 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
-
 import { useTranslation } from "@/i18n/client";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { useState } from "react";
@@ -18,9 +17,9 @@ import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import Marker from "@/components/map/panels/mapStyle/Marker";
 
-interface MapStyleProps {
-  projectId: string;
-}
+// interface MapStyleProps {
+//   projectId: string;
+// }
 
 const MapStylePanel = ({ projectId }: MapStyleProps) => {
   const theme = useTheme();

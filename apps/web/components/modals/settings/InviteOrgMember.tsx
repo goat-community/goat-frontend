@@ -35,7 +35,7 @@ const OrgMemberInviteModal: React.FC<OrgMemberInviteDialogProps> = ({
   const theme = useTheme();
   const { t } = useTranslation(["common", "dashboard"]);
 
-  const { register, handleSubmit, formState, getValues, control, reset } =
+  const { register, handleSubmit, formState, getValues } =
     useForm<InvitationCreate>({
       mode: "onChange",
       resolver: zodResolver(invitationCreateSchema),

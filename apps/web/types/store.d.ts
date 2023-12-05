@@ -1,17 +1,11 @@
-import type {IStylingState} from "@/lib/store/styling/slice";
 import type { Expression } from "./map/filtering";
 import type { LayerState } from "@/lib/store/layer/slice";
+import type { MapState } from "@/lib/store/map/slice";
+import type { ContentState } from "@/lib/store/content/slice";
 
 export interface IStore {
-  map: {
-    loading: boolean;
-  };
-  content: {
-    folders: [];
-    getFoldersStatus: string;
-    previewMode: string;
-  };
-  styling: IStylingState;
+  map: MapState;
+  content: ContentState;
   mapFilters: {
     filters: { [key: string]: string };
     logicalOperator: string;

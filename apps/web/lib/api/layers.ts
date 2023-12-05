@@ -1,11 +1,19 @@
 import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { GetContentQueryParams } from "@/lib/validations/common";
-import type { CreateNewDatasetLayer, LayerPaginated } from "@/lib/validations/layer";
+import type {
+  CreateNewDatasetLayer,
+  LayerPaginated,
+} from "@/lib/validations/layer";
 
 export const LAYERS_API_BASE_URL = new URL(
   "api/v2/layer",
   process.env.NEXT_PUBLIC_API_URL,
+).href;
+
+export const LAYER_KEYS_API_BASE_URL = new URL(
+  "collections",
+  process.env.NEXT_PUBLIC_GEOAPI_URL,
 ).href;
 
 export const useLayers = (queryParams?: GetContentQueryParams) => {
@@ -56,4 +64,13 @@ export const layerUploadValidateFile = async (file: File) => {
     throw new Error("Failed to upload folder");
   }
   return await response.json();
+};
+
+export const useLayerKeys = (layerId: string) => {
+  const { data, isLoading, error} =
+    useSWR<LayerPaginated>(
+      [`${LAYER_KEYS_API_BASE_URL}/${layerId}/queryables`],
+      fetcher,
+    );
+  return {data, isLoading, error}
 }

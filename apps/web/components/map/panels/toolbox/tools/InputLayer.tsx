@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
+import { useProjectLayers } from "@/lib/api/projects";
+import { useParams } from "next/navigation";
 
 import type { SelectChangeEvent } from "@mui/material";
 
@@ -26,6 +28,11 @@ const InputLayer = (props: PickLayerProps) => {
   const theme = useTheme();
   const { t } = useTranslation("maps");
 
+  const { projectId } = useParams();
+
+  const { layers: projectLayers } = useProjectLayers(
+    typeof projectId === "string" ? projectId : "",
+  );
 
   const handleSingleChange = (event: SelectChangeEvent) => {
     setInputValues(event.target.value as string);
@@ -66,11 +73,13 @@ const InputLayer = (props: PickLayerProps) => {
                   handleMultipleChange(event, 0)
                 }
               >
-                {projectLayers.map((layer) => (
-                  <MenuItem value={layer.id} key={v4()}>
-                    {layer.name}
-                  </MenuItem>
-                ))}
+                {projectLayers
+                  ? projectLayers.map((layer) => (
+                      <MenuItem value={layer.layer_id} key={v4()}>
+                        {layer.name}
+                      </MenuItem>
+                    ))
+                  : null}
               </Select>
             </FormControl>
           </Box>
@@ -100,11 +109,13 @@ const InputLayer = (props: PickLayerProps) => {
                   handleMultipleChange(event, 1)
                 }
               >
-                {projectLayers.map((layer) => (
-                  <MenuItem value={layer.id} key={v4()}>
-                    {layer.name}
-                  </MenuItem>
-                ))}
+                {projectLayers
+                  ? projectLayers.map((layer) => (
+                      <MenuItem value={layer.layer_id} key={v4()}>
+                        {layer.name}
+                      </MenuItem>
+                    ))
+                  : null}
               </Select>
             </FormControl>
           </Box>
@@ -132,13 +143,13 @@ const InputLayer = (props: PickLayerProps) => {
               value={inputValues}
               onChange={handleSingleChange}
             >
-              {projectLayers.map((layer) =>
+              {projectLayers ? projectLayers.map((layer) =>
                 layerTypes.includes(layer.feature_layer_geometry_type) ? (
-                  <MenuItem value={layer.id} key={v4()}>
+                  <MenuItem value={layer.layer_id} key={v4()}>
                     {layer.name}
                   </MenuItem>
                 ) : null,
-              )}
+              ) : null}
             </Select>
           </FormControl>
         </Box>

@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
+import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
 import type { ColumStatisticsOperation } from "@/types/map/toolbox";
@@ -24,7 +25,6 @@ interface StatisticsProps {
   setMethod: (value: ColumStatisticsOperation) => void;
   setGroupedFields: (value: string[]) => void;
   groupedFields: string[] | undefined;
-  setOutputName: (value: string) => void;
 }
 
 const Statistics = (props: StatisticsProps) => {
@@ -36,7 +36,6 @@ const Statistics = (props: StatisticsProps) => {
     setMethod,
     groupedFields,
     setGroupedFields,
-    setOutputName,
   } = props;
 
   const theme = useTheme();
@@ -69,22 +68,22 @@ const Statistics = (props: StatisticsProps) => {
     },
   ];
 
-  const pointLayerKeys = useLayerHook(
-    typeof pointLayerId === "string" ? pointLayerId : "",
+  const pointLayerKeys = useGetLayerKeys(
+    `user_data.${
+      typeof pointLayerId === "string" ? pointLayerId.split("-").join("") : ""
+    }`,
   );
 
   function checkType() {
-      return methodsKeys.map((key) =>
-        key.types.includes(
-          pointLayerKeys
-            .getLayerKeys()
-            .keys.filter((layerKey) => layerKey.name === field)[0].type,
-        ) ? (
-          <MenuItem value={key.name} key={v4()}>
-            {key.name}
-          </MenuItem>
-        ) : null,
-      );
+    return methodsKeys.map((key) =>
+      key.types.includes(
+        pointLayerKeys.keys.filter((layerKey) => layerKey.name === field)[0].type,
+      ) ? (
+        <MenuItem value={key.name} key={v4()}>
+          {key.name}
+        </MenuItem>
+      ) : null,
+    );
   }
 
   return (
@@ -117,7 +116,7 @@ const Statistics = (props: StatisticsProps) => {
                 setFieldSelected(event.target.value as string)
               }
             >
-              {pointLayerKeys.getLayerKeys().keys.map((key) => (
+              {pointLayerKeys.keys.map((key) => (
                 <MenuItem value={key.name} key={v4()}>
                   {key.name}
                 </MenuItem>
@@ -136,9 +135,6 @@ const Statistics = (props: StatisticsProps) => {
               value={method}
               onChange={(event: SelectChangeEvent) => {
                 setMethod(event.target.value as ColumStatisticsOperation);
-                setOutputName(
-                  `${field}_${event.target.value as ColumStatisticsOperation}`,
-                );
               }}
             >
               {field ? checkType() : null}
@@ -168,7 +164,7 @@ const Statistics = (props: StatisticsProps) => {
                 setGroupedFields(event.target.value as string[])
               }
             >
-              {pointLayerKeys.getLayerKeys().keys.map((key) => (
+              {pointLayerKeys.keys.map((key) => (
                 <MenuItem value={key.name} key={v4()}>
                   <Checkbox
                     checked={

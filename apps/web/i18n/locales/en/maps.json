@@ -23,6 +23,50 @@
     "charts": {
       "charts": "Charts"
     },
+    "isochrone": {
+      "isochrone": "Isochrone",
+      "isochrone_description": "Isochrones illustrate reachable areas within a set travel time or distance from a specific point, aiding in spatial analysis and route planning.",
+      "routing": {
+        "routing": "Routing",
+        "chose_routing": "Chose a routing type for the isochrone.",
+        "pt_type": "PT type",
+        "modes": {
+          "bus": "Bus",
+          "tram": "Tram",
+          "rail": "Rail",
+          "subway": "Subway",
+          "ferry": "Ferry",
+          "cable_car": "Cable Car",
+          "gondola": "Gondola",
+          "funicular": "Funicular",
+          "walk": "Walk",
+          "bicycle": "Bicycle",
+          "pedelec": "Pedelec",
+          "car": "Car",
+          "pt": "PT"
+        }
+      },
+      "speed": "Speed",
+      "unity": "Unity",
+      "time": "Time",
+      "distance": "Distance",
+      "invalid_distance": "Invalid distance value",
+      "travelTime": "Travel Time",
+      "steps": "Steps",
+      "invalid_step": "Invalid step value",
+      "starting": {
+        "starting": "Starting",
+        "starting_point_desc": "Chose a way to select the starting point/s of the isochrone",
+        "origin": "Origin",
+        "pick_layer": "Browse layers",
+        "type": "Type",
+        "starting_point": "Starting Point",
+        "pick_on_map": "Place on map",
+        "search_location": "Search Location",
+        "layer": "Layer",
+        "search_address": "Search Address"
+      }
+    },
     "tools": {
       "tools": "Toolbox",
       "select_layer": "Select Layer",
@@ -63,6 +107,19 @@
         "hexagon_bin": "Hexagon bin",
         "polygon_layer": "Polygon Layer",
         "unit": "Unit"
+      },
+      "accessibility_indicators": {
+        "accessibility_indicators": "Accessibility Indicators",
+        "isochrone": "Isochrone"
+      },
+      "summarize_features": {
+        "summarize_features": "Summarize Features"
+      },
+      "origin_to_destination": {
+        "origin_to_destination": "Origin to  destination"
+      },
+      "summarize_data": {
+        "summarize_data": "Summarize data"
       }
     },
     "filter": {
