@@ -144,7 +144,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
             error={distance ? distance % 50 !== 0 || distance > 20000 : false}
             helperText={
               distance && (distance % 50 !== 0 || distance > 20000)
-                ? "Invalid distance value"
+                ? t("panels.isochrone.invalid_distance")
                 : ""
             }
             size="small"
@@ -236,7 +236,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
           label="XX"
           value={steps ? steps : ""}
           error={isValidStep}
-          helperText={isValidStep ? "Invalid step value" : ""}
+          helperText={isValidStep ? t("panels.isochrone.invalid_step") : ""}
           size="small"
           disabled={!routing ? true : false}
           fullWidth
@@ -269,7 +269,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
           variant="body2"
           sx={{ fontStyle: "italic", marginBottom: theme.spacing(2) }}
         >
-          Chose a routing type for the isochrone.
+          {t("panels.isochrone.routing.chose_routing")}
         </Typography>
         <FormControl
           fullWidth
@@ -292,7 +292,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
           >
             {routingModes.map((modeRoute) => (
               <MenuItem key={v4()} value={modeRoute.value}>
-                {/* {modeRoute.name} */}
                 {t(`panels.isochrone.routing.modes.${modeRoute.name}`)}
               </MenuItem>
             ))}
@@ -341,12 +340,11 @@ const IsochroneSettings = (props: PickLayerProps) => {
             onChange={(_: React.SyntheticEvent, newValue: string) => {
               setTab(newValue as "distance" | "time");
             }}
-            aria-label="lab API tabs example"
             variant="fullWidth"
           >
-            <Tab label="Time" disabled={!routing ? true : false} value="time" />
+            <Tab label={t("panels.isochrone.time")} disabled={!routing ? true : false} value="time" />
             <Tab
-              label="Distance"
+              label={t("panels.isochrone.distance")}
               disabled={
                 !routing || ["car_peak", "pt"].includes(routing ? routing : "")
                   ? true

@@ -9,13 +9,16 @@ import {
   SendPTIsochroneRequest,
   SendCarIsochroneRequest,
 } from "@/lib/api/isochrone";
-import { v4 } from "uuid";
 import { useDispatch } from "react-redux";
 import { removeMarker } from "@/lib/store/map/slice";
 
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { RoutingTypes, PTModeTypes } from "@/types/map/isochrone";
 import type { StartingPointType as StartingPointTypeForm } from "@/lib/validations/isochrone";
+import type {
+  PostIsochrone,
+  PostPTIsochrone,
+} from "@/lib/validations/isochrone";
 
 const Isochrone = () => {
   // Isochrone Settings states
@@ -57,7 +60,7 @@ const Isochrone = () => {
     setDistance(undefined);
     setTravelTime(undefined);
     setSteps(undefined);
-    setOutputName(`isochrone-${v4()}`);
+    setOutputName(`isochrone`);
     setFolderSaveID(undefined);
     setStartingType(undefined);
     setStartingPoint([]);
@@ -110,8 +113,7 @@ const Isochrone = () => {
       outputName &&
       folderSaveID
     ) {
-
-      const isochroneBody = {
+      const isochroneBody: PostIsochrone | PostPTIsochrone = {
         starting_points: getStartingPoint(),
         result_target: {
           layer_name: outputName,
@@ -123,35 +125,33 @@ const Isochrone = () => {
               distance_step: steps,
             }
           : {
-              max_traveltime: travelTime,
+              max_traveltime: travelTime ? travelTime : 10,
               traveltime_step: steps,
               speed: speed ?? undefined,
             },
-        ...(routing === "pt" && {
-          routing_type: {
-            mode: ptModes,
-            egress_mode: "walk",
-            access_mode: "walk",
-          },
-          time_window: {
-            weekday: "weekday",
-            from_time: 25200,
-            to_time: 32400,
-          },
-        }),
-        ...(routing !== "pt" && {
-          routing_type: routing,
-        }),
+        ...(routing === "pt"
+          ? {
+              routing_type: {
+                mode: ptModes as string[],
+                egress_mode: "walk",
+                access_mode: "walk",
+              },
+              time_window: {
+                weekday: "weekday",
+                from_time: 25200,
+                to_time: 32400,
+              },
+            }
+          : {
+              routing_type: routing,
+            }),
       };
 
       if (routing === "pt") {
         SendPTIsochroneRequest(isochroneBody);
       } else if (routing === "car_peak") {
-        // isochroneBody["routing_type"] = routing;
         SendCarIsochroneRequest(isochroneBody);
       } else {
-        // isochroneBody["routing_type"] = routing;
-        console.log(isochroneBody);
         SendIsochroneRequest(isochroneBody);
       }
     }
@@ -169,9 +169,7 @@ const Isochrone = () => {
           variant="body2"
           sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
         >
-          Isochrones illustrate reachable areas within a set travel time or
-          distance from a specific point, aiding in spatial analysis and route
-          planning.
+          {t("panels.isochrone.isochrone_description")}
         </Typography>
         <IsochroneSettings
           routing={routing}

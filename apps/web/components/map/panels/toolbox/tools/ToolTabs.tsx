@@ -3,10 +3,11 @@ import {
   Box,
   useTheme,
   Typography,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
+  Accordion as MuiAccordion,
+  AccordionDetails as MuiAccordionDetails,
+  AccordionSummary as MuiAccordionSummary,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useParams } from "next/navigation";
@@ -16,18 +17,57 @@ import Join from "@/components/map/panels/toolbox/tools/join/Join";
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
 import Isochrone from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/Isochrone";
 
+import type { AccordionProps, AccordionSummaryProps } from "@mui/material";
+
+const Accordion = styled((props: AccordionProps) => (
+  <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+  border: `1.5px solid ${theme.palette.divider}`,
+  "&:not(:last-child)": {
+    borderBottom: 0,
+  },
+  "&:before": {
+    display: "none",
+  },
+}));
+
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+  <MuiAccordionSummary
+    expandIcon={
+      <Icon iconName={ICON_NAME.CHEVRON_RIGHT} sx={{ fontSize: "12px" }} />
+    }
+    {...props}
+  />
+))(({ theme }) => ({
+  flexDirection: "row-reverse",
+  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+    transform: "rotate(90deg)",
+  },
+  "& .MuiAccordionSummary-content": {
+    marginLeft: theme.spacing(1),
+  },
+}));
+
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+  padding: theme.spacing(2),
+  borderTop: "1px solid rgba(0, 0, 0, .125)",
+}));
+
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("maps");
   const theme = useTheme();
 
   return (
     <>
-      {tab.children.map((childTab) => (
+      {tab.children.map((childTab, index) => (
         <Box
           key={v4()}
           sx={{
             padding: "12px 0",
-            borderBottom: `1px solid ${theme.palette.primary.main}80`,
+            borderBottom:
+              index + 1 === tab.children.length
+                ? "none"
+                : `1px solid ${theme.palette.primary.main}80`,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -72,17 +112,10 @@ const ToolTabs = (props: ToolTabsProps) => {
   const { setTitle, defaultRoute, setDefaultRoute } = props;
 
   const [value, setValue] = useState<string | undefined>(undefined);
-  const [expanded, setExpanded] = React.useState<string | false>(false);
 
   const { t } = useTranslation("maps");
 
-  // const theme = useTheme();
   const params = useParams();
-
-  const handleChangetry =
-    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false);
-    };
 
   const main_accordions = [
     {
@@ -164,8 +197,9 @@ const ToolTabs = (props: ToolTabsProps) => {
         main_accordions.map((tab) => (
           <Accordion
             key={v4()}
-            expanded={expanded === tab.value}
-            onChange={handleChangetry(tab.value)}
+            defaultExpanded={true}
+            // expanded={expanded === tab.value}
+            // onChange={handleChangetry(tab.value)}
           >
             <AccordionSummary
               expandIcon={<Icon iconName={ICON_NAME.CHEVRON_DOWN} />}

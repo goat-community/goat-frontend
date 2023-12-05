@@ -198,7 +198,7 @@ const StartingPoint = (props: PickLayerProps) => {
         variant="body2"
         sx={{ fontStyle: "italic", marginBottom: theme.spacing(2) }}
       >
-        Chose a way to select the starting point/s of the isochrone
+        {t("panels.isochrone.starting.starting_point_desc")}
       </Typography>
       <Box>
         <FormControl
@@ -221,9 +221,15 @@ const StartingPoint = (props: PickLayerProps) => {
               dispatch(removeMarker());
             }}
           >
-            <MenuItem value="place_on_map">Place on map</MenuItem>
-            <MenuItem value="browse_layers">Browse layers</MenuItem>
-            <MenuItem value="address_input">Address input</MenuItem>
+            <MenuItem value="place_on_map">
+              {t("panels.isochrone.starting.pick_on_map")}
+            </MenuItem>
+            <MenuItem value="browse_layers">
+              {t("panels.isochrone.starting.pick_layer")}
+            </MenuItem>
+            <MenuItem value="address_input">
+              {t("panels.isochrone.starting.search_address")}
+            </MenuItem>
           </Select>
         </FormControl>
       </Box>

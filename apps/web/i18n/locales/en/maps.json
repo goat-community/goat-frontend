@@ -25,8 +25,10 @@
     },
     "isochrone": {
       "isochrone": "Isochrone",
+      "isochrone_description": "Isochrones illustrate reachable areas within a set travel time or distance from a specific point, aiding in spatial analysis and route planning.",
       "routing": {
         "routing": "Routing",
+        "chose_routing": "Chose a routing type for the isochrone.",
         "pt_type": "PT type",
         "modes": {
           "bus": "Bus",
@@ -46,16 +48,20 @@
       },
       "speed": "Speed",
       "unity": "Unity",
+      "time": "Time",
       "distance": "Distance",
+      "invalid_distance": "Invalid distance value",
       "travelTime": "Travel Time",
       "steps": "Steps",
+      "invalid_step": "Invalid step value",
       "starting": {
         "starting": "Starting",
+        "starting_point_desc": "Chose a way to select the starting point/s of the isochrone",
         "origin": "Origin",
-        "pick_layer": "Pick Layer",
+        "pick_layer": "Browse layers",
         "type": "Type",
         "starting_point": "Starting Point",
-        "pick_on_map": "Pick on map",
+        "pick_on_map": "Place on map",
         "search_location": "Search Location",
         "layer": "Layer",
         "search_address": "Search Address"

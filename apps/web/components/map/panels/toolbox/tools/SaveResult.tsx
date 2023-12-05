@@ -38,8 +38,6 @@ const SaveResult = (props: SaveResultProps) => {
 
   const { uniqueName } = useGetUniqueLayerName(outputName ? outputName : "");
 
-  console.log("Unique Name is: ", uniqueName);
-
   return (
     <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
       <Typography variant="body1" sx={{ color: "black" }}>
@@ -53,7 +51,7 @@ const SaveResult = (props: SaveResultProps) => {
       >
         <RadioGroup aria-label="options" name="options">
           <FormControlLabel
-            value={outputName}
+            value={uniqueName}
             sx={{
               span: {
                 fontSize: "12px",
@@ -79,7 +77,7 @@ const SaveResult = (props: SaveResultProps) => {
                 }
               />
             }
-            label={outputName}
+            label={uniqueName}
           />
         </RadioGroup>
       </Card>
@@ -92,7 +90,7 @@ const SaveResult = (props: SaveResultProps) => {
       <Box>
         <TextField
           fullWidth
-          value={outputName ? outputName : ""}
+          value={uniqueName ? uniqueName : ""}
           label="Name"
           size="small"
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
