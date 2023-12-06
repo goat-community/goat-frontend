@@ -137,7 +137,6 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   const handleOnClose = () => {
     setFileValue(undefined);
     setActiveStep(0);
-    // setSelectedFolder(homeFolder);
     setFileUploadError(undefined);
     setIsBusy(false);
     reset();
