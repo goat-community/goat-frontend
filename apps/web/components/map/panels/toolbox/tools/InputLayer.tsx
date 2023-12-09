@@ -14,16 +14,27 @@ import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
 
 import type { SelectChangeEvent } from "@mui/material";
+import type { UseFormGetValues, UseFormRegister } from "react-hook-form";
+import type { PostJoin, PostAggregate } from "@/lib/validations/tools";
 
 interface PickLayerProps {
+  register: UseFormRegister<PostJoin> | UseFormRegister<PostAggregate>;
+  getValues: UseFormGetValues<PostJoin> | UseFormGetValues<PostAggregate>;
   multiple?: boolean;
-  inputValues: string | string[];
-  setInputValues: (value: string | string[]) => void;
-  layerTypes: string[];
+  // inputValues: string | string[];
+  // setInputValues: (value: string | string[]) => void;
+  // layerTypes: string[];
 }
 
 const InputLayer = (props: PickLayerProps) => {
-  const { multiple = false, inputValues, setInputValues, layerTypes } = props;
+  const {
+    register,
+    getValues,
+    multiple = false, 
+    // inputValues, 
+    // setInputValues, 
+    // layerTypes 
+  } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
@@ -35,15 +46,15 @@ const InputLayer = (props: PickLayerProps) => {
   );
 
   const handleSingleChange = (event: SelectChangeEvent) => {
-    setInputValues(event.target.value as string);
+    // setInputValues(event.target.value as string);
   };
 
   const handleMultipleChange = (event: SelectChangeEvent, inputNr: number) => {
-    const multipleValues =
-      typeof inputValues !== "string" ? [...inputValues] : ["", ""];
-    multipleValues[inputNr] = event.target.value as string;
+    // const multipleValues =
+    //   typeof inputValues !== "string" ? [...inputValues] : ["", ""];
+    // multipleValues[inputNr] = event.target.value as string;
 
-    setInputValues(multipleValues);
+    // setInputValues(multipleValues);
   };
 
   return (
@@ -68,7 +79,8 @@ const InputLayer = (props: PickLayerProps) => {
               </InputLabel>
               <Select
                 label={t("panels.tools.select_layer")}
-                value={inputValues[0]}
+                // value={inputValues[0]}
+                {...register("")}
                 onChange={(event: SelectChangeEvent) =>
                   handleMultipleChange(event, 0)
                 }
@@ -140,16 +152,19 @@ const InputLayer = (props: PickLayerProps) => {
             </InputLabel>
             <Select
               label={t("panels.tools.select_layer")}
-              value={inputValues}
+              // value={inputValues}
+              {...register("")}
               onChange={handleSingleChange}
             >
-              {projectLayers ? projectLayers.map((layer) =>
-                layerTypes.includes(layer.feature_layer_geometry_type) ? (
-                  <MenuItem value={layer.layer_id} key={v4()}>
-                    {layer.name}
-                  </MenuItem>
-                ) : null,
-              ) : null}
+              {projectLayers
+                ? projectLayers.map((layer) =>
+                    layerTypes.includes(layer.feature_layer_geometry_type) ? (
+                      <MenuItem value={layer.layer_id} key={v4()}>
+                        {layer.name}
+                      </MenuItem>
+                    ) : null,
+                  )
+                : null}
             </Select>
           </FormControl>
         </Box>

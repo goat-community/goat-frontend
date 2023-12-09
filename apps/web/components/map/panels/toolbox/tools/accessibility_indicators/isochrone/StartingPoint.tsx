@@ -25,33 +25,28 @@ import { useDispatch } from "react-redux";
 import { addMarker, removeMarker } from "@/lib/store/map/slice";
 
 import type { StartingPointType } from "@/types/map/isochrone";
-import type { SelectChangeEvent } from "@mui/material";
 import type { Result } from "@/types/map/controllers";
 import type { FeatureCollection } from "geojson";
-import type { RoutingTypes } from "@/types/map/isochrone";
+import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import type { PostIsochrone } from "@/lib/validations/isochrone";
+import type { SelectChangeEvent } from "@mui/material";
 
 interface PickLayerProps {
-  routing: RoutingTypes | undefined;
+  register: UseFormRegister<PostIsochrone>;
+  // getValues: UseFormGetValues<PostIsochrone>;
+  setValue: UseFormSetValue<PostIsochrone>;
+  watch: PostIsochrone;
   startingType: StartingPointType | undefined;
   setStartingType: (value: StartingPointType) => void;
-  startingPoint: string[] | string;
-  setStartingPoint: (value: string[] | string) => void;
 }
-
-const isochroneMarkerIcons = {
-  walking: ICON_NAME.RUN,
-  padelec: ICON_NAME.PEDELEC,
-  bicycle: ICON_NAME.BICYCLE,
-  pt: ICON_NAME.BUS,
-  car_peak: ICON_NAME.CAR,
-};
 
 const StartingPoint = (props: PickLayerProps) => {
   const {
-    routing,
+    register,
+    // getValues,
+    setValue: setFormValue,
     startingType,
-    setStartingPoint,
-    startingPoint,
+    watch,
     setStartingType,
   } = props;
   // const { projectLayers } = useProjectLayers();
@@ -94,17 +89,21 @@ const StartingPoint = (props: PickLayerProps) => {
 
   useEffect(() => {
     const handleMapClick = (event) => {
-      if (getCoordinates && typeof startingPoint !== "string") {
-        startingPoint?.push(`${event.lngLat.lat},${event.lngLat.lng}`);
-        setStartingPoint(startingPoint);
+      if (getCoordinates) {
         dispatch(
           addMarker({
-            id: `isochrone-${(startingPoint ? startingPoint?.length : 0) + 1}`,
+            id: `isochrone-${watch.starting_points.latitude.length}`,
             lat: event.lngLat.lat,
             long: event.lngLat.lng,
-            iconName: isochroneMarkerIcons[routing ? routing : "walking"],
+            iconName: ICON_NAME.LOCATION,
           }),
         );
+        watch.starting_points.latitude.push(event.lngLat.lat);
+        watch.starting_points.longitude.push(event.lngLat.lat);
+        setFormValue("starting_points", {
+          latitude: watch.starting_points.latitude,
+          longitude: watch.starting_points.longitude,
+        });
       }
     };
 
@@ -114,7 +113,7 @@ const StartingPoint = (props: PickLayerProps) => {
       map.off("click", handleMapClick);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getCoordinates, routing]);
+  }, [getCoordinates, watch.routing_type]);
 
   useEffect(() => {
     let active = true;
@@ -125,6 +124,9 @@ const StartingPoint = (props: PickLayerProps) => {
     const resultCoordinates = testForCoordinates(inputValue);
     if (resultCoordinates[0]) {
       const [_, latitude, longitude] = resultCoordinates;
+
+      setFormValue("starting_points", {latitude: [latitude], longitude: [longitude]})
+
       setOptions([
         {
           feature: {
@@ -214,11 +216,16 @@ const StartingPoint = (props: PickLayerProps) => {
           </InputLabel>
           <Select
             label={t("panels.isochrone.starting.type")}
-            defaultValue="browse_layers"
-            value={startingType ? startingType : ""}
             onChange={(event: SelectChangeEvent) => {
               setStartingType(event.target.value as StartingPointType);
-              setStartingPoint([]);
+              setFormValue(
+                "starting_points",
+                ["place_on_map", "address_input"].includes(
+                  event.target.value as StartingPointType,
+                )
+                  ? { latitude: [], longitude: [] }
+                  : { layer_id: "" },
+              );
               dispatch(removeMarker());
             }}
           >
@@ -260,10 +267,7 @@ const StartingPoint = (props: PickLayerProps) => {
               </InputLabel>
               <Select
                 label={t("panels.isochrone.starting.layer")}
-                value={startingPoint ? startingPoint : ""}
-                onChange={(event: SelectChangeEvent) => {
-                  setStartingPoint(event.target.value as string);
-                }}
+                {...register("starting_points.layer_id")}
               >
                 {projectLayers
                   ? projectLayers.map((layer) =>
@@ -302,13 +306,32 @@ const StartingPoint = (props: PickLayerProps) => {
           >
             <TextField
               value={
-                typeof startingPoint !== "string"
-                  ? startingPoint?.join(";")
+                watch.starting_points.latitude.length
+                  ? watch.starting_points.latitude
+                      .map(
+                        (el, index) =>
+                          `${el},${watch.starting_points.longitude[index]}`,
+                      )
+                      .join(";")
                   : ""
               }
               size="small"
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setStartingPoint(event.target.value.split(";") as string[]);
+                const inputCoords = event.target.value;
+                const [latitudes, longitudes] = inputCoords
+                  .split(";")
+                  .map((pair) => pair.split(","))
+                  .reduce(
+                    ([latAcc, lonAcc], [latitude, longitude]) => [
+                      [...latAcc, parseFloat(latitude)],
+                      [...lonAcc, parseFloat(longitude)],
+                    ],
+                    [[], []],
+                  );
+                setFormValue("starting_points", {
+                  latitude: latitudes,
+                  longitude: longitudes,
+                });
               }}
               sx={{
                 margin: `${theme.spacing(1)} 0`,
@@ -345,13 +368,6 @@ const StartingPoint = (props: PickLayerProps) => {
             }}
             onChange={(_event: unknown, newValue: Result | null) => {
               setOptions(newValue ? [newValue, ...options] : options);
-              setStartingPoint(
-                newValue?.feature.center
-                  ? newValue?.feature.center
-                      .reverse()
-                      .map((coord) => coord.toString())
-                  : [],
-              );
               setValue(newValue);
             }}
             onInputChange={(_event, newInputValue) => {
@@ -361,7 +377,8 @@ const StartingPoint = (props: PickLayerProps) => {
               <TextField
                 {...params}
                 label={t("panels.isochrone.starting.search_address")}
-                value={inputValue ? { label: inputValue } : { label: "" }}
+                
+                // value={inputValue ? { label: inputValue } : { label: "" }}
               />
             )}
           />
