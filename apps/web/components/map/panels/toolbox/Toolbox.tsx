@@ -48,6 +48,7 @@ const ToolboxPanel = () => {
           setDefaultRoute={setDefaultRoute}
         />
       }
+      disablePadding
     />
   );
 };
