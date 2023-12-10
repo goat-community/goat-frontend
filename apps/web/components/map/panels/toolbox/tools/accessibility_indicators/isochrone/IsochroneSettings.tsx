@@ -20,24 +20,38 @@ import { removeMarker } from "@/lib/store/map/slice";
 import { ptModes, routingModes } from "@/public/assets/data/isochroneModes";
 
 import type { SelectChangeEvent } from "@mui/material";
-import type {
-  UseFormRegister,
-  UseFormGetValues,
-  UseFormSetValue,
-} from "react-hook-form";
-import type { PostIsochrone } from "@/lib/validations/isochrone";
-import type { PTModeTypes } from "@/types/map/isochrone";
+import type { RoutingTypes, PTModeTypes } from "@/types/map/isochrone";
 
 interface PickLayerProps {
-  register: UseFormRegister<PostIsochrone>;
-  getValues: UseFormGetValues<PostIsochrone>;
-  setValue: UseFormSetValue<PostIsochrone>;
-  watch: PostIsochrone;
+  routing: RoutingTypes | undefined;
+  setRouting: (value: RoutingTypes) => void;
+  ptModes: PTModeTypes[] | undefined;
+  setPtModes: (value: PTModeTypes[]) => void;
+  speed: number | undefined;
+  setSpeed: (value: number) => void;
+  distance: number | undefined;
+  setDistance: (value: number) => void;
+  travelTime: number | undefined;
+  setTravelTime: (value: number) => void;
+  steps: number | undefined;
+  setSteps: (value: number) => void;
 }
 
 const IsochroneSettings = (props: PickLayerProps) => {
-  const { register, watch, setValue } = props;
-
+  const {
+    routing,
+    setRouting,
+    ptModes: getPtModes,
+    setPtModes,
+    speed,
+    setSpeed,
+    distance,
+    setDistance,
+    travelTime,
+    setTravelTime,
+    steps,
+    setSteps,
+  } = props;
   const [tab, setTab] = useState<"time" | "distance">("time");
 
   const { t } = useTranslation("maps");
@@ -75,18 +89,16 @@ const IsochroneSettings = (props: PickLayerProps) => {
             disablePortal
             id="combo-box-demo"
             size="small"
+            disabled={!routing ? true : false}
             options={allowedNumbers}
-            value={
-              watch.travel_cost.speed
-                ? { label: watch.travel_cost.speed }
-                : { label: 1 }
-            }
+            value={speed ? { label: speed } : { label: 1 }}
             sx={{
               margin: `${theme.spacing(1)} 0`,
               width: "45%",
             }}
-            disabled={!watch.routing_type}
-            {...register("travel_cost.speed")}
+            onChange={(_, value) => {
+              setSpeed(value ? value.label : 1);
+            }}
             renderInput={(params) => <TextField {...params} label="XX" />}
           />
           <FormControl
@@ -113,7 +125,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
   }
 
   function distanceFunctionality() {
-    return "max_distance" in watch.travel_cost ? (
+    return (
       <Box
         sx={{
           display: "flex",
@@ -128,10 +140,19 @@ const IsochroneSettings = (props: PickLayerProps) => {
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <TextField
             label="XX"
-            {...register("travel_cost.max_distance")}
+            value={distance ? distance : ""}
+            error={distance ? distance % 50 !== 0 || distance > 20000 : false}
+            helperText={
+              distance && (distance % 50 !== 0 || distance > 20000)
+                ? t("panels.isochrone.invalid_distance")
+                : ""
+            }
             size="small"
-            disabled={!watch.routing_type ? true : false}
+            disabled={!routing ? true : false}
             type="number"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setDistance(parseInt(event.target.value) as number);
+            }}
             sx={{
               margin: `${theme.spacing(1)} 0`,
               width: "45%",
@@ -157,7 +178,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
           </FormControl>
         </Box>
       </Box>
-    ) : null;
+    );
   }
 
   function travelTimeFunctionality() {
@@ -178,10 +199,12 @@ const IsochroneSettings = (props: PickLayerProps) => {
           disablePortal
           id="combo-box-demo"
           size="small"
-          disabled={!watch.routing_type ? true : false}
-          value={{ label: watch.travel_cost.max_traveltime }}
+          disabled={!routing ? true : false}
+          defaultValue={travelTime ? { label: travelTime } : { label: 1 }}
           options={allowedMaxTravelTimeNumbers}
-          {...register("travel_cost.max_traveltime")}
+          onChange={(_, value) => {
+            setTravelTime(value ? value.label : 1);
+          }}
           sx={{
             margin: `${theme.spacing(1)} 0`,
             width: "100%",
@@ -193,6 +216,10 @@ const IsochroneSettings = (props: PickLayerProps) => {
   }
 
   function stepFunctionality() {
+    const isValidStep = steps
+      ? steps % 5 !== 0 || steps > (travelTime ? travelTime : 0)
+      : false;
+
     return (
       <Box
         sx={{
@@ -207,22 +234,16 @@ const IsochroneSettings = (props: PickLayerProps) => {
         </Typography>
         <TextField
           label="XX"
-          disabled={
-            !(
-              watch.travel_cost.max_distance |
-                watch.travel_cost.max_traveltime && watch.routing_type
-            )
-              ? true
-              : false
-          }
-          {...register(
-            watch.travel_cost.max_traveltime
-              ? "travel_cost.traveltime_step"
-              : "travel_cost.distance_step",
-          )}
+          value={steps ? steps : ""}
+          error={isValidStep}
+          helperText={isValidStep ? t("panels.isochrone.invalid_step") : ""}
           size="small"
+          disabled={!routing ? true : false}
           fullWidth
           type="number"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setSteps(parseInt(event.target.value) as number);
+          }}
           sx={{
             margin: `${theme.spacing(1)} 0`,
           }}
@@ -230,12 +251,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
       </Box>
     );
   }
-
-  // useEffect(() => {
-  //   if(watch.routing_type === "pt"){
-  //     setValue("routing_type", )
-  //   }
-  // }, [])
 
   return (
     <>
@@ -268,28 +283,10 @@ const IsochroneSettings = (props: PickLayerProps) => {
           </InputLabel>
           <Select
             label={t("panels.filter.select_attribute")}
-            value={
-              typeof watch.routing_type === "string" ? watch.routing_type : "pt"
-            }
+            defaultValue={routing}
+            value={routing ? routing : ""}
             onChange={(event: SelectChangeEvent<string>) => {
-              if (event.target.value === "pt") {
-                setValue("routing_type", {
-                  mode: [
-                    "bus",
-                    "tram",
-                    "rail",
-                    "subway",
-                    "ferry",
-                    "cable_car",
-                    "gondola",
-                    "funicular",
-                  ],
-                  egress_mode: "walk",
-                  access_mode: "walk",
-                });
-              } else {
-                setValue("routing_type", event.target.value);
-              }
+              setRouting(event.target.value as RoutingTypes);
               dispatch(removeMarker());
             }}
           >
@@ -302,15 +299,12 @@ const IsochroneSettings = (props: PickLayerProps) => {
         </FormControl>
       </Box>
       {/*--------------------------PT Options--------------------------*/}
-      {typeof watch.routing_type !== "string" ? (
+      {routing === ("pt" as RoutingTypes) ? (
         <Autocomplete
           multiple
           id="checkboxes-tags-demo"
           options={ptModes}
           disableCloseOnSelect
-          defaultValue={ptModes.filter((mode) =>
-            watch.routing_type.mode.includes(mode.value as PTModeTypes),
-          )}
           getOptionLabel={(option) => option.name}
           renderOption={(props, option, { selected }) => (
             <li {...props}>
@@ -319,7 +313,9 @@ const IsochroneSettings = (props: PickLayerProps) => {
             </li>
           )}
           fullWidth
-          {...register("routing_type.mode")}
+          defaultValue={ptModes.filter(
+            (mode) => getPtModes?.includes(mode.value as PTModeTypes),
+          )}
           size="small"
           renderInput={(params) => (
             <TextField
@@ -328,54 +324,29 @@ const IsochroneSettings = (props: PickLayerProps) => {
               placeholder={t("panels.isochrone.routing.pt_type")}
             />
           )}
+          onChange={(_, value) => {
+            setPtModes(value.map((val) => val.value) as PTModeTypes[]);
+          }}
         />
-      ) : (
-        <></>
-      )}
+      ) : null}
       {/*--------------------------------------------------------------*/}
       <TabContext
         value={
-          ["car_peak", "pt"].includes(
-            typeof watch.routing_type === "string" ? watch.routing_type : "pt",
-          )
-            ? "time"
-            : tab
+          ["car_peak", "pt"].includes(routing ? routing : "") ? "time" : tab
         }
       >
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList
             onChange={(_: React.SyntheticEvent, newValue: string) => {
               setTab(newValue as "distance" | "time");
-              setValue(
-                "travel_cost",
-                newValue === "distance"
-                  ? {
-                      max_distance: 50,
-                      distance_step: 50,
-                    }
-                  : {
-                      max_traveltime: 10,
-                      traveltime_step: 50,
-                      speed: 10,
-                    },
-              );
             }}
             variant="fullWidth"
           >
-            <Tab
-              label={t("panels.isochrone.time")}
-              disabled={!watch.routing_type ? true : false}
-              value="time"
-            />
+            <Tab label={t("panels.isochrone.time")} disabled={!routing ? true : false} value="time" />
             <Tab
               label={t("panels.isochrone.distance")}
               disabled={
-                !watch.routing_type ||
-                ["car_peak", "pt"].includes(
-                  typeof watch.routing_type === "string"
-                    ? watch.routing_type
-                    : "pt",
-                )
+                !routing || ["car_peak", "pt"].includes(routing ? routing : "")
                   ? true
                   : false
               }
@@ -384,7 +355,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
           </TabList>
         </Box>
         <TabPanel value="time">
-          {typeof watch.routing_type === "string" ? speedFunctionality() : null}
+          {routing !== ("pt" as RoutingTypes) ? speedFunctionality() : null}
           {travelTimeFunctionality()}
           {stepFunctionality()}
         </TabPanel>
