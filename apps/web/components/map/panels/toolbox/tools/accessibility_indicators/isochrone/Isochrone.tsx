@@ -4,22 +4,16 @@ import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibili
 import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
 import { useTranslation } from "@/i18n/client";
 import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
+// import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
 import {
-  SendIsochroneRequest,
   SendPTIsochroneRequest,
   SendCarIsochroneRequest,
+  SendIsochroneRequest,
 } from "@/lib/api/isochrone";
-import { useDispatch } from "react-redux";
-import { removeMarker } from "@/lib/store/map/slice";
-import { useForm, useWatch } from "react-hook-form";
 
 import type { StartingPointType } from "@/types/map/isochrone";
-import type { RoutingTypes, PTModeTypes } from "@/types/map/isochrone";
-import type { StartingPointType as StartingPointTypeForm } from "@/lib/validations/isochrone";
-import type {
-  PostIsochrone,
-  PostPTIsochrone,
-} from "@/lib/validations/isochrone";
+import type { PostIsochrone } from "@/lib/validations/isochrone";
 
 const Isochrone = () => {
   // Isochrone Settings states
@@ -43,7 +37,7 @@ const Isochrone = () => {
   const [startingType, setStartingType] = useState<
     StartingPointType | undefined
   >(undefined);
-  const [startingPoint, setStartingPoint] = useState<string[] | string>([]);
+  // const [startingPoint, setStartingPoint] = useState<string[] | string>([]);
 
   // Save Result states
   // const [outputName, setOutputName] = useState<string>(`isochrone`);
@@ -53,17 +47,15 @@ const Isochrone = () => {
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const {
-    // handleSubmit,
     register,
     reset,
     watch,
     getValues,
     setValue,
     // formState: { errors },
-    control,
   } = useForm<PostIsochrone>({
     defaultValues: {
       routing_type: "",
@@ -73,15 +65,10 @@ const Isochrone = () => {
       },
       travel_cost: {
         max_traveltime: 10,
-        traveltime_step: 10,
+        traveltime_step: 50,
         speed: 10,
       },
       time_window: undefined,
-      // {
-      //     weekday: z.string(),
-      //     from_time: z.number(),
-      //     to_time: z.number(),
-      //   },
       result_target: {
         layer_name: "isochrone",
         folder_id: "",
@@ -94,120 +81,29 @@ const Isochrone = () => {
 
   const handleReset = () => {
     reset();
-    // setRouting(undefined);
-    // setSpeed(undefined);
-    // setDistance(undefined);
-    // setTravelTime(undefined);
-    // setSteps(undefined);
-    // setOutputName(`isochrone`);
-    // setFolderSaveID(undefined);
-    // setStartingType(undefined);
-    // setStartingPoint([]);
-    // dispatch(removeMarker());
-
   };
-
-  // const getStartingPoint = (): StartingPointTypeForm => {
-  //   switch (startingType) {
-  //     case "place_on_map":
-  //       return {
-  //         latitude: [
-  //           ...(typeof startingPoint !== "string"
-  //             ? startingPoint.map((startPoint) =>
-  //                 parseFloat(startPoint.split(",")[0]),
-  //               )
-  //             : []),
-  //         ],
-  //         longitude: [
-  //           ...(typeof startingPoint !== "string"
-  //             ? startingPoint.map((startPoint) =>
-  //                 parseFloat(startPoint.split(",")[1]),
-  //               )
-  //             : []),
-  //         ],
-  //       };
-  //     case "address_input":
-  //       return {
-  //         latitude: [parseFloat(startingPoint[1])],
-  //         longitude: [parseFloat(startingPoint[0])],
-  //       };
-  //     case "browse_layers":
-  //       return {
-  //         layer_id: startingPoint === "string" ? startingPoint : "",
-  //       };
-  //     // never gonna happen, but just to remove the linting issue
-  //     default:
-  //       return {
-  //         layer_id: "",
-  //       };
-  //   }
-  // };
 
   const handleRun = () => {
     console.log("body of the request: ", getValues());
-    // if (
-    //   routing &&
-    //   startingPoint &&
-    //   startingPoint.length &&
-    //   startingType &&
-    //   steps &&
-    //   outputName &&
-    //   folderSaveID
-    // ) {
-    //   const isochroneBody: PostIsochrone | PostPTIsochrone = {
-    //     starting_points: getStartingPoint(),
-    //     result_target: {
-    //       layer_name: outputName,
-    //       folder_id: folderSaveID,
-    //     },
-    //     travel_cost: distance
-    //       ? {
-    //           max_distance: distance,
-    //           distance_step: steps,
-    //         }
-    //       : {
-    //           max_traveltime: travelTime ? travelTime : 10,
-    //           traveltime_step: steps,
-    //           speed: speed ?? undefined,
-    //         },
-    //     ...(routing === "pt"
-    //       ? {
-    //           routing_type: {
-    //             mode: ptModes as string[],
-    //             egress_mode: "walk",
-    //             access_mode: "walk",
-    //           },
-    //           time_window: {
-    //             weekday: "weekday",
-    //             from_time: 25200,
-    //             to_time: 32400,
-    //           },
-    //         }
-    //       : {
-    //           routing_type: routing,
-    //         }),
-    //   };
 
-    //   if (routing === "pt") {
-    //     SendPTIsochroneRequest(isochroneBody);
-    //   } else if (routing === "car_peak") {
-    //     SendCarIsochroneRequest(isochroneBody);
-    //   } else {
-    //     SendIsochroneRequest(isochroneBody);
-    //   }
+    if (typeof watchFormValues.routing_type !== "string") {
+      setValue("time_window", {
+        weekday: "weekday",
+        from_time: 25200,
+        to_time: 32400,
+      });
+      SendPTIsochroneRequest(getValues());
+    } else if (watchFormValues.routing_type === "car_peak") {
+      SendCarIsochroneRequest(getValues());
+    } else {
+      SendIsochroneRequest(getValues());
+    }
     // }
   };
 
   const getCurrentValues = useMemo(() => {
     return watchFormValues;
   }, [watchFormValues]);
-
-  // useEffect(() => {
-  //   const subscription = watch((value) =>
-  //     console.log(value)
-  //   )
-  //   return () => subscription.unsubscribe()
-  // }, [watch])
 
   return (
     <Box

@@ -29,7 +29,7 @@ interface PickLayerProps {
 const InputLayer = (props: PickLayerProps) => {
   const {
     register,
-    getValues,
+    // getValues,
     multiple = false, 
     // inputValues, 
     // setInputValues, 
@@ -45,11 +45,12 @@ const InputLayer = (props: PickLayerProps) => {
     typeof projectId === "string" ? projectId : "",
   );
 
-  const handleSingleChange = (event: SelectChangeEvent) => {
+  const handleSingleChange = (_: SelectChangeEvent) => {
     // setInputValues(event.target.value as string);
   };
 
-  const handleMultipleChange = (event: SelectChangeEvent, inputNr: number) => {
+  const handleMultipleChange = (_: SelectChangeEvent, inputNr: number) => {
+    console.log(inputNr);
     // const multipleValues =
     //   typeof inputValues !== "string" ? [...inputValues] : ["", ""];
     // multipleValues[inputNr] = event.target.value as string;

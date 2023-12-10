@@ -20,7 +20,7 @@ import { useTranslation } from "@/i18n/client";
 import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
 
 // import type { SelectChangeEvent } from "@mui/material";
-import type { UseFormGetValues, UseFormRegister } from "react-hook-form";
+import type { UseFormRegister } from "react-hook-form";
 import type { PostAggregate, PostJoin } from "@/lib/validations/tools";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 
@@ -38,6 +38,7 @@ const SaveResult = (props: SaveResultProps) => {
     register,
     watch, 
   } = props;
+
 
   const theme = useTheme();
   const { t } = useTranslation("maps");

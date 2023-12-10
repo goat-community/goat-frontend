@@ -20,13 +20,13 @@ import { removeMarker } from "@/lib/store/map/slice";
 import { ptModes, routingModes } from "@/public/assets/data/isochroneModes";
 
 import type { SelectChangeEvent } from "@mui/material";
-import type { RoutingTypes } from "@/types/map/isochrone";
 import type {
   UseFormRegister,
   UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
+import type { PTModeTypes } from "@/types/map/isochrone";
 
 interface PickLayerProps {
   register: UseFormRegister<PostIsochrone>;
@@ -56,8 +56,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
       label: label,
     })),
   ];
-
-  // console.log("routing: ", watch);
 
   function speedFunctionality() {
     return (
@@ -195,10 +193,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
   }
 
   function stepFunctionality() {
-    // const isValidStep = steps
-    //   ? steps % 5 !== 0 || steps > (travelTime ? travelTime : 0)
-    //   : false;
-
     return (
       <Box
         sx={{
@@ -237,6 +231,12 @@ const IsochroneSettings = (props: PickLayerProps) => {
     );
   }
 
+  // useEffect(() => {
+  //   if(watch.routing_type === "pt"){
+  //     setValue("routing_type", )
+  //   }
+  // }, [])
+
   return (
     <>
       <Box
@@ -268,11 +268,22 @@ const IsochroneSettings = (props: PickLayerProps) => {
           </InputLabel>
           <Select
             label={t("panels.filter.select_attribute")}
-            {...register("routing_type")}
+            value={
+              typeof watch.routing_type === "string" ? watch.routing_type : "pt"
+            }
             onChange={(event: SelectChangeEvent<string>) => {
               if (event.target.value === "pt") {
                 setValue("routing_type", {
-                  mode: [],
+                  mode: [
+                    "bus",
+                    "tram",
+                    "rail",
+                    "subway",
+                    "ferry",
+                    "cable_car",
+                    "gondola",
+                    "funicular",
+                  ],
                   egress_mode: "walk",
                   access_mode: "walk",
                 });
@@ -291,12 +302,15 @@ const IsochroneSettings = (props: PickLayerProps) => {
         </FormControl>
       </Box>
       {/*--------------------------PT Options--------------------------*/}
-      {watch.routing_type === ("pt" as RoutingTypes) ? (
+      {typeof watch.routing_type !== "string" ? (
         <Autocomplete
           multiple
           id="checkboxes-tags-demo"
           options={ptModes}
           disableCloseOnSelect
+          defaultValue={ptModes.filter((mode) =>
+            watch.routing_type.mode.includes(mode.value as PTModeTypes),
+          )}
           getOptionLabel={(option) => option.name}
           renderOption={(props, option, { selected }) => (
             <li {...props}>
@@ -315,7 +329,9 @@ const IsochroneSettings = (props: PickLayerProps) => {
             />
           )}
         />
-      ) : null}
+      ) : (
+        <></>
+      )}
       {/*--------------------------------------------------------------*/}
       <TabContext
         value={
@@ -334,12 +350,12 @@ const IsochroneSettings = (props: PickLayerProps) => {
                 "travel_cost",
                 newValue === "distance"
                   ? {
-                      max_distance: 10,
-                      distance_step: 10,
+                      max_distance: 50,
+                      distance_step: 50,
                     }
                   : {
                       max_traveltime: 10,
-                      traveltime_step: 10,
+                      traveltime_step: 50,
                       speed: 10,
                     },
               );
