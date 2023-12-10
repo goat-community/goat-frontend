@@ -19,33 +19,24 @@ import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
 import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
 
-// import type { SelectChangeEvent } from "@mui/material";
-import type { UseFormRegister } from "react-hook-form";
-import type { PostAggregate, PostJoin } from "@/lib/validations/tools";
-import type { PostIsochrone } from "@/lib/validations/isochrone";
+import type { SelectChangeEvent } from "@mui/material";
 
 interface SaveResultProps {
-  register: UseFormRegister<PostJoin> | UseFormRegister<PostAggregate> | UseFormRegister<PostIsochrone>;
-  watch: PostJoin | PostAggregate | PostIsochrone;
-  // outputName: string | undefined;
-  // setOutputName: (value: string) => void;
-  // folderSaveId: string | undefined;
-  // setFolderSaveID: (value: string) => void;
+  outputName: string | undefined;
+  setOutputName: (value: string) => void;
+  folderSaveId: string | undefined;
+  setFolderSaveID: (value: string) => void;
 }
 
 const SaveResult = (props: SaveResultProps) => {
-  const {
-    register,
-    watch, 
-  } = props;
-
+  const { outputName, setOutputName, folderSaveId, setFolderSaveID } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
 
   const { folders } = useFolders();
 
-  const { uniqueName } = useGetUniqueLayerName(watch.result_target.layer_name ? watch.result_target.layer_name : "");
+  const { uniqueName } = useGetUniqueLayerName(outputName ? outputName : "");
 
   return (
     <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
@@ -102,10 +93,9 @@ const SaveResult = (props: SaveResultProps) => {
           value={uniqueName ? uniqueName : ""}
           label="Name"
           size="small"
-          {...register("result_target.layer_name")}
-          // onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-          //   setOutputName(event.target.value as string)
-          // }
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setOutputName(event.target.value as string)
+          }
         />
       </Box>
       <Typography variant="body1" sx={{ color: "black" }}>
@@ -118,7 +108,10 @@ const SaveResult = (props: SaveResultProps) => {
           </InputLabel>
           <Select
             label={t("panels.tools.select_option")}
-            {...register("result_target.folder_id")}
+            value={folderSaveId}
+            onChange={(event: SelectChangeEvent) =>
+              setFolderSaveID(event.target.value as string)
+            }
           >
             {folders
               ? folders.map((folder) => (

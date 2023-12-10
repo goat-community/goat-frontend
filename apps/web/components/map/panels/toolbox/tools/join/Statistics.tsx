@@ -12,35 +12,30 @@ import {
 import { useTranslation } from "@/i18n/client";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
-import type { UseFormGetValues, UseFormRegister } from "react-hook-form";
-import type { PostJoin } from "@/lib/validations/tools";
+import type { SelectChangeEvent } from "@mui/material";
+import type { ColumStatisticsOperation } from "@/types/map/toolbox";
 
 interface StatisticsProps {
-  register: UseFormRegister<PostJoin>;
-  getValues: UseFormGetValues<PostJoin>;
-  // secondLayerId: string;
-  // secondField: string | undefined;
-  // setMethod: (value: ColumStatisticsOperation | undefined) => void;
-  // method: ColumStatisticsOperation | undefined;
-  // setStatisticField: (value: string) => void;
-  // statisticField: string | undefined;
+  secondLayerId: string;
+  secondField: string | undefined;
+  setMethod: (value: ColumStatisticsOperation | undefined) => void;
+  method: ColumStatisticsOperation | undefined;
+  setStatisticField: (value: string) => void;
+  statisticField: string | undefined;
 }
 
 const Statistics = (props: StatisticsProps) => {
   const {
-    register,
-    getValues,
-    // secondLayerId,
-    // secondField,
-    // setMethod,
-    // method,
-    // setStatisticField,
-    // statisticField
+    secondLayerId,
+    secondField,
+    setMethod,
+    method,
+    setStatisticField,
+    statisticField
   } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
-  const method = getValues("column_statistics.operation");
 
   const methods = [
     {
@@ -69,7 +64,7 @@ const Statistics = (props: StatisticsProps) => {
     },
   ];
 
-  const saveFieldKeys = useGetLayerKeys(`user_data.${getValues("join_layer_id").split("-").join("")}`);
+  const saveFieldKeys = useGetLayerKeys(`user_data.${secondLayerId.split("-").join("")}`);
 
   function checkType() {
     return saveFieldKeys.keys.map((key) =>
@@ -102,13 +97,12 @@ const Statistics = (props: StatisticsProps) => {
             {t("panels.tools.select_method")}
           </InputLabel>
           <Select
-            disabled={!getValues("join_layer_id")}
+            disabled={!secondField}
             label={t("panels.tools.select_method")}
-            {...register("column_statistics.operation")}
-            // value={method ? method : ""}
-            // onChange={(event: SelectChangeEvent) => {
-            //   setMethod(event.target.value as ColumStatisticsOperation);
-            // }}
+            value={method ? method : ""}
+            onChange={(event: SelectChangeEvent) => {
+              setMethod(event.target.value as ColumStatisticsOperation);
+            }}
           >
             {methods.map((method) => (
               <MenuItem value={method.name} key={v4()}>
@@ -126,13 +120,12 @@ const Statistics = (props: StatisticsProps) => {
             </InputLabel>
             <Select
               label={t("panels.tools.select_field")}
-              // value={statisticField}
-              // onChange={(event: SelectChangeEvent) => {
-              //   setStatisticField(event.target.value as string);
-              // }}
-              {...register("column_statistics.field")}
+              value={statisticField}
+              onChange={(event: SelectChangeEvent) => {
+                setStatisticField(event.target.value as string);
+              }}
             >
-              {register("join_layer_id").length ? checkType() : null}
+              {secondLayerId.length ? checkType() : null}
             </Select>
           </FormControl>
         </Box>
