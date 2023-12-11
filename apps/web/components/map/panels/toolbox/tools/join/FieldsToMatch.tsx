@@ -13,34 +13,43 @@ import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
-import type { SelectChangeEvent } from "@mui/material";
+// import type { SelectChangeEvent } from "@mui/material";
+import type { UseFormGetValues, UseFormRegister } from "react-hook-form";
+import type { PostJoin } from "@/lib/validations/tools";
 
 interface FieldsToMatchProps {
-  setFirstField: (value: string) => void;
-  firstField: string | undefined;
-  setSecondField: (value: string) => void;
-  secondField: string | undefined;
-  firstLayerId: string;
-  secondLayerId: string;
+  register: UseFormRegister<PostJoin>;
+  getValues: UseFormGetValues<PostJoin>;
+  // setFirstField: (value: string) => void;
+  // firstField: string | undefined;
+  // setSecondField: (value: string) => void;
+  // secondField: string | undefined;
+  // firstLayerId: string;
+  // secondLayerId: string;
 }
 
 const FieldsToMatch = (props: FieldsToMatchProps) => {
   const {
-    firstLayerId,
-    secondLayerId,
-    setFirstField,
-    setSecondField,
-    firstField,
-    secondField,
+    register,
+    getValues,
+    // firstLayerId,
+    // secondLayerId,
+    // setFirstField,
+    // setSecondField,
+    // firstField,
+    // secondField,
   } = props;
   const { t } = useTranslation("maps");
 
   const theme = useTheme();
 
-  
-  const firstLayerKeys = useGetLayerKeys(`user_data.${firstLayerId.split("-").join("")}`);
-  const secondLayerKeys = useGetLayerKeys(`user_data.${secondLayerId.split("-").join("")}`);
-  
+  const firstLayerKeys = useGetLayerKeys(
+    `user_data.${getValues("target_layer_id").split("-").join("")}`,
+  );
+  const secondLayerKeys = useGetLayerKeys(
+    `user_data.${getValues("join_layer_id").split("-").join("")}`,
+  );
+
   return (
     <Box>
       <Typography variant="body1" sx={{ color: "black" }}>
@@ -68,14 +77,15 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
               {t("panels.tools.select_field")}
             </InputLabel>
             <Select
-              disabled={!firstLayerId.length}
+              disabled={!getValues("target_layer_id").length}
               label={t("panels.tools.select_field")}
-              value={firstField}
-              onChange={(event: SelectChangeEvent) => {
-                setFirstField(event.target.value as string);
-              }}
+              {...register("target_field")}
+              // value={firstField}
+              // onChange={(event: SelectChangeEvent) => {
+              //   setFirstField(event.target.value as string);
+              // }}
             >
-              {firstLayerId.length
+              {getValues("target_layer_id").length
                 ? firstLayerKeys.keys.map((key) => (
                     <MenuItem value={key.name} key={v4()}>
                       {key.name}
@@ -109,14 +119,15 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
               {t("panels.tools.select_field")}
             </InputLabel>
             <Select
-              disabled={!secondLayerId.length}
+              disabled={!getValues("join_layer_id").length}
               label={t("panels.tools.select_field")}
-              value={secondField}
-              onChange={(event: SelectChangeEvent) => {
-                setSecondField(event.target.value as string);
-              }}
+              {...register("join_field")}
+              // value={secondField}
+              // onChange={(event: SelectChangeEvent) => {
+              //   setSecondField(event.target.value as string);
+              // }}
             >
-              {secondLayerId.length
+              {getValues("join_layer_id").length
                 ? secondLayerKeys.keys.map((key) => (
                     <MenuItem value={key.name} key={v4()}>
                       {key.name}
