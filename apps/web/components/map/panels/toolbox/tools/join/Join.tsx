@@ -5,7 +5,7 @@ import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
 import { Divider, useTheme, Box, Button } from "@mui/material";
 // import { SendJoinFeatureRequest } from "@/lib/api/tools";
 import { useTranslation } from "@/i18n/client";
-import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
+// import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
 import { useForm } from "react-hook-form";
 
 import type { PostJoin } from "@/lib/validations/tools";
@@ -117,15 +117,16 @@ const Join = () => {
         />
         {getValues("join_layer_id") &&
         getValues("column_statistics.operation") ? (
-          <SaveResult
-            register={register}
-            getValues={getValues}
-            // outputName={outputName}
-            // setOutputName={setOutputName}
-            // folderSaveId={folderSaveID}
-            // setFolderSaveID={setFolderSaveID}
-          />
-        ) : null}
+          <></>
+        ) : // <SaveResult
+        //   register={register}
+        //   // getValues={getValues}
+        //   // outputName={outputName}
+        //   // setOutputName={setOutputName}
+        //   // folderSaveId={folderSaveID}
+        //   // setFolderSaveID={setFolderSaveID}
+        // />
+        null}
       </Box>
       <Box
         sx={{

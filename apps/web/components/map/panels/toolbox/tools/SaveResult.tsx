@@ -35,7 +35,7 @@ interface SaveResultProps {
 
 const SaveResult = (props: SaveResultProps) => {
   const {
-    register,
+    // register,
     watch, 
   } = props;
 
@@ -102,7 +102,7 @@ const SaveResult = (props: SaveResultProps) => {
           value={uniqueName ? uniqueName : ""}
           label="Name"
           size="small"
-          {...register("result_target.layer_name")}
+          // {...register("result_target.layer_name")}
           // onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
           //   setOutputName(event.target.value as string)
           // }
@@ -118,7 +118,7 @@ const SaveResult = (props: SaveResultProps) => {
           </InputLabel>
           <Select
             label={t("panels.tools.select_option")}
-            {...register("result_target.folder_id")}
+            // {...register("result_target.folder_id")}
           >
             {folders
               ? folders.map((folder) => (

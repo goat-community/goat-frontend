@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
+// import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
 import SelectArea from "@/components/map/panels/toolbox/tools/aggregate/SelectArea";
 import Statistics from "@/components/map/panels/toolbox/tools/aggregate/Statistics";
-import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
+// import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
 import { Box, Button, useTheme } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { SendAggregateFeatureRequest } from "@/lib/api/tools";
@@ -63,8 +63,11 @@ const Aggregate = (props: AggregateProps) => {
       folderSaveID
     ) {
       const requestBody: PostAggregate = {
-        point_layer_id: typeof pointLayerId === "string" ? pointLayerId :"",
-        area_type: area === t("panels.tools.aggregate.hexagon_bin") ? "h3_grid" : "feature_layer",
+        point_layer_id: typeof pointLayerId === "string" ? pointLayerId : "",
+        area_type:
+          area === t("panels.tools.aggregate.hexagon_bin")
+            ? "h3_grid"
+            : "feature_layer",
         column_statistics: {
           operation: method,
           field: fieldSelected,
@@ -76,13 +79,13 @@ const Aggregate = (props: AggregateProps) => {
         },
       };
 
-      if(area === t("panels.tools.aggregate.hexagon_bin")){
+      if (area === t("panels.tools.aggregate.hexagon_bin")) {
         requestBody.h3_resolution = parseInt(hexagonSize);
-      }else{
+      } else {
         requestBody.area_layer_id = polygonLayer;
       }
 
-      if(groupedFields && groupedFields.length){
+      if (groupedFields && groupedFields.length) {
         requestBody.area_group_by_field = groupedFields;
       }
 
@@ -100,11 +103,11 @@ const Aggregate = (props: AggregateProps) => {
       sx={{ height: "100%" }}
     >
       <Box sx={{ maxHeight: "95%", overflow: "scroll" }}>
-        <InputLayer
+        {/* <InputLayer
           layerTypes={["point"]}
           inputValues={pointLayerId}
           setInputValues={setPointLayerId}
-        />
+        /> */}
         <SelectArea
           pointLayerId={pointLayerId}
           area={area}
@@ -124,13 +127,14 @@ const Aggregate = (props: AggregateProps) => {
           setGroupedFields={setGroupedFields}
         />
         {fieldSelected && method ? (
-          <SaveResult
-            outputName={outputName}
-            setOutputName={setOutputName}
-            folderSaveId={folderSaveID}
-            setFolderSaveID={setFolderSaveID}
-          />
-        ) : null}
+          <></>
+        ) : // <SaveResult
+        //   outputName={outputName}
+        //   setOutputName={setOutputName}
+        //   folderSaveId={folderSaveID}
+        //   setFolderSaveID={setFolderSaveID}
+        // />
+        null}
       </Box>
       <Box
         sx={{

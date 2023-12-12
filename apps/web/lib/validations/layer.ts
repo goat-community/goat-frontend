@@ -43,13 +43,8 @@ export const createLayerBaseSchema = layerMetadataSchema.extend({
   folder_id: z.string().uuid(),
 });
 
-export const createNewTableLayerSchema = createLayerBaseSchema.extend({
-  type: z.literal("table"),
-});
-
-export const createNewStandardLayerSchema = createLayerBaseSchema.extend({
-  type: z.literal("feature_layer"),
-  feature_layer_type: featureLayerType.optional(),
+export const createFeatureLayerSchema = createLayerBaseSchema.extend({
+  dataset_id: z.string().uuid(),
 });
 
 export const createNewScenarioLayerSchema = createLayerBaseSchema.extend({
@@ -76,11 +71,6 @@ export const createNewExternalTileLayerSchema = createLayerBaseSchema.extend({
   extent: z.string().optional(),
 });
 
-export const createNewDatasetLayerSchema = z.object({
-  file: z.any(),
-  layer_in: z.union([createNewTableLayerSchema, createNewStandardLayerSchema]),
-});
-
 export const layerResponseSchema = responseSchema(layerSchema);
 export const layerTypesArray = Object.values(layerType.Values);
 export const featureLayerTypesArray = Object.values(featureLayerType.Values);
@@ -94,10 +84,7 @@ export type LayerType = z.infer<typeof layerType>;
 export type LayerMetadata = z.infer<typeof layerMetadataSchema>;
 export type FeatureLayerType = z.infer<typeof featureLayerType>;
 export type GetLayersQueryParams = z.infer<typeof getLayersQueryParamsSchema>;
-export type CreateNewTableLayer = z.infer<typeof createNewTableLayerSchema>;
-export type CreateNewStandardLayer = z.infer<
-  typeof createNewStandardLayerSchema
->;
+export type CreateFeatureLayer = z.infer<typeof createFeatureLayerSchema>;
 export type CreateNewScenarioLayer = z.infer<
   typeof createNewScenarioLayerSchema
 >;
@@ -107,4 +94,3 @@ export type CreateNewExternalImageryLayer = z.infer<
 export type CreateNewExternalTileLayer = z.infer<
   typeof createNewExternalTileLayerSchema
 >;
-export type CreateNewDatasetLayer = z.infer<typeof createNewDatasetLayerSchema>;

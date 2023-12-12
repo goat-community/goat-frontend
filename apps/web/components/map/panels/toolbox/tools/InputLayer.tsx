@@ -28,7 +28,7 @@ interface PickLayerProps {
 
 const InputLayer = (props: PickLayerProps) => {
   const {
-    register,
+    // register,
     // getValues,
     multiple = false, 
     // inputValues, 
@@ -81,7 +81,7 @@ const InputLayer = (props: PickLayerProps) => {
               <Select
                 label={t("panels.tools.select_layer")}
                 // value={inputValues[0]}
-                {...register("")}
+                // {...register("")}
                 onChange={(event: SelectChangeEvent) =>
                   handleMultipleChange(event, 0)
                 }
@@ -117,7 +117,7 @@ const InputLayer = (props: PickLayerProps) => {
               </InputLabel>
               <Select
                 label={t("panels.tools.select_layer")}
-                value={inputValues[1]}
+                // value={inputValues[1]}
                 onChange={(event: SelectChangeEvent) =>
                   handleMultipleChange(event, 1)
                 }
@@ -154,10 +154,10 @@ const InputLayer = (props: PickLayerProps) => {
             <Select
               label={t("panels.tools.select_layer")}
               // value={inputValues}
-              {...register("")}
+              // {...register("")}
               onChange={handleSingleChange}
             >
-              {projectLayers
+              {/* {projectLayers
                 ? projectLayers.map((layer) =>
                     layerTypes.includes(layer.feature_layer_geometry_type) ? (
                       <MenuItem value={layer.layer_id} key={v4()}>
@@ -165,7 +165,7 @@ const InputLayer = (props: PickLayerProps) => {
                       </MenuItem>
                     ) : null,
                   )
-                : null}
+                : null} */}
             </Select>
           </FormControl>
         </Box>

@@ -27,17 +27,15 @@ import { useEffect, useState } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useForm } from "react-hook-form";
-import type { FeatureLayerType, LayerMetadata } from "@/lib/validations/layer";
+import type { LayerMetadata } from "@/lib/validations/layer";
 import {
-  createNewDatasetLayerSchema,
-  createNewStandardLayerSchema,
-  createNewTableLayerSchema,
+  createFeatureLayerSchema,
   layerMetadataSchema,
 } from "@/lib/validations/layer";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createLayer } from "@/lib/api/layers";
+import { createInternalLayer, layerFileUpload } from "@/lib/api/layers";
 import { toast } from "react-toastify";
-import { getJob } from "@/lib/api/jobs";
+import { useJobs } from "@/lib/api/jobs";
 import { useTranslation } from "@/i18n/client";
 
 interface DatasetUploadDialogProps {
@@ -56,7 +54,9 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
     t("projects.dataset.destination_and_metadata"),
     t("projects.dataset.confirmation"),
   ];
-
+  const { mutate } = useJobs({
+    read: false,
+  });
   const queryParams: GetContentQueryParams = {
     order: "descendent",
     order_by: "updated_at",
@@ -76,8 +76,6 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
       setSelectedFolder(homeFolder);
     }
   }, [folders]);
-
-  const [featureLayerType] = useState<FeatureLayerType>("standard");
 
   const {
     register,
@@ -144,37 +142,30 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   };
 
   const handleUpload = async () => {
-    let layerBaseInput;
     try {
       setIsBusy(true);
-      if (datasetType === "feature_layer") {
-        layerBaseInput = createNewStandardLayerSchema.parse({
+      if (
+        (datasetType === "feature_layer" || datasetType === "table") &&
+        fileValue !== undefined
+      ) {
+        const uploadResponse = await layerFileUpload(fileValue);
+        const datasetId = uploadResponse?.dataset_id;
+        const payload = createFeatureLayerSchema.parse({
           ...getValues(),
           folder_id: selectedFolder?.id,
-          type: datasetType,
-          feature_layer_type: featureLayerType,
+          dataset_id: datasetId,
         });
-      } else if (datasetType === "table") {
-        layerBaseInput = createNewTableLayerSchema.parse({
-          ...getValues(),
-          folder_id: selectedFolder?.id,
-          type: datasetType,
-        });
+        const response = await createInternalLayer(payload);
+        const jobId = response?.job_id;
+        if (jobId) {
+          mutate();
+        }
       }
-      const payload = createNewDatasetLayerSchema.parse({
-        layer_in: layerBaseInput,
-        file: fileValue,
-      });
-      const response = await createLayer(payload);
-      const jobId = response?.job_id;
-      const jobDetails = await getJob(jobId);
-      console.log("jobDetails", jobDetails);
     } catch (error) {
       toast.error("Error uploading dataset");
       console.error("error", error);
-      handleOnClose();
     } finally {
-      setIsBusy(false);
+      handleOnClose();
     }
   };
 

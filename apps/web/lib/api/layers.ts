@@ -2,7 +2,7 @@ import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import type {
-  CreateNewDatasetLayer,
+  CreateFeatureLayer,
   LayerPaginated,
 } from "@/lib/validations/layer";
 
@@ -39,24 +39,24 @@ export const deleteLayer = async (id: string) => {
   }
 };
 
-export const createLayer = async (data: CreateNewDatasetLayer) => {
-  const formData = new FormData();
-  formData.append("file", data.file);
-  formData.append("layer_in", JSON.stringify(data.layer_in));
-  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}`, {
+export const createInternalLayer = async (payload: CreateFeatureLayer) => {
+  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/internal`, {
     method: "POST",
-    body: formData,
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
   if (!response.ok) {
-    throw new Error("Failed to upload folder");
+    throw new Error("Failed to create internal layer");
   }
   return await response.json();
 };
 
-export const layerUploadValidateFile = async (file: File) => {
+export const layerFileUpload = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/file-validate`, {
+  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/file-upload`, {
     method: "POST",
     body: formData,
   });
@@ -67,10 +67,9 @@ export const layerUploadValidateFile = async (file: File) => {
 };
 
 export const useLayerKeys = (layerId: string) => {
-  const { data, isLoading, error} =
-    useSWR<LayerPaginated>(
-      [`${LAYER_KEYS_API_BASE_URL}/${layerId}/queryables`],
-      fetcher,
-    );
-  return {data, isLoading, error}
-}
+  const { data, isLoading, error } = useSWR<LayerPaginated>(
+    [`${LAYER_KEYS_API_BASE_URL}/${layerId}/queryables`],
+    fetcher,
+  );
+  return { data, isLoading, error };
+};

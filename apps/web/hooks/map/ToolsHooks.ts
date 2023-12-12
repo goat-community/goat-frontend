@@ -1,20 +1,20 @@
-import { useLayerKeys } from "@/lib/api/layers";
+// import { useLayerKeys } from "@/lib/api/layers";
 import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
 
-export const useGetLayerKeys = (layerId: string) => {
-  const { isLoading, error, data } = useLayerKeys(layerId);
+export const useGetLayerKeys = (_layerId: string) => {
+  // const { isLoading, error, data } = useLayerKeys(layerId);
 
   return {
-    keys:
-      isLoading || error || !data
-        ? []
-        : Object.keys(data.properties)
-            .filter((key) => "name" in data.properties[key])
-            .map((key) => ({
-              name: data.properties[key].name,
-              type: data.properties[key].type,
-            })),
+    keys: [],
+      // isLoading || error || !data
+      //   ? []
+      //   : Object.keys(data.properties)
+      //       .filter((key) => "name" in data.properties[key])
+      //       .map((key) => ({
+      //         name: data.properties[key].name,
+      //         type: data.properties[key].type,
+      //       })),
   };
 };
 

@@ -170,3 +170,26 @@ export function stableSort<T>(
   });
   return stabilizedThis.map((el) => el[0]);
 }
+
+export function isValidHex(hex) {
+  return /^#[0-9A-F]{6}$/i.test(hex);
+}
+
+export function isValidRGB(rgb) {
+  return (
+    rgb.r >= 0 &&
+    rgb.r <= 255 &&
+    rgb.g >= 0 &&
+    rgb.g <= 255 &&
+    rgb.b >= 0 &&
+    rgb.b <= 255
+  );
+}
+
+export function hexToRgb(hex: string): number[] {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+
+  return [r, g, b];
+}

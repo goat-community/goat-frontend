@@ -17,6 +17,7 @@ import { useLayers } from "@/lib/api/layers";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
+import type { Layer } from "@/lib/validations/layer";
 
 const Home = () => {
   const { t } = useTranslation("dashboard");
@@ -76,7 +77,10 @@ const Home = () => {
             isLoading={isProjectLoading}
           />
         </Stack>
-        <DataSection layers={layers?.items ?? []} isLoading={isLayerLoading} />
+        <DataSection
+          layers={(layers?.items as Layer[]) ?? []}
+          isLoading={isLayerLoading}
+        />
         <BlogSection />
       </Stack>
     </Container>
