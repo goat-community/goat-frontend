@@ -25,7 +25,7 @@ import type { PostAggregate, PostJoin } from "@/lib/validations/tools";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 
 interface SaveResultProps {
-  register: UseFormRegister<PostJoin> | UseFormRegister<PostAggregate> | UseFormRegister<PostIsochrone>;
+  register: UseFormRegister<PostJoin | PostAggregate | PostIsochrone>;
   watch: PostJoin | PostAggregate | PostIsochrone;
   // outputName: string | undefined;
   // setOutputName: (value: string) => void;
@@ -34,18 +34,16 @@ interface SaveResultProps {
 }
 
 const SaveResult = (props: SaveResultProps) => {
-  const {
-    register,
-    watch, 
-  } = props;
-
+  const { register, watch } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
 
   const { folders } = useFolders();
 
-  const { uniqueName } = useGetUniqueLayerName(watch.result_target.layer_name ? watch.result_target.layer_name : "");
+  const { uniqueName } = useGetUniqueLayerName(
+    watch.result_target.layer_name ? watch.result_target.layer_name : "",
+  );
 
   return (
     <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>

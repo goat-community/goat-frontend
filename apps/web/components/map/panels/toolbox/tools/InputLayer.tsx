@@ -14,26 +14,24 @@ import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
 
 import type { SelectChangeEvent } from "@mui/material";
-import type { UseFormGetValues, UseFormRegister } from "react-hook-form";
+import type { UseFormSetValue, UseFormRegister } from "react-hook-form";
 import type { PostJoin, PostAggregate } from "@/lib/validations/tools";
 
 interface PickLayerProps {
-  register: UseFormRegister<PostJoin> | UseFormRegister<PostAggregate>;
-  getValues: UseFormGetValues<PostJoin> | UseFormGetValues<PostAggregate>;
+  setValue: UseFormSetValue<PostJoin> | UseFormSetValue<PostAggregate>;
+  watch: PostJoin | PostAggregate;
   multiple?: boolean;
   // inputValues: string | string[];
   // setInputValues: (value: string | string[]) => void;
-  // layerTypes: string[];
+  layerTypes?: string[];
 }
 
 const InputLayer = (props: PickLayerProps) => {
   const {
-    register,
-    // getValues,
+    setValue,
+    watch,
+    layerTypes,
     multiple = false, 
-    // inputValues, 
-    // setInputValues, 
-    // layerTypes 
   } = props;
 
   const theme = useTheme();
@@ -44,19 +42,6 @@ const InputLayer = (props: PickLayerProps) => {
   const { layers: projectLayers } = useProjectLayers(
     typeof projectId === "string" ? projectId : "",
   );
-
-  const handleSingleChange = (_: SelectChangeEvent) => {
-    // setInputValues(event.target.value as string);
-  };
-
-  const handleMultipleChange = (_: SelectChangeEvent, inputNr: number) => {
-    console.log(inputNr);
-    // const multipleValues =
-    //   typeof inputValues !== "string" ? [...inputValues] : ["", ""];
-    // multipleValues[inputNr] = event.target.value as string;
-
-    // setInputValues(multipleValues);
-  };
 
   return (
     <Box>
@@ -81,9 +66,10 @@ const InputLayer = (props: PickLayerProps) => {
               <Select
                 label={t("panels.tools.select_layer")}
                 // value={inputValues[0]}
-                {...register("")}
+                value={"point_layer_id" in watch ? null : watch.target_layer_id}
+                // {...register("")}
                 onChange={(event: SelectChangeEvent) =>
-                  handleMultipleChange(event, 0)
+                  setValue("target_layer_id", event.target.value as string)
                 }
               >
                 {projectLayers
@@ -117,9 +103,12 @@ const InputLayer = (props: PickLayerProps) => {
               </InputLabel>
               <Select
                 label={t("panels.tools.select_layer")}
-                value={inputValues[1]}
+                value={"point_layer_id" in watch ? null : watch.join_layer_id}
+                // onChange={(event: SelectChangeEvent) =>
+                //   handleMultipleChange(event, 1)
+                // }
                 onChange={(event: SelectChangeEvent) =>
-                  handleMultipleChange(event, 1)
+                  setValue("join_layer_id", event.target.value as string)
                 }
               >
                 {projectLayers
@@ -153,9 +142,10 @@ const InputLayer = (props: PickLayerProps) => {
             </InputLabel>
             <Select
               label={t("panels.tools.select_layer")}
-              // value={inputValues}
-              {...register("")}
-              onChange={handleSingleChange}
+              value={"point_layer_id" in watch ? watch.point_layer_id :null}
+              onChange={(event: SelectChangeEvent) =>
+                setValue("point_layer_id", event.target.value as string)
+              }
             >
               {projectLayers
                 ? projectLayers.map((layer) =>

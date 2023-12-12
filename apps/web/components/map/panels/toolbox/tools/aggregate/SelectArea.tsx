@@ -13,28 +13,33 @@ import { useProjectLayers } from "@/lib/api/projects";
 import { useTranslation } from "@/i18n/client";
 import { useParams } from "next/navigation";
 
-import type { SelectChangeEvent } from "@mui/material";
-import type { areaSelectionTypes } from "@/types/map/toolbox";
+import type { UseFormRegister } from "react-hook-form";
+import type { PostAggregate } from "@/lib/validations/tools";
 
 interface SelectAreaProps {
-  pointLayerId: string | string[];
-  area: areaSelectionTypes | undefined;
-  setArea: (value: areaSelectionTypes) => void;
-  setHexagonSize: (value: string) => void;
-  hexagonSize: string;
-  setPolygonLayer: (value: string) => void;
-  polygonLayer: string;
+  register: UseFormRegister<PostAggregate>;
+  watch: PostAggregate;
+  // setValue: UseFormSetValue<PostAggregate>;
+  // pointLayerId: string | string[];
+  // area: areaSelectionTypes | undefined;
+  // setArea: (value: areaSelectionTypes) => void;
+  // setHexagonSize: (value: string) => void;
+  // hexagonSize: string;
+  // setPolygonLayer: (value: string) => void;
+  // polygonLayer: string;
 }
 
 const SelectArea = (props: SelectAreaProps) => {
   const {
-    pointLayerId,
-    area,
-    setArea,
-    setHexagonSize,
-    hexagonSize,
-    setPolygonLayer,
-    polygonLayer,
+    register,
+    watch,
+    // pointLayerId,
+    // area,
+    // setArea,
+    // setHexagonSize,
+    // hexagonSize,
+    // setPolygonLayer,
+    // polygonLayer,
   } = props;
 
   const theme = useTheme();
@@ -66,25 +71,28 @@ const SelectArea = (props: SelectAreaProps) => {
               {t("panels.tools.select_option")}
             </InputLabel>
             <Select
-              disabled={!pointLayerId.length}
+              disabled={!watch.point_layer_id.length}
               label={t("panels.tools.select_option")}
-              value={area}
-              onChange={(event: SelectChangeEvent) =>
-                setArea(event.target.value as areaSelectionTypes)
-              }
+              {...register("area_type")}
             >
               {[
-                t("panels.tools.aggregate.hexagon_bin"),
-                t("panels.tools.aggregate.polygon_layer"),
+                {
+                  name: t("panels.tools.aggregate.polygon_layer"),
+                  value: "feature",
+                },
+                {
+                  name: t("panels.tools.aggregate.hexagon_bin"),
+                  value: "h3_grid",
+                }
               ].map((layer) => (
-                <MenuItem value={layer} key={v4()}>
-                  {layer}
+                <MenuItem value={layer.value} key={v4()}>
+                  {layer.name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Box>
-        {area === t("panels.tools.aggregate.hexagon_bin") ? (
+        {watch.area_type === "h3_grid" ? (
           <Box display="flex" alignItems="center">
             <Typography variant="body1" sx={{ color: "black", flexGrow: "1" }}>
               {t("panels.tools.aggregate.hexagon_size")}
@@ -95,10 +103,7 @@ const SelectArea = (props: SelectAreaProps) => {
               </InputLabel>
               <Select
                 label={`XX ${t("panels.tools.aggregate.unit")}`}
-                value={hexagonSize}
-                onChange={(event: SelectChangeEvent) =>
-                  setHexagonSize(event.target.value as areaSelectionTypes)
-                }
+                {...register("h3_resolution")}
               >
                 {["3", "4", "5", "6", "7", "8", "9", "10"].map((layer) => (
                   <MenuItem value={layer} key={v4()}>
@@ -116,16 +121,13 @@ const SelectArea = (props: SelectAreaProps) => {
               </InputLabel>
               <Select
                 label={t("panels.tools.select_layer")}
-                disabled={!area}
-                value={polygonLayer}
-                onChange={(event: SelectChangeEvent) =>
-                  setPolygonLayer(event.target.value as areaSelectionTypes)
-                }
+                disabled={!watch.area_type}
+                {...register("area_layer_id")}
               >
                 {projectLayers
                   ? projectLayers.map((layer) =>
                       layer.feature_layer_geometry_type === "polygon" ? (
-                        <MenuItem value={layer.id} key={v4()}>
+                        <MenuItem value={layer.layer_id} key={v4()}>
                           {layer.name}
                         </MenuItem>
                       ) : null,

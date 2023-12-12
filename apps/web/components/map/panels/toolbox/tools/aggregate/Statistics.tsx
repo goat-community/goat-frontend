@@ -16,26 +16,34 @@ import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
 import type { ColumStatisticsOperation } from "@/types/map/toolbox";
+import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import type { PostAggregate } from "@/lib/validations/tools";
 
 interface StatisticsProps {
-  pointLayerId: string | string[];
-  field: string;
-  setFieldSelected: (value: string) => void;
-  method: ColumStatisticsOperation | undefined;
-  setMethod: (value: ColumStatisticsOperation) => void;
-  setGroupedFields: (value: string[]) => void;
-  groupedFields: string[] | undefined;
+  register: UseFormRegister<PostAggregate>;
+  setValue: UseFormSetValue<PostAggregate>;
+  watch: PostAggregate;
+  // pointLayerId: string | string[];
+  // field: string;
+  // setFieldSelected: (value: string) => void;
+  // method: ColumStatisticsOperation | undefined;
+  // setMethod: (value: ColumStatisticsOperation) => void;
+  // setGroupedFields: (value: string[]) => void;
+  // groupedFields: string[] | undefined;
 }
 
 const Statistics = (props: StatisticsProps) => {
   const {
-    pointLayerId,
-    field,
-    setFieldSelected,
-    method,
-    setMethod,
-    groupedFields,
-    setGroupedFields,
+    register,
+    setValue,
+    watch,
+    // pointLayerId,
+    // field,
+    // setFieldSelected,
+    // method,
+    // setMethod,
+    // groupedFields,
+    // setGroupedFields,
   } = props;
 
   const theme = useTheme();
@@ -69,15 +77,14 @@ const Statistics = (props: StatisticsProps) => {
   ];
 
   const pointLayerKeys = useGetLayerKeys(
-    `user_data.${
-      typeof pointLayerId === "string" ? pointLayerId.split("-").join("") : ""
-    }`,
+    `user_data.${watch.point_layer_id.split("-").join("")}`,
   );
 
   function checkType() {
     return methodsKeys.map((key) =>
       key.types.includes(
-        pointLayerKeys.keys.filter((layerKey) => layerKey.name === field)[0].type,
+        pointLayerKeys.keys.filter((layerKey) => layerKey.name === watch.column_statistics.field)[0]
+          .type,
       ) ? (
         <MenuItem value={key.name} key={v4()}>
           {key.name}
@@ -109,12 +116,13 @@ const Statistics = (props: StatisticsProps) => {
               {t("panels.tools.select_field")}
             </InputLabel>
             <Select
-              disabled={!pointLayerId.length}
+              disabled={!watch.point_layer_id.length}
               label={t("panels.tools.select_field")}
-              value={field}
-              onChange={(event: SelectChangeEvent) =>
-                setFieldSelected(event.target.value as string)
-              }
+              {...register("column_statistics.field")}
+              // value={field}
+              // onChange={(event: SelectChangeEvent) =>
+              //   setFieldSelected(event.target.value as string)
+              // }
             >
               {pointLayerKeys.keys.map((key) => (
                 <MenuItem value={key.name} key={v4()}>
@@ -130,14 +138,15 @@ const Statistics = (props: StatisticsProps) => {
               {t("panels.tools.select_method")}
             </InputLabel>
             <Select
-              disabled={!field.length}
+              disabled={!watch.column_statistics.field}
               label={t("panels.tools.select_method")}
-              value={method}
-              onChange={(event: SelectChangeEvent) => {
-                setMethod(event.target.value as ColumStatisticsOperation);
-              }}
+              {...register("column_statistics.operation")}
+              // value={method}
+              // onChange={(event: SelectChangeEvent) => {
+              //   setMethod(event.target.value as ColumStatisticsOperation);
+              // }}
             >
-              {field ? checkType() : null}
+              {watch.column_statistics.field ? checkType() : null}
             </Select>
           </FormControl>
         </Box>
@@ -155,20 +164,27 @@ const Statistics = (props: StatisticsProps) => {
             <Select
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
-              disabled={!pointLayerId.length}
+              disabled={!watch.point_layer_id.length}
               multiple
               label={t("panels.tools.select_field")}
-              value={groupedFields ? groupedFields : []}
+              // {...register("area_group_by_field")}
+              value={watch.area_group_by_field}
               renderValue={(selected) => (selected ? selected.join(", ") : "")}
-              onChange={(event: SelectChangeEvent<typeof groupedFields>) =>
-                setGroupedFields(event.target.value as string[])
+              // value={}
+              onChange={(
+                event: SelectChangeEvent<typeof watch.area_group_by_field>,
+              ) =>{
+                setValue("area_group_by_field", event.target.value as string[])
+
+              }
               }
             >
               {pointLayerKeys.keys.map((key) => (
                 <MenuItem value={key.name} key={v4()}>
                   <Checkbox
                     checked={
-                      groupedFields && groupedFields.indexOf(key.name) > -1
+                      watch.area_group_by_field &&
+                      watch.area_group_by_field.indexOf(key.name) > -1
                     }
                   />
                   <ListItemText primary={key.name} />

@@ -18,24 +18,14 @@ import type { PostJoin } from "@/lib/validations/tools";
 interface StatisticsProps {
   register: UseFormRegister<PostJoin>;
   getValues: UseFormGetValues<PostJoin>;
-  // secondLayerId: string;
-  // secondField: string | undefined;
-  // setMethod: (value: ColumStatisticsOperation | undefined) => void;
-  // method: ColumStatisticsOperation | undefined;
-  // setStatisticField: (value: string) => void;
-  // statisticField: string | undefined;
+  watch: PostJoin;
 }
 
 const Statistics = (props: StatisticsProps) => {
   const {
     register,
     getValues,
-    // secondLayerId,
-    // secondField,
-    // setMethod,
-    // method,
-    // setStatisticField,
-    // statisticField
+    watch
   } = props;
 
   const theme = useTheme();
@@ -69,7 +59,9 @@ const Statistics = (props: StatisticsProps) => {
     },
   ];
 
-  const saveFieldKeys = useGetLayerKeys(`user_data.${getValues("join_layer_id").split("-").join("")}`);
+  const saveFieldKeys = useGetLayerKeys(
+    `user_data.${getValues("join_layer_id").split("-").join("")}`,
+  );
 
   function checkType() {
     return saveFieldKeys.keys.map((key) =>
@@ -105,10 +97,6 @@ const Statistics = (props: StatisticsProps) => {
             disabled={!getValues("join_layer_id")}
             label={t("panels.tools.select_method")}
             {...register("column_statistics.operation")}
-            // value={method ? method : ""}
-            // onChange={(event: SelectChangeEvent) => {
-            //   setMethod(event.target.value as ColumStatisticsOperation);
-            // }}
           >
             {methods.map((method) => (
               <MenuItem value={method.name} key={v4()}>
@@ -118,7 +106,7 @@ const Statistics = (props: StatisticsProps) => {
           </Select>
         </FormControl>
       </Box>
-      {method ? (
+      {watch.column_statistics.operation.length ? (
         <Box sx={{ marginTop: theme.spacing(2) }}>
           <FormControl fullWidth size="small">
             <InputLabel id="demo-simple-select-label">
@@ -126,13 +114,9 @@ const Statistics = (props: StatisticsProps) => {
             </InputLabel>
             <Select
               label={t("panels.tools.select_field")}
-              // value={statisticField}
-              // onChange={(event: SelectChangeEvent) => {
-              //   setStatisticField(event.target.value as string);
-              // }}
               {...register("column_statistics.field")}
             >
-              {register("join_layer_id").length ? checkType() : null}
+              {watch.join_layer_id.length ? checkType() : null}
             </Select>
           </FormControl>
         </Box>

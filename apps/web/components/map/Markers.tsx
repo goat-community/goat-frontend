@@ -1,15 +1,15 @@
 import React from "react";
 import { Marker } from "react-map-gl";
 import { useSelector } from "react-redux/es/hooks/useSelector";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { Box, useTheme } from "@mui/material";
+import { Icon } from "@p4b/ui/components/Icon";
 
 import type { IStore } from "@/types/store";
+import type { ICON_NAME } from "@p4b/ui/components/Icon";
 
 const Markers = () => {
   const { markers } = useSelector((state: IStore) => state.map);
 
-  const theme = useTheme();
+  // const theme = useTheme();
 
   return (
     <>
@@ -20,16 +20,11 @@ const Markers = () => {
           latitude={marker.lat}
           anchor="bottom"
         >
-          <Box position="relative">
-            <Icon iconName={ICON_NAME.LOCATION_MARKER} htmlColor="#cf0707" fontSize="large"/>
-            <Box position="absolute" top="3px" left="50%" sx={{
-              transform: "translateX(-50%)"
-            }}>
-              <Icon iconName={marker.iconName as ICON_NAME} htmlColor={theme.palette.background.paper} sx={{
-                fontSize: "17px"
-              }}/>
-            </Box>
-          </Box>
+          <Icon
+            iconName={marker.iconName as ICON_NAME}
+            htmlColor="#cf0707"
+            fontSize="large"
+          />
         </Marker>
       ))}
     </>
