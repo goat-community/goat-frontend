@@ -224,7 +224,7 @@ const PropertiesPanel = ({ projectId }: { projectId: string }) => {
             <>
               <ProjectLayerDropdown projectId={projectId} />
               <LayerInfo layer={activeLayer} />
-              <Symbology layer={activeLayer} />
+              <Symbology />
               <Visibility layer={activeLayer} projectId={projectId} />
             </>
           )}

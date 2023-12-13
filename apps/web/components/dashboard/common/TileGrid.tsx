@@ -18,7 +18,7 @@ import { useTranslation } from "@/i18n/client";
 interface TileGridProps {
   view: "list" | "grid";
   type: "project" | "layer";
-  items: Project[] | Layer[];
+  items: Omit<Project, "layer_order">[] | Layer[];
   isLoading: boolean;
   enableActions?: boolean;
   onClick?: (item: Project | Layer) => void;

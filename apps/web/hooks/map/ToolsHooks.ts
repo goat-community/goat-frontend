@@ -18,7 +18,7 @@ export const useGetLayerKeys = (layerId: string) => {
   };
 };
 
-export const useGetUniqueLayerName = (name: string): {uniqueName: string} => {
+export const useGetUniqueLayerName = (name: string): { uniqueName: string } => {
   const { projectId } = useParams();
 
   const { layers } = useProjectLayers(

@@ -21,18 +21,11 @@ interface PickLayerProps {
   setValue: UseFormSetValue<PostJoin> | UseFormSetValue<PostAggregate>;
   watch: PostJoin | PostAggregate;
   multiple?: boolean;
-  // inputValues: string | string[];
-  // setInputValues: (value: string | string[]) => void;
   layerTypes?: string[];
 }
 
 const InputLayer = (props: PickLayerProps) => {
-  const {
-    setValue,
-    watch,
-    layerTypes,
-    multiple = false, 
-  } = props;
+  const { setValue, watch, layerTypes, multiple = false } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
@@ -142,12 +135,12 @@ const InputLayer = (props: PickLayerProps) => {
             </InputLabel>
             <Select
               label={t("panels.tools.select_layer")}
-              value={"point_layer_id" in watch ? watch.point_layer_id :null}
+              value={"point_layer_id" in watch ? watch.point_layer_id : null}
               onChange={(event: SelectChangeEvent) =>
                 setValue("point_layer_id", event.target.value as string)
               }
             >
-              {projectLayers
+              {projectLayers && layerTypes
                 ? projectLayers.map((layer) =>
                     layerTypes.includes(layer.feature_layer_geometry_type) ? (
                       <MenuItem value={layer.layer_id} key={v4()}>

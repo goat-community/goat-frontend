@@ -174,5 +174,4 @@ const Statistics = (props: StatisticsProps) => {
     </Box>
   );
 };
-
 export default Statistics;

@@ -3,11 +3,10 @@ import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
 import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
 import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
 import { Divider, useTheme, Box, Button } from "@mui/material";
-// import { SendJoinFeatureRequest } from "@/lib/api/tools";
+import { SendJoinFeatureRequest } from "@/lib/api/tools";
 import { useTranslation } from "@/i18n/client";
 import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
 import { useForm } from "react-hook-form";
-import { SendJoinFeatureRequest } from "@/lib/api/tools";
 import { useParams } from "next/navigation";
 
 import type { PostJoin } from "@/lib/validations/tools";

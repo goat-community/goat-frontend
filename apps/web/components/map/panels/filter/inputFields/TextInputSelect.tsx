@@ -9,9 +9,9 @@ import {
 } from "@mui/material";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 
-import type { IStore } from "@/types/store";
+// import type { IStore } from "@/types/store";
 
 export type Option = {
   label: string;
@@ -33,7 +33,8 @@ const TextInputSelect = (props: TextInputSelectProps) => {
 
   const theme = useTheme();
 
-  const { loading: mapLoading } = useSelector((state: IStore) => state.map);
+  // const { loading: mapLoading } = useSelector((state: IStore) => state.map);
+  const mapLoading = false;
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);

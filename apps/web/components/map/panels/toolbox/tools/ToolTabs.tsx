@@ -143,9 +143,9 @@ const ToolTabs = (props: ToolTabsProps) => {
       value: "join",
       element: (
         <Join
-          projectId={
-            typeof params.projectId === "string" ? params.projectId : ""
-          }
+          // projectId={
+          //   typeof params.projectId === "string" ? params.projectId : ""
+          // }
         />
       ),
     },

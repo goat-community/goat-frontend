@@ -26,7 +26,7 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
-import type { PTModeTypes } from "@/types/map/isochrone";
+// import type { PTModeTypes } from "@/types/map/isochrone";
 
 interface PickLayerProps {
   register: UseFormRegister<PostIsochrone>;
@@ -179,7 +179,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
           id="combo-box-demo"
           size="small"
           disabled={!watch.routing_type ? true : false}
-          value={{ label: watch.travel_cost.max_traveltime }}
+          // value={{ label: watch.travel_cost.max_traveltime }}
           options={allowedMaxTravelTimeNumbers}
           {...register("travel_cost.max_traveltime")}
           sx={{
@@ -207,19 +207,19 @@ const IsochroneSettings = (props: PickLayerProps) => {
         </Typography>
         <TextField
           label="XX"
-          disabled={
-            !(
-              watch.travel_cost.max_distance |
-                watch.travel_cost.max_traveltime && watch.routing_type
-            )
-              ? true
-              : false
-          }
-          {...register(
-            watch.travel_cost.max_traveltime
-              ? "travel_cost.traveltime_step"
-              : "travel_cost.distance_step",
-          )}
+          // disabled={
+          //   !(
+          //     watch.travel_cost.max_distance |
+          //       watch.travel_cost.max_traveltime && watch.routing_type
+          //   )
+          //     ? true
+          //     : false
+          // }
+          // {...register(
+          //   watch.travel_cost.max_traveltime
+          //     ? "travel_cost.traveltime_step"
+          //     : "travel_cost.distance_step",
+          // )}
           size="small"
           fullWidth
           type="number"
@@ -308,9 +308,9 @@ const IsochroneSettings = (props: PickLayerProps) => {
           id="checkboxes-tags-demo"
           options={ptModes}
           disableCloseOnSelect
-          defaultValue={ptModes.filter((mode) =>
-            watch.routing_type.mode.includes(mode.value as PTModeTypes),
-          )}
+          // defaultValue={ptModes.filter((mode) =>
+          //   watch.routing_type.mode.includes(mode.value as PTModeTypes),
+          // )}
           getOptionLabel={(option) => option.name}
           renderOption={(props, option, { selected }) => (
             <li {...props}>

@@ -89,3 +89,11 @@ export const declineInvitation = async (invitationId: string) => {
   if (!response.ok) throw await response.json();
   return response;
 };
+
+export const deleteAccount = async () => {
+  const response = await fetchWithAuth(`${USERS_API_BASE_URL}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw await response.json();
+  return response;
+}
