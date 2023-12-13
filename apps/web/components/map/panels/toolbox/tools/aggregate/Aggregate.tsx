@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
 import SelectArea from "@/components/map/panels/toolbox/tools/aggregate/SelectArea";
 import Statistics from "@/components/map/panels/toolbox/tools/aggregate/Statistics";
@@ -8,10 +8,6 @@ import { useTranslation } from "@/i18n/client";
 import { useForm } from "react-hook-form";
 import { SendAggregateFeatureRequest } from "@/lib/api/tools";
 
-import type {
-  areaSelectionTypes,
-  ColumStatisticsOperation,
-} from "@/types/map/toolbox";
 import type { PostAggregate } from "@/lib/validations/tools";
 
 interface AggregateProps {
@@ -20,22 +16,6 @@ interface AggregateProps {
 
 const Aggregate = (props: AggregateProps) => {
   const { projectId } = props;
-
-  // const [pointLayerId, setPointLayerId] = useState<string | string[]>("");
-  // const [area, setArea] = useState<areaSelectionTypes | undefined>(undefined);
-  // const [hexagonSize, setHexagonSize] = useState<string>("");
-  // const [polygonLayer, setPolygonLayer] = useState<string>("");
-  // const [fieldSelected, setFieldSelected] = useState<string>("");
-  // const [method, setMethod] = useState<ColumStatisticsOperation | undefined>(
-  //   undefined,
-  // );
-  // const [groupedFields, setGroupedFields] = useState<string[] | undefined>(
-  //   undefined,
-  // );
-  // const [outputName, setOutputName] = useState<string | undefined>("aggregate");
-  // const [folderSaveID, setFolderSaveID] = useState<string | undefined>(
-  //   undefined,
-  // );
 
   const { t } = useTranslation("maps");
 
@@ -52,8 +32,6 @@ const Aggregate = (props: AggregateProps) => {
     defaultValues: {
       point_layer_id: "",
       area_type: "",
-      // area_layer_id: undefined,
-      // h3_resolution: undefined,
       area_group_by_field: [],
       column_statistics: {
         operation: "",

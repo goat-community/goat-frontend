@@ -14,7 +14,7 @@ import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
 
 import type { SelectChangeEvent } from "@mui/material";
-import type { UseFormSetValue, UseFormRegister } from "react-hook-form";
+import type { UseFormSetValue } from "react-hook-form";
 import type { PostJoin, PostAggregate } from "@/lib/validations/tools";
 
 interface PickLayerProps {

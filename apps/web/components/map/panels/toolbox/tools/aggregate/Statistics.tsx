@@ -15,7 +15,6 @@ import { useTranslation } from "@/i18n/client";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
 import type { SelectChangeEvent } from "@mui/material";
-import type { ColumStatisticsOperation } from "@/types/map/toolbox";
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import type { PostAggregate } from "@/lib/validations/tools";
 
@@ -23,13 +22,6 @@ interface StatisticsProps {
   register: UseFormRegister<PostAggregate>;
   setValue: UseFormSetValue<PostAggregate>;
   watch: PostAggregate;
-  // pointLayerId: string | string[];
-  // field: string;
-  // setFieldSelected: (value: string) => void;
-  // method: ColumStatisticsOperation | undefined;
-  // setMethod: (value: ColumStatisticsOperation) => void;
-  // setGroupedFields: (value: string[]) => void;
-  // groupedFields: string[] | undefined;
 }
 
 const Statistics = (props: StatisticsProps) => {
@@ -37,13 +29,6 @@ const Statistics = (props: StatisticsProps) => {
     register,
     setValue,
     watch,
-    // pointLayerId,
-    // field,
-    // setFieldSelected,
-    // method,
-    // setMethod,
-    // groupedFields,
-    // setGroupedFields,
   } = props;
 
   const theme = useTheme();
@@ -119,10 +104,6 @@ const Statistics = (props: StatisticsProps) => {
               disabled={!watch.point_layer_id.length}
               label={t("panels.tools.select_field")}
               {...register("column_statistics.field")}
-              // value={field}
-              // onChange={(event: SelectChangeEvent) =>
-              //   setFieldSelected(event.target.value as string)
-              // }
             >
               {pointLayerKeys.keys.map((key) => (
                 <MenuItem value={key.name} key={v4()}>
@@ -141,10 +122,6 @@ const Statistics = (props: StatisticsProps) => {
               disabled={!watch.column_statistics.field}
               label={t("panels.tools.select_method")}
               {...register("column_statistics.operation")}
-              // value={method}
-              // onChange={(event: SelectChangeEvent) => {
-              //   setMethod(event.target.value as ColumStatisticsOperation);
-              // }}
             >
               {watch.column_statistics.field ? checkType() : null}
             </Select>
