@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { updateUserProfile, useUserProfile } from "@/lib/api/users";
+import { deleteAccount, updateUserProfile, useUserProfile } from "@/lib/api/users";
 import { RhfAvatar } from "@/components/common/form-inputs/AvatarUpload";
 import { toast } from "react-toastify";
 import ConfirmModal from "@/components/modals/Confirm";
@@ -75,6 +75,7 @@ const Profile = () => {
   async function _deleteAccount() {
     setIsDeleteAccountBusy(true);
     try {
+      await deleteAccount();
       toast.success("Account deleted");
       reset({}, { keepValues: true });
     } catch (_error) {
