@@ -95,7 +95,7 @@ const OrganizationProfile = () => {
         toast.success("Organization deleted");
         reset({}, { keepValues: true });
         Cookies.remove("organization");
-        signOut();
+        signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL });
       }
     } catch (_error) {
       toast.error("Error deleting organization");
@@ -207,7 +207,7 @@ const OrganizationProfile = () => {
             onConfirm={async () => {
               setConfirmDeleteOrganizationDialogOpen(false);
               await _deleteOrganization();
-              signOut();
+              signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL });
             }}
             closeText={t("common:close")}
             confirmText={t("common:delete")}

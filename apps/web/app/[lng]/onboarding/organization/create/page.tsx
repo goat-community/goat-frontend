@@ -196,7 +196,7 @@ export default function OrganizationOnBoarding() {
                           options={regionsOptions}
                           control={control}
                           name="region"
-                          label={t("onboarding:organization_location_label")}
+                          label={t("onboarding:organization_region_label")}
                         />
                       </>
                     )}
@@ -270,7 +270,7 @@ export default function OrganizationOnBoarding() {
                               <FormControlLabel
                                 control={
                                   <Checkbox
-                                  sx={{ ml: -3}}
+                                    sx={{ ml: -3 }}
                                     onChange={onChange}
                                     checked={value}
                                   />

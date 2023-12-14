@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useForm } from "react-hook-form";
@@ -95,14 +95,10 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const acceptedFileTypes = [
-    ".gpkg",
-    ".geojson",
-    ".shp",
-    ".kml",
-    ".csv",
-    ".xlsx",
-  ];
+  const acceptedFileTypes = useMemo(() => {
+    return [".gpkg", ".geojson", ".shp", ".kml", ".csv", ".xlsx"];
+  }, []);
+
   const handleChange = (file) => {
     setFileUploadError(undefined);
     setFileValue(undefined);
@@ -141,7 +137,20 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
     onClose?.();
   };
 
+  const fileName = useMemo(() => {
+    if (fileValue) {
+      // remove extension if in accepted file types
+      const fileExtension = fileValue.name.split(".").pop();
+      if (fileExtension && acceptedFileTypes.includes(`.${fileExtension}`)) {
+        return fileValue.name.replace(`.${fileExtension}`, "");
+      }
+      return fileValue.name;
+    }
+    return "";
+  }, [acceptedFileTypes, fileValue]);
+
   const handleUpload = async () => {
+    console.log(fileValue);
     try {
       setIsBusy(true);
       if (
@@ -279,6 +288,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
               <TextField
                 fullWidth
                 required
+                defaultValue={fileName}
                 label={t("projects.dataset.name")}
                 {...register("name")}
                 error={!!errors.name}
