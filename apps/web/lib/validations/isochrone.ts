@@ -44,11 +44,7 @@ export const IsochroneBaseSchema = z.object({
       to_time: z.number(),
     })
     .optional(),
-  result_target: z.object({
-    layer_name: z.string(),
-    folder_id: z.string(),
-    project_id: z.string().optional(),
-  }),
+  layer_name: z.string(),
 });
 
 export type StartingPointType = z.infer<typeof StartingPoint>;

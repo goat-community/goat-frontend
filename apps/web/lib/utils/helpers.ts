@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import Color from "color";
 
+import type { ProjectLayer } from "@/lib/validations/project";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function filterSearch<T extends Record<string, any>>(
   allArray: T[],
@@ -192,4 +194,14 @@ export function hexToRgb(hex: string): number[] {
   const b = parseInt(hex.slice(5, 7), 16);
 
   return [r, g, b];
+}
+
+export function getLayerStringIdById(layers: ProjectLayer[], id: number) {
+  const filteredLayers = layers.filter((layer) => layer.id === id);
+
+  if (filteredLayers.length) {
+    return filteredLayers[0].layer_id;
+  } else {
+    return "";
+  }
 }

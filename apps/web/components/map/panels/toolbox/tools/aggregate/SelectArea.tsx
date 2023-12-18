@@ -19,27 +19,12 @@ import type { PostAggregate } from "@/lib/validations/tools";
 interface SelectAreaProps {
   register: UseFormRegister<PostAggregate>;
   watch: PostAggregate;
-  // setValue: UseFormSetValue<PostAggregate>;
-  // pointLayerId: string | string[];
-  // area: areaSelectionTypes | undefined;
-  // setArea: (value: areaSelectionTypes) => void;
-  // setHexagonSize: (value: string) => void;
-  // hexagonSize: string;
-  // setPolygonLayer: (value: string) => void;
-  // polygonLayer: string;
 }
 
 const SelectArea = (props: SelectAreaProps) => {
   const {
     register,
     watch,
-    // pointLayerId,
-    // area,
-    // setArea,
-    // setHexagonSize,
-    // hexagonSize,
-    // setPolygonLayer,
-    // polygonLayer,
   } = props;
 
   const theme = useTheme();
@@ -71,7 +56,7 @@ const SelectArea = (props: SelectAreaProps) => {
               {t("panels.tools.select_option")}
             </InputLabel>
             <Select
-              disabled={!watch.point_layer_id.length}
+              disabled={!watch.point_layer_project_id}
               label={t("panels.tools.select_option")}
               {...register("area_type")}
             >

@@ -1,53 +1,33 @@
 import React, { useState, useMemo } from "react";
-import { Box, Button, useTheme, Typography } from "@mui/material";
+import { Box, Button, useTheme, TextField, Typography } from "@mui/material";
 import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/IsochroneSettings";
 import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
 import { useTranslation } from "@/i18n/client";
-import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
-// import { useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
   SendPTIsochroneRequest,
   SendCarIsochroneRequest,
   SendIsochroneRequest,
 } from "@/lib/api/isochrone";
+import { useParams } from "next/navigation";
+import { removeMarker } from "@/lib/store/map/slice";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
 
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 
 const Isochrone = () => {
-  // Isochrone Settings states
-  // const [routing, setRouting] = useState<RoutingTypes | undefined>(undefined);
-  // const [ptModes, setPtModes] = useState<PTModeTypes[] | undefined>([
-  //   "bus",
-  //   "tram",
-  //   "rail",
-  //   "subway",
-  //   "ferry",
-  //   "cable_car",
-  //   "gondola",
-  //   "funicular",
-  // ]);
-  // const [speed, setSpeed] = useState<number | undefined>(undefined);
-  // const [distance, setDistance] = useState<number | undefined>(undefined);
-  // const [travelTime, setTravelTime] = useState<number | undefined>(undefined);
-  // const [steps, setSteps] = useState<number | undefined>(undefined);
-
   // Sarting point states
   const [startingType, setStartingType] = useState<
     StartingPointType | undefined
   >(undefined);
-  // const [startingPoint, setStartingPoint] = useState<string[] | string>([]);
-
-  // Save Result states
-  // const [outputName, setOutputName] = useState<string>(`isochrone`);
-  // const [folderSaveID, setFolderSaveID] = useState<string | undefined>(
-  //   undefined,
-  // );
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
-  // const dispatch = useDispatch();
+  const { projectId } = useParams();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -68,12 +48,7 @@ const Isochrone = () => {
         traveltime_step: 50,
         speed: 10,
       },
-      time_window: undefined,
-      result_target: {
-        layer_name: "isochrone",
-        folder_id: "",
-        project_id: undefined,
-      },
+      layer_name: "isochrone",
     },
   });
 
@@ -92,18 +67,28 @@ const Isochrone = () => {
         from_time: 25200,
         to_time: 32400,
       });
-      SendPTIsochroneRequest(getValues());
+      SendPTIsochroneRequest(getValues(), projectId as string);
     } else if (watchFormValues.routing_type === "car_peak") {
-      SendCarIsochroneRequest(getValues());
+      setValue("time_window", {
+        weekday: "weekday",
+        from_time: 25200,
+        to_time: 32400,
+      });
+      SendCarIsochroneRequest(getValues(), projectId as string);
     } else {
-      SendIsochroneRequest(getValues());
+      SendIsochroneRequest(getValues(), projectId as string);
     }
-    // }
+    reset();
+    dispatch(removeMarker());
   };
 
   const getCurrentValues = useMemo(() => {
     return watchFormValues;
   }, [watchFormValues]);
+
+  const { uniqueName } = useGetUniqueLayerName(
+    getCurrentValues.layer_name ? getCurrentValues.layer_name : "",
+  );
 
   return (
     <Box
@@ -112,13 +97,16 @@ const Isochrone = () => {
       justifyContent="space-between"
       sx={{ height: "100%" }}
     >
-      <Box sx={{ maxHeight: "95%", overflow: "scroll" }}>
-        <Typography
-          variant="body2"
-          sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-        >
-          {t("panels.isochrone.isochrone_description")}
-        </Typography>
+      <Box
+        sx={{
+          height: "95%",
+          maxHeight: "95%",
+          overflow: "scroll",
+          display: "flex",
+          flexDirection: "column",
+          gap: "18px",
+        }}
+      >
         <IsochroneSettings
           register={register}
           getValues={getValues}
@@ -137,12 +125,31 @@ const Isochrone = () => {
         {startingType &&
         ("layer_id" in getCurrentValues.starting_points ||
           "latitude" in getCurrentValues.starting_points) ? (
-          <SaveResult
-            register={register}
-            // setValue={setValue}
-            watch={getCurrentValues}
-          />
-        ) : null}
+          <Box display="flex" flexDirection="column" gap={theme.spacing(4)}>
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: theme.spacing(2),
+              }}
+            >
+              <Icon iconName={ICON_NAME.DOWNLOAD} />
+              {t("panels.tools.result")}
+            </Typography>
+            <Box>
+              <TextField
+                fullWidth
+                value={uniqueName ? uniqueName : ""}
+                label={t("panels.tools.output_name")}
+                size="small"
+                {...register("layer_name")}
+              />
+            </Box>
+          </Box>
+        ) : // <SaveResult register={register} watch={getCurrentValues} />
+        null}
       </Box>
       <Box
         sx={{

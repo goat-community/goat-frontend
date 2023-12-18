@@ -11,6 +11,9 @@ import {
 } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
+import { getLayerStringIdById } from "@/lib/utils/helpers";
+import { useParams } from "next/navigation";
+import { useProjectLayers } from "@/lib/api/projects";
 
 import type { UseFormGetValues, UseFormRegister } from "react-hook-form";
 import type { PostJoin } from "@/lib/validations/tools";
@@ -59,8 +62,17 @@ const Statistics = (props: StatisticsProps) => {
     },
   ];
 
+  const { projectId } = useParams();
+
+  const { layers } = useProjectLayers(projectId as string);
+
   const saveFieldKeys = useGetLayerKeys(
-    `user_data.${getValues("join_layer_id").split("-").join("")}`,
+    `user_data.${getLayerStringIdById(
+      layers ? layers : [],
+      watch.join_layer_project_id,
+    )
+      .split("-")
+      .join("")}`,
   );
 
   function checkType() {
@@ -94,7 +106,7 @@ const Statistics = (props: StatisticsProps) => {
             {t("panels.tools.select_method")}
           </InputLabel>
           <Select
-            disabled={!getValues("join_layer_id")}
+            disabled={!watch.join_layer_project_id}
             label={t("panels.tools.select_method")}
             {...register("column_statistics.operation")}
           >
@@ -116,7 +128,7 @@ const Statistics = (props: StatisticsProps) => {
               label={t("panels.tools.select_field")}
               {...register("column_statistics.field")}
             >
-              {watch.join_layer_id.length ? checkType() : null}
+              {watch.join_layer_project_id ? checkType() : null}
             </Select>
           </FormControl>
         </Box>

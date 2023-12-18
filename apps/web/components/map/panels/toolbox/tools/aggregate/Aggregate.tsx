@@ -1,12 +1,13 @@
 import React, { useMemo } from "react";
-import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
 import SelectArea from "@/components/map/panels/toolbox/tools/aggregate/SelectArea";
 import Statistics from "@/components/map/panels/toolbox/tools/aggregate/Statistics";
-import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
-import { Box, Button, useTheme } from "@mui/material";
+import { Box, Button, useTheme, Typography, TextField } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { useForm } from "react-hook-form";
 import { SendAggregateFeatureRequest } from "@/lib/api/tools";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
+import InputLayer from "@/components/map/panels/toolbox/tools/aggregate/InputLayer";
 
 import type { PostAggregate } from "@/lib/validations/tools";
 
@@ -30,18 +31,14 @@ const Aggregate = (props: AggregateProps) => {
     // formState: { errors },
   } = useForm<PostAggregate>({
     defaultValues: {
-      point_layer_id: "",
+      point_layer_project_id: 0,
       area_type: "",
       area_group_by_field: [],
       column_statistics: {
         operation: "",
         field: "",
       },
-      result_target: {
-        layer_name: "aggregate",
-        folder_id: "",
-        project_id: projectId as string,
-      },
+      layer_name: "aggregate",
     },
   });
 
@@ -57,8 +54,12 @@ const Aggregate = (props: AggregateProps) => {
 
   const handleRun = () => {
     console.log(getValues());
-    SendAggregateFeatureRequest(getValues());
+    SendAggregateFeatureRequest(getValues(), projectId);
   };
+
+  const { uniqueName } = useGetUniqueLayerName(
+    getCurrentValues.layer_name ? getCurrentValues.layer_name : "",
+  );
 
   return (
     <Box
@@ -69,9 +70,7 @@ const Aggregate = (props: AggregateProps) => {
     >
       <Box sx={{ maxHeight: "95%", overflow: "scroll" }}>
         <InputLayer
-          watch={getCurrentValues}
-          setValue={setValue}
-          layerTypes={["point"]}
+          register={register}
         />
         <SelectArea register={register} watch={getCurrentValues} />
         <Statistics
@@ -81,7 +80,29 @@ const Aggregate = (props: AggregateProps) => {
         />
         {getCurrentValues.column_statistics.field &&
         getCurrentValues.column_statistics.operation ? (
-          <SaveResult register={register} watch={getCurrentValues} />
+          <Box display="flex" flexDirection="column" gap={theme.spacing(4)}>
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: theme.spacing(2),
+              }}
+            >
+              <Icon iconName={ICON_NAME.DOWNLOAD} />
+              {t("panels.tools.result")}
+            </Typography>
+            <Box>
+              <TextField
+                fullWidth
+                value={uniqueName ? uniqueName : ""}
+                label={t("panels.tools.output_name")}
+                size="small"
+                {...register("layer_name")}
+              />
+            </Box>
+          </Box>
         ) : null}
       </Box>
       <Box

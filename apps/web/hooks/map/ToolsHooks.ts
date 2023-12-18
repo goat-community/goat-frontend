@@ -7,7 +7,7 @@ export const useGetLayerKeys = (layerId: string) => {
 
   return {
     keys:
-      isLoading || error || !data
+      (isLoading || error || !data)
         ? []
         : Object.keys(data.properties)
             .filter((key) => "name" in data.properties[key])

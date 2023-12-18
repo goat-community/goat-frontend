@@ -24,10 +24,6 @@ import { match } from "@/lib/utils/match";
 
 import type {
   Result,
-  // Feature,
-  // Context,
-  // Geometry,
-  // Properties,
 } from "@/types/map/controllers";
 
 type Props = {

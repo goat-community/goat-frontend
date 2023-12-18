@@ -13,6 +13,9 @@ import {
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
+import { useProjectLayers } from "@/lib/api/projects";
+import { getLayerStringIdById } from "@/lib/utils/helpers";
+import { useParams } from "next/navigation";
 
 import type { SelectChangeEvent } from "@mui/material";
 import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
@@ -25,11 +28,7 @@ interface StatisticsProps {
 }
 
 const Statistics = (props: StatisticsProps) => {
-  const {
-    register,
-    setValue,
-    watch,
-  } = props;
+  const { register, setValue, watch } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
@@ -61,15 +60,25 @@ const Statistics = (props: StatisticsProps) => {
     },
   ];
 
+  const { projectId } = useParams();
+
+  const { layers } = useProjectLayers(projectId as string);
+
   const pointLayerKeys = useGetLayerKeys(
-    `user_data.${watch.point_layer_id.split("-").join("")}`,
+    `user_data.${getLayerStringIdById(
+      layers ? layers : [],
+      watch.point_layer_project_id,
+    )
+      .split("-")
+      .join("")}`,
   );
 
   function checkType() {
     return methodsKeys.map((key) =>
       key.types.includes(
-        pointLayerKeys.keys.filter((layerKey) => layerKey.name === watch.column_statistics.field)[0]
-          .type,
+        pointLayerKeys.keys.filter(
+          (layerKey) => layerKey.name === watch.column_statistics.field,
+        )[0].type,
       ) ? (
         <MenuItem value={key.name} key={v4()}>
           {key.name}
@@ -101,7 +110,7 @@ const Statistics = (props: StatisticsProps) => {
               {t("panels.tools.select_field")}
             </InputLabel>
             <Select
-              disabled={!watch.point_layer_id.length}
+              disabled={!watch.point_layer_project_id}
               label={t("panels.tools.select_field")}
               {...register("column_statistics.field")}
             >
@@ -141,7 +150,7 @@ const Statistics = (props: StatisticsProps) => {
             <Select
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
-              disabled={!watch.point_layer_id.length}
+              disabled={!watch.point_layer_project_id}
               multiple
               label={t("panels.tools.select_field")}
               // {...register("area_group_by_field")}
@@ -150,11 +159,9 @@ const Statistics = (props: StatisticsProps) => {
               // value={}
               onChange={(
                 event: SelectChangeEvent<typeof watch.area_group_by_field>,
-              ) =>{
-                setValue("area_group_by_field", event.target.value as string[])
-
-              }
-              }
+              ) => {
+                setValue("area_group_by_field", event.target.value as string[]);
+              }}
             >
               {pointLayerKeys.keys.map((key) => (
                 <MenuItem value={key.name} key={v4()}>

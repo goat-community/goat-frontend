@@ -81,6 +81,7 @@
       "output_name": "Output name",
       "save_in_folder": "Save in folder",
       "join": {
+        "tooltip": "This is a tooltip for the join feature.",
         "join": "Join",
         "pick_target_layer": "Pick a target layer",
         "target_layer_text": "Select the layer you want to add data",
@@ -93,6 +94,7 @@
         "statistics_text": "Select the method used to join the data"
       },
       "aggregate": {
+        "tooltip": "This is a tooltip for the aggregate feature.",
         "aggregate": "Aggregate features",
         "pick_layer": "Pick a layer",
         "pick_layer_text": "Select the layer you want to add data",
@@ -112,11 +114,17 @@
         "accessibility_indicators": "Accessibility Indicators",
         "isochrone": "Isochrone"
       },
+      "catchment_area": {
+        "catchment_area": "Catchment Area",
+        "tooltip": "This is a tooltip for the Catchment Area feature."
+      },
       "summarize_features": {
-        "summarize_features": "Summarize Features"
+        "summarize_features": "Summarize Features",
+        "tooltip": "This is a tooltip for the Summarize Features feature."
       },
       "origin_to_destination": {
-        "origin_to_destination": "Origin to  destination"
+        "origin_to_destination": "Origin to destination",
+        "tooltip": "This is a tooltip for the Origin to destination feature."
       },
       "summarize_data": {
         "summarize_data": "Summarize data"

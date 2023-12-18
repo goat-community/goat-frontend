@@ -1,13 +1,15 @@
 import React, { useMemo } from "react";
-import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
+// import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
 import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
 import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
-import { Divider, useTheme, Box, Button } from "@mui/material";
+import { Divider, useTheme, Box, Button, Typography, TextField } from "@mui/material";
 import { SendJoinFeatureRequest } from "@/lib/api/tools";
 import { useTranslation } from "@/i18n/client";
-import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
 import { useForm } from "react-hook-form";
 import { useParams } from "next/navigation";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
+import InputLayer from "@/components/map/panels/toolbox/tools/join/InputLayer";
 
 import type { PostJoin } from "@/lib/validations/tools";
 
@@ -26,19 +28,15 @@ const Join = () => {
     // formState: { errors },
   } = useForm<PostJoin>({
     defaultValues: {
-      target_layer_id: "",
+      target_layer_project_id: 0,
       target_field: "",
-      join_layer_id: "",
+      join_layer_project_id: 0,
       join_field: "",
       column_statistics: {
         operation: "",
         field: "",
       },
-      result_target: {
-        layer_name: "join",
-        folder_id: "",
-        project_id: projectId as string,
-      },
+      layer_name: "join",
     },
   });
 
@@ -53,8 +51,12 @@ const Join = () => {
   };
 
   const handleRun = () => {
-    SendJoinFeatureRequest(getValues());
+    SendJoinFeatureRequest(getValues(), projectId as string);
   };
+
+  const { uniqueName } = useGetUniqueLayerName(
+    getCurrentValues.layer_name ? getCurrentValues.layer_name : "",
+  );
 
   return (
     <Box
@@ -67,7 +69,7 @@ const Join = () => {
         <InputLayer
           watch={getCurrentValues}
           setValue={setValue}
-          multiple
+          register={register}
         />
         <Divider
           sx={{
@@ -75,16 +77,40 @@ const Join = () => {
             backgroundColor: `${theme.palette.primary.main}40`,
           }}
         />
-        <FieldsToMatch register={register} getValues={getValues} />
+        <FieldsToMatch register={register} watch={getCurrentValues} />
         <Statistics
           register={register}
           getValues={getValues}
           watch={getCurrentValues}
         />
-        {getValues("join_layer_id") &&
-        getValues("column_statistics.operation") ? (
-          <SaveResult register={register} watch={getCurrentValues} />
-        ) : null}
+
+        {getCurrentValues.join_layer_project_id &&
+        getCurrentValues.column_statistics.operation ? (
+          <Box display="flex" flexDirection="column" gap={theme.spacing(4)}>
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: theme.spacing(2),
+              }}
+            >
+              <Icon iconName={ICON_NAME.DOWNLOAD} />
+              {t("panels.tools.result")}
+            </Typography>
+            <Box>
+              <TextField
+                fullWidth
+                value={uniqueName ? uniqueName : ""}
+                label={t("panels.tools.output_name")}
+                size="small"
+                {...register("layer_name")}
+              />
+            </Box>
+          </Box>
+        ) : // <SaveResult register={register} watch={getCurrentValues} />
+        null}
       </Box>
       <Box
         sx={{
