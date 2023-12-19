@@ -74,7 +74,9 @@ export default function UserInfoMenu() {
               </Stack>
               <Divider />
               <ListItemButton
-                onClick={() => signOut()}
+                onClick={() =>
+                  signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL })
+                }
                 sx={{
                   color: theme.palette.error.main,
                 }}

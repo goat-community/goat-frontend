@@ -120,7 +120,7 @@ export const deleteProjectLayer = async (
 ) => {
   try {
     await fetchWithAuth(
-      `${PROJECTS_API_BASE_URL}/${projectId}/layer/?layer_project_id=${layerId}`,
+      `${PROJECTS_API_BASE_URL}/${projectId}/layer?layer_project_id=${layerId}`,
       {
         method: "DELETE",
       },

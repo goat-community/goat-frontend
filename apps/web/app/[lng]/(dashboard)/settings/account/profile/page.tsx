@@ -18,7 +18,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { LoadingButton } from "@mui/lab";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { deleteAccount, updateUserProfile, useUserProfile } from "@/lib/api/users";
+import {
+  deleteAccount,
+  updateUserProfile,
+  useUserProfile,
+} from "@/lib/api/users";
 import { RhfAvatar } from "@/components/common/form-inputs/AvatarUpload";
 import { toast } from "react-toastify";
 import ConfirmModal from "@/components/modals/Confirm";
@@ -122,7 +126,7 @@ const Profile = () => {
               setConfirmLogoutDialogOpen(false);
               const data = getValues();
               await _updateUserProfile(data);
-              signOut();
+              signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL });
             }}
           />
 
@@ -215,7 +219,7 @@ const Profile = () => {
             onConfirm={async () => {
               setConfirmDeleteAccountDialogOpen(false);
               await _deleteAccount();
-              signOut();
+              signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL });
             }}
             closeText={t("common:close")}
             confirmText={t("common:delete")}
