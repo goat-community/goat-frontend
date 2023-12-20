@@ -4,7 +4,7 @@ import Statistics from "@/components/map/panels/toolbox/tools/aggregate/Statisti
 import { Box, Button, useTheme, Typography, TextField } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { useForm } from "react-hook-form";
-import { SendAggregateFeatureRequest } from "@/lib/api/tools";
+import { sendAggregateFeatureRequest } from "@/lib/api/tools";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
 import InputLayer from "@/components/map/panels/toolbox/tools/aggregate/InputLayer";
@@ -54,7 +54,7 @@ const Aggregate = (props: AggregateProps) => {
 
   const handleRun = () => {
     console.log(getValues());
-    SendAggregateFeatureRequest(getValues(), projectId);
+    sendAggregateFeatureRequest(getValues(), projectId);
   };
 
   const { uniqueName } = useGetUniqueLayerName(

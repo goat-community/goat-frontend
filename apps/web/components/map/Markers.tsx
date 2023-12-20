@@ -2,6 +2,7 @@ import React from "react";
 import { Marker } from "react-map-gl";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { Icon } from "@p4b/ui/components/Icon";
+import { useTheme } from "@mui/material";
 
 import type { IStore } from "@/types/store";
 import type { ICON_NAME } from "@p4b/ui/components/Icon";
@@ -9,7 +10,7 @@ import type { ICON_NAME } from "@p4b/ui/components/Icon";
 const Markers = () => {
   const { markers } = useSelector((state: IStore) => state.map);
 
-  // const theme = useTheme();
+  const theme = useTheme();
 
   return (
     <>
@@ -22,7 +23,7 @@ const Markers = () => {
         >
           <Icon
             iconName={marker.iconName as ICON_NAME}
-            htmlColor="#cf0707"
+            htmlColor={theme.palette.error.main}
             fontSize="large"
           />
         </Marker>

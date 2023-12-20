@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
 import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
 import { Divider, useTheme, Box, Button, Typography, TextField } from "@mui/material";
-import { SendJoinFeatureRequest } from "@/lib/api/tools";
+import { sendJoinFeatureRequest } from "@/lib/api/tools";
 import { useTranslation } from "@/i18n/client";
 import { useForm } from "react-hook-form";
 import { useParams } from "next/navigation";
@@ -51,7 +51,7 @@ const Join = () => {
   };
 
   const handleRun = () => {
-    SendJoinFeatureRequest(getValues(), projectId as string);
+    sendJoinFeatureRequest(getValues(), projectId as string);
   };
 
   const { uniqueName } = useGetUniqueLayerName(

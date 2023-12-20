@@ -12,7 +12,6 @@ import {
   Autocomplete,
   Checkbox,
   Chip,
-  Stack,
 } from "@mui/material";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 import { useTranslation } from "@/i18n/client";
@@ -70,9 +69,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
           marginBottom: theme.spacing(4),
         }}
       >
-        <Typography variant="body1" sx={{ color: "black" }}>
-          {t("panels.isochrone.speed")}
-        </Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Autocomplete
             disablePortal
@@ -186,8 +182,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
   }
 
   function stepFunctionality() {
-    return "max_distance" in watch.travel_cost &&
-      "max_traveltime" in watch.travel_cost ? (
+    return (
       <Box
         sx={{
           display: "flex",
@@ -196,23 +191,24 @@ const IsochroneSettings = (props: PickLayerProps) => {
           marginBottom: theme.spacing(4),
         }}
       >
-        {/* <Typography variant="body1" sx={{ color: "black" }}>
-          
-        </Typography> */}
         <TextField
           label={t("panels.isochrone.steps")}
           disabled={
             !(
-              watch.travel_cost.max_distance ||
-              (watch.travel_cost.max_traveltime && watch.routing_type)
+              ("max_distance" in watch.travel_cost &&
+                watch.travel_cost.max_distance) ||
+              ("max_traveltime" in watch.travel_cost &&
+                watch.travel_cost.max_traveltime &&
+                watch.routing_type)
             )
               ? true
               : false
           }
           {...register(
-            watch.travel_cost.max_traveltime
-              ? "travel_cost.traveltime_step"
-              : "travel_cost.distance_step",
+            "max_distance" in watch.travel_cost &&
+              watch.travel_cost.max_distance
+              ? "travel_cost.distance_step"
+              : "travel_cost.traveltime_step",
           )}
           size="small"
           fullWidth
@@ -222,14 +218,8 @@ const IsochroneSettings = (props: PickLayerProps) => {
           }}
         />
       </Box>
-    ) : null;
+    );
   }
-
-  // useEffect(() => {
-  //   if(watch.routing_type === "pt"){
-  //     setValue("routing_type", )
-  //   }
-  // }, [])
 
   return (
     <>
@@ -334,25 +324,21 @@ const IsochroneSettings = (props: PickLayerProps) => {
               {t(`panels.isochrone.routing.modes.${option.name}`)}
             </li>
           )}
-          renderTags={(value, getTagProps) => (
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                // maxWidth: "150px",
-              }}
-            >
-              {value.map((option, index) => (
-                <Chip
-                  label={option.name}
-                  {...getTagProps({ index })}
-                  key={index}
-                />
-              ))}
-            </Stack>
-          )}
+          renderTags={
+            (value, getTagProps) => (
+              <>
+                {value.slice(0, 2).map((option, index) => (
+                  <Chip
+                    label={option.name}
+                    {...getTagProps({ index })}
+                    key={index}
+                  />
+                ))}
+                {value.length > 2 ? <Chip label="..." /> : null}
+              </>
+            )
+            // </Stack>
+          }
           fullWidth
           {...register("routing_type.mode")}
           size="small"

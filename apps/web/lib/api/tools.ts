@@ -6,10 +6,11 @@ const PROJECTS_API_BASE_URL = new URL(
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
-export const SendJoinFeatureRequest = async (
+export const sendJoinFeatureRequest = async (
   body: PostJoin,
   projectId: string,
 ) => {
+
   await fetchWithAuth(`${PROJECTS_API_BASE_URL}/join?project_id=${projectId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -20,7 +21,7 @@ export const SendJoinFeatureRequest = async (
     .catch((err) => console.log(err));
 };
 
-export const SendAggregateFeatureRequest = async (
+export const sendAggregateFeatureRequest = async (
   body: PostAggregate,
   projectId: string,
 ) => {

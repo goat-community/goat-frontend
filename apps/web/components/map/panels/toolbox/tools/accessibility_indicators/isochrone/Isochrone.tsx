@@ -35,7 +35,7 @@ const Isochrone = () => {
     watch,
     getValues,
     setValue,
-    // formState: { errors },
+    formState: { errors },
   } = useForm<PostIsochrone>({
     defaultValues: {
       routing_type: "",
@@ -51,6 +51,8 @@ const Isochrone = () => {
       layer_name: "isochrone",
     },
   });
+
+  console.log(errors)
 
   const watchFormValues = watch();
 
