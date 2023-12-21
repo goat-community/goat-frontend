@@ -11,6 +11,7 @@ import {
   Tab,
   Autocomplete,
   Checkbox,
+  Chip,
 } from "@mui/material";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 import { useTranslation } from "@/i18n/client";
@@ -18,6 +19,7 @@ import { v4 } from "uuid";
 import { useDispatch } from "react-redux";
 import { removeMarker } from "@/lib/store/map/slice";
 import { ptModes, routingModes } from "@/public/assets/data/isochroneModes";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 import type { SelectChangeEvent } from "@mui/material";
 import type {
@@ -26,7 +28,7 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
-// import type { PTModeTypes } from "@/types/map/isochrone";
+import type { PTModeTypes } from "@/types/map/isochrone";
 
 interface PickLayerProps {
   register: UseFormRegister<PostIsochrone>;
@@ -67,9 +69,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
           marginBottom: theme.spacing(4),
         }}
       >
-        <Typography variant="body1" sx={{ color: "black" }}>
-          {t("panels.isochrone.speed")}
-        </Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Autocomplete
             disablePortal
@@ -81,32 +80,16 @@ const IsochroneSettings = (props: PickLayerProps) => {
                 ? { label: watch.travel_cost.speed }
                 : { label: 1 }
             }
-            sx={{
-              margin: `${theme.spacing(1)} 0`,
-              width: "45%",
-            }}
+            fullWidth
             disabled={!watch.routing_type}
             {...register("travel_cost.speed")}
-            renderInput={(params) => <TextField {...params} label="XX" />}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={`${t("panels.isochrone.speed")} (Km/h)`}
+              />
+            )}
           />
-          <FormControl
-            size="small"
-            sx={{
-              margin: `${theme.spacing(1)} 0`,
-              width: "45%",
-            }}
-          >
-            <InputLabel id="demo-simple-select-label">
-              {t("panels.isochrone.unity")}
-            </InputLabel>
-            <Select
-              disabled
-              label={t("panels.isochrone.unity")}
-              defaultValue="Km/h"
-            >
-              <MenuItem value="Km/h">Km/h</MenuItem>
-            </Select>
-          </FormControl>
         </Box>
       </Box>
     );
@@ -127,7 +110,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <TextField
-            label="XX"
+            label="m"
             {...register("travel_cost.max_distance")}
             size="small"
             disabled={!watch.routing_type ? true : false}
@@ -170,23 +153,29 @@ const IsochroneSettings = (props: PickLayerProps) => {
           marginBottom: theme.spacing(4),
         }}
       >
-        <Typography variant="body1" sx={{ color: "black" }}>
-          {t("panels.isochrone.travelTime")}
-        </Typography>
         <Autocomplete
           fullWidth
           disablePortal
           id="combo-box-demo"
           size="small"
           disabled={!watch.routing_type ? true : false}
-          // value={{ label: watch.travel_cost.max_traveltime }}
+          value={{
+            label:
+              "max_traveltime" in watch.travel_cost &&
+              watch.travel_cost.max_traveltime,
+          }}
           options={allowedMaxTravelTimeNumbers}
           {...register("travel_cost.max_traveltime")}
           sx={{
             margin: `${theme.spacing(1)} 0`,
             width: "100%",
           }}
-          renderInput={(params) => <TextField {...params} label="XX" />}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={`${t("panels.isochrone.travelTime")} (min)`}
+            />
+          )}
         />
       </Box>
     );
@@ -202,24 +191,25 @@ const IsochroneSettings = (props: PickLayerProps) => {
           marginBottom: theme.spacing(4),
         }}
       >
-        <Typography variant="body1" sx={{ color: "black" }}>
-          {t("panels.isochrone.steps")}
-        </Typography>
         <TextField
-          label="XX"
-          // disabled={
-          //   !(
-          //     watch.travel_cost.max_distance |
-          //       watch.travel_cost.max_traveltime && watch.routing_type
-          //   )
-          //     ? true
-          //     : false
-          // }
-          // {...register(
-          //   watch.travel_cost.max_traveltime
-          //     ? "travel_cost.traveltime_step"
-          //     : "travel_cost.distance_step",
-          // )}
+          label={t("panels.isochrone.steps")}
+          disabled={
+            !(
+              ("max_distance" in watch.travel_cost &&
+                watch.travel_cost.max_distance) ||
+              ("max_traveltime" in watch.travel_cost &&
+                watch.travel_cost.max_traveltime &&
+                watch.routing_type)
+            )
+              ? true
+              : false
+          }
+          {...register(
+            "max_distance" in watch.travel_cost &&
+              watch.travel_cost.max_distance
+              ? "travel_cost.distance_step"
+              : "travel_cost.traveltime_step",
+          )}
           size="small"
           fullWidth
           type="number"
@@ -231,12 +221,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
     );
   }
 
-  // useEffect(() => {
-  //   if(watch.routing_type === "pt"){
-  //     setValue("routing_type", )
-  //   }
-  // }, [])
-
   return (
     <>
       <Box
@@ -247,7 +231,26 @@ const IsochroneSettings = (props: PickLayerProps) => {
           marginBottom: theme.spacing(4),
         }}
       >
-        <Typography variant="body1" sx={{ color: "black" }}>
+        <Typography
+          variant="body2"
+          sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
+        >
+          {t("panels.isochrone.isochrone_description")}
+        </Typography>
+        <Typography
+          variant="body1"
+          fontWeight="bold"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: theme.spacing(2),
+          }}
+        >
+          <Icon
+            iconName={ICON_NAME.BUS}
+            htmlColor={theme.palette.grey[700]}
+            fontSize="small"
+          />
           {t("panels.isochrone.routing.routing")}
         </Typography>
         <Typography
@@ -308,9 +311,12 @@ const IsochroneSettings = (props: PickLayerProps) => {
           id="checkboxes-tags-demo"
           options={ptModes}
           disableCloseOnSelect
-          // defaultValue={ptModes.filter((mode) =>
-          //   watch.routing_type.mode.includes(mode.value as PTModeTypes),
-          // )}
+          defaultValue={ptModes.filter((mode) =>
+            typeof watch.routing_type !== "string" &&
+            "mode" in watch.routing_type
+              ? watch.routing_type.mode.includes(mode.value as PTModeTypes)
+              : "",
+          )}
           getOptionLabel={(option) => option.name}
           renderOption={(props, option, { selected }) => (
             <li {...props}>
@@ -318,6 +324,21 @@ const IsochroneSettings = (props: PickLayerProps) => {
               {t(`panels.isochrone.routing.modes.${option.name}`)}
             </li>
           )}
+          renderTags={
+            (value, getTagProps) => (
+              <>
+                {value.slice(0, 2).map((option, index) => (
+                  <Chip
+                    label={option.name}
+                    {...getTagProps({ index })}
+                    key={index}
+                  />
+                ))}
+                {value.length > 2 ? <Chip label="..." /> : null}
+              </>
+            )
+            // </Stack>
+          }
           fullWidth
           {...register("routing_type.mode")}
           size="small"
@@ -325,7 +346,13 @@ const IsochroneSettings = (props: PickLayerProps) => {
             <TextField
               {...params}
               label={t("panels.isochrone.routing.pt_type")}
-              placeholder={t("panels.isochrone.routing.pt_type")}
+              placeholder={
+                typeof watch.routing_type !== "string" &&
+                "mode" in watch.routing_type &&
+                watch.routing_type.mode.length
+                  ? undefined
+                  : t("panels.isochrone.routing.pt_type")
+              }
             />
           )}
         />
@@ -342,6 +369,36 @@ const IsochroneSettings = (props: PickLayerProps) => {
             : tab
         }
       >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: theme.spacing(2),
+          }}
+        >
+          <Typography
+            variant="body1"
+            fontWeight="bold"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: theme.spacing(2),
+            }}
+          >
+            <Icon
+              iconName={ICON_NAME.SLIDERS}
+              htmlColor={theme.palette.grey[700]}
+              fontSize="small"
+            />
+            Configuration
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ fontStyle: "italic", marginBottom: theme.spacing(2) }}
+          >
+            {t("panels.isochrone.routing.chose_routing")}
+          </Typography>
+        </Box>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <TabList
             onChange={(_: React.SyntheticEvent, newValue: string) => {
@@ -363,12 +420,42 @@ const IsochroneSettings = (props: PickLayerProps) => {
             variant="fullWidth"
           >
             <Tab
-              label={t("panels.isochrone.time")}
+              label={
+                <Typography
+                  variant="body2"
+                  fontWeight="bold"
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: theme.spacing(2),
+                  }}
+                  color={tab !== "time" ? theme.palette.grey[400] : undefined}
+                >
+                  <Icon iconName={ICON_NAME.CLOCK} fontSize="small" />{" "}
+                  {t("panels.isochrone.time")}
+                </Typography>
+              }
               disabled={!watch.routing_type ? true : false}
               value="time"
             />
             <Tab
-              label={t("panels.isochrone.distance")}
+              label={
+                <Typography
+                  variant="body2"
+                  fontWeight="bold"
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: theme.spacing(2),
+                  }}
+                  color={
+                    tab !== "distance" ? theme.palette.grey[400] : undefined
+                  }
+                >
+                  <Icon iconName={ICON_NAME.MAP_LOCATION} fontSize="small" />{" "}
+                  {t("panels.isochrone.distance")}
+                </Typography>
+              }
               disabled={
                 !watch.routing_type ||
                 ["car_peak", "pt"].includes(
@@ -383,12 +470,17 @@ const IsochroneSettings = (props: PickLayerProps) => {
             />
           </TabList>
         </Box>
-        <TabPanel value="time">
+        <TabPanel
+          value="time"
+          sx={{
+            padding: "0",
+          }}
+        >
           {typeof watch.routing_type === "string" ? speedFunctionality() : null}
           {travelTimeFunctionality()}
           {stepFunctionality()}
         </TabPanel>
-        <TabPanel value="distance">
+        <TabPanel value="distance" sx={{ padding: "0" }}>
           {distanceFunctionality()}
           {stepFunctionality()}
         </TabPanel>

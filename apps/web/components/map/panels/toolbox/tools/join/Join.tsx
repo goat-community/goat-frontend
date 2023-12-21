@@ -1,77 +1,62 @@
-import React from "react";
-import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
+import React, { useMemo } from "react";
+// import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
 import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
 import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
-import { Divider, useTheme, Box, Button } from "@mui/material";
-// import { SendJoinFeatureRequest } from "@/lib/api/tools";
+import { Divider, useTheme, Box, Button, Typography, TextField } from "@mui/material";
+import { sendJoinFeatureRequest } from "@/lib/api/tools";
 import { useTranslation } from "@/i18n/client";
-// import SaveResult from "@/components/map/panels/toolbox/tools/SaveResult";
 import { useForm } from "react-hook-form";
+import { useParams } from "next/navigation";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
+import InputLayer from "@/components/map/panels/toolbox/tools/join/InputLayer";
 
 import type { PostJoin } from "@/lib/validations/tools";
 
-// type ColumStatisticsOperation =
-//   | "count"
-//   | "sum"
-//   | "mean"
-//   | "median"
-//   | "min"
-//   | "max";
-
 const Join = () => {
-  // const [inputValues, setInputValues] = useState<string | string[]>(["", ""]);
-
   const theme = useTheme();
   const { t } = useTranslation("maps");
 
+  const { projectId } = useParams();
+
   const {
-    // handleSubmit,
     register,
-    // reset,
-    // watch,
+    reset,
+    watch,
     getValues,
+    setValue,
     // formState: { errors },
-    // control,
-  } = useForm<PostJoin>();
+  } = useForm<PostJoin>({
+    defaultValues: {
+      target_layer_project_id: 0,
+      target_field: "",
+      join_layer_project_id: 0,
+      join_field: "",
+      column_statistics: {
+        operation: "",
+        field: "",
+      },
+      layer_name: "join",
+    },
+  });
+
+  const watchFormValues = watch();
+
+  const getCurrentValues = useMemo(() => {
+    return watchFormValues;
+  }, [watchFormValues]);
 
   const handleReset = () => {
-    //   setInputValues(["", ""]);
-    //   setFirstField(undefined);
-    //   setSecondField(undefined);
-    //   setMethod(undefined);
-    //   setStatisticField(undefined);
+    reset();
   };
 
   const handleRun = () => {
-    //   if (
-    //     inputValues[0].length &&
-    //     inputValues[1].length &&
-    //     firstField &&
-    //     secondField &&
-    //     method &&
-    //     statisticField
-    //   ) {
-    //     const requestBody: PostJoin = {
-    //       target_layer_id: inputValues[0],
-    //       target_field: firstField,
-    //       join_layer_id: inputValues[1],
-    //       join_field: secondField,
-    //       column_statistics: {
-    //         operation: method,
-    //         field: statisticField,
-    //       },
-    //       result_target: {
-    //         layer_name: outputName ? outputName : `${statisticField}_${method}`,
-    //         folder_id: "159cc0f9-81e9-497d-8823-d9d37507ed54",
-    //         project_id: projectId,
-    //       },
-    //     };
-    //     console.log(requestBody);
-    //     SendJoinFeatureRequest(requestBody);
-    //   } else {
-    //     console.log("Error: Not all fields are filled");
-    //   }
+    sendJoinFeatureRequest(getValues(), projectId as string);
   };
+
+  const { uniqueName } = useGetUniqueLayerName(
+    getCurrentValues.layer_name ? getCurrentValues.layer_name : "",
+  );
 
   return (
     <Box
@@ -82,12 +67,9 @@ const Join = () => {
     >
       <Box sx={{ maxHeight: "95%", overflow: "scroll" }}>
         <InputLayer
+          watch={getCurrentValues}
+          setValue={setValue}
           register={register}
-          getValues={getValues}
-          multiple
-          // layerTypes={[]}
-          // inputValues={inputValues}
-          // setInputValues={setInputValues}
         />
         <Divider
           sx={{
@@ -95,37 +77,39 @@ const Join = () => {
             backgroundColor: `${theme.palette.primary.main}40`,
           }}
         />
-        <FieldsToMatch
-          register={register}
-          getValues={getValues}
-          // firstLayerId={inputValues[0]}
-          // secondLayerId={inputValues[1]}
-          // setSecondField={setSecondField}
-          // setFirstField={setFirstField}
-          // firstField={firstField}
-          // secondField={secondField}
-        />
+        <FieldsToMatch register={register} watch={getCurrentValues} />
         <Statistics
           register={register}
           getValues={getValues}
-          // secondLayerId={inputValues[1]}
-          // secondField={secondField}
-          // setMethod={setMethod}
-          // method={method}
-          // setStatisticField={setStatisticField}
-          // statisticField={statisticField}
+          watch={getCurrentValues}
         />
-        {getValues("join_layer_id") &&
-        getValues("column_statistics.operation") ? (
-          <></>
-        ) : // <SaveResult
-        //   register={register}
-        //   // getValues={getValues}
-        //   // outputName={outputName}
-        //   // setOutputName={setOutputName}
-        //   // folderSaveId={folderSaveID}
-        //   // setFolderSaveID={setFolderSaveID}
-        // />
+
+        {getCurrentValues.join_layer_project_id &&
+        getCurrentValues.column_statistics.operation ? (
+          <Box display="flex" flexDirection="column" gap={theme.spacing(4)}>
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: theme.spacing(2),
+              }}
+            >
+              <Icon iconName={ICON_NAME.DOWNLOAD} />
+              {t("panels.tools.result")}
+            </Typography>
+            <Box>
+              <TextField
+                fullWidth
+                value={uniqueName ? uniqueName : ""}
+                label={t("panels.tools.output_name")}
+                size="small"
+                {...register("layer_name")}
+              />
+            </Box>
+          </Box>
+        ) : // <SaveResult register={register} watch={getCurrentValues} />
         null}
       </Box>
       <Box
