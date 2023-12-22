@@ -163,5 +163,20 @@
   "properties": "Properties",
   "zoom_to": "Zoom to", 
   "add_layer": "Add layer",
-  "source": "Source"
+  "source": "Source",
+  "type": "Type",
+  "steps": "Steps",
+  "reversed": "Reversed",
+  "customPalette": "Custom",
+  "custom": "Custom",
+  "diverging": "Diverging",
+  "sequential": "Sequential",
+  "qualitative": "Qualitative",
+  "singlehue": "Singlehue",
+  "all": "All", 
+  "color": "Color", 
+  "palette": "Palette",
+  "color_based_on": "Color based on",
+  "color_based_on_desc": "Apply a color based on a field value",
+  "color_scale": "Color scale"
 }
