@@ -5,6 +5,7 @@ export const updateLayerFilters = z.object({
 });
 
 export const expression = z.object({
+  id: z.string().uuid(),
   attribute: z.string(),
   expression: z.string(),
   value: z.string().or(z.number()),
@@ -16,3 +17,4 @@ export const layerFilters = z.object({
 
 export type UpdateFilterRequestBody = z.infer<typeof updateLayerFilters>;
 export type LayerExpressions = z.infer<typeof layerFilters>;
+export type Expression = z.infer<typeof expression>;

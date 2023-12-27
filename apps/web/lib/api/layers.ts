@@ -73,3 +73,18 @@ export const useLayerKeys = (layerId: string) => {
   );
   return { data, isLoading, error };
 };
+
+export const useUniqueValues = (layerId: string, column: string) => {
+  const { data, isLoading, error } = useSWR<LayerPaginated>(
+    [`${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}`],
+    fetcher,
+  );
+  return { data, isLoading, error };
+  // const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}`, {
+  //   method: "GET",
+  // });
+  // if (!response.ok) {
+  //   throw new Error(`Failed to get unique values for column ${layerId}`);
+  // }
+  // return await response.json();
+};

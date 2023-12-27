@@ -33,7 +33,6 @@ const TextInputSelect = (props: TextInputSelectProps) => {
 
   const theme = useTheme();
 
-  // const { loading: mapLoading } = useSelector((state: IStore) => state.map);
   const mapLoading = false;
 
   const handleInputChange = (event) => {
