@@ -1,9 +1,6 @@
 import React from "react";
 import TextInputSelect from "./inputFields/TextInputSelect";
-import {
-  dummyFilterDataText,
-  dummyFilterDataNumber,
-} from "@/public/assets/data/filterDummy";
+import { dummyFilterDataNumber } from "@/public/assets/data/filterDummy";
 import { Select, FormControl, InputLabel, MenuItem } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { v4 } from "uuid";
@@ -12,8 +9,8 @@ import type { SelectChangeEvent } from "@mui/material";
 import type { Option } from "./inputFields/TextInputSelect";
 
 interface simpleInput {
-  value: string | undefined;
-  setChange: (value: string) => void;
+  value: string | number | undefined;
+  setChange: (value: string | number) => void;
   options: Option[];
 }
 
@@ -47,9 +44,9 @@ export const TextOption = (props: simpleInput) => {
 };
 
 interface SelectOptionProps {
-  value: string | undefined;
-  setChange: (value: string) => void;
-  options: string[];
+  value: string[] | undefined;
+  setChange: (value: string[]) => void;
+  options: Option[];
 }
 
 export const SelectOption = (props: SelectOptionProps) => {
@@ -64,15 +61,16 @@ export const SelectOption = (props: SelectOptionProps) => {
           {t("panels.filter.select_value")}
         </InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={value}
+          labelId="demo-multiple-name-label"
+          id="demo-multiple-name"
+          multiple
+          value={value as unknown as string}
           label={t("panels.filter.select_value")}
-          onChange={(event: SelectChangeEvent) => setChange(event.target.value)}
+          onChange={(event: SelectChangeEvent) => setChange(event.target.value as unknown as string[])}
         >
           {options.map((option) => (
-            <MenuItem key={v4()} value={option}>
-              {option}
+            <MenuItem key={v4()} value={option.value}>
+              {option.label}
             </MenuItem>
           ))}
         </Select>

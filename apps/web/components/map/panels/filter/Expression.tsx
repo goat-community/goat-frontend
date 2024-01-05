@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
-  IconButton,
   Select,
+  debounce,
   FormControl,
   InputLabel,
   MenuItem,
   useTheme,
-  TextField,
+  Button,
+  MenuList,
 } from "@mui/material";
+import CustomMenu from "@/components/common/CustomMenu";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
@@ -25,29 +27,36 @@ import {
 } from "@/components/map/panels/filter/nonuse/FilterOption";
 import { useUniqueValues } from "@/lib/api/layers";
 
-import { Expression } from "@/lib/validations/filter";
-import type { LayerExpressions } from "@/lib/validations/filter";
-import type { UseFormSetValue } from "react-hook-form";
+import type { Expression as ExpressionType } from "@/lib/validations/filter";
 import type { SelectChangeEvent } from "@mui/material";
-import { ZodNullable } from "zod";
 
 interface ExpressionProps {
-  expression: Expression;
-  setValue: UseFormSetValue<LayerExpressions>;
-  modifyExpression: (key: string, value: string, expressionId: string) => void;
+  expression: ExpressionType;
+  modifyExpression: (
+    expression: ExpressionType,
+    key: string,
+    value: string | string[] | number,
+  ) => void;
+  deleteOneExpression: (expression: ExpressionType) => void;
+  duplicateExpression: (expression: ExpressionType) => void;
 }
 
 const Expression = React.memo(function Expression(props: ExpressionProps) {
   const {
     expression,
-    // setValue,
     modifyExpression,
+    deleteOneExpression,
+    duplicateExpression,
   } = props;
   const { projectId } = useParams();
-  // const [attributeType, setAttributeType] = useState();
+
+  const [expressionValue, setExpressionValue] = useState(expression.value);
+  const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
 
   const { t } = useTranslation("maps");
-  const activeLayer = useActiveLayer(projectId as string);
+  const { activeLayer } = useActiveLayer(projectId as string);
+  const open = Boolean(anchorEl);
+
   const theme = useTheme();
 
   const { data } = useUniqueValues(
@@ -59,6 +68,126 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
     value: option,
     label: option,
   }));
+
+  const debounceEffect = (
+    expression: ExpressionType,
+    key: string,
+    value: string,
+  ) => {
+    setExpressionValue(value);
+    debounce(() => {
+      modifyExpression(expression, key, value);
+    }, 500)();
+  };
+
+  const getValueCollector = () => {
+    switch (expression.expression) {
+      case "is":
+      case "is_not":
+        if (attributeType === "string") {
+          return (
+            <TextOption
+              value={expressionValue as string}
+              setChange={(value: string) =>
+                debounceEffect(expression, "value", value)
+              }
+              options={optionsStatistic}
+            />
+          );
+        } else {
+          return (
+            <NumberOption
+              value={expression.value as string}
+              setChange={(value: string) => {
+                modifyExpression(expression, "value", parseFloat(value));
+              }}
+              options={optionsStatistic}
+            />
+          );
+        }
+      case "starts_with":
+      case "ends_with":
+      case "contains_the_text":
+      case "does_not_contains_the_text":
+        return (
+          <TextOption
+            value={expression.value as string}
+            setChange={(value: string) =>
+              modifyExpression(expression, "value", value)
+            }
+            options={optionsStatistic}
+          />
+        );
+        break;
+      case "includes":
+      case "excludes":
+        return (
+          <SelectOption
+            value={
+              (typeof expression.value === "string"
+                ? expression.value.split(",")
+                : expression.value) as string[]
+            }
+            setChange={(value: string[]) => {
+              modifyExpression(expression, "value", value);
+            }}
+            options={optionsStatistic}
+          />
+        );
+      case "is_at_least":
+      case "is_less_than":
+      case "is_at_most":
+      case "is_greater_than":
+        return (
+          <NumberOption
+            value={expression.value as string}
+            setChange={(value: string) =>
+              modifyExpression(expression, "value", parseFloat(value))
+            }
+            options={optionsStatistic}
+          />
+        );
+      case "is_between":
+        return (
+          <DualNumberOption
+            value1={
+              typeof expression.value === "string"
+                ? expression.value.split("-")[0]
+                : "0"
+            }
+            setChange1={(value: string) =>
+              modifyExpression(
+                expression,
+                "value",
+                `${value.length ? value : "0"}-${
+                  typeof expression.value === "string" && expression.value.split("-").length > 1
+                    ? expression.value.split("-")[1]
+                    : "0"
+                }`,
+              )
+            }
+            value2={
+              typeof expression.value === "string"
+                ? expression.value.split("-")[1]
+                : "0"
+            }
+            setChange2={(value: string) =>
+              modifyExpression(
+                expression,
+                "value",
+                `${
+                  typeof expression.value === "string" && expression.value.split("-").length > 1
+                    ? expression.value.split("-")[0]
+                    : "0"
+                }-${value.length ? value : "0"}`,
+              )
+            }
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   const layerAttributes = useGetLayerKeys(
     `user_data.${(activeLayer ? activeLayer.layer_id : "")
@@ -74,99 +203,9 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       )[0].type
     : undefined;
 
-  const expandMoreOption = () => {};
-
-  const getValueCollector = () => {
-    switch (expression.expression) {
-      case "is":
-      case "is_not":
-        if (attributeType === "string") {
-          return (
-            <TextOption
-              value={expression.value as string}
-              setChange={(value: string) =>
-                modifyExpression("value", value, expression.id)
-              }
-              options={optionsStatistic}
-            />
-          );
-        } else {
-          return (
-            <NumberOption
-              value={expression.value as string}
-              setChange={(value: string) =>
-                modifyExpression("value", value, expression.id)
-              }
-              options={optionsStatistic}
-            />
-          );
-        }
-      case "ends_with":
-      case "contains_the_text":
-      case "does_not_contains_the_text":
-        return (
-          <TextOption
-            value={expression.value as string}
-            setChange={(value: string) =>
-              modifyExpression("value", value, expression.id)
-            }
-            options={optionsStatistic}
-          />
-        );
-        break;
-      case "includes":
-      case "excludes":
-        return (
-          <SelectOption
-            value={expression.value as string}
-            setChange={(value: string) =>
-              modifyExpression("value", value, expression.id)
-            }
-            options={["hi"]}
-          />
-        );
-      case "is_at_least":
-      case "is_less_than":
-      case "is_at_most":
-      case "is_greater_than":
-        return (
-          <NumberOption
-            value={expression.value as string}
-            setChange={(value: string) =>
-              modifyExpression("value", value, expression.id)
-            }
-            options={optionsStatistic}
-          />
-        );
-      case "is_between":
-        return (
-          <DualNumberOption
-            value1={expression.value.split("-")[0]}
-            setChange1={(value: string) =>
-              modifyExpression(
-                "value",
-                `${value}-${expression.value.split("-")[1]}`,
-                expression.id,
-              )
-            }
-            value2={expression.length ? expression.value.split("-")[1] : ""}
-            setChange2={(value: string) =>
-              modifyExpression(
-                "value",
-                `${expression.value.split("-")[0]}-${value}`,
-                expression.id,
-              )
-            }
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  useEffect(() => {
-    console.log(expression);
-  }, []);
+  function toggleMorePopover() {
+    setAnchorEl(!anchorEl);
+  }
 
   return (
     <Box
@@ -184,9 +223,30 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         }}
       >
         <Typography>{t("panels.filter.expression")}</Typography>
-        <IconButton onClick={expandMoreOption}>
-          <Icon iconName={ICON_NAME.ELLIPSIS} />
-        </IconButton>
+        <Box sx={{ position: "relative" }}>
+          <Button
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={toggleMorePopover}
+            variant="text"
+          >
+            <Icon iconName={ICON_NAME.ELLIPSIS} />
+          </Button>
+          {open ? (
+            <CustomMenu close={toggleMorePopover}>
+              <MenuList>
+                <MenuItem onClick={() => deleteOneExpression(expression)}>
+                  {t("panels.filter.delete_expression")}
+                </MenuItem>
+                <MenuItem onClick={() => duplicateExpression(expression)}>
+                  {t("panels.filter.duplicate")}
+                </MenuItem>
+              </MenuList>
+            </CustomMenu>
+          ) : null}
+        </Box>
       </Box>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">
@@ -198,7 +258,8 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           value={expression.attribute}
           label={t("panels.filter.select_attribute")}
           onChange={(event: SelectChangeEvent) => {
-            modifyExpression("attribute", event.target.value, expression.id);
+            modifyExpression(expression, "attribute", event.target.value);
+            setExpressionValue("");
           }}
         >
           {layerAttributes.keys.map((attr) => (
@@ -215,12 +276,13 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          disabled={!attributeType}
+          // disabled={!attributeType}
           value={expression.expression}
           label={t("panels.filter.select_an_expression")}
-          onChange={(event: SelectChangeEvent) =>
-            modifyExpression("expression", event.target.value, expression.id)
-          }
+          onChange={(event: SelectChangeEvent) => {
+            modifyExpression(expression, "expression", event.target.value);
+            setExpressionValue("");
+          }}
         >
           {attributeType
             ? comparerModes[attributeType].map((attr) => (
@@ -228,9 +290,15 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                   {attr.label}
                 </MenuItem>
               ))
-            : ZodNullable}
+            : null}
         </Select>
       </FormControl>
+      {/* <TextField
+        value={expression.value}
+        onChange={(e) =>
+          modifyExpression(expression, "value", e.target.value)
+        }
+      /> */}
       {getValueCollector()}
     </Box>
   );

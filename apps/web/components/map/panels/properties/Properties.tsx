@@ -211,7 +211,7 @@ const Symbology = () => {
 
 const PropertiesPanel = ({ projectId }: { projectId: string }) => {
   const dispatch = useAppDispatch();
-  const activeLayer = useActiveLayer(projectId);
+  const {activeLayer} = useActiveLayer(projectId);
   return (
     <Container
       title="Properties"

@@ -1,14 +1,31 @@
 // general queries
 
-function createComparisonCondition(op: string, key: string, value: string | number) {
-  return `{"op":"${op}","args":[{"property":"${key}"},${typeof value === "string" ? `"${value}"` : value}]}`;
+function createComparisonCondition(
+  op: string,
+  key: string,
+  value: string | number,
+) {
+  return `{"op":"${op}","args":[{"property":"${key}"},${
+    typeof value === "string" ? `"${value}"` : value
+  }]}`;
 }
 
-function createInclusionCondition(op: string, key: string, values: (string | number)[]) {
-  return `{"op":"${op}","args":[{"property":"${key}"},${JSON.stringify(values)}]}`;
-}
+// function createInclusionCondition(
+//   op: string,
+//   key: string,
+//   values: (string | number)[],
+// ) {
+//   return `{"op":"${op}","args":[{"property":"${key}"},${JSON.stringify(
+//     values,
+//   )}]}`;
+// }
 
-function createNestedCondition(outerOp: string, key: string, value: string, innerOp?: string) {
+function createNestedCondition(
+  outerOp: string,
+  key: string,
+  value: string,
+  innerOp?: string,
+) {
   return `{"op": "${outerOp}","args": [
       ${
         innerOp
@@ -17,8 +34,6 @@ function createNestedCondition(outerOp: string, key: string, value: string, inne
       "${value}"`
       }]}`;
 }
-
-// all the queries
 
 export function is(key: string, value: string | number) {
   return createComparisonCondition("=", key, value);
@@ -29,11 +44,15 @@ export function is_not(key: string, value: string | number) {
 }
 
 export function includes(key: string, values: (string | number)[]) {
-  return createInclusionCondition("in", key, values);
+  const args =
+    typeof values === "string" ? [] : values.map((value) => is(key, value));
+  return or_operator(args);
 }
 
 export function excludes(key: string, values: (string | number)[]) {
-  return createInclusionCondition("not", key, values);
+  const args =
+    typeof values === "string" ? [] : values.map((value) => is_not(key, value));
+  return and_operator(args);
 }
 
 export function starts_with(key: string, value: string) {
@@ -88,6 +107,7 @@ export function is_at_least(key: string, value: number) {
 }
 
 export function is_at_most(key: string, value: number) {
+  console.log(createComparisonCondition("<=", key, value));
   return createComparisonCondition("<=", key, value);
 }
 
@@ -100,7 +120,6 @@ export function is_greater_than(key: string, value: number) {
 }
 
 export function is_between(key: string, value1: number, value2: number) {
-  // other props (valueA: number, valueB: number)
   return `{"op":"and","args":[{"op":">=","args":[{"property":"${key}"},${value1}]},{"op":"<=","args":[{"property":"${key}"},${value2}]}]}`;
 }
 
@@ -110,4 +129,64 @@ export function and_operator(args: string[]) {
 
 export function or_operator(args: string[]) {
   return `{"op":"or","args": [${args.map((arg) => `${arg}`)}]}`;
+}
+
+export function createTheCQLBasedOnExpression(
+  expressions,
+  logicalOperator?: "and" | "or",
+) {
+  const queries = expressions
+    .filter((exp) => exp.value && exp.expression && exp.attribute)
+    .map((expression) => {
+      switch (expression.expression) {
+        case "is":
+          return is(expression.attribute, expression.value);
+        case "is_not":
+          return is_not(expression.attribute, expression.value);
+        case "is_empty_string":
+          return is_empty_string(expression.attribute);
+        case "is_not_empty_string":
+          return is_not_empty_string(expression.attribute);
+        case "is_at_least":
+          return is_at_least(expression.attribute, expression.value);
+        case "is_less_than":
+          return is_less_than(expression.attribute, expression.value);
+        case "is_greater_than":
+          return is_greater_than(expression.attribute, expression.value);
+        case "is_at_most":
+          return is_at_most(expression.attribute, expression.value);
+        case "includes":
+          return includes(expression.attribute, expression.value);
+        case "excludes":
+          return excludes(expression.attribute, expression.value);
+        case "starts_with":
+          return starts_with(expression.attribute, expression.value);
+        case "ends_with":
+          return ends_with(expression.attribute, expression.value);
+        case "contains_the_text":
+          return contains_the_text(expression.attribute, expression.value);
+        case "does_not_contains_the_text":
+          return does_not_contains_the_text(
+            expression.attribute,
+            expression.value,
+          );
+        case "is_blank":
+          return is_blank(expression.attribute);
+        case "is_not_blank":
+          return is_not_blank(expression.attribute);
+        case "is_between":
+          console.log(expression.value)
+          return is_between(
+            expression.attribute,
+            parseFloat(expression.value.split("-")[0]),
+            parseFloat(expression.value.split("-")[1]),
+          );
+      }
+    });
+
+  if (logicalOperator === "and") {
+    return JSON.parse(and_operator(queries));
+  } else {
+    return JSON.parse(or_operator(queries));
+  }
 }

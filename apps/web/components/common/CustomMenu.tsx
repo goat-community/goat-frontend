@@ -31,7 +31,7 @@ const CustomMenu = (props: CustomMenuProps) => {
         position: "absolute",
         top: "80%",
         right: "20px",
-        background: theme.palette.background.default,
+        background: theme.palette.background.paper,
         borderRadius: theme.spacing(2),
         zIndex: "20",
       }}

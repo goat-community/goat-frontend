@@ -5,14 +5,14 @@ export const updateLayerFilters = z.object({
 });
 
 export const expression = z.object({
-  id: z.string().uuid(),
   attribute: z.string(),
   expression: z.string(),
   value: z.string().or(z.number()),
+  id: z.string(),
 });
 
 export const layerFilters = z.object({
-  expressions: z.array(expression),
+  expressions: z.object({}),
 });
 
 export type UpdateFilterRequestBody = z.infer<typeof updateLayerFilters>;

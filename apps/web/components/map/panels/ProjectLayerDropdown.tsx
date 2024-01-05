@@ -26,7 +26,7 @@ const ProjectLayerDropdown = ({
     if (!layerTypes) return projectLayers;
     return projectLayers?.filter((layer) => layerTypes.includes(layer.type));
   }, [layerTypes, projectLayers]);
-  const activeLayer = useActiveLayer(projectId);
+  const { activeLayer } = useActiveLayer(projectId);
   const dispatch = useAppDispatch();
 
   return (
