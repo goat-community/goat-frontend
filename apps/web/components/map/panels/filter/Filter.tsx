@@ -21,6 +21,7 @@ import Expression from "@/components/map/panels/filter/Expression";
 import { createTheCQLBasedOnExpression } from "@/lib/utils/filtering/filtering_cql";
 import { updateProjectLayer } from "@/lib/api/projects";
 import { parseCQLQueryToObject } from "@/lib/utils/filtering/cql_to_expression";
+import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 
 import type { Expression as ExpressionType } from "@/lib/validations/filter";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
@@ -96,6 +97,12 @@ const FilterPanel = (props: FilterProps) => {
     }
   };
 
+  const layerAttributes = useGetLayerKeys(
+    `user_data.${(activeLayer ? activeLayer.layer_id : "")
+      .split("-")
+      .join("")}`,
+  );
+
   useEffect(() => {
     if (!expressions) {
       const existingExpressions = parseCQLQueryToObject(
@@ -105,7 +112,7 @@ const FilterPanel = (props: FilterProps) => {
       );
       setExpressions(existingExpressions);
     } else {
-      const query = createTheCQLBasedOnExpression(expressions, logicalOperator);
+      const query = createTheCQLBasedOnExpression(expressions, logicalOperator, layerAttributes);
       setLogicalOperator("op" in query ? (query.op as "and" | "or") : "and");
 
       const updatedProjectLayer = {

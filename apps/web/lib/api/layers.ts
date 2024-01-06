@@ -81,13 +81,3 @@ export const useUniqueValues = (layerId: string, column: string) => {
   );
   return { data, isLoading, error };
 };
-
-export const getUniqueValues = async (layerId: string, column: string) => {
-  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}`, {
-    method: "GET",
-  });
-  if (!response.ok) {
-    throw new Error("Failed to upload folder");
-  }
-  return await response.json();
-}

@@ -134,10 +134,21 @@ export function or_operator(args: string[]) {
 export function createTheCQLBasedOnExpression(
   expressions,
   logicalOperator?: "and" | "or",
+  layerAttributes: {keys: {name: string, label}[]},
 ) {
   const queries = expressions
     .filter((exp) => exp.value && exp.expression && exp.attribute)
     .map((expression) => {
+      const attributeType = layerAttributes.keys.filter(
+        (attrib) => attrib.name === expression.attribute,
+      ).length
+        ? layerAttributes.keys.filter(
+            (attrib) => attrib.name === expression.attribute,
+          )[0].type
+        : undefined;
+
+      console.log(attributeType);
+
       switch (expression.expression) {
         case "is":
           return is(expression.attribute, expression.value);
@@ -156,9 +167,17 @@ export function createTheCQLBasedOnExpression(
         case "is_at_most":
           return is_at_most(expression.attribute, expression.value);
         case "includes":
-          return includes(expression.attribute, expression.value);
+          if (attributeType === "string") {
+            return includes(expression.attribute, expression.value);
+          } else {
+            return includes(expression.attribute, expression.value.map(Number));
+          }
         case "excludes":
-          return excludes(expression.attribute, expression.value);
+          if (attributeType === "string") {
+            return excludes(expression.attribute, expression.value);
+          } else {
+            return excludes(expression.attribute, expression.value.map(Number));
+          }
         case "starts_with":
           return starts_with(expression.attribute, expression.value);
         case "ends_with":
@@ -175,7 +194,7 @@ export function createTheCQLBasedOnExpression(
         case "is_not_blank":
           return is_not_blank(expression.attribute);
         case "is_between":
-          console.log(expression.value)
+          console.log(expression.value);
           return is_between(
             expression.attribute,
             parseFloat(expression.value.split("-")[0]),
