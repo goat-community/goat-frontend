@@ -23,6 +23,7 @@ const Layers = (props: LayersProps) => {
                   layer.properties.type,
                 )
               ) {
+
                 return (
                   <Source
                     key={layer.updated_at}
@@ -34,7 +35,9 @@ const Layers = (props: LayersProps) => {
                           "",
                         )}/tiles/{z}/{x}/{y}${
                           layer.query
-                            ? `?query=${JSON.stringify(layer.query)}`
+                            ? `?filter=${encodeURIComponent(
+                                JSON.stringify(layer.query),
+                              )}`
                             : ""
                         }`,
                     ]}

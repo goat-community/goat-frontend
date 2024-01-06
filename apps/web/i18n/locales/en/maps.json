@@ -137,6 +137,7 @@
       "expression": "Expression",
       "select_attribute": "Select Attribute",
       "select_an_expression": "Select an expression",
+      "select_value": "Select Value",
       "and": "And",
       "or": "Or",
       "delete_expression": "Delete Expression",

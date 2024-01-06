@@ -1,11 +1,12 @@
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import { useAppSelector } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
 import { useProject, useProjectLayers } from "@/lib/api/projects";
-import type { ProjectLayer } from "@/lib/validations/project";
 import { ContentActions, MapLayerActions } from "@/types/common";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMemo, useState } from "react";
+
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import type { ProjectLayer } from "@/lib/validations/project";
 
 export const useLayerSettingsMoreMenu = () => {
   const { t } = useTranslation(["maps", "common"]);
@@ -61,14 +62,14 @@ export const useLayerSettingsMoreMenu = () => {
 };
 
 export const useActiveLayer = (projectId: string) => {
-  const { layers: projectLayers } = useProjectLayers(projectId);
+  const { layers: projectLayers, mutate } = useProjectLayers(projectId);
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
   const activeLayer = useMemo(
     () =>
       projectLayers?.find((layer) => layer.id === activeLayerId) ?? undefined,
     [activeLayerId, projectLayers],
   );
-  return activeLayer;
+  return { activeLayer, mutate };
 };
 
 export const useSortedLayers = (projectId: string) => {
@@ -83,3 +84,29 @@ export const useSortedLayers = (projectId: string) => {
   }, [projectLayers, project]);
   return sortedLayers;
 };
+
+// export const useOptionsStatistics = (expressions: Expression[]) => {
+//   const [data, _] = useState();
+//   const [optionsStatistics, setOptionsStatistics] = useState();
+
+//   if (expressions) {
+//     expressions.map((expression) => {
+//       const optionsStatistic = Object.keys(data ? data : {}).map((option) => ({
+//         value: option,
+//         label: option,
+//       }));
+
+//       setOptionsStatistics([
+//         optionsStatistic,
+//         {
+//           id: expression.id,
+//           optionsStatistic: optionsStatistic,
+//         },
+//       ]);
+//     });
+//   }
+
+//   console.log(optionsStatistics)
+
+//   return { optionsStatistics };
+// };

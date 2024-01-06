@@ -21,7 +21,7 @@ const MapStylePanel = ({ projectId }: { projectId: string }) => {
   const theme = useTheme();
   const { t } = useTranslation(["maps", "common"]);
   const dispatch = useDispatch();
-  const activeLayer = useActiveLayer(projectId);
+  const {activeLayer} = useActiveLayer(projectId);
 
   return (
     <Container

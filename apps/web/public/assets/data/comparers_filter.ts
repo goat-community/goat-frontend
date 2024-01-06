@@ -1,8 +1,7 @@
 import type { ComparerMode } from "@/types/map/filtering";
 
-export const comparerModes: { number: ComparerMode[]; date: ComparerMode[]; text: ComparerMode[] } = {
+export const comparerModes: { number: ComparerMode[]; date: ComparerMode[]; string: ComparerMode[] } = {
   number: [
-    // Number Comparers
     {
       label: "is",
       value: "is",
@@ -135,7 +134,7 @@ export const comparerModes: { number: ComparerMode[]; date: ComparerMode[]; text
     //   select: false,
     // },
   ],
-  text: [
+  string: [
     // Text Comparers
     {
       label: "is",
