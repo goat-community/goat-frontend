@@ -112,7 +112,7 @@ const FilterPanel = (props: FilterProps) => {
       );
       setExpressions(existingExpressions);
     } else {
-      const query = createTheCQLBasedOnExpression(expressions, logicalOperator, layerAttributes);
+      const query = createTheCQLBasedOnExpression(expressions, layerAttributes, logicalOperator);
       setLogicalOperator("op" in query ? (query.op as "and" | "or") : "and");
 
       const updatedProjectLayer = {
@@ -129,6 +129,7 @@ const FilterPanel = (props: FilterProps) => {
     setTimeout(() => {
       mutate();
     }, 300);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expressions, logicalOperator]);
 
   return (
