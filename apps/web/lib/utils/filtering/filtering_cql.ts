@@ -133,8 +133,8 @@ export function or_operator(args: string[]) {
 
 export function createTheCQLBasedOnExpression(
   expressions,
+  layerAttributes: {keys: {name: string, type: string}[]},
   logicalOperator?: "and" | "or",
-  layerAttributes: {keys: {name: string, label}[]},
 ) {
   const queries = expressions
     .filter((exp) => exp.value && exp.expression && exp.attribute)
