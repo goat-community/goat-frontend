@@ -81,6 +81,7 @@
       "output_name": "Output name",
       "save_in_folder": "Save in folder",
       "join": {
+        "tooltip": "This is a tooltip for the join feature.",
         "join": "Join",
         "pick_target_layer": "Pick a target layer",
         "target_layer_text": "Select the layer you want to add data",
@@ -93,6 +94,7 @@
         "statistics_text": "Select the method used to join the data"
       },
       "aggregate": {
+        "tooltip": "This is a tooltip for the aggregate feature.",
         "aggregate": "Aggregate features",
         "pick_layer": "Pick a layer",
         "pick_layer_text": "Select the layer you want to add data",
@@ -112,11 +114,17 @@
         "accessibility_indicators": "Accessibility Indicators",
         "isochrone": "Isochrone"
       },
+      "catchment_area": {
+        "catchment_area": "Catchment Area",
+        "tooltip": "This is a tooltip for the Catchment Area feature."
+      },
       "summarize_features": {
-        "summarize_features": "Summarize Features"
+        "summarize_features": "Summarize Features",
+        "tooltip": "This is a tooltip for the Summarize Features feature."
       },
       "origin_to_destination": {
-        "origin_to_destination": "Origin to  destination"
+        "origin_to_destination": "Origin to destination",
+        "tooltip": "This is a tooltip for the Origin to destination feature."
       },
       "summarize_data": {
         "summarize_data": "Summarize data"
@@ -159,9 +167,9 @@
   "feature": "Feature",
   "external_vector_tile": "External Vector Tile",
   "table": "Table",
-  "external_imagery": "External Image", 
+  "external_imagery": "External Image",
   "properties": "Properties",
-  "zoom_to": "Zoom to", 
+  "zoom_to": "Zoom to",
   "add_layer": "Add layer",
   "source": "Source",
   "type": "Type",
@@ -173,10 +181,25 @@
   "sequential": "Sequential",
   "qualitative": "Qualitative",
   "singlehue": "Singlehue",
-  "all": "All", 
-  "color": "Color", 
+  "all": "All",
+  "color": "Color",
   "palette": "Palette",
   "color_based_on": "Color based on",
+  "radius_based_on": "Radius based on",
+  "stroke_width_based_on": "Stroke based on",
   "color_based_on_desc": "Apply a color based on a field value",
-  "color_scale": "Color scale"
+  "radius_based_on_desc": "Apply a radius based on a field value",
+  "stroke_width_based_on_desc": "Apply a stroke based on a field value",
+  "color_scale": "Color scale",
+  "quantile": "Quantile",
+  "standard_deviation": "Standard Deviation",
+  "equal_interval": "Equal Interval",
+  "heads_and_tails": "Heads and Tails",
+  "ordinal": "Ordinal",
+  "change_colors_and_steps": " To change the colors and number of steps, make adjustments in the  palette field above.",
+  "fill_color": "Fill Color",
+  "stroke_color": "Stroke Color",
+  "stroke_width": "Stroke Width",
+  "radius": "Radius",
+  "outline": "Outline"
 }

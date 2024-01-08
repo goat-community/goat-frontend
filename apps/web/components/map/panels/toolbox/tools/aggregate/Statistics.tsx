@@ -1,190 +1,184 @@
-// import React from "react";
-// import {
-//   Box,
-//   Typography,
-//   Select,
-//   FormControl,
-//   InputLabel,
-//   MenuItem,
-//   useTheme,
-//   ListItemText,
-//   Checkbox,
-// } from "@mui/material";
-// import { v4 } from "uuid";
-// import { useTranslation } from "@/i18n/client";
-// import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
+import React from "react";
+import {
+  Box,
+  Typography,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  useTheme,
+  ListItemText,
+  Checkbox,
+} from "@mui/material";
+import { v4 } from "uuid";
+import { useTranslation } from "@/i18n/client";
+import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
+import { useProjectLayers } from "@/lib/api/projects";
+import { getLayerStringIdById } from "@/lib/utils/helpers";
+import { useParams } from "next/navigation";
 
-// import type { SelectChangeEvent } from "@mui/material";
-import type { ColumStatisticsOperation } from "@/types/map/toolbox";
+import type { SelectChangeEvent } from "@mui/material";
+import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import type { PostAggregate } from "@/lib/validations/tools";
 
 interface StatisticsProps {
-  pointLayerId: string | string[];
-  field: string;
-  setFieldSelected: (value: string) => void;
-  method: ColumStatisticsOperation | undefined;
-  setMethod: (value: ColumStatisticsOperation) => void;
-  setGroupedFields: (value: string[]) => void;
-  groupedFields: string[] | undefined;
+  register: UseFormRegister<PostAggregate>;
+  setValue: UseFormSetValue<PostAggregate>;
+  watch: PostAggregate;
 }
 
-// const Statistics = (props: StatisticsProps) => {
-//   const {
-//     pointLayerId,
-//     field,
-//     setFieldSelected,
-//     method,
-//     setMethod,
-//     groupedFields,
-//     setGroupedFields,
-//   } = props;
+const Statistics = (props: StatisticsProps) => {
+  const { register, setValue, watch } = props;
 
-//   const theme = useTheme();
-//   const { t } = useTranslation("maps");
+  const theme = useTheme();
+  const { t } = useTranslation("maps");
 
-//   const methodsKeys = [
-//     {
-//       name: "count",
-//       types: ["string", "number"],
-//     },
-//     {
-//       name: "sum",
-//       types: ["number"],
-//     },
-//     {
-//       name: "mean",
-//       types: ["number"],
-//     },
-//     {
-//       name: "median",
-//       types: ["number"],
-//     },
-//     {
-//       name: "min",
-//       types: ["number"],
-//     },
-//     {
-//       name: "max",
-//       types: ["number"],
-//     },
-//   ];
+  const methodsKeys = [
+    {
+      name: "count",
+      types: ["string", "number"],
+    },
+    {
+      name: "sum",
+      types: ["number"],
+    },
+    {
+      name: "mean",
+      types: ["number"],
+    },
+    {
+      name: "median",
+      types: ["number"],
+    },
+    {
+      name: "min",
+      types: ["number"],
+    },
+    {
+      name: "max",
+      types: ["number"],
+    },
+  ];
 
-//   const pointLayerKeys = useGetLayerKeys(
-//     `user_data.${
-//       typeof pointLayerId === "string" ? pointLayerId.split("-").join("") : ""
-//     }`,
-//   );
+  const { projectId } = useParams();
 
-//   function checkType() {
-//     return methodsKeys.map((key) =>
-//       key.types.includes(
-//         pointLayerKeys.keys.filter((layerKey) => layerKey.name === field)[0].type,
-//       ) ? (
-//         <MenuItem value={key.name} key={v4()}>
-//           {key.name}
-//         </MenuItem>
-//       ) : null,
-//     );
-//   }
+  const { layers } = useProjectLayers(projectId as string);
 
-//   return (
-//     <Box>
-//       <Box
-//         display="flex"
-//         flexDirection="column"
-//         gap={theme.spacing(2)}
-//         marginBottom={theme.spacing(4)}
-//       >
-//         <Typography variant="body1" sx={{ color: "black" }}>
-//           {t("panels.tools.statistics")}
-//         </Typography>
-//         <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-//           {t("panels.tools.aggregate.statistics_text")}
-//         </Typography>
-//         <Typography variant="body1" sx={{ color: "black" }}>
-//           {t("panels.tools.aggregate.field")}
-//         </Typography>
-//         <Box>
-//           <FormControl fullWidth size="small">
-//             <InputLabel id="demo-simple-select-label">
-//               {t("panels.tools.select_field")}
-//             </InputLabel>
-//             <Select
-//               disabled={!pointLayerId.length}
-//               label={t("panels.tools.select_field")}
-//               value={field}
-//               onChange={(event: SelectChangeEvent) =>
-//                 setFieldSelected(event.target.value as string)
-//               }
-//             >
-//               {pointLayerKeys.keys.map((key) => (
-//                 <MenuItem value={key.name} key={v4()}>
-//                   {key.name}
-//                 </MenuItem>
-//               ))}
-//             </Select>
-//           </FormControl>
-//         </Box>
-//         <Box>
-//           <FormControl fullWidth size="small">
-//             <InputLabel id="demo-simple-select-label">
-//               {t("panels.tools.select_method")}
-//             </InputLabel>
-//             <Select
-//               disabled={!field.length}
-//               label={t("panels.tools.select_method")}
-//               value={method}
-//               onChange={(event: SelectChangeEvent) => {
-//                 setMethod(event.target.value as ColumStatisticsOperation);
-//               }}
-//             >
-//               {field ? checkType() : null}
-//             </Select>
-//           </FormControl>
-//         </Box>
-//         <Typography variant="body1" sx={{ color: "black" }}>
-//           {t("panels.tools.aggregate.field_group")}
-//         </Typography>
-//         <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-//           {t("panels.tools.aggregate.field_group_text")}
-//         </Typography>
-//         <Box>
-//           <FormControl fullWidth size="small">
-//             <InputLabel id="demo-multiple-checkbox-label">
-//               {t("panels.tools.select_field")}
-//             </InputLabel>
-//             <Select
-//               labelId="demo-multiple-checkbox-label"
-//               id="demo-multiple-checkbox"
-//               disabled={!pointLayerId.length}
-//               multiple
-//               label={t("panels.tools.select_field")}
-//               value={groupedFields ? groupedFields : []}
-//               renderValue={(selected) => (selected ? selected.join(", ") : "")}
-//               onChange={(event: SelectChangeEvent<typeof groupedFields>) =>
-//                 setGroupedFields(event.target.value as string[])
-//               }
-//             >
-//               {pointLayerKeys.keys.map((key) => (
-//                 <MenuItem value={key.name} key={v4()}>
-//                   <Checkbox
-//                     checked={
-//                       groupedFields && groupedFields.indexOf(key.name) > -1
-//                     }
-//                   />
-//                   <ListItemText primary={key.name} />
-//                 </MenuItem>
-//               ))}
-//             </Select>
-//           </FormControl>
-//         </Box>
-//       </Box>
-//     </Box>
-//   );
-// };
+  const pointLayerKeys = useGetLayerKeys(
+    `user_data.${getLayerStringIdById(
+      layers ? layers : [],
+      watch.point_layer_project_id,
+    )
+      .split("-")
+      .join("")}`,
+  );
 
-// export default Statistics;
+  function checkType() {
+    return methodsKeys.map((key) =>
+      key.types.includes(
+        pointLayerKeys.keys.filter(
+          (layerKey) => layerKey.name === watch.column_statistics.field,
+        )[0].type,
+      ) ? (
+        <MenuItem value={key.name} key={v4()}>
+          {key.name}
+        </MenuItem>
+      ) : null,
+    );
+  }
 
-const Statistics = (_props: StatisticsProps) => {
-  return <></>;
+  return (
+    <Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        gap={theme.spacing(2)}
+        marginBottom={theme.spacing(4)}
+      >
+        <Typography variant="body1" sx={{ color: "black" }}>
+          {t("panels.tools.statistics")}
+        </Typography>
+        <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+          {t("panels.tools.aggregate.statistics_text")}
+        </Typography>
+        <Typography variant="body1" sx={{ color: "black" }}>
+          {t("panels.tools.aggregate.field")}
+        </Typography>
+        <Box>
+          <FormControl fullWidth size="small">
+            <InputLabel id="demo-simple-select-label">
+              {t("panels.tools.select_field")}
+            </InputLabel>
+            <Select
+              disabled={!watch.point_layer_project_id}
+              label={t("panels.tools.select_field")}
+              {...register("column_statistics.field")}
+            >
+              {pointLayerKeys.keys.map((key) => (
+                <MenuItem value={key.name} key={v4()}>
+                  {key.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+        <Box>
+          <FormControl fullWidth size="small">
+            <InputLabel id="demo-simple-select-label">
+              {t("panels.tools.select_method")}
+            </InputLabel>
+            <Select
+              disabled={!watch.column_statistics.field}
+              label={t("panels.tools.select_method")}
+              {...register("column_statistics.operation")}
+            >
+              {watch.column_statistics.field ? checkType() : null}
+            </Select>
+          </FormControl>
+        </Box>
+        <Typography variant="body1" sx={{ color: "black" }}>
+          {t("panels.tools.aggregate.field_group")}
+        </Typography>
+        <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+          {t("panels.tools.aggregate.field_group_text")}
+        </Typography>
+        <Box>
+          <FormControl fullWidth size="small">
+            <InputLabel id="demo-multiple-checkbox-label">
+              {t("panels.tools.select_field")}
+            </InputLabel>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              disabled={!watch.point_layer_project_id}
+              multiple
+              label={t("panels.tools.select_field")}
+              // {...register("area_group_by_field")}
+              value={watch.area_group_by_field}
+              renderValue={(selected) => (selected ? selected.join(", ") : "")}
+              // value={}
+              onChange={(
+                event: SelectChangeEvent<typeof watch.area_group_by_field>,
+              ) => {
+                setValue("area_group_by_field", event.target.value as string[]);
+              }}
+            >
+              {pointLayerKeys.keys.map((key) => (
+                <MenuItem value={key.name} key={v4()}>
+                  <Checkbox
+                    checked={
+                      watch.area_group_by_field &&
+                      watch.area_group_by_field.indexOf(key.name) > -1
+                    }
+                  />
+                  <ListItemText primary={key.name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
+      </Box>
+    </Box>
+  );
 };
 export default Statistics;

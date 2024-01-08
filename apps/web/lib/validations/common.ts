@@ -36,8 +36,9 @@ export const featureLayerType = z.enum([
   "street_network",
 ]);
 
-export const data_type = z.enum(["wms", "mvt"]);
+export const featureLayerGeometryType = z.enum(["point", "line", "polygon"]);
 
+export const data_type = z.enum(["wms", "mvt"]);
 
 export type LayerType = z.infer<typeof layerType>;
 export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;

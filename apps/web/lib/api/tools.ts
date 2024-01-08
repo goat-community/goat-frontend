@@ -6,24 +6,34 @@ const PROJECTS_API_BASE_URL = new URL(
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
-export const SendJoinFeatureRequest = async (body: PostJoin) => {
-  await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/join`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  );
-}
+export const sendJoinFeatureRequest = async (
+  body: PostJoin,
+  projectId: string,
+) => {
 
-export const SendAggregateFeatureRequest = async (body: PostAggregate) => {
+  await fetchWithAuth(`${PROJECTS_API_BASE_URL}/join?project_id=${projectId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  })
+    .then((res) => res.json())
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err));
+};
+
+export const sendAggregateFeatureRequest = async (
+  body: PostAggregate,
+  projectId: string,
+) => {
   await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/aggregate-points`,
+    `${PROJECTS_API_BASE_URL}/aggregate-points?project_id=${projectId}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     },
-  );
-}
+  )
+    .then((res) => res.json())
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err));
+};

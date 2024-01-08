@@ -1,4 +1,7 @@
-import type { PostIsochrone, PostPTIsochrone } from "@/lib/validations/isochrone";
+import type {
+  PostIsochrone,
+  PostPTIsochrone,
+} from "@/lib/validations/isochrone";
 import { fetchWithAuth } from "@/lib/api/fetcher";
 
 const ACCESSIBILITY_ISOCHRONE_API_BASE_URL = new URL(
@@ -16,8 +19,27 @@ const CAR_ISOCHRONE_API_BASE_URL = new URL(
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
-export const SendIsochroneRequest = async (body: PostIsochrone) => {
-  await fetchWithAuth(ACCESSIBILITY_ISOCHRONE_API_BASE_URL, {
+export const SendIsochroneRequest = async (
+  body: PostIsochrone,
+  projectId: string,
+) => {
+  await fetchWithAuth(
+    `${ACCESSIBILITY_ISOCHRONE_API_BASE_URL}?project_id=${projectId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  )
+    .then((res) => res.json())
+    .then((data) => console.log(data));
+};
+
+export const SendPTIsochroneRequest = async (
+  body: PostPTIsochrone,
+  projectId: string,
+) => {
+  await fetchWithAuth(`${PT_ISOCHRONE_API_BASE_URL}?project_id=${projectId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -26,18 +48,11 @@ export const SendIsochroneRequest = async (body: PostIsochrone) => {
     .then((data) => console.log(data));
 };
 
-export const SendPTIsochroneRequest = async (body: PostPTIsochrone) => {
-  await fetchWithAuth(PT_ISOCHRONE_API_BASE_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
-};
-
-export const SendCarIsochroneRequest = async (body: PostIsochrone) => {
-  await fetchWithAuth(CAR_ISOCHRONE_API_BASE_URL, {
+export const SendCarIsochroneRequest = async (
+  body: PostIsochrone,
+  projectId: string,
+) => {
+  await fetchWithAuth(`${CAR_ISOCHRONE_API_BASE_URL}?project_id=${projectId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

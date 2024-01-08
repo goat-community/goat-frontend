@@ -2,8 +2,11 @@ import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import type {
+  ClassBreaks,
   CreateFeatureLayer,
+  LayerClassBreaks,
   LayerPaginated,
+  LayerQueryables,
 } from "@/lib/validations/layer";
 
 export const LAYERS_API_BASE_URL = new URL(
@@ -11,7 +14,7 @@ export const LAYERS_API_BASE_URL = new URL(
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
-export const LAYER_KEYS_API_BASE_URL = new URL(
+export const COLLECTIONS_API_BASE_URL = new URL(
   "collections",
   process.env.NEXT_PUBLIC_GEOAPI_URL,
 ).href;
@@ -26,6 +29,34 @@ export const useLayers = (queryParams?: GetContentQueryParams) => {
     mutate,
     isValidating,
   };
+};
+
+export const useLayerQueryables = (layerId: string) => {
+  // remove dashes from layerId UUID
+  const _layerId = `user_data.${layerId.replace(/-/g, "")}`;
+  const { data, isLoading, error } = useSWR<LayerQueryables>(
+    [`${COLLECTIONS_API_BASE_URL}/${_layerId}/queryables`],
+    fetcher,
+  );
+  return { queryables: data, isLoading, isError: error };
+};
+
+export const useLayerClassBreaks = (
+  layerId: string,
+  operation?: ClassBreaks,
+  column?: string,
+  breaks?: number,
+) => {
+  const { data, isLoading, error } = useSWR<LayerClassBreaks>(
+    () =>
+      operation && column && breaks
+        ? [
+            `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}/?breaks=${breaks}`,
+          ]
+        : null,
+    fetcher,
+  );
+  return { classBreaks: data, isLoading, isError: error };
 };
 
 export const deleteLayer = async (id: string) => {
@@ -64,12 +95,4 @@ export const layerFileUpload = async (file: File) => {
     throw new Error("Failed to upload folder");
   }
   return await response.json();
-};
-
-export const useLayerKeys = (layerId: string) => {
-  const { data, isLoading, error } = useSWR<LayerPaginated>(
-    [`${LAYER_KEYS_API_BASE_URL}/${layerId}/queryables`],
-    fetcher,
-  );
-  return { data, isLoading, error };
 };

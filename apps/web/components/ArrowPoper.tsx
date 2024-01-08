@@ -15,6 +15,7 @@ interface Props {
   arrow?: boolean;
   placement?: PopperPlacementType;
   disablePortal?: boolean;
+  isClickAwayEnabled?: boolean;
 }
 
 const Popper = styled(MuiPopper, {
@@ -111,6 +112,7 @@ export function ArrowPopper({
   onClose = () => undefined,
   content,
   children,
+  isClickAwayEnabled = true,
 }: Props) {
   const [arrowRef, setArrowRef] = useState<HTMLElement | null>(null);
   const [childNode, setChildNode] = useState<HTMLElement | null>(null);
@@ -152,16 +154,26 @@ export function ArrowPopper({
               element: arrowRef,
             },
           },
-        ]}>
+        ]}
+      >
         {({ TransitionProps }) => (
           <Grow {...TransitionProps} timeout={150}>
             <Paper
               sx={{
                 boxShadow: "none",
-              }}>
-              <ClickAwayListener onClickAway={onClose}>
+              }}
+            >
+              <ClickAwayListener
+                onClickAway={() => {
+                  if (isClickAwayEnabled) {
+                    onClose();
+                  }
+                }}
+              >
                 <Paper elevation={0}>
-                  {arrow ? <Arrow ref={setArrowRef} className="MuiPopper-arrow" /> : null}
+                  {arrow ? (
+                    <Arrow ref={setArrowRef} className="MuiPopper-arrow" />
+                  ) : null}
                   <Box>{content}</Box>
                 </Paper>
               </ClickAwayListener>

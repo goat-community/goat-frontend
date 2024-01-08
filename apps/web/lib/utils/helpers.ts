@@ -3,6 +3,8 @@ import Color from "color";
 import type { HexColor, RGBColor } from "@/types/map/color";
 import type { ColorRange } from "@/lib/validations/layer";
 
+import type { ProjectLayer } from "@/lib/validations/project";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function filterSearch<T extends Record<string, any>>(
   allArray: T[],
@@ -262,4 +264,14 @@ export default function range(
 
 export function numberSort(a: number, b: number): number {
   return a - b;
+}
+
+export function getLayerStringIdById(layers: ProjectLayer[], id: number) {
+  const filteredLayers = layers.filter((layer) => layer.id === id);
+
+  if (filteredLayers.length) {
+    return filteredLayers[0].layer_id;
+  } else {
+    return "";
+  }
 }

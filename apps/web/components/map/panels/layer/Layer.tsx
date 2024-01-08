@@ -302,14 +302,8 @@ const LayerPanel = ({ projectId }: PanelProps) => {
     if (!properties) {
       properties = {};
     }
-    if (!properties?.layout) {
-      properties.layout = {};
-    }
-    properties.layout.visibility =
-      !properties.layout.visibility ||
-      properties.layout.visibility === "visible"
-        ? "none"
-        : "visible";
+
+    properties.visibility = !properties.visibility;
 
     layerToUpdate.properties = properties;
     await mutateProjectLayers(layers, false);
@@ -506,7 +500,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                           <Tooltip
                             key={layer.id}
                             title={
-                              layer.properties?.layout?.visibility === "none"
+                              layer.properties.visibility
                                 ? t("show_layer")
                                 : t("hide_layer")
                             }
@@ -527,17 +521,12 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                                       theme.transitions.duration.standard,
                                   },
                                 ),
-                                opacity:
-                                  layer.properties?.layout?.visibility ===
-                                  "none"
-                                    ? 1
-                                    : 0,
+                                opacity: !layer.properties.visibility ? 1 : 0,
                               }}
                             >
                               <Icon
                                 iconName={
-                                  layer.properties?.layout?.visibility ===
-                                  "none"
+                                  !layer.properties.visibility
                                     ? ICON_NAME.EYE_SLASH
                                     : ICON_NAME.EYE
                                 }

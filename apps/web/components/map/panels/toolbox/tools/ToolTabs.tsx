@@ -3,55 +3,17 @@ import {
   Box,
   useTheme,
   Typography,
-  Accordion as MuiAccordion,
-  AccordionDetails as MuiAccordionDetails,
-  AccordionSummary as MuiAccordionSummary,
+  Tooltip,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useParams } from "next/navigation";
 import { useTranslation } from "@/i18n/client";
+import AccordionWrapper from "@/components/common/AccordionWrapper";
 
 import Join from "@/components/map/panels/toolbox/tools/join/Join";
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
 import Isochrone from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/Isochrone";
-
-import type { AccordionProps, AccordionSummaryProps } from "@mui/material";
-
-const Accordion = styled((props: AccordionProps) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  border: `1.5px solid ${theme.palette.divider}`,
-  "&:not(:last-child)": {
-    borderBottom: 0,
-  },
-  "&:before": {
-    display: "none",
-  },
-}));
-
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary
-    expandIcon={
-      <Icon iconName={ICON_NAME.CHEVRON_RIGHT} sx={{ fontSize: "12px" }} />
-    }
-    {...props}
-  />
-))(({ theme }) => ({
-  flexDirection: "row-reverse",
-  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-    transform: "rotate(90deg)",
-  },
-  "& .MuiAccordionSummary-content": {
-    marginLeft: theme.spacing(1),
-  },
-}));
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderTop: "1px solid rgba(0, 0, 0, .125)",
-}));
 
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("maps");
@@ -67,7 +29,7 @@ const Tabs = ({ tab, handleChange }) => {
             borderBottom:
               index + 1 === tab.children.length
                 ? "none"
-                : `1px solid ${theme.palette.primary.main}80`,
+                : `1px solid ${theme.palette.secondary.main}80`,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -86,11 +48,15 @@ const Tabs = ({ tab, handleChange }) => {
               gap: theme.spacing(2),
             }}
           >
-            <Icon
-              iconName={ICON_NAME.CIRCLEINFO}
-              htmlColor={theme.palette.secondary.light}
-              sx={{ fontSize: "12px" }}
-            />
+            <Tooltip title={t(`panels.tools.${childTab}.tooltip`)}  placement="left">
+              <Box>
+                <Icon
+                  iconName={ICON_NAME.CIRCLEINFO}
+                  htmlColor={theme.palette.secondary.light}
+                  sx={{ fontSize: "12px" }}
+                />
+              </Box>
+            </Tooltip>
             <Typography variant="body1">
               {t(`panels.tools.${childTab}.${childTab}`)}
             </Typography>
@@ -129,25 +95,17 @@ const ToolTabs = (props: ToolTabsProps) => {
       ],
     },
     {
-      name: t("panels.tools.aggregate.aggregate"),
-      value: "aggregate_features",
-      children: ["accessibility_indicators"],
+      name: t("panels.tools.accessibility_indicators.accessibility_indicators"),
+      value: "accessibility_indicators",
+      children: ["catchment_area"],
     },
   ];
-
-  // const allTabs
 
   const tabs = {
     join: {
       name: t("panels.tools.join.join"),
       value: "join",
-      element: (
-        <Join
-          // projectId={
-          //   typeof params.projectId === "string" ? params.projectId : ""
-          // }
-        />
-      ),
+      element: <Join />,
     },
     aggregate: {
       name: t("panels.tools.aggregate.aggregate"),
@@ -160,9 +118,9 @@ const ToolTabs = (props: ToolTabsProps) => {
         />
       ),
     },
-    accessibility_indicators: {
-      name: t("panels.tools.accessibility_indicators.accessibility_indicators"),
-      value: "accessibility_indicators",
+    catchment_area: {
+      name: t("panels.tools.catchment_area.catchment_area"),
+      value: "catchment_area",
       element: <Isochrone />,
     },
     summarize_features: {
@@ -192,26 +150,14 @@ const ToolTabs = (props: ToolTabsProps) => {
   }, [defaultRoute]);
 
   return (
-    <Box sx={{ maxHeight: "100%" }}>
+    <Box sx={{ height: "100%" }}>
       {!value &&
         main_accordions.map((tab) => (
-          <Accordion
+          <AccordionWrapper
             key={v4()}
-            defaultExpanded={true}
-            // expanded={expanded === tab.value}
-            // onChange={handleChangetry(tab.value)}
-          >
-            <AccordionSummary
-              expandIcon={<Icon iconName={ICON_NAME.CHEVRON_DOWN} />}
-              aria-controls="panel1bh-content"
-              id="panel1bh-header"
-            >
-              <Typography sx={{ flexShrink: 0 }}>{tab.name}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Tabs tab={tab} handleChange={handleChange} />
-            </AccordionDetails>
-          </Accordion>
+            header={<Typography sx={{ flexShrink: 0 }}>{tab.name}</Typography>}
+            body={<Tabs tab={tab} handleChange={handleChange} />}
+          />
         ))}
       {value ? <>{tabs[value].element}</> : null}
     </Box>

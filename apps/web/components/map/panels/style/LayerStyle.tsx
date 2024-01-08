@@ -1,32 +1,79 @@
 import Container from "@/components/map/panels/Container";
-import {
-  Button,
-  Typography,
-  useTheme,
-  Box,
-  Stack,
-  Switch,
-  IconButton,
-  Divider,
-} from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "@/i18n/client";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import ColorPicker from "@/components/map/panels/style/ColorPicker";
+import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
+import type { FeatureLayerProperties } from "@/lib/validations/layer";
+import { useCallback, useMemo, useState } from "react";
+import { useLayerQueryables } from "@/lib/api/layers";
+import Header from "@/components/map/panels/style/other/Header";
+import ColorOptions from "@/components/map/panels/style/color/ColorOptions";
+import SizeOptions from "@/components/map/panels/style/size/SizeOptions";
 
-const MapStylePanel = ({ projectId }: { projectId: string }) => {
-  const theme = useTheme();
+const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation(["maps", "common"]);
   const dispatch = useDispatch();
   const activeLayer = useActiveLayer(projectId);
+  const { layers: projectLayers, mutate: mutateProjectLayers } =
+    useProjectLayers(projectId);
 
+  const { queryables } = useLayerQueryables(activeLayer?.layer_id || "");
+
+  const layerFields = useMemo(() => {
+    if (!activeLayer || !queryables) return [];
+    return Object.entries(queryables.properties)
+      .filter(
+        ([_key, value]) => value.type === "string" || value.type === "number",
+      )
+      .map(([key, value]) => {
+        return {
+          name: key,
+          type: value.type,
+        };
+      });
+  }, [activeLayer, queryables]);
+
+  const updateLayerStyle = useCallback(
+    async (newStyle: FeatureLayerProperties) => {
+      if (!activeLayer) return;
+      const layers = JSON.parse(JSON.stringify(projectLayers));
+      const index = layers.findIndex((l) => l.id === activeLayer.id);
+      const layerToUpdate = layers[index];
+      if (!layerToUpdate.properties) {
+        layerToUpdate.properties = {};
+      }
+      layerToUpdate.properties = newStyle;
+      await mutateProjectLayers(layers, false);
+      await updateProjectLayer(projectId, activeLayer.id, layerToUpdate);
+    },
+    [activeLayer, projectLayers, mutateProjectLayers, projectId],
+  );
+
+  const onToggleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>, property: string) => {
+      const newStyle =
+        JSON.parse(JSON.stringify(activeLayer?.properties)) || {};
+      newStyle[property] = event.target.checked;
+      updateLayerStyle(newStyle);
+    },
+    [activeLayer, updateLayerStyle],
+  );
+
+  const [collapseFillOptions, setCollapseFillOptions] = useState(true);
+  const [collapseStrokeColorOptions, setCollapseStrokeColorOptions] =
+    useState(true);
+  const [collapseStrokeWidthOptions, setCollapseStrokeWidthOptions] =
+    useState(true);
+  const [collapseRadiusOptions, setCollapseRadiusOptions] = useState(true);
+
+  
   return (
     <Container
       title="Layer Style"
-      disablePadding={true}
+      disablePadding={false}
       close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <>
@@ -42,95 +89,137 @@ const MapStylePanel = ({ projectId }: { projectId: string }) => {
               flexDirection: "column",
             }}
           >
-            {/* {Fill Color} */}
-            <Stack>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <Stack direction="row" alignItems="center">
-                  <Icon
-                    iconName={ICON_NAME.CIRCLE}
-                    style={{ fontSize: "17px" }}
-                    color="inherit"
-                  />
-                  <Typography variant="body2" fontWeight="bold" sx={{ pl: 2 }}>
-                    Fill Color
-                  </Typography>
-                </Stack>
-                <Stack direction="row" alignItems="center">
-                  <Switch defaultChecked size="small" />
-                  <IconButton>
-                    <Icon
-                      iconName={ICON_NAME.SLIDERS}
-                      style={{ fontSize: "15px" }}
-                    />
-                  </IconButton>
-                </Stack>
-              </Stack>
-              <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
-                <Divider
-                  orientation="vertical"
-                  sx={{ borderRightWidth: "2px", my: -4 }}
+            {activeLayer && (
+              <Stack>
+                {/* {FILL COLOR} */}
+                {activeLayer.feature_layer_geometry_type &&
+                  ["polygon", "point"].includes(
+                    activeLayer.feature_layer_geometry_type,
+                  ) && (
+                    <>
+                      <Header
+                        active={activeLayer?.properties.filled}
+                        onToggleChange={(event) => {
+                          onToggleChange(event, "filled");
+                        }}
+                        label={
+                          activeLayer?.feature_layer_geometry_type === "line"
+                            ? t("maps:color")
+                            : t("maps:fill_color")
+                        }
+                        collapsed={collapseFillOptions}
+                        setCollapsed={setCollapseFillOptions}
+                      />
+                      <ColorOptions
+                        type="color"
+                        layerStyle={activeLayer?.properties}
+                        active={!!activeLayer?.properties.filled}
+                        layerFields={layerFields}
+                        collapsed={collapseFillOptions}
+                        selectedField={activeLayer?.properties.color_field}
+                        onStyleChange={(newStyle: FeatureLayerProperties) => {
+                          updateLayerStyle(newStyle);
+                        }}
+                        layerId={activeLayer?.layer_id}
+                      />
+                    </>
+                  )}
+
+                {/* {STROKE COLOR} */}
+                <Header
+                  active={!!activeLayer?.properties.stroked}
+                  onToggleChange={(event) => {
+                    onToggleChange(event, "stroked");
+                  }}
+                  alwaysActive={
+                    activeLayer?.feature_layer_geometry_type === "line"
+                  }
+                  label={
+                    activeLayer?.feature_layer_geometry_type === "line"
+                      ? t("maps:color")
+                      : t("maps:stroke_color")
+                  }
+                  collapsed={collapseStrokeColorOptions}
+                  setCollapsed={setCollapseStrokeColorOptions}
                 />
-                <Stack sx={{ pl: 4, py: 4 }}>
-                  <ColorPicker selectedColor="#ff0000" onChange={() => {}} />
-                </Stack>
+
+                <ColorOptions
+                  type="stroke_color"
+                  layerStyle={activeLayer?.properties}
+                  active={!!activeLayer?.properties.stroked}
+                  layerFields={layerFields}
+                  collapsed={collapseStrokeColorOptions}
+                  selectedField={activeLayer?.properties.stroke_color_field}
+                  onStyleChange={(newStyle: FeatureLayerProperties) => {
+                    updateLayerStyle(newStyle);
+                  }}
+                  layerId={activeLayer?.layer_id}
+                />
+
+                {/* {STROKE WIDTH} */}
+                <Header
+                  active={!!activeLayer?.properties.stroked}
+                  onToggleChange={(event) => {
+                    onToggleChange(event, "stroked");
+                  }}
+                  alwaysActive={
+                    activeLayer?.feature_layer_geometry_type === "line"
+                  }
+                  label={
+                    ["line", "polygon"].includes(
+                      activeLayer?.feature_layer_geometry_type || "",
+                    )
+                      ? t("maps:stroke_width")
+                      : t("maps:outline")
+                  }
+                  collapsed={collapseStrokeWidthOptions}
+                  setCollapsed={setCollapseStrokeWidthOptions}
+                />
+
+                <SizeOptions
+                  type="stroke_width"
+                  layerStyle={activeLayer?.properties}
+                  active={!!activeLayer?.properties.stroked}
+                  collapsed={collapseStrokeWidthOptions}
+                  onStyleChange={(newStyle: FeatureLayerProperties) => {
+                    updateLayerStyle(newStyle);
+                  }}
+                  layerFields={layerFields}
+                  selectedField={activeLayer?.properties["stroke_width_field"]}
+                />
+
+                {/* {RADIUS} */}
+                {activeLayer?.feature_layer_geometry_type &&
+                  activeLayer.feature_layer_geometry_type === "point" && (
+                    <>
+                      <Header
+                        active={true}
+                        alwaysActive={true}
+                        label={t("maps:radius")}
+                        collapsed={collapseRadiusOptions}
+                        setCollapsed={setCollapseRadiusOptions}
+                      />
+
+                      <SizeOptions
+                        type="radius"
+                        layerStyle={activeLayer?.properties}
+                        active={true}
+                        collapsed={collapseRadiusOptions}
+                        onStyleChange={(newStyle: FeatureLayerProperties) => {
+                          updateLayerStyle(newStyle);
+                        }}
+                        layerFields={layerFields}
+                        selectedField={activeLayer?.properties["radius_field"]}
+                      />
+                    </>
+                  )}
               </Stack>
-            </Stack>
+            )}
           </Box>
         </>
-      }
-      action={
-        <Box
-          sx={{
-            minWidth: "266px",
-            display: "flex",
-            columnGap: "16px",
-          }}
-        >
-          <Button
-            sx={{
-              borderRadius: "24px",
-              textTransform: "none",
-              fontSize: "14px",
-              width: "50%",
-              "&:disabled": {
-                border: "1px solid #ccc",
-                color: theme.palette.secondary.dark,
-              },
-            }}
-            color="error"
-            variant="outlined"
-          >
-            <Typography variant="body2" fontWeight="bold" color="inherit">
-              {t("common:reset")}
-            </Typography>
-          </Button>
-          <Button
-            sx={{
-              borderRadius: "24px",
-              textTransform: "none",
-              fontSize: "14px",
-              width: "50%",
-              "&:disabled": {
-                border: "1px solid #ccc",
-                color: theme.palette.secondary.dark,
-              },
-            }}
-            color="primary"
-            size="small"
-            variant="outlined"
-          >
-            <Typography variant="body2" fontWeight="bold" color="inherit">
-              {t("common:save")}
-            </Typography>
-          </Button>
-        </Box>
       }
     />
   );
 };
 
-export default MapStylePanel;
+export default LayerStylePanel;

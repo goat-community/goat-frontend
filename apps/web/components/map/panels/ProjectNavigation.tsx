@@ -6,7 +6,7 @@ import LayerPanel from "@/components/map/panels/layer/Layer";
 import Legend from "@/components/map/panels/Legend";
 import Charts from "@/components/map/panels/Charts";
 import Toolbox from "@/components/map/panels/toolbox/Toolbox";
-// import Filter from "@/components/map/panels/filter/Filter";
+import Filter from "@/components/map/panels/filter/Filter";
 import Scenario from "@/components/map/panels/Scenario";
 import LayerStyle from "@/components/map/panels/style/LayerStyle";
 import MapSidebar from "@/components/map/Sidebar";
@@ -89,14 +89,14 @@ const ProjectNavigation = ({ projectId }) => {
         component: <PropertiesPanel projectId={projectId} />,
         disabled: !activeLayer,
       },
-      // {
-      //   id: MapSidebarItemID.FILTER,
-      //   icon: ICON_NAME.FILTER,
-      //   name: t("panels.filter.filter"),
-      //   component: <Filter projectId={projectId} />,
-      //   disabled:
-      //     !activeLayer || activeLayer?.type !== layerType.Values.feature,
-      // },
+      {
+        id: MapSidebarItemID.FILTER,
+        icon: ICON_NAME.FILTER,
+        name: t("panels.filter.filter"),
+        component: <Filter projectId={projectId} />,
+        disabled:
+          !activeLayer || activeLayer?.type !== layerType.Values.feature,
+      },
       {
         id: MapSidebarItemID.STYLE,
         icon: ICON_NAME.STYLE,
