@@ -109,7 +109,7 @@ export const updateProjectLayer = async (
     },
   );
   if (!response.ok) {
-    throw new Error("Failed to update project layer");
+    console.log("Failed to update project layer", response);
   }
   return await response.json();
 };

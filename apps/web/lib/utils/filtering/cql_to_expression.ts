@@ -1,114 +1,93 @@
-import type { Expression } from "@/types/map/filtering";
-import { comparerModes } from "@/public/assets/data/comparers_filter";
+// import { comparerModes } from "@/public/assets/data/comparers_filter";
 import { comparisonAndInclussionOpperators } from "./filter_opperators";
+import { v4 } from "uuid";
 
-export function parseCQLQueryToObject(
-  condition: string,
-  expressionKey: string,
-) {
-  const fixedCondition = condition.replace(/\\/g, '\\\\')
-  const parsedCondition = JSON.parse(fixedCondition);
+import type { Expression } from "@/lib/validations/filter";
 
-  const proccessedExpression: Expression = {
-    expression: null,
-    attribute: null,
-    id: expressionKey,
-    value: null,
-  };
+function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
+  return expressionsInsideLogicalOperator.map((expressionToBeProcessed) => {
+    const expression: Expression = {
+      expression: "",
+      attribute: "",
+      value: "",
+      id: v4(),
+    };
 
-  if (Object.keys(parsedCondition).length) {
-    const comparerType =
-      typeof parsedCondition.args[1] === "string"
-        ? "text"
-        : typeof parsedCondition.args[1];
+    const value =
+      expressionToBeProcessed.args.length > 1
+        ? expressionToBeProcessed.args[1]
+        : "";
 
-    if (parsedCondition.op === "like") {
-      const value = parsedCondition.args[1];
-      proccessedExpression.attribute = parsedCondition.args[0].property;
-      if ("%" in parsedCondition.args[1]) {
-        proccessedExpression.value = parsedCondition.args[1].replace("%", "");
-      } else {
-        proccessedExpression.value = parsedCondition.args[1];
-      }
-
+    if (expressionToBeProcessed.op === "like") {
       switch (true) {
         case value.startsWith("%") && value.endsWith("%"):
-          proccessedExpression.expression = {
-            label: "contains_the_text",
-            value: "contains_the_text",
-            type: "text",
-            select: false,
-          };
-        case value.startsWith("%"):
-          proccessedExpression.expression = {
-            label: "starts_with",
-            value: "starts_with",
-            type: "text",
-            select: false,
-          };
+          expression.expression = "contains_the_text";
+          break;
         case value.endsWith("%"):
-          proccessedExpression.expression = {
-            label: "ends_with",
-            value: "ends_with",
-            type: "text",
-            select: false,
-          };
+          expression.expression = "starts_with";
+          break;
+        case value.startsWith("%"):
+          expression.expression = "ends_with";
+          break;
         default:
-          proccessedExpression.expression = {
-            label: "does_not_contains_the_text",
-            value: "does_not_contains_the_text",
-            type: "text",
-            select: false,
-          };
+          expression.expression = "does_not_contains_the_text";
+          break;
       }
-    } else if (parsedCondition.args.length === 1) {
+      expression.attribute = expressionToBeProcessed.args[0].property;
+      expression.value = value.replace(/%/g, "");
+    } else if (expressionToBeProcessed.args.length === 1) {
       switch (true) {
-        case parsedCondition.op === "isNull":
-          proccessedExpression.expression = {
-            label: "is_blank",
-            value: "is_blank",
-            type: "none",
-            select: false,
-          };
-        case parsedCondition.op === "not":
-          proccessedExpression.expression = {
-            label: "is_not_blank",
-            value: "is_not_blank",
-            type: "none",
-            select: false,
-          };
+        case expressionToBeProcessed.op === "isNull":
+          expression.expression = "is_blank";
+        case expressionToBeProcessed.op === "not":
+          expression.expression = "is_not_blank";
       }
+      expression.attribute = expressionToBeProcessed.args[0].property;
+      expression.attribute = value;
     } else if (
-      "args" in parsedCondition.args[0] &&
-      parsedCondition.args.length === 2
+      "args" in expressionToBeProcessed.args[0] &&
+      expressionToBeProcessed.args.length === 2
     ) {
-      proccessedExpression.expression = {
-        label: "is_between",
-        value: "is_between",
-        type: "number",
-        select: false,
-      };
+      expression.expression = "is_between";
+      expression.attribute = expressionToBeProcessed.args[0].args[0].property;
+      expression.value = `${expressionToBeProcessed.args[0].args[1]}-${expressionToBeProcessed.args[1].args[1]}`;
+    } else if (["and", "or"].includes(expressionToBeProcessed.op)) {
+      switch (expressionToBeProcessed.op) {
+        case "and":
+          expression.expression = "excludes";
+        case "or":
+          expression.expression = "includes";
+      }
+      expression.attribute = expressionToBeProcessed.args[0].args[0].property;
+      expression.value = expressionToBeProcessed.args.map((arg) => arg.args[1]);
     } else {
-      proccessedExpression.expression = comparerModes[comparerType].filter(
-        (key) =>
-          key.value ===
-          Object.keys(comparisonAndInclussionOpperators).filter(
-            (comp) =>
-              comparisonAndInclussionOpperators[comp] === parsedCondition.op,
-          )[0],
+      expression.expression = Object.keys(
+        comparisonAndInclussionOpperators,
+      ).filter(
+        (comp) =>
+          comparisonAndInclussionOpperators[comp] ===
+          expressionToBeProcessed.op,
       )[0];
-      proccessedExpression.attribute = parsedCondition.args[0].property;
-      proccessedExpression.value = parsedCondition.args[1];
+      expression.attribute = expressionToBeProcessed.args[0].property;
+      expression.value = value;
     }
-    return proccessedExpression;
-  } else {
-    return proccessedExpression;
+
+    return expression;
+  });
+}
+
+export function parseCQLQueryToObject(condition?: {
+  op: string;
+  args: unknown[];
+}) {
+  if (condition) {
+    let expressions: Expression[] = [];
+    const expressionsInsideLogicalOperator =
+      condition.args;
+    expressions = toExpressionObject(expressionsInsideLogicalOperator);
+
+    return expressions;
   }
 
-  // return {
-  //   id: expressionKey,
-  //   attribute: parsedCondition.op,
-  //   expression: parsedCondition.args[0].property,
-  //   value: parsedCondition.args[1]
-  // };
+  return [];
 }

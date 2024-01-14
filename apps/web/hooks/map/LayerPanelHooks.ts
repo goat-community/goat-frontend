@@ -1,4 +1,3 @@
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import { useAppSelector } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
 import { useProject, useProjectLayers } from "@/lib/api/projects";
@@ -14,6 +13,8 @@ import {
 import { ContentActions, MapLayerActions } from "@/types/common";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMemo, useState } from "react";
+
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
 
 export const useLayerSettingsMoreMenu = () => {
   const { t } = useTranslation(["maps", "common"]);
@@ -110,3 +111,29 @@ export const useSortedLayers = (projectId: string) => {
   }, [projectLayers, project]);
   return sortedLayers;
 };
+
+// export const useOptionsStatistics = (expressions: Expression[]) => {
+//   const [data, _] = useState();
+//   const [optionsStatistics, setOptionsStatistics] = useState();
+
+//   if (expressions) {
+//     expressions.map((expression) => {
+//       const optionsStatistic = Object.keys(data ? data : {}).map((option) => ({
+//         value: option,
+//         label: option,
+//       }));
+
+//       setOptionsStatistics([
+//         optionsStatistic,
+//         {
+//           id: expression.id,
+//           optionsStatistic: optionsStatistic,
+//         },
+//       ]);
+//     });
+//   }
+
+//   console.log(optionsStatistics)
+
+//   return { optionsStatistics };
+// };
