@@ -192,6 +192,7 @@
   "stroke_width_based_on_desc": "Apply a stroke based on a field value",
   "color_scale": "Color scale",
   "quantile": "Quantile",
+  "custom_breaks": "Custom Breaks",
   "standard_deviation": "Standard Deviation",
   "equal_interval": "Equal Interval",
   "heads_and_tails": "Heads and Tails",

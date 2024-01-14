@@ -29,6 +29,7 @@ export const classBreaks = z.enum([
   "equal_interval",
   "heads_and_tails",
   "ordinal",
+  "custom_breaks",
 ]);
 export const sizeScale = z.enum(["linear", "logarithmic", "exponential"]);
 const layerFieldType = z.object({
@@ -36,14 +37,12 @@ const layerFieldType = z.object({
   type: z.union([z.literal("string"), z.literal("number")]),
 });
 
-
 export const layerClassBreaks = z.object({
   min: z.number(),
   max: z.number(),
   mean: z.number(),
   breaks: z.array(z.number()),
 });
-
 
 const ColorLegends = z.record(z.string());
 const ColorRange = z.object({
@@ -68,7 +67,7 @@ export const colorSchema = z.object({
   color_range: ColorRange.optional().default(DEFAULT_COLOR_RANGE),
   color_field: layerFieldType.optional(),
   color_scale: classBreaks.optional().default("quantile"),
-  color_scale_breaks: layerClassBreaks.optional()
+  color_scale_breaks: layerClassBreaks.optional(),
 });
 
 export const strokeColorSchema = z.object({
