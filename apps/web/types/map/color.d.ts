@@ -12,6 +12,7 @@ export type SingleColorSelectorProps = {
 
 export type ColorScaleSelectorProps = {
   selectedColorScaleMethod?: ClassBreaks;
+  classBreaksValues?: LayerClassBreaks;
   setSelectedColorScaleMethod: (colorScale: ClassBreaks) => void;
   colorSet: ColorSet;
   label?: string;

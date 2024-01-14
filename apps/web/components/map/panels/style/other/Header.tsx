@@ -8,6 +8,7 @@ const Header = ({
   collapsed,
   setCollapsed,
   alwaysActive = false,
+  disableAdvanceOptions = false,
 }: {
   label: string;
   active: boolean;
@@ -15,6 +16,7 @@ const Header = ({
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
   alwaysActive?: boolean;
+  disableAdvanceOptions?: boolean;
 }) => {
   const theme = useTheme();
   return (
@@ -44,23 +46,26 @@ const Header = ({
         {alwaysActive ? null : (
           <Switch size="small" checked={!!active} onChange={onToggleChange} />
         )}
-        <IconButton
-          disabled={!active}
-          sx={{
-            ...(!collapsed && {
-              color: theme.palette.primary.main,
-            }),
-          }}
-          onClick={() => {
-            setCollapsed(!collapsed);
-          }}
-        >
-          <Icon
-            htmlColor="inherit"
-            iconName={ICON_NAME.SLIDERS}
-            style={{ fontSize: "15px" }}
-          />
-        </IconButton>
+
+        {!disableAdvanceOptions && (
+          <IconButton
+            disabled={!active}
+            sx={{
+              ...(!collapsed && {
+                color: theme.palette.primary.main,
+              }),
+            }}
+            onClick={() => {
+              setCollapsed(!collapsed);
+            }}
+          >
+            <Icon
+              htmlColor="inherit"
+              iconName={ICON_NAME.SLIDERS}
+              style={{ fontSize: "15px" }}
+            />
+          </IconButton>
+        )}
       </Stack>
     </Stack>
   );

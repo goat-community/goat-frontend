@@ -1,5 +1,4 @@
 import { useTranslation } from "@/i18n/client";
-import { useLayerClassBreaks } from "@/lib/api/layers";
 import type { ClassBreaks, ColorRange } from "@/lib/validations/layer";
 import { classBreaks } from "@/lib/validations/layer";
 import type { ColorMap, ColorScaleSelectorProps } from "@/types/map/color";
@@ -21,19 +20,8 @@ type NumericColorScaleProps = ColorScaleSelectorProps & {
 
 const NumericColorScale = (props: NumericColorScaleProps) => {
   const theme = useTheme();
-  const {
-    selectedColorScaleMethod,
-    activeLayerId,
-    activeLayerField,
-    intervals,
-  } = props;
+  const { classBreaksValues } = props;
   const { t } = useTranslation("maps");
-  const { classBreaks: classBreaksValues } = useLayerClassBreaks(
-    activeLayerId,
-    selectedColorScaleMethod,
-    activeLayerField.name,
-    intervals - 1,
-  );
 
   const colorMapValues = useMemo(() => {
     if (!classBreaksValues || !Array.isArray(classBreaksValues.breaks)) {

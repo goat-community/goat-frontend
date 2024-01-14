@@ -36,6 +36,15 @@ const layerFieldType = z.object({
   type: z.union([z.literal("string"), z.literal("number")]),
 });
 
+
+export const layerClassBreaks = z.object({
+  min: z.number(),
+  max: z.number(),
+  mean: z.number(),
+  breaks: z.array(z.number()),
+});
+
+
 const ColorLegends = z.record(z.string());
 const ColorRange = z.object({
   name: z.string().optional(),
@@ -59,6 +68,7 @@ export const colorSchema = z.object({
   color_range: ColorRange.optional().default(DEFAULT_COLOR_RANGE),
   color_field: layerFieldType.optional(),
   color_scale: classBreaks.optional().default("quantile"),
+  color_scale_breaks: layerClassBreaks.optional()
 });
 
 export const strokeColorSchema = z.object({
@@ -69,6 +79,7 @@ export const strokeColorSchema = z.object({
   stroke_color_range: ColorRange.optional().default(DEFAULT_COLOR_RANGE),
   stroke_color_field: layerFieldType.optional(),
   stroke_color_scale: classBreaks.optional().default("quantile"),
+  stroke_color_scale_breaks: layerClassBreaks.optional(),
 });
 
 export const strokeWidthSchema = z.object({
@@ -179,13 +190,6 @@ export const layerQueryables = z.object({
   type: z.string(),
   $schema: z.string(),
   $id: z.string(),
-});
-
-export const layerClassBreaks = z.object({
-  min: z.number(),
-  max: z.number(),
-  mean: z.number(),
-  breaks: z.array(z.number()),
 });
 
 export const layerResponseSchema = responseSchema(layerSchema);

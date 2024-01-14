@@ -7,7 +7,7 @@ import type {
 } from "@/lib/validations/layer";
 import { Slider, Stack, useTheme } from "@mui/material";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 const InputStyled = ({ value, onChange, onBlur }) => {
   return (
@@ -59,19 +59,23 @@ const SizeOptions = ({
       : layerStyle?.[`${type}`] || 0,
   );
 
-  console.log("value", value);
+  const isRange = useMemo(
+    () => (layerStyle?.[`${type}_field`] ? true : false),
+    [layerStyle, type],
+  );
 
-  const isRange = layerStyle?.[`${type}_field`] ? true : false;
-
-  const _onStyleChange = (value) => {
-    const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
-    if (isRange) {
-      newStyle[`${type}_range`] = value;
-    } else {
-      newStyle[`${type}`] = value;
-    }
-    onStyleChange && onStyleChange(newStyle);
-  };
+  const _onStyleChange = useCallback(
+    (value) => {
+      const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
+      if (isRange) {
+        newStyle[`${type}_range`] = value;
+      } else {
+        newStyle[`${type}`] = value;
+      }
+      onStyleChange && onStyleChange(newStyle);
+    },
+    [layerStyle, isRange, type, onStyleChange],
+  );
 
   return (
     <>
@@ -100,7 +104,7 @@ const SizeOptions = ({
                 <InputStyled
                   value={value}
                   onChange={(event) => {
-                    setValue(event.target.value);
+                    setValue(Number(event.target.value));
                   }}
                   onBlur={() => {
                     _onStyleChange(value);
@@ -118,7 +122,7 @@ const SizeOptions = ({
                 <InputStyled
                   value={value[0]}
                   onChange={(event) => {
-                    setValue([event.target.value, value[1]]);
+                    setValue([Number(event.target.value), value[1]]);
                   }}
                   onBlur={() => {
                     _onStyleChange(value);
@@ -127,7 +131,7 @@ const SizeOptions = ({
                 <InputStyled
                   value={value[1]}
                   onChange={(event) => {
-                    setValue([value[0], event.target.value]);
+                    setValue([value[0], Number(event.target.value)]);
                   }}
                   onBlur={() => {
                     _onStyleChange(value);

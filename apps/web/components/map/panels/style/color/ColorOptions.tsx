@@ -91,6 +91,7 @@ const ColorOptions = ({
                 selectedColorScaleMethod={
                   layerStyle?.[`${type}_scale`] || "quantile"
                 }
+                classBreaksValues={layerStyle?.[`${type}_scale_breaks`]}
                 setSelectedColorScaleMethod={(colorScale) => {
                   const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
                   newStyle[`${type}_scale`] = colorScale;

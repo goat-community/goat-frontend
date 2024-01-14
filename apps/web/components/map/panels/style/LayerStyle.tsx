@@ -8,10 +8,11 @@ import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
 import type { FeatureLayerProperties } from "@/lib/validations/layer";
 import { useCallback, useMemo, useState } from "react";
-import { useLayerQueryables } from "@/lib/api/layers";
+import { getLayerClassBreaks, useLayerQueryables } from "@/lib/api/layers";
 import Header from "@/components/map/panels/style/other/Header";
 import ColorOptions from "@/components/map/panels/style/color/ColorOptions";
 import SizeOptions from "@/components/map/panels/style/size/SizeOptions";
+import type { ProjectLayer } from "@/lib/validations/project";
 
 const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation(["maps", "common"]);
@@ -41,15 +42,48 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       if (!activeLayer) return;
       const layers = JSON.parse(JSON.stringify(projectLayers));
       const index = layers.findIndex((l) => l.id === activeLayer.id);
-      const layerToUpdate = layers[index];
+      const layerToUpdate = layers[index] as ProjectLayer;
       if (!layerToUpdate.properties) {
-        layerToUpdate.properties = {};
+        layerToUpdate.properties = {} as FeatureLayerProperties;
       }
+
       layerToUpdate.properties = newStyle;
       await mutateProjectLayers(layers, false);
       await updateProjectLayer(projectId, activeLayer.id, layerToUpdate);
     },
     [activeLayer, projectLayers, mutateProjectLayers, projectId],
+  );
+
+  const updateColorClassificationBreaks = useCallback(
+    async (
+      updateType: "color" | "stroke_color",
+      newStyle: FeatureLayerProperties,
+    ) => {
+      if (!activeLayer) return;
+      if (!newStyle[`${updateType}_field`]?.name) return;
+      if (
+        newStyle[`${updateType}_scale`] !==
+          activeLayer.properties[`${updateType}_scale`] ||
+        newStyle[`${updateType}_field`]?.name !==
+          activeLayer.properties[`${updateType}_field`]?.name ||
+        newStyle[`${updateType}_range`]?.colors?.length !==
+          activeLayer.properties[`${updateType}_range`]?.colors?.length
+      ) {
+        const breaks = await getLayerClassBreaks(
+          activeLayer.layer_id,
+          newStyle[`${updateType}_scale`],
+          newStyle[`${updateType}_field`]?.name as string,
+          newStyle[`${updateType}_range`]?.colors?.length - 1,
+        );
+        if (
+          breaks &&
+          breaks?.breaks?.length ===
+            newStyle[`${updateType}_range`]?.colors?.length - 1
+        )
+          newStyle[`${updateType}_scale_breaks`] = breaks;
+      }
+    },
+    [activeLayer],
   );
 
   const onToggleChange = useCallback(
@@ -69,7 +103,6 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     useState(true);
   const [collapseRadiusOptions, setCollapseRadiusOptions] = useState(true);
 
-  
   return (
     <Container
       title="Layer Style"
@@ -117,7 +150,13 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         layerFields={layerFields}
                         collapsed={collapseFillOptions}
                         selectedField={activeLayer?.properties.color_field}
-                        onStyleChange={(newStyle: FeatureLayerProperties) => {
+                        onStyleChange={async (
+                          newStyle: FeatureLayerProperties,
+                        ) => {
+                          await updateColorClassificationBreaks(
+                            "color",
+                            newStyle,
+                          );
                           updateLayerStyle(newStyle);
                         }}
                         layerId={activeLayer?.layer_id}
@@ -150,7 +189,11 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   layerFields={layerFields}
                   collapsed={collapseStrokeColorOptions}
                   selectedField={activeLayer?.properties.stroke_color_field}
-                  onStyleChange={(newStyle: FeatureLayerProperties) => {
+                  onStyleChange={async (newStyle: FeatureLayerProperties) => {
+                    await updateColorClassificationBreaks(
+                      "stroke_color",
+                      newStyle,
+                    );
                     updateLayerStyle(newStyle);
                   }}
                   layerId={activeLayer?.layer_id}
@@ -174,6 +217,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   }
                   collapsed={collapseStrokeWidthOptions}
                   setCollapsed={setCollapseStrokeWidthOptions}
+                  disableAdvanceOptions={true}
                 />
 
                 <SizeOptions
@@ -198,6 +242,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         label={t("maps:radius")}
                         collapsed={collapseRadiusOptions}
                         setCollapsed={setCollapseRadiusOptions}
+                        disableAdvanceOptions={true}
                       />
 
                       <SizeOptions

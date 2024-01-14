@@ -41,4 +41,5 @@ export const featureLayerGeometryType = z.enum(["point", "line", "polygon"]);
 export const data_type = z.enum(["wms", "mvt"]);
 
 export type LayerType = z.infer<typeof layerType>;
+export type FeatureLayerGeometryType = z.infer<typeof featureLayerGeometryType>;
 export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;
