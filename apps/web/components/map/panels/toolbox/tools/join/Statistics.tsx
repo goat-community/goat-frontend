@@ -8,28 +8,35 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Divider,
+  Stack,
 } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 import { getLayerStringIdById } from "@/lib/utils/helpers";
 import { useParams } from "next/navigation";
 import { useProjectLayers } from "@/lib/api/projects";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
 
-import type { UseFormGetValues, UseFormRegister } from "react-hook-form";
+import type {
+  UseFormGetValues,
+  UseFormRegister,
+  FieldErrors,
+  UseFormSetValue,
+} from "react-hook-form";
 import type { PostJoin } from "@/lib/validations/tools";
 
 interface StatisticsProps {
   register: UseFormRegister<PostJoin>;
   getValues: UseFormGetValues<PostJoin>;
+  setValue: UseFormSetValue<PostJoin>
   watch: PostJoin;
+  errors: FieldErrors<PostJoin>;
 }
 
 const Statistics = (props: StatisticsProps) => {
-  const {
-    register,
-    getValues,
-    watch
-  } = props;
+  const { register, getValues, watch, errors, setValue } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
@@ -76,63 +83,103 @@ const Statistics = (props: StatisticsProps) => {
   );
 
   function checkType() {
-    return saveFieldKeys.keys.map((key) =>
-      methods
-        .filter((meth) => meth.name === method)[0]
-        .types.includes(key.type) ? (
-        <MenuItem value={key.name} key={v4()}>
-          {key.name}
-        </MenuItem>
-      ) : null,
-    );
+    return saveFieldKeys.keys
+      .map((key) =>
+        methods
+          .filter((meth) => meth.name === method)[0]
+          .types.includes(key.type)
+          ? key
+          : null,
+      )
+      .filter((n) => n) as { type: "string" | "number"; name: string; }[];
   }
 
   return (
     <Box
       sx={{
-        backgroundColor: `${theme.palette.primary.light}14`,
-        padding: `${theme.spacing(3.5)} ${theme.spacing(2)}`,
+        display: "flex",
+        flexDirection: "column",
+        gap: theme.spacing(2),
       }}
     >
-      <Typography variant="body1" sx={{ color: "black" }}>
+      <Typography
+        variant="body1"
+        fontWeight="bold"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: theme.spacing(2),
+        }}
+      >
+        <Icon
+          iconName={ICON_NAME.CHART}
+          htmlColor={theme.palette.grey[700]}
+          sx={{ fontSize: "18px" }}
+        />
         {t("panels.tools.statistics")}
       </Typography>
-      <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-        {t("panels.tools.join.statistics_text")}
-      </Typography>
-      <Box sx={{ marginTop: theme.spacing(2) }}>
-        <FormControl fullWidth size="small">
-          <InputLabel id="demo-simple-select-label">
-            {t("panels.tools.select_method")}
-          </InputLabel>
-          <Select
-            disabled={!watch.join_layer_project_id}
-            label={t("panels.tools.select_method")}
-            {...register("column_statistics.operation")}
-          >
-            {methods.map((method) => (
-              <MenuItem value={method.name} key={v4()}>
-                {method.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-      {watch.column_statistics.operation.length ? (
-        <Box sx={{ marginTop: theme.spacing(2) }}>
-          <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">
-              {t("panels.tools.select_field")}
-            </InputLabel>
-            <Select
-              label={t("panels.tools.select_field")}
-              {...register("column_statistics.field")}
-            >
-              {watch.join_layer_project_id ? checkType() : null}
-            </Select>
-          </FormControl>
-        </Box>
-      ) : null}
+      <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
+        <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
+        <Stack sx={{ pl: 4, py: 4, pr: 2}}>
+          <Box>
+            <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+              {t("panels.tools.join.statistics_text")}
+            </Typography>
+            <Box sx={{ marginTop: theme.spacing(2) }}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">
+                  {t("panels.tools.select_method")}
+                </InputLabel>
+                <Select
+                  disabled={!watch.join_layer_project_id}
+                  label={t("panels.tools.select_method")}
+                  error={!!errors.column_statistics?.operation}
+                  value={
+                    watch.column_statistics.operation
+                      ? watch.column_statistics.operation
+                      : ""
+                  }
+                  {...register("column_statistics.operation")}
+                >
+                  {methods.map((method) => (
+                    <MenuItem value={method.name} key={v4()}>
+                      {method.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {!!errors.column_statistics &&
+                  errors.column_statistics.operation && (
+                    <Typography sx={{ fontSize: "10px" }} color="error">
+                      {errors.column_statistics.operation.message}
+                    </Typography>
+                  )}
+              </FormControl>
+            </Box>
+            {watch.column_statistics.operation.length ? (
+              <Box sx={{mt: 2}}>
+                <LayerFieldSelector
+                  label="Join Field"
+                  selectedField={
+                    checkType().filter(
+                      (key) => key.name === watch.column_statistics.field,
+                    )[0]}
+                  setSelectedField={(field: {
+                    type: "string" | "number";
+                    name: string;
+                  }) => {
+                    if (field) {
+                      setValue("column_statistics.field", field.name);
+                    } else {
+                      setValue("column_statistics.field", "");
+                    }
+                  }}
+                  fields={checkType()}
+                />
+              </Box>
+            ) : null}
+          </Box>
+        </Stack>
+      </Stack>
     </Box>
   );
 };

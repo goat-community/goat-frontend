@@ -118,9 +118,9 @@
         "catchment_area": "Catchment Area",
         "tooltip": "This is a tooltip for the Catchment Area feature."
       },
-      "summarize_features": {
-        "summarize_features": "Summarize Features",
-        "tooltip": "This is a tooltip for the Summarize Features feature."
+      "buffer": {
+        "buffer": "Buffer",
+        "tooltip": "This is a tooltip for the Buffer feature."
       },
       "origin_to_destination": {
         "origin_to_destination": "Origin to destination",

@@ -1,15 +1,14 @@
 import React, { useMemo } from "react";
-// import InputLayer from "@/components/map/panels/toolbox/tools/InputLayer";
 import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
 import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
-import { Divider, useTheme, Box, Button, Typography, TextField } from "@mui/material";
+import { useTheme, Box, Button } from "@mui/material";
 import { sendJoinFeatureRequest } from "@/lib/api/tools";
 import { useTranslation } from "@/i18n/client";
 import { useForm } from "react-hook-form";
 import { useParams } from "next/navigation";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
 import InputLayer from "@/components/map/panels/toolbox/tools/join/InputLayer";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { joinBaseSchema } from "@/lib/validations/tools";
 
 import type { PostJoin } from "@/lib/validations/tools";
 
@@ -25,8 +24,10 @@ const Join = () => {
     watch,
     getValues,
     setValue,
-    // formState: { errors },
+    formState: { errors, isValid },
   } = useForm<PostJoin>({
+    mode: "onChange",
+    resolver: zodResolver(joinBaseSchema),
     defaultValues: {
       target_layer_project_id: 0,
       target_field: "",
@@ -36,7 +37,6 @@ const Join = () => {
         operation: "",
         field: "",
       },
-      layer_name: "join",
     },
   });
 
@@ -54,10 +54,6 @@ const Join = () => {
     sendJoinFeatureRequest(getValues(), projectId as string);
   };
 
-  const { uniqueName } = useGetUniqueLayerName(
-    getCurrentValues.layer_name ? getCurrentValues.layer_name : "",
-  );
-
   return (
     <Box
       display="flex"
@@ -65,66 +61,80 @@ const Join = () => {
       justifyContent="space-between"
       sx={{ height: "100%" }}
     >
-      <Box sx={{ maxHeight: "95%", overflow: "scroll" }}>
+      <Box
+        sx={{
+          height: "95%",
+          maxHeight: "95%",
+          overflow: "scroll",
+          display: "flex",
+          flexDirection: "column",
+          gap: "18px",
+        }}
+      >
         <InputLayer
           watch={getCurrentValues}
           setValue={setValue}
           register={register}
+          errors={errors}
         />
-        <Divider
-          sx={{
-            margin: `${theme.spacing(4)} 0px`,
-            backgroundColor: `${theme.palette.primary.main}40`,
-          }}
+        <FieldsToMatch
+          register={register}
+          watch={getCurrentValues}
+          errors={errors}
+          setValue={setValue}
         />
-        <FieldsToMatch register={register} watch={getCurrentValues} />
         <Statistics
           register={register}
           getValues={getValues}
           watch={getCurrentValues}
+          errors={errors}
+          setValue={setValue}
         />
-
-        {getCurrentValues.join_layer_project_id &&
-        getCurrentValues.column_statistics.operation ? (
-          <Box display="flex" flexDirection="column" gap={theme.spacing(4)}>
-            <Typography
-              variant="body1"
-              fontWeight="bold"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: theme.spacing(2),
-              }}
-            >
-              <Icon iconName={ICON_NAME.DOWNLOAD} />
-              {t("panels.tools.result")}
-            </Typography>
-            <Box>
-              <TextField
-                fullWidth
-                value={uniqueName ? uniqueName : ""}
-                label={t("panels.tools.output_name")}
-                size="small"
-                {...register("layer_name")}
-              />
-            </Box>
-          </Box>
-        ) : // <SaveResult register={register} watch={getCurrentValues} />
-        null}
       </Box>
       <Box
         sx={{
-          display: "flex",
-          gap: theme.spacing(2),
-          alignItems: "center",
+          position: "relative",
+          maxHeight: "5%",
         }}
       >
-        <Button variant="outlined" sx={{ flexGrow: "1" }} onClick={handleReset}>
-          {t("panels.tools.reset")}
-        </Button>
-        <Button sx={{ flexGrow: "1" }} onClick={handleRun}>
-          {t("panels.tools.run")}
-        </Button>
+        <Box
+          sx={{
+            display: "flex",
+            gap: theme.spacing(2),
+            alignItems: "center",
+            position: "absolute",
+            bottom: "-25px",
+            left: "-8px",
+            width: "calc(100% + 16px)",
+            padding: "16px",
+            background: "white",
+            boxShadow: "0px -5px 10px -5px rgba(58, 53, 65, 0.1)",
+          }}
+        >
+          <Button
+            color="error"
+            variant="outlined"
+            sx={{ flexGrow: "1" }}
+            onClick={handleReset}
+            disabled={
+              !getCurrentValues.join_layer_project_id &&
+              !getCurrentValues.join_field &&
+              !getCurrentValues.column_statistics.operation &&
+              !getCurrentValues.column_statistics.field &&
+              !getCurrentValues.target_layer_project_id &&
+              !getCurrentValues.target_field
+            }
+          >
+            {t("panels.tools.reset")}
+          </Button>
+          <Button
+            sx={{ flexGrow: "1" }}
+            onClick={handleRun}
+            disabled={!isValid}
+          >
+            {t("panels.tools.run")}
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Box, Button, useTheme, TextField, Typography } from "@mui/material";
+import { Box, Button, useTheme } from "@mui/material";
 import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/IsochroneSettings";
 import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
 import { useTranslation } from "@/i18n/client";
@@ -12,8 +12,6 @@ import {
 } from "@/lib/api/isochrone";
 import { useParams } from "next/navigation";
 import { removeMarker } from "@/lib/store/map/slice";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useGetUniqueLayerName } from "@/hooks/map/ToolsHooks";
 
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
@@ -47,8 +45,7 @@ const Isochrone = () => {
         max_traveltime: 10,
         traveltime_step: 50,
         speed: 10,
-      },
-      layer_name: "isochrone",
+      }
     },
   });
 
@@ -88,10 +85,6 @@ const Isochrone = () => {
     return watchFormValues;
   }, [watchFormValues]);
 
-  const { uniqueName } = useGetUniqueLayerName(
-    getCurrentValues.layer_name ? getCurrentValues.layer_name : "",
-  );
-
   return (
     <Box
       display="flex"
@@ -124,34 +117,6 @@ const Isochrone = () => {
             setStartingType={setStartingType}
           />
         ) : null}
-        {startingType &&
-        ("layer_id" in getCurrentValues.starting_points ||
-          "latitude" in getCurrentValues.starting_points) ? (
-          <Box display="flex" flexDirection="column" gap={theme.spacing(4)}>
-            <Typography
-              variant="body1"
-              fontWeight="bold"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: theme.spacing(2),
-              }}
-            >
-              <Icon iconName={ICON_NAME.DOWNLOAD} />
-              {t("panels.tools.result")}
-            </Typography>
-            <Box>
-              <TextField
-                fullWidth
-                value={uniqueName ? uniqueName : ""}
-                label={t("panels.tools.output_name")}
-                size="small"
-                {...register("layer_name")}
-              />
-            </Box>
-          </Box>
-        ) : // <SaveResult register={register} watch={getCurrentValues} />
-        null}
       </Box>
       <Box
         sx={{

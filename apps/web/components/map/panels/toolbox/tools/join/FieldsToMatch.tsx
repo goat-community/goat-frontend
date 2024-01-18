@@ -1,46 +1,40 @@
 import {
   Box,
   Typography,
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
+  // Select,
+  // FormControl,
+  // InputLabel,
+  // MenuItem,
   useTheme,
+  Stack,
+  Divider,
 } from "@mui/material";
 import React from "react";
-import { v4 } from "uuid";
+// import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
 import { getLayerStringIdById } from "@/lib/utils/helpers";
+import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
 
-import type { UseFormRegister } from "react-hook-form";
+import type {
+  FieldErrors,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 import type { PostJoin } from "@/lib/validations/tools";
 
 interface FieldsToMatchProps {
   register: UseFormRegister<PostJoin>;
   watch: PostJoin;
-  // setFirstField: (value: string) => void;
-  // firstField: string | undefined;
-  // setSecondField: (value: string) => void;
-  // secondField: string | undefined;
-  // firstLayerId: string;
-  // secondLayerId: string;
+  errors: FieldErrors<PostJoin>;
+  setValue: UseFormSetValue<PostJoin>;
 }
 
 const FieldsToMatch = (props: FieldsToMatchProps) => {
-  const {
-    watch,
-    register,
-    // firstLayerId,
-    // secondLayerId,
-    // setFirstField,
-    // setSecondField,
-    // firstField,
-    // secondField,
-  } = props;
+  const { watch, setValue } = props;
   const { t } = useTranslation("maps");
 
   const theme = useTheme();
@@ -67,93 +61,97 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
   );
 
   return (
-    <Box>
-      <Typography variant="body1" sx={{ color: "black" }}>
-        {t("panels.tools.join.set_field_to_match")}
-      </Typography>
-      <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-        {t("panels.tools.join.field_to_match_text")}
-      </Typography>
-      <Box
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: theme.spacing(2),
+      }}
+    >
+      <Typography
+        variant="body1"
+        fontWeight="bold"
         sx={{
-          backgroundColor: `${theme.palette.primary.light}14`,
-          padding: `${theme.spacing(3.5)} ${theme.spacing(2)}`,
-          marginTop: theme.spacing(2),
+          display: "flex",
+          alignItems: "center",
+          gap: theme.spacing(2),
         }}
       >
-        <Box>
-          <Typography
-            variant="body1"
-            sx={{ color: "black", marginBottom: theme.spacing(2) }}
-          >
-            {t("panels.tools.join.target_field")}
-          </Typography>
-          <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">
-              {t("panels.tools.select_field")}
-            </InputLabel>
-            <Select
-              disabled={!watch.target_layer_project_id}
-              label={t("panels.tools.select_field")}
-              {...register("target_field")}
-              // value={firstField}
-              // onChange={(event: SelectChangeEvent) => {
-              //   setFirstField(event.target.value as string);
-              // }}
-            >
-              {watch.target_layer_project_id
-                ? firstLayerKeys.keys.map((key) => (
-                    <MenuItem value={key.name} key={v4()}>
-                      {key.name}
-                    </MenuItem>
-                  ))
-                : null}
-            </Select>
-          </FormControl>
+        <Icon
+          iconName={ICON_NAME.CIRCLE}
+          htmlColor={theme.palette.grey[700]}
+          sx={{ fontSize: "18px" }}
+        />
+        Fields to match
+      </Typography>
+      <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
+        <Box sx={{ height: "100%" }}>
+          <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Box
-          display="flex"
-          justifyContent="center"
-          sx={{
-            margin: `${theme.spacing(2)} 0px`,
-          }}
+        <Stack
+          sx={{ pl: 4, py: 4, pr: 1, marginTop: theme.spacing(2)}}
         >
-          <Icon
-            iconName={ICON_NAME.REVERSE}
-            htmlColor={theme.palette.primary.main}
-          />
-        </Box>
-        <Box>
-          <Typography
-            variant="body1"
-            sx={{ color: "black", marginBottom: theme.spacing(2) }}
-          >
-            {t("panels.tools.join.join_field")}
-          </Typography>
-          <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">
-              {t("panels.tools.select_field")}
-            </InputLabel>
-            <Select
-              disabled={!watch.join_layer_project_id}
-              label={t("panels.tools.select_field")}
-              {...register("join_field")}
-              // value={secondField}
-              // onChange={(event: SelectChangeEvent) => {
-              //   setSecondField(event.target.value as string);
-              // }}
+          <Box>
+            <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+              {t("panels.tools.join.field_to_match_text")}
+            </Typography>
+            <Box sx={{ width: "100%", mt: 2 }}>
+              <LayerFieldSelector
+                label="Target Field"
+                selectedField={
+                  firstLayerKeys.keys.filter(
+                    (key) => key.name === watch.target_field,
+                  )[0]
+                }
+                setSelectedField={(field: {
+                  type: "string" | "number";
+                  name: string;
+                }) => {
+                  if(field){
+                    setValue("target_field", field.name);
+                  }else {
+                    setValue("target_field", "");
+                  }
+                }}
+                fields={firstLayerKeys.keys}
+              />
+            </Box>
+            <Box
+              display="flex"
+              justifyContent="center"
+              sx={{
+                margin: `${theme.spacing(2)} 0px`,
+              }}
             >
-              {watch.join_layer_project_id
-                ? secondLayerKeys.keys.map((key) => (
-                    <MenuItem value={key.name} key={v4()}>
-                      {key.name}
-                    </MenuItem>
-                  ))
-                : null}
-            </Select>
-          </FormControl>
-        </Box>
-      </Box>
+              <Icon
+                iconName={ICON_NAME.REVERSE}
+                htmlColor={theme.palette.primary.main}
+              />
+            </Box>
+            <Box>
+              <LayerFieldSelector
+                label="Join Field"
+                selectedField={
+                  secondLayerKeys.keys.filter(
+                    (key) => key.name === watch.join_field,
+                  )[0]
+                }
+                setSelectedField={(field: {
+                  type: "string" | "number";
+                  name: string;
+                }) => {
+                  if(field){
+                    setValue("join_field", field.name);
+                  }else {
+                    setValue("join_field", "");
+                  }
+                }}
+                fields={secondLayerKeys.keys}
+              />
+            </Box>
+          </Box>
+        </Stack>
+      </Stack>
     </Box>
   );
 };

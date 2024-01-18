@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { setActiveLeftPanel } from "@/lib/store/map/slice";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
 import Container from "@/components/map/panels/Container";
 import { useTranslation } from "@/i18n/client";
@@ -103,7 +103,7 @@ const FilterPanel = (props: FilterProps) => {
       .join("")}`,
   );
 
-  useEffect(() => {
+  const updateExpressions = () => {
     if (!expressions) {
       const existingExpressions = parseCQLQueryToObject(
         activeLayer && "query" in activeLayer
@@ -112,7 +112,11 @@ const FilterPanel = (props: FilterProps) => {
       );
       setExpressions(existingExpressions);
     } else {
-      const query = createTheCQLBasedOnExpression(expressions, layerAttributes, logicalOperator);
+      const query = createTheCQLBasedOnExpression(
+        expressions,
+        layerAttributes,
+        logicalOperator,
+      );
       setLogicalOperator("op" in query ? (query.op as "and" | "or") : "and");
 
       const updatedProjectLayer = {
@@ -129,26 +133,41 @@ const FilterPanel = (props: FilterProps) => {
     setTimeout(() => {
       mutate();
     }, 300);
+  };
+
+  useEffect(() => {
+    updateExpressions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expressions, logicalOperator]);
+
+  useEffect(() => {
+    // setExpressions(undefined);
+    const existingExpressions = parseCQLQueryToObject(
+      activeLayer && "query" in activeLayer
+        ? (activeLayer.query as { op: string; args: unknown[] })
+        : undefined,
+    );
+    setExpressions(existingExpressions);
+    // updateExpressions();
+  }, [activeLayer]);
 
   return (
     <Container
       title={t("panels.filter.filter")}
-      close={() => dispatch(setActiveLeftPanel(undefined))}
+      close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <>
           <ProjectLayerDropdown projectId={projectId} />
           {expressions && expressions.length > 1 ? (
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
-                {t("panels.filter.select_attribute")}
+                Logical Operator
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={logicalOperator}
-                label={t("panels.filter.select_attribute")}
+                label="Logical Operator"
                 onChange={(event: SelectChangeEvent) => {
                   setLogicalOperator(event.target.value as "or" | "and");
                 }}
@@ -162,16 +181,25 @@ const FilterPanel = (props: FilterProps) => {
               </Select>
             </FormControl>
           ) : null}
-          {expressions ? (
-            expressions.map((expression) => (
-              <Expression
-                key={expression.id}
-                expression={expression}
-                modifyExpression={modifyExpressions}
-                deleteOneExpression={deleteOneExpression}
-                duplicateExpression={duplicateExpression}
-              />
-            ))
+          {expressions && expressions.length ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: theme.spacing(6),
+                my: theme.spacing(6),
+              }}
+            >
+              {expressions.map((expression) => (
+                <Expression
+                  key={expression.id}
+                  expression={expression}
+                  modifyExpression={modifyExpressions}
+                  deleteOneExpression={deleteOneExpression}
+                  duplicateExpression={duplicateExpression}
+                />
+              ))}
+            </Box>
           ) : (
             <Box sx={{ marginTop: `${theme.spacing(4)}` }}>
               <Card sx={{ backgroundColor: theme.palette.background.default }}>
@@ -207,29 +235,30 @@ const FilterPanel = (props: FilterProps) => {
               </Card>
             </Box>
           )}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: theme.spacing(2),
+              marginTop: theme.spacing(5),
+            }}
+          >
+            <Button variant="outlined" fullWidth onClick={createExpression}>
+              Create Expression
+            </Button>
+            <Button
+              variant="outlined"
+              fullWidth
+              color="error"
+              disabled={!expressions || !expressions.length}
+              onClick={() => setExpressions([])}
+            >
+              Clear Expression
+            </Button>
+          </Box>
         </>
       }
-      action={
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: theme.spacing(2),
-          }}
-        >
-          <Button variant="outlined" fullWidth onClick={createExpression}>
-            Create Expression
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={() => setExpressions([])}
-          >
-            Clear Expression
-          </Button>
-        </Box>
-      }
-      disablePadding
+      // disablePadding
     />
   );
 };

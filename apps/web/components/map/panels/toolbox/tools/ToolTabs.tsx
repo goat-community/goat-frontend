@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  useTheme,
-  Typography,
-  Tooltip,
-} from "@mui/material";
+import { Box, useTheme, Typography, Tooltip } from "@mui/material";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useParams } from "next/navigation";
@@ -48,7 +43,10 @@ const Tabs = ({ tab, handleChange }) => {
               gap: theme.spacing(2),
             }}
           >
-            <Tooltip title={t(`panels.tools.${childTab}.tooltip`)}  placement="left">
+            <Tooltip
+              title={t(`panels.tools.${childTab}.tooltip`)}
+              placement="left"
+            >
               <Box>
                 <Icon
                   iconName={ICON_NAME.CIRCLEINFO}
@@ -80,24 +78,33 @@ const ToolTabs = (props: ToolTabsProps) => {
   const [value, setValue] = useState<string | undefined>(undefined);
 
   const { t } = useTranslation("maps");
-
+  const theme = useTheme();
   const params = useParams();
 
   const main_accordions = [
     {
-      name: t("panels.tools.summarize_data.summarize_data"),
-      value: "summarize_data",
-      children: [
-        "join",
-        "aggregate",
-        "summarize_features",
-        "origin_to_destination",
-      ],
-    },
-    {
-      name: t("panels.tools.accessibility_indicators.accessibility_indicators"),
+      name: "Accessibility Indicators",
       value: "accessibility_indicators",
       children: ["catchment_area"],
+      icon: ICON_NAME.RUN,
+    },
+    {
+      name: "Data Management",
+      value: "data_management",
+      children: ["join"],
+      icon: ICON_NAME.DATABASE,
+    },
+    {
+      name: "Geoanalysis",
+      value: "geoanalysis",
+      children: ["aggregate"],
+      icon: ICON_NAME.CHART,
+    },
+    {
+      name: "Geoprocessing",
+      value: "geoprocessing",
+      children: ["buffer"],
+      icon: ICON_NAME.LAYERS,
     },
   ];
 
@@ -123,9 +130,9 @@ const ToolTabs = (props: ToolTabsProps) => {
       value: "catchment_area",
       element: <Isochrone />,
     },
-    summarize_features: {
-      name: "Summarize features",
-      value: "summarize_features",
+    buffer: {
+      name: "Buffer features",
+      value: "buffer",
       element: <p>summarize</p>,
     },
     origin_to_destination: {
@@ -155,7 +162,12 @@ const ToolTabs = (props: ToolTabsProps) => {
         main_accordions.map((tab) => (
           <AccordionWrapper
             key={v4()}
-            header={<Typography sx={{ flexShrink: 0 }}>{tab.name}</Typography>}
+            header={
+              <Typography sx={{ flexShrink: 0, display: "flex", gap: theme.spacing(2), alignItems: "center" }}>
+                <Icon iconName={tab.icon} sx={{fontSize: "18px"}} htmlColor={theme.palette.secondary.dark}/>
+                {tab.name}
+              </Typography>
+            }
             body={<Tabs tab={tab} handleChange={handleChange} />}
           />
         ))}

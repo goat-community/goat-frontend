@@ -30,7 +30,7 @@ const CustomMenu = (props: CustomMenuProps) => {
       sx={{
         position: "absolute",
         top: "80%",
-        right: "20px",
+        right: "5px",
         background: theme.palette.background.paper,
         borderRadius: theme.spacing(2),
         zIndex: "20",
