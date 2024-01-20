@@ -1,17 +1,19 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   MenuItem,
   Select,
   InputBase,
   TextField,
   useTheme,
+  ListSubheader,
+  InputAdornment,
   Box,
+  Typography,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { v4 } from "uuid";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-// import { useSelector } from "react-redux";
-
-// import type { IStore } from "@/types/store";
+import { filterSearch } from "@/lib/utils/helpers";
 
 export type Option = {
   label: string;
@@ -25,10 +27,18 @@ interface TextInputSelectProps {
   inputValue: string | number;
   options: Option[];
   type?: "number" | "text";
+  fetchMoreData: () => void;
 }
 
 const TextInputSelect = (props: TextInputSelectProps) => {
-  const { inputValue, setInputValue, options, type = "text" } = props;
+  const {
+    inputValue,
+    setInputValue,
+    options,
+    type = "text",
+    fetchMoreData,
+  } = props;
+  const [searchText, setSearchText] = useState("");
   const input = useRef<HTMLInputElement | null>(null);
 
   const theme = useTheme();
@@ -57,6 +67,23 @@ const TextInputSelect = (props: TextInputSelectProps) => {
     }
   };
 
+  let debounceTimer;
+
+  const onScrolling = (e) => {
+    if (e.target) {
+      const { scrollTop, scrollHeight, clientHeight } = e.target;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight;
+
+      if (isNearBottom && fetchMoreData) {
+        clearTimeout(debounceTimer);
+  
+        debounceTimer = setTimeout(() => {
+          fetchMoreData();
+        }, 500); 
+      }
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -70,6 +97,9 @@ const TextInputSelect = (props: TextInputSelectProps) => {
       <TextField
         sx={{
           flex: 9,
+          p: 2,
+          pt: 3,
+          pl: 3,
           "& .mui-9425fu-MuiOutlinedInput-notchedOutline": {
             outline: "none",
             border: "none",
@@ -81,6 +111,10 @@ const TextInputSelect = (props: TextInputSelectProps) => {
         value={inputValue}
         onChange={handleInputChange}
         type={type}
+        variant="standard"
+        InputProps={{
+          disableUnderline: true,
+        }}
       />
       {type === "number" ? (
         <Box
@@ -147,9 +181,11 @@ const TextInputSelect = (props: TextInputSelectProps) => {
               },
             }}
             MenuProps={{
+              PaperProps: {
+                onScroll: onScrolling,
+              },
               classes: {
                 paper: "selectTextInput",
-                // paper: classes.selectDropdown,
               },
               anchorOrigin: {
                 vertical: "bottom",
@@ -159,13 +195,56 @@ const TextInputSelect = (props: TextInputSelectProps) => {
                 vertical: "top",
                 horizontal: "right",
               },
+              autoFocus: false,
+              sx: { width: "294.5px", marginTop: 3 },
+              slotProps: {
+                paper: {
+                  sx: {
+                    maxHeight: "350px",
+                    overflowY: "auto",
+                  },
+                },
+              },
             }}
           >
-            {options.map((option) => (
-              <MenuItem key={v4()} value={option.value}>
-                {option.label}
-              </MenuItem>
-            ))}
+            <ListSubheader sx={{ px: 2, pt: 1 }}>
+              <TextField
+                size="small"
+                autoFocus
+                placeholder="Search"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                onChange={(e) => setSearchText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key !== "Escape") {
+                    e.stopPropagation();
+                  }
+                }}
+              />
+            </ListSubheader>
+            {filterSearch(options, "label", searchText).length ? (
+              filterSearch(options, "label", searchText).map((option) => (
+                <MenuItem
+                  key={v4()}
+                  value={option.value}
+                  sx={{ width: "262.5px" }}
+                >
+                  {option.label}
+                </MenuItem>
+              ))
+            ) : (
+              <Typography
+                variant="body1"
+                sx={{ width: "262.5px", px: 2, py: 1, textAlign: "center" }}
+              >
+                No Result.
+              </Typography>
+            )}
           </Select>
         ) : null}
       </Box>

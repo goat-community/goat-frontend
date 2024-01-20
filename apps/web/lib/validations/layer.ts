@@ -14,6 +14,11 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
   data_reference_year: z.number().optional(),
 });
 
+const layerFieldType = z.object({
+  name: z.string(),
+  type: z.union([z.literal("string"), z.literal("number")]),
+});
+
 export const layerSchema = layerMetadataSchema.extend({
   id: z.string(),
   properties: z.object({}),
@@ -81,6 +86,7 @@ export type Layer = Omit<LayerZod, "properties"> & {
 };
 export type LayerPaginated = z.infer<typeof layerResponseSchema>;
 export type LayerType = z.infer<typeof layerType>;
+export type LayerFieldType = z.infer<typeof layerFieldType>;
 export type LayerMetadata = z.infer<typeof layerMetadataSchema>;
 export type FeatureLayerType = z.infer<typeof featureLayerType>;
 export type GetLayersQueryParams = z.infer<typeof getLayersQueryParamsSchema>;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,8 +8,8 @@ import {
   InputLabel,
   MenuItem,
   useTheme,
-  Button,
   MenuList,
+  IconButton,
 } from "@mui/material";
 import CustomMenu from "@/components/common/CustomMenu";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
@@ -26,6 +26,7 @@ import {
   DualNumberOption,
 } from "@/components/map/panels/filter/nonuse/FilterOption";
 import { useUniqueValues } from "@/lib/api/layers";
+import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
 
 import type { Expression as ExpressionType } from "@/lib/validations/filter";
 import type { SelectChangeEvent } from "@mui/material";
@@ -52,6 +53,8 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
 
   const [expressionValue, setExpressionValue] = useState(expression.value);
   const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
+  const [statisticsPage, setStatisticsPage] = React.useState<number>(1);
+  const [statisticsData, setStatisticsData] = React.useState<string[]>([]);
 
   const { t } = useTranslation("maps");
   const { activeLayer } = useActiveLayer(projectId as string);
@@ -62,9 +65,17 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   const { data } = useUniqueValues(
     activeLayer ? activeLayer.layer_id : "",
     expression.attribute,
+    statisticsPage,
   );
 
-  const optionsStatistic = Object.keys(data ? data : {}).map((option) => ({
+  useEffect(() => {
+    if (data && Object.keys(data) !== statisticsData) {
+      setStatisticsData([...statisticsData, ...Object.keys(data)]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  const optionsStatistic = statisticsData.map((option) => ({
     value: option,
     label: option,
   }));
@@ -88,10 +99,13 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           return (
             <TextOption
               value={expressionValue as string}
-              setChange={(value: string) =>
-                debounceEffect(expression, "value", value)
-              }
+              setChange={(value: string) => {
+                debounceEffect(expression, "value", value);
+              }}
               options={optionsStatistic}
+              fetchMoreData={() => {
+                setStatisticsPage(statisticsPage + 1);
+              }}
             />
           );
         } else {
@@ -102,6 +116,9 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                 modifyExpression(expression, "value", parseFloat(value));
               }}
               options={optionsStatistic}
+              fetchMoreData={() => {
+                setStatisticsPage(statisticsPage + 1);
+              }}
             />
           );
         }
@@ -116,6 +133,9 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
               modifyExpression(expression, "value", value)
             }
             options={optionsStatistic}
+            fetchMoreData={() => {
+              setStatisticsPage(statisticsPage + 1);
+            }}
           />
         );
         break;
@@ -128,6 +148,9 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                 ? expression.value.split(",")
                 : expression.value) as string[]
             }
+            fetchMoreData={() => {
+              setStatisticsPage(statisticsPage + 1);
+            }}
             setChange={(value: string[]) => {
               modifyExpression(expression, "value", value);
             }}
@@ -145,11 +168,18 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
               modifyExpression(expression, "value", parseFloat(value))
             }
             options={optionsStatistic}
+            fetchMoreData={() => {
+              setStatisticsPage(statisticsPage + 1);
+            }}
           />
         );
       case "is_between":
         return (
           <DualNumberOption
+            options={optionsStatistic}
+            fetchMoreData={() => {
+              setStatisticsPage(statisticsPage + 1);
+            }}
             value1={
               typeof expression.value === "string"
                 ? expression.value.split("-")[0]
@@ -160,7 +190,8 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                 expression,
                 "value",
                 `${value.length ? value : "0"}-${
-                  typeof expression.value === "string" && expression.value.split("-").length > 1
+                  typeof expression.value === "string" &&
+                  expression.value.split("-").length > 1
                     ? expression.value.split("-")[1]
                     : "0"
                 }`,
@@ -176,7 +207,8 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                 expression,
                 "value",
                 `${
-                  typeof expression.value === "string" && expression.value.split("-").length > 1
+                  typeof expression.value === "string" &&
+                  expression.value.split("-").length > 1
                     ? expression.value.split("-")[0]
                     : "0"
                 }-${value.length ? value : "0"}`,
@@ -222,18 +254,21 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           alignItems: "center",
         }}
       >
-        <Typography>{t("panels.filter.expression")}</Typography>
+        <Typography
+          fontWeight="bold"
+          color={theme.palette.secondary.dark}
+          sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}
+        >
+          <Icon iconName={ICON_NAME.EDITPEN} sx={{ fontSize: "18px" }} />
+          {t("panels.filter.expression")}
+        </Typography>
         <Box sx={{ position: "relative" }}>
-          <Button
-            id="basic-button"
-            aria-controls={open ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
+          <IconButton
             onClick={toggleMorePopover}
-            variant="text"
+            sx={{ padding: theme.spacing(1), width: "fit-content" }}
           >
             <Icon iconName={ICON_NAME.ELLIPSIS} />
-          </Button>
+          </IconButton>
           {open ? (
             <CustomMenu close={toggleMorePopover}>
               <MenuList>
@@ -248,27 +283,28 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           ) : null}
         </Box>
       </Box>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">
-          {t("panels.filter.select_attribute")}
-        </InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={expression.attribute}
-          label={t("panels.filter.select_attribute")}
-          onChange={(event: SelectChangeEvent) => {
-            modifyExpression(expression, "attribute", event.target.value);
-            setExpressionValue("");
-          }}
-        >
-          {layerAttributes.keys.map((attr) => (
-            <MenuItem key={v4()} value={attr.name}>
-              {attr.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <LayerFieldSelector
+        label="Target Field"
+        selectedField={
+          layerAttributes.keys.filter(
+            (key) => key.name === expression.attribute,
+          )[0]
+        }
+        setSelectedField={(field: {
+          type: "string" | "number";
+          name: string;
+        }) => {
+          if (field) {
+            modifyExpression(expression, "attribute", field.name);
+            // setValue("target_field", field.name);
+          } else {
+            modifyExpression(expression, "attribute", "");
+          }
+          setStatisticsData([]);
+          setExpressionValue("");
+        }}
+        fields={layerAttributes.keys}
+      />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">
           {t("panels.filter.select_an_expression")}
@@ -276,12 +312,12 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          // disabled={!attributeType}
           value={expression.expression}
           label={t("panels.filter.select_an_expression")}
           onChange={(event: SelectChangeEvent) => {
             modifyExpression(expression, "expression", event.target.value);
             setExpressionValue("");
+            setStatisticsData([]);
           }}
         >
           {attributeType
@@ -293,12 +329,6 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
             : null}
         </Select>
       </FormControl>
-      {/* <TextField
-        value={expression.value}
-        onChange={(e) =>
-          modifyExpression(expression, "value", e.target.value)
-        }
-      /> */}
       {getValueCollector()}
     </Box>
   );

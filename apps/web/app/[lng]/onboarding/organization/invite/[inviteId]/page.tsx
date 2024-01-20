@@ -33,7 +33,6 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
     invitation_id: inviteId,
   });
   const { invitations, isLoading } = useInvitations(queryParams);
-  console.log(invitations);
   const { status, data: session, update } = useSession();
   const router = useRouter();
   const [isBusy, setIsBusy] = useState(false);

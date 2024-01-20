@@ -1,7 +1,6 @@
 import React from "react";
 import TextInputSelect from "./inputFields/TextInputSelect";
-import { dummyFilterDataNumber } from "@/public/assets/data/filterDummy";
-import { Select, FormControl, InputLabel, MenuItem } from "@mui/material";
+import { Select, FormControl, InputLabel, MenuItem, Box, useTheme } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { v4 } from "uuid";
 
@@ -12,10 +11,11 @@ interface simpleInput {
   value: string | number | undefined;
   setChange: (value: string | number) => void;
   options: Option[];
+  fetchMoreData: () => void;
 }
 
 export const NumberOption = (props: simpleInput) => {
-  const { value, setChange, options } = props;
+  const { value, setChange, options, fetchMoreData } = props;
 
   return (
     <div style={{ marginBottom: "8px" }}>
@@ -24,13 +24,14 @@ export const NumberOption = (props: simpleInput) => {
         inputValue={value ? value : ""}
         options={options}
         type="number"
+        fetchMoreData={fetchMoreData}
       />
     </div>
   );
 };
 
 export const TextOption = (props: simpleInput) => {
-  const { value, setChange, options } = props;
+  const { value, setChange, options, fetchMoreData } = props;
 
   return (
     <div>
@@ -38,6 +39,7 @@ export const TextOption = (props: simpleInput) => {
         setInputValue={setChange}
         inputValue={value ? value : ""}
         options={options}
+        fetchMoreData={fetchMoreData}
       />
     </div>
   );
@@ -47,12 +49,30 @@ interface SelectOptionProps {
   value: string[] | undefined;
   setChange: (value: string[]) => void;
   options: Option[];
+  fetchMoreData: () => void;
 }
 
 export const SelectOption = (props: SelectOptionProps) => {
-  const { value, setChange, options } = props;
+  const { value, setChange, options, fetchMoreData } = props;
 
   const { t } = useTranslation("maps");
+
+  let debounceTimer;
+
+  const onScrolling = (e) => {
+    if (e.target) {
+      const { scrollTop, scrollHeight, clientHeight } = e.target;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight;
+
+      if (isNearBottom && fetchMoreData) {
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(() => {
+          fetchMoreData();
+        }, 500);
+      }
+    }
+  };
 
   return (
     <div>
@@ -61,12 +81,19 @@ export const SelectOption = (props: SelectOptionProps) => {
           {t("panels.filter.select_value")}
         </InputLabel>
         <Select
+          MenuProps={{
+            PaperProps: {
+              onScroll: onScrolling,
+            },
+          }}
           labelId="demo-multiple-name-label"
           id="demo-multiple-name"
           multiple
           value={value as unknown as string}
           label={t("panels.filter.select_value")}
-          onChange={(event: SelectChangeEvent) => setChange(event.target.value as unknown as string[])}
+          onChange={(event: SelectChangeEvent) =>
+            setChange(event.target.value as unknown as string[])
+          }
         >
           {options.map((option) => (
             <MenuItem key={v4()} value={option.value}>
@@ -84,25 +111,32 @@ interface DualNumberOptionProps {
   setChange1: (value: string) => void;
   value2: string | undefined;
   setChange2: (value: string) => void;
+  options: Option[];
+  fetchMoreData: () => void;
 }
 
 export const DualNumberOption = (props: DualNumberOptionProps) => {
-  const { setChange1, value1, setChange2, value2 } = props;
+  const { setChange1, value1, setChange2, value2, fetchMoreData, options } =
+    props;
+
+  const theme = useTheme();
 
   return (
-    <div>
+    <Box sx={{display: "flex", flexDirection: "column", gap: theme.spacing(3)}}>
       <TextInputSelect
         setInputValue={setChange1}
         inputValue={value1 ? value1 : ""}
-        options={dummyFilterDataNumber}
+        options={options}
         type="number"
+        fetchMoreData={fetchMoreData}
       />
       <TextInputSelect
         setInputValue={setChange2}
         inputValue={value2 ? value2 : ""}
-        options={dummyFilterDataNumber}
+        options={options}
         type="number"
+        fetchMoreData={fetchMoreData}
       />
-    </div>
+    </Box>
   );
 };

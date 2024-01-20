@@ -7,21 +7,25 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Stack,
+  Divider,
 } from "@mui/material";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
 import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
-import type { UseFormRegister } from "react-hook-form";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+
+import type { UseFormRegister, FieldErrors } from "react-hook-form";
 import type { PostAggregate } from "@/lib/validations/tools";
 
 interface PickLayerProps {
   register: UseFormRegister<PostAggregate>;
+  watch: PostAggregate;
+  errors: FieldErrors<PostAggregate>;
 }
 const InputLayer = (props: PickLayerProps) => {
-  const {
-    register,
-  } = props;
+  const { register, watch, errors } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
@@ -38,32 +42,64 @@ const InputLayer = (props: PickLayerProps) => {
       gap={theme.spacing(2)}
       marginBottom={theme.spacing(4)}
     >
-      <Typography variant="body1" sx={{ color: "black" }}>
-        {t("panels.tools.aggregate.pick_layer")}
+      <Typography
+        variant="body1"
+        fontWeight="bold"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: theme.spacing(2),
+        }}
+      >
+        <Icon
+          iconName={ICON_NAME.LAYERS}
+          htmlColor={theme.palette.grey[700]}
+          sx={{ fontSize: "18px" }}
+        />
+        Pick a Layer
       </Typography>
-      <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-        {t("panels.tools.aggregate.pick_layer_text")}
-      </Typography>
-      <FormControl fullWidth size="small">
-        <InputLabel id="demo-simple-select-label">
-          {" "}
-          {t("panels.tools.select_layer")}
-        </InputLabel>
-        <Select
-          label={t("panels.tools.select_layer")}
-          {...register("point_layer_project_id")}
-        >
-          {projectLayers
-            ? projectLayers.map((layer) =>
-                ["point"].includes(layer.feature_layer_geometry_type) ? (
-                  <MenuItem value={layer.layer_id} key={v4()}>
-                    {layer.name}
-                  </MenuItem>
-                ) : null,
-              )
-            : null}
-        </Select>
-      </FormControl>
+      <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
+        <Box sx={{ height: "100%" }}>
+          <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
+        </Box>
+        <Stack sx={{ pl: 4, py: 4, pr: 1, flexGrow: 1 }}>
+          <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
+            <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+              {t("panels.tools.aggregate.pick_layer_text")}
+            </Typography>
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">
+                {t("panels.tools.select_layer")}
+              </InputLabel>
+              <Select
+                label={t("panels.tools.select_layer")}
+                error={!!errors.source_layer_project_id}
+                value={
+                  watch.source_layer_project_id
+                    ? watch.source_layer_project_id
+                    : ""
+                }
+                {...register("source_layer_project_id")}
+              >
+                {projectLayers
+                  ? projectLayers.map((layer) =>
+                      ["point"].includes(layer.feature_layer_geometry_type) ? (
+                        <MenuItem value={layer.id} key={v4()}>
+                          {layer.name}
+                        </MenuItem>
+                      ) : null,
+                    )
+                  : null}
+              </Select>
+              {!!errors.source_layer_project_id && (
+                <Typography sx={{ fontSize: "10px" }} color="error">
+                  {errors.source_layer_project_id.message}
+                </Typography>
+              )}
+            </FormControl>
+          </Box>
+        </Stack>
+      </Stack>
     </Box>
   );
 };

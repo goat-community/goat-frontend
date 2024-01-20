@@ -74,9 +74,9 @@ export const useLayerKeys = (layerId: string) => {
   return { data, isLoading, error };
 };
 
-export const useUniqueValues = (layerId: string, column: string) => {
-  const { data, isLoading, error } = useSWR<LayerPaginated>(
-    [`${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}`],
+export const useUniqueValues = (layerId: string, column: string, page?: number) => {
+  const { data, isLoading, error } = useSWR<Record<string, number>>(
+    [`${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${page ? `?page=${page}` : ""}`],
     fetcher,
   );
   return { data, isLoading, error };

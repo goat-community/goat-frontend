@@ -21,7 +21,6 @@ export default function JobsPopper() {
 
   const [intervalId, setIntervalId] = useState<number | null>(null);
   useEffect(() => {
-    console.log("jobs", jobs);
     if (!jobs?.items) return;
     const runningJobs = jobs.items.length;
     if (runningJobs === 0) {

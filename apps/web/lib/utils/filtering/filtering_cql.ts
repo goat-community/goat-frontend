@@ -197,13 +197,14 @@ export function createTheCQLBasedOnExpression(
           console.log(expression.value);
           return is_between(
             expression.attribute,
-            parseFloat(expression.value.split("-")[0]),
-            parseFloat(expression.value.split("-")[1]),
+            parseInt(expression.value.split("-")[0]),
+            parseInt(expression.value.split("-")[1]),
           );
       }
     });
 
   if (logicalOperator === "and") {
+    console.log(and_operator(queries));
     return JSON.parse(and_operator(queries));
   } else {
     return JSON.parse(or_operator(queries));
