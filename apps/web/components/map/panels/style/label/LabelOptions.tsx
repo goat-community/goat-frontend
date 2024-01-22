@@ -1,27 +1,24 @@
 import { useTranslation } from "@/i18n/client";
-import type {
-  FeatureLayerProperties,
-  LayerFieldType,
-} from "@/lib/validations/layer";
+import type { LayerFieldType } from "@/lib/validations/layer";
 import OptionsCollapse from "@/components/map/panels/style/other/OptionsCollapse";
 import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
 
 const LabelOptions = ({
-  layerStyle,
-  layerId,
+  // layerStyle,
+  // layerId,
   active,
   layerFields,
   selectedField,
   collapsed,
-  onStyleChange,
-}: {
-  layerStyle?: FeatureLayerProperties;
-  layerId: string;
+} // onStyleChange,
+: {
+  // layerStyle?: FeatureLayerProperties;
+  // layerId: string;
   active: boolean;
   selectedField?: LayerFieldType;
   layerFields: LayerFieldType[];
   collapsed?: boolean;
-  onStyleChange?: (newStyle: FeatureLayerProperties) => void;
+  // onStyleChange?: (newStyle: FeatureLayerProperties) => void;
 }) => {
   const { t } = useTranslation(["maps", "common"]);
 

@@ -70,7 +70,7 @@ export const useLayerSettingsMoreMenu = () => {
 };
 
 export const useActiveLayer = (projectId: string) => {
-  const { layers: projectLayers } = useProjectLayers(projectId);
+  const { layers: projectLayers, mutate } = useProjectLayers(projectId);
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
   const activeLayer = useMemo(() => {
     const activeLayer = projectLayers?.find(
@@ -96,7 +96,7 @@ export const useActiveLayer = (projectId: string) => {
 
     return parsedActiveLayer;
   }, [activeLayerId, projectLayers]);
-  return activeLayer;
+  return { activeLayer, mutate };
 };
 
 export const useSortedLayers = (projectId: string) => {

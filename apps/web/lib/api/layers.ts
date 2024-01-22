@@ -41,6 +41,15 @@ export const useLayerQueryables = (layerId: string) => {
   return { queryables: data, isLoading, isError: error };
 };
 
+//TODO: remove this hook and use useLayerQueryables instead
+export const useLayerKeys = (layerId: string) => {
+  const { data, isLoading, error } = useSWR<LayerPaginated>(
+    [`${COLLECTIONS_API_BASE_URL}/${layerId}/queryables`],
+    fetcher,
+  );
+  return { data, isLoading, error };
+};
+
 export const useLayerClassBreaks = (
   layerId: string,
   operation?: ClassBreaks,
@@ -115,9 +124,17 @@ export const getLayerClassBreaks = async (
   return await response.json();
 };
 
-export const useUniqueValues = (layerId: string, column: string) => {
-  const { data, isLoading, error } = useSWR<LayerPaginated>(
-    [`${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}`],
+export const useUniqueValues = (
+  layerId: string,
+  column: string,
+  page?: number,
+) => {
+  const { data, isLoading, error } = useSWR<Record<string, number>>(
+    [
+      `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${
+        page ? `?page=${page}` : ""
+      }`,
+    ],
     fetcher,
   );
   return { data, isLoading, error };

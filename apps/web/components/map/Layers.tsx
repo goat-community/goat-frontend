@@ -1,4 +1,5 @@
 import React from "react";
+import type { LayerProps } from "react-map-gl";
 import { Source, Layer as MapLayer } from "react-map-gl";
 import type { ProjectLayer } from "@/lib/validations/project";
 import { GEOAPI_BASE_URL } from "@/lib/constants";
@@ -36,7 +37,12 @@ const Layers = (props: LayersProps) => {
                         }`,
                     ]}
                   >
-                    <MapLayer {...transformToMapboxLayerStyleSpec(layer)} source-layer="default" />
+                    <MapLayer
+                      {...(transformToMapboxLayerStyleSpec(
+                        layer,
+                      ) as LayerProps)}
+                      source-layer="default"
+                    />
                   </Source>
                 );
               } else if (layer.type === "external_imagery") {

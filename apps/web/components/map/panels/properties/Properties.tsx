@@ -96,18 +96,18 @@ const Visibility = ({
 }) => {
   const { layers: projectLayers, mutate: mutateProjectLayers } =
     useProjectLayers(projectId);
-  const layerType = layer.properties.type;
+  const layerType = layer.type;
 
   const opacity = useMemo(() => {
-    if (!layer.properties.paint) return 100;
-    return layer.properties.paint[`${layerType}-opacity`] * 100;
-  }, [layer.properties.paint, layerType]);
+    if (!layer.properties.opacity) return 80;
+    return layer.properties.opacity * 100;
+  }, [layer.properties.opacity]);
 
   const visibilityRange = useMemo(() => {
-    const minZoom = layer.properties.minzoom || 0;
-    const maxZoom = layer.properties.maxzoom || 22;
+    const minZoom = layer.properties.min_zoom || 0;
+    const maxZoom = layer.properties.max_zoom || 22;
     return [minZoom, maxZoom];
-  }, [layer.properties.minzoom, layer.properties.maxzoom]);
+  }, [layer.properties.min_zoom, layer.properties.max_zoom]);
 
   const [opacityValue, setOpacityValue] = useState<number>(opacity);
   const [visibilityRangeValue, setVisibilityRangeValue] =
@@ -211,7 +211,7 @@ const Symbology = () => {
 
 const PropertiesPanel = ({ projectId }: { projectId: string }) => {
   const dispatch = useAppDispatch();
-  const activeLayer = useActiveLayer(projectId);
+  const { activeLayer } = useActiveLayer(projectId);
   return (
     <Container
       title="Properties"

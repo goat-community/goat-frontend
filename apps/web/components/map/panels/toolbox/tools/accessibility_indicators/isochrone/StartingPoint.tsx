@@ -127,10 +127,9 @@ const StartingPoint = (props: PickLayerProps) => {
       const [_, latitude, longitude] = resultCoordinates;
 
       setFormValue("starting_points", {
-        latitude: [latitude],
-        longitude: [longitude],
+        latitude: [latitude.toString()],
+        longitude: [longitude.toString()],
       });
-      console.log([latitude, longitude])
       map.setCenter([latitude, longitude]);
       setOptions([
         {

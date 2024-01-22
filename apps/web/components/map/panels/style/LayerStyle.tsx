@@ -17,7 +17,7 @@ import type { ProjectLayer } from "@/lib/validations/project";
 const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation(["maps", "common"]);
   const dispatch = useDispatch();
-  const activeLayer = useActiveLayer(projectId);
+  const { activeLayer } = useActiveLayer(projectId);
   const { layers: projectLayers, mutate: mutateProjectLayers } =
     useProjectLayers(projectId);
 

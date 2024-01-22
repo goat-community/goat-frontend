@@ -149,7 +149,7 @@ export const featureLayerProperties = featureLayerPointPropertiesSchema
   .or(featureLayerPolygonPropertiesSchema);
 
 export const layerSchema = layerMetadataSchema.extend({
-  id: z.number(),
+  id: z.string(),
   properties: featureLayerProperties,
   total_count: z.number().optional(),
   extent: z.string(),
