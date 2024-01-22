@@ -1,8 +1,10 @@
 import React from "react";
+import type { LayerProps } from "react-map-gl";
 import { Source, Layer as MapLayer } from "react-map-gl";
 import type { ProjectLayer } from "@/lib/validations/project";
 import { GEOAPI_BASE_URL } from "@/lib/constants";
 import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
+import { transformToMapboxLayerStyleSpec } from "@/lib/transformers/layer";
 
 interface LayersProps {
   projectId: string;
@@ -16,14 +18,7 @@ const Layers = (props: LayersProps) => {
       {sortedLayers?.length
         ? sortedLayers.map((layer: ProjectLayer) =>
             (() => {
-              if (
-                ["feature", "external_vector_tile"].includes(layer.type) &&
-                layer.properties &&
-                ["circle", "fill", "line", "symbol"].includes(
-                  layer.properties.type,
-                )
-              ) {
-
+              if (["feature", "external_vector_tile"].includes(layer.type)) {
                 return (
                   <Source
                     key={layer.updated_at}
@@ -42,7 +37,12 @@ const Layers = (props: LayersProps) => {
                         }`,
                     ]}
                   >
-                    <MapLayer {...layer.properties} source-layer="default" />
+                    <MapLayer
+                      {...(transformToMapboxLayerStyleSpec(
+                        layer,
+                      ) as LayerProps)}
+                      source-layer="default"
+                    />
                   </Source>
                 );
               } else if (layer.type === "external_imagery") {

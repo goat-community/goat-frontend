@@ -42,7 +42,7 @@ const ProjectNavigation = ({ projectId }) => {
   const activeBasemap = useAppSelector((state) => state.map.activeBasemap);
   const activeLeft = useAppSelector((state) => state.map.activeLeftPanel);
   const activeRight = useAppSelector((state) => state.map.activeRightPanel);
-  const {activeLayer} = useActiveLayer(projectId);
+  const { activeLayer } = useActiveLayer(projectId);
 
   const prevActiveLeftRef = useRef<MapSidebarItemID | undefined>(undefined);
   const prevActiveRightRef = useRef<MapSidebarItemID | undefined>(undefined);

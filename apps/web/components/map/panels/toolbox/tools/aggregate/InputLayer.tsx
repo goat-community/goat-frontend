@@ -83,7 +83,9 @@ const InputLayer = (props: PickLayerProps) => {
               >
                 {projectLayers
                   ? projectLayers.map((layer) =>
-                      ["point"].includes(layer.feature_layer_geometry_type) ? (
+                      ["point"].includes(
+                        layer.feature_layer_geometry_type as string,
+                      ) ? (
                         <MenuItem value={layer.id} key={v4()}>
                           {layer.name}
                         </MenuItem>

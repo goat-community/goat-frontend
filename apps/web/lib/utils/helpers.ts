@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 import Color from "color";
+import type { HexColor, RGBColor } from "@/types/map/color";
+import type { ColorRange } from "@/lib/validations/layer";
 
 import type { ProjectLayer } from "@/lib/validations/project";
 
@@ -177,6 +179,12 @@ export function isValidHex(hex) {
   return /^#[0-9A-F]{6}$/i.test(hex);
 }
 
+export function isHexColor(hex: string): RegExpExecArray | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+  return result;
+}
+
 export function isValidRGB(rgb) {
   return (
     rgb.r >= 0 &&
@@ -188,12 +196,74 @@ export function isValidRGB(rgb) {
   );
 }
 
-export function hexToRgb(hex: string): number[] {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
+export function hexToRgb(hex: string): RGBColor {
+  const result = isHexColor(hex);
+
+  if (!result) {
+    return [0, 0, 0];
+  }
+
+  const r = parseInt(result[1], 16);
+  const g = parseInt(result[2], 16);
+  const b = parseInt(result[3], 16);
 
   return [r, g, b];
+}
+
+function PadNum(c) {
+  const hex = c.toString(16);
+  return hex.length === 1 ? `0${hex}` : hex;
+}
+
+/**
+ * get hex from r g b
+ *
+ * @param rgb
+ * @returns hex string
+ */
+export function rgbToHex([r, g, b]: RGBColor): HexColor {
+  return `#${[r, g, b].map((n) => PadNum(n)).join("")}`.toUpperCase();
+}
+
+/**
+ * Get a reversed colorRange
+ * @param reversed
+ * @param colorRange
+ */
+export function reverseColorRange(
+  reversed: boolean,
+  colorRange: ColorRange,
+): ColorRange | null {
+  if (!colorRange) return null;
+  // if (colorRange.reversed) return colorRange;
+  return {
+    ...colorRange,
+    reversed,
+    colors: colorRange.colors.slice().reverse(),
+  };
+}
+
+export default function range(
+  start: number,
+  stop?: number,
+  step?: number,
+): number[] {
+  start = +start;
+  stop = stop !== undefined ? +stop : start;
+  step = step !== undefined ? +step : 1;
+
+  const n = Math.max(0, Math.ceil((stop - start) / step)) | 0;
+  const range: number[] = new Array(n);
+
+  for (let i = 0; i < n; i++) {
+    range[i] = start + i * step;
+  }
+
+  return range;
+}
+
+export function numberSort(a: number, b: number): number {
+  return a - b;
 }
 
 export function getLayerStringIdById(layers: ProjectLayer[], id: number) {

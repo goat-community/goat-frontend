@@ -5,7 +5,6 @@ import {
 } from "@/lib/validations/common";
 import { responseSchema } from "@/lib/validations/response";
 import { layerSchema } from "@/lib/validations/layer";
-import type { AnyLayer as MapLayerStyle } from "react-map-gl";
 
 export const projectSchema = contentMetadataSchema.extend({
   folder_id: z.string(),
@@ -18,9 +17,8 @@ export const projectSchema = contentMetadataSchema.extend({
 export const projectLayerSchema = layerSchema.extend({
   id: z.number(),
   folder_id: z.string(),
-  query: z.object({}),
+  query: z.object({}).optional().default({}),
   layer_id: z.string().uuid(),
-  project_id: z.string().uuid(),
   legend_urls: z.array(z.string()).optional(),
 });
 
@@ -49,10 +47,7 @@ export const projectResponseSchema = responseSchema(projectSchema);
 export const projectLayersResponseSchema = responseSchema(projectLayerSchema);
 
 export type Project = z.infer<typeof projectSchema>;
-type LayerZod = z.infer<typeof projectLayerSchema>;
-export type ProjectLayer = Omit<LayerZod, "properties"> & {
-  properties: MapLayerStyle;
-};
+export type ProjectLayer = z.infer<typeof projectLayerSchema>;
 export type ProjectPaginated = z.infer<typeof projectResponseSchema>;
 export type PostProject = z.infer<typeof postProjectSchema>;
 export type ProjectViewState = z.infer<typeof projectViewStateSchema>;

@@ -1,12 +1,20 @@
 import { useAppSelector } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
 import { useProject, useProjectLayers } from "@/lib/api/projects";
+import {
+  featureLayerLinePropertiesSchema,
+  featureLayerPointPropertiesSchema,
+  featureLayerPolygonPropertiesSchema,
+} from "@/lib/validations/layer";
+import {
+  projectLayerSchema,
+  type ProjectLayer,
+} from "@/lib/validations/project";
 import { ContentActions, MapLayerActions } from "@/types/common";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMemo, useState } from "react";
 
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
-import type { ProjectLayer } from "@/lib/validations/project";
 
 export const useLayerSettingsMoreMenu = () => {
   const { t } = useTranslation(["maps", "common"]);
@@ -64,11 +72,30 @@ export const useLayerSettingsMoreMenu = () => {
 export const useActiveLayer = (projectId: string) => {
   const { layers: projectLayers, mutate } = useProjectLayers(projectId);
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
-  const activeLayer = useMemo(
-    () =>
-      projectLayers?.find((layer) => layer.id === activeLayerId) ?? undefined,
-    [activeLayerId, projectLayers],
-  );
+  const activeLayer = useMemo(() => {
+    const activeLayer = projectLayers?.find(
+      (layer) => layer.id === activeLayerId,
+    );
+    if (!activeLayer) return undefined;
+    const properties = activeLayer?.properties;
+    if (!properties) return undefined;
+    const parsedActiveLayer = projectLayerSchema.parse(activeLayer);
+    if (parsedActiveLayer.feature_layer_geometry_type === "point") {
+      parsedActiveLayer.properties =
+        featureLayerPointPropertiesSchema.parse(properties);
+    }
+    if (parsedActiveLayer.feature_layer_geometry_type === "line") {
+      parsedActiveLayer.properties =
+        featureLayerLinePropertiesSchema.parse(properties);
+    }
+
+    if (parsedActiveLayer.feature_layer_geometry_type === "polygon") {
+      parsedActiveLayer.properties =
+        featureLayerPolygonPropertiesSchema.parse(properties);
+    }
+
+    return parsedActiveLayer;
+  }, [activeLayerId, projectLayers]);
   return { activeLayer, mutate };
 };
 

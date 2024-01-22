@@ -1,3 +1,7 @@
+export type NestedPartial<T> = {
+  [P in keyof T]?: NestedPartial<T[P]>;
+};
+
 export enum ContentActions {
   INFO = "info",
   EDIT_METADATA = "editMetadata",
@@ -11,14 +15,14 @@ export enum MapLayerActions {
   DUPLICATE = "duplicate",
   RENAME = "rename",
   ZOOM_TO = "zoomTo",
-  PROPERTIES = "properties"
+  PROPERTIES = "properties",
 }
 
 export enum OrgMemberActions {
   EDIT = "edit",
   DELETE = "delete",
   TRANSFER_OWNERSHIP = "transferOwnership",
-  CANCEL_INVITATION = "cancelInvitation"
+  CANCEL_INVITATION = "cancelInvitation",
 }
 
 export type ResponseResult = {

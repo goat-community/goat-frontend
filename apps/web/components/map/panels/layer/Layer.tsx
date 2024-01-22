@@ -8,7 +8,6 @@ import {
   Card,
   Grid,
   IconButton,
-  styled,
   Typography,
   Stack,
   Tooltip,
@@ -61,35 +60,12 @@ import { setActiveLeftPanel, setActiveRightPanel } from "@/lib/store/map/slice";
 import { MapSidebarItemID } from "@/types/map/common";
 import DatasetUploadModal from "@/components/modals/DatasetUpload";
 import DatasetExplorerModal from "@/components/modals/DatasetExplorer";
+import { DragHandle } from "@/components/common/DragHandle";
 
 interface PanelProps {
   onCollapse?: () => void;
   projectId: string;
 }
-
-const StyledDragHandle = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  color: theme.palette.text.secondary,
-  transition: theme.transitions.create(["opacity"], {
-    duration: theme.transitions.duration.standard,
-  }),
-  opacity: 0,
-  ":hover": {
-    cursor: "move",
-    color: theme.palette.text.primary,
-  },
-}));
-
-export const DragHandle: React.FC<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  listeners?: any;
-  children?: React.ReactNode;
-}> = ({ listeners, children }) => (
-  <StyledDragHandle {...(listeners ? listeners : {})}>
-    {children}
-  </StyledDragHandle>
-);
 
 type SortableLayerTileProps = {
   id: number;
@@ -302,14 +278,8 @@ const LayerPanel = ({ projectId }: PanelProps) => {
     if (!properties) {
       properties = {};
     }
-    if (!properties?.layout) {
-      properties.layout = {};
-    }
-    properties.layout.visibility =
-      !properties.layout.visibility ||
-      properties.layout.visibility === "visible"
-        ? "none"
-        : "visible";
+
+    properties.visibility = !properties.visibility;
 
     layerToUpdate.properties = properties;
     await mutateProjectLayers(layers, false);
@@ -506,7 +476,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                           <Tooltip
                             key={layer.id}
                             title={
-                              layer.properties?.layout?.visibility === "none"
+                              layer.properties.visibility
                                 ? t("show_layer")
                                 : t("hide_layer")
                             }
@@ -527,17 +497,12 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                                       theme.transitions.duration.standard,
                                   },
                                 ),
-                                opacity:
-                                  layer.properties?.layout?.visibility ===
-                                  "none"
-                                    ? 1
-                                    : 0,
+                                opacity: !layer.properties.visibility ? 1 : 0,
                               }}
                             >
                               <Icon
                                 iconName={
-                                  layer.properties?.layout?.visibility ===
-                                  "none"
+                                  !layer.properties.visibility
                                     ? ICON_NAME.EYE_SLASH
                                     : ICON_NAME.EYE
                                 }

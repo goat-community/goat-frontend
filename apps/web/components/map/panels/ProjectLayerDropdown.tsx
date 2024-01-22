@@ -40,7 +40,6 @@ const ProjectLayerDropdown = ({
             id="select-active-layer"
             value={activeLayer.id}
             label="Active Layer"
-            autoWidth
             onChange={(event) => {
               const id = event.target.value as number;
               dispatch(setActiveLayer(id));
