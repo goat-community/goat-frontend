@@ -36,6 +36,7 @@ const ColorPaletteGroup = (props: ColorPaletteGroupProps) => {
   return (
     <Box
       sx={{
+        px: 3,
         maxHeight: "300px",
         overflowY: "auto",
       }}

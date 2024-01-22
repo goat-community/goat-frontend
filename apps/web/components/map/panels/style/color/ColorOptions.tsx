@@ -4,10 +4,12 @@ import type {
   FeatureLayerProperties,
   LayerFieldType,
 } from "@/lib/validations/layer";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
 import ColorScaleSelector from "@/components/map/panels/style/classification/ColorScaleSelector";
 import OptionsCollapse from "@/components/map/panels/style/other/OptionsCollapse";
+import SliderInput from "@/components/map/panels/style/other/SliderInput";
+import FormLabelHelper from "@/components/common/FormLabelHelper";
 
 const ColorOptions = ({
   type,
@@ -48,6 +50,7 @@ const ColorOptions = ({
     }),
     [layerStyle, onStyleChange, type],
   );
+  const [opacity, setOpacity] = useState(layerStyle?.opacity || 1);
 
   return (
     <OptionsCollapse
@@ -105,6 +108,33 @@ const ColorOptions = ({
                 intervals={layerStyle?.[`${type}_range`]?.colors.length}
               />
             )}
+          {type === "color" && (
+            <>
+              <FormLabelHelper label={t("maps:opacity")} color="inherit" />
+              <SliderInput
+                value={opacity}
+                isRange={false}
+                rootSx={{
+                  pl: 1,
+                  pt: 0,
+                  "&&": {
+                    mt: 0,
+                  },
+                }}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(value) => {
+                  setOpacity(value as number);
+                }}
+                onChangeCommitted={(value) => {
+                  const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
+                  newStyle.opacity = value as number;
+                  onStyleChange && onStyleChange(newStyle);
+                }}
+              />
+            </>
+          )}
         </>
       }
       collapsed={collapsed}

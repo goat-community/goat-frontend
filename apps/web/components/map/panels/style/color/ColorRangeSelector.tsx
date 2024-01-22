@@ -28,11 +28,13 @@ import { numberSort } from "@/lib/utils/helpers";
 import type { ColorRange } from "@/lib/validations/layer";
 import { useTranslation } from "@/i18n/client";
 import ColorPaletteGroup from "@/components/map/panels/style/color/ColorPaletteGroup";
+import CustomPalette from "@/components/map/panels/style/color/CustomPalette";
 
 type ColorRangeSelectorProps = {
   selectedColorRange: ColorRange;
   onSelectColorRange: (p: ColorRange) => void;
   setIsBusy?: (p: boolean) => void;
+  setIsOpen?: (p: boolean) => void;
 };
 
 export const ALL_TYPES: string[] = uniq(
@@ -85,7 +87,7 @@ const PaletteConfig = (props: PaletteConfigProps) => {
       direction="row"
       justifyContent="space-between"
       alignItems="center"
-      sx={{ pl: 1 }}
+      sx={{ pl: 4, pr: 3 }}
     >
       <Typography variant="body2">{t(`${label}`)}</Typography>
       {config.type === "select" && (
@@ -150,7 +152,7 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
 
   return (
     <Stack spacing={2}>
-      {(selectedColorRange.type === "custom"
+      {(colorRangeConfig.custom
         ? ["custom"]
         : Object.keys(colorRangeConfig)
       ).map((key) => (
@@ -169,7 +171,16 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
         />
       ))}
       {colorRangeConfig.custom ? (
-        <div>Custom Palette</div>
+        <CustomPalette
+          onApply={(colorRange: ColorRange) => {
+            onSelectColorRange(colorRange);
+            props.setIsOpen && props.setIsOpen(false);
+          }}
+          onCancel={() => {
+            props.setIsOpen && props.setIsOpen(false);
+          }}
+          customPalette={selectedColorRange}
+        />
       ) : (
         <ColorPaletteGroup
           colorRanges={filteredColorRange}

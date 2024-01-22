@@ -102,6 +102,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const [collapseStrokeWidthOptions, setCollapseStrokeWidthOptions] =
     useState(true);
   const [collapseRadiusOptions, setCollapseRadiusOptions] = useState(true);
+  const [collapseLabelOptions, setCollapseLabelOptions] = useState(true);
 
   return (
     <Container
@@ -200,37 +201,41 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                 />
 
                 {/* {STROKE WIDTH} */}
-                <Header
-                  active={!!activeLayer?.properties.stroked}
-                  onToggleChange={(event) => {
-                    onToggleChange(event, "stroked");
-                  }}
-                  alwaysActive={
-                    activeLayer?.feature_layer_geometry_type === "line"
-                  }
-                  label={
-                    ["line", "polygon"].includes(
-                      activeLayer?.feature_layer_geometry_type || "",
-                    )
-                      ? t("maps:stroke_width")
-                      : t("maps:outline")
-                  }
-                  collapsed={collapseStrokeWidthOptions}
-                  setCollapsed={setCollapseStrokeWidthOptions}
-                  disableAdvanceOptions={true}
-                />
+                {/* {fix: only for point and line. stroke_width doesn't yet work with polygon due to webgl limitation} */}
+                {activeLayer.feature_layer_geometry_type &&
+                  ["line", "point"].includes(
+                    activeLayer.feature_layer_geometry_type,
+                  ) && (
+                    <>
+                      <Header
+                        active={!!activeLayer?.properties.stroked}
+                        onToggleChange={(event) => {
+                          onToggleChange(event, "stroked");
+                        }}
+                        alwaysActive={
+                          activeLayer?.feature_layer_geometry_type === "line"
+                        }
+                        label={t("maps:stroke_width")}
+                        collapsed={collapseStrokeWidthOptions}
+                        setCollapsed={setCollapseStrokeWidthOptions}
+                        disableAdvanceOptions={true}
+                      />
 
-                <SizeOptions
-                  type="stroke_width"
-                  layerStyle={activeLayer?.properties}
-                  active={!!activeLayer?.properties.stroked}
-                  collapsed={collapseStrokeWidthOptions}
-                  onStyleChange={(newStyle: FeatureLayerProperties) => {
-                    updateLayerStyle(newStyle);
-                  }}
-                  layerFields={layerFields}
-                  selectedField={activeLayer?.properties["stroke_width_field"]}
-                />
+                      <SizeOptions
+                        type="stroke_width"
+                        layerStyle={activeLayer?.properties}
+                        active={!!activeLayer?.properties.stroked}
+                        collapsed={collapseStrokeWidthOptions}
+                        onStyleChange={(newStyle: FeatureLayerProperties) => {
+                          updateLayerStyle(newStyle);
+                        }}
+                        layerFields={layerFields}
+                        selectedField={
+                          activeLayer?.properties["stroke_width_field"]
+                        }
+                      />
+                    </>
+                  )}
 
                 {/* {RADIUS} */}
                 {activeLayer?.feature_layer_geometry_type &&
@@ -258,6 +263,16 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                       />
                     </>
                   )}
+
+                {/* {LABELS} */}
+
+                <Header
+                  active={true}
+                  alwaysActive={true}
+                  label={t("maps:labels")}
+                  collapsed={collapseLabelOptions}
+                  setCollapsed={setCollapseLabelOptions}
+                />
               </Stack>
             )}
           </Box>

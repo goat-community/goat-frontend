@@ -13,5 +13,6 @@
     "update": "Update",
     "info": "Info",
     "properties": "Properties",
-    "rename": "Rename"
+    "rename": "Rename",
+    "apply": "Apply"
 }

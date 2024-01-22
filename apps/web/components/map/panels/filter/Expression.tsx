@@ -54,7 +54,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
 
   const { t } = useTranslation("maps");
-  const { activeLayer } = useActiveLayer(projectId as string);
+  const activeLayer = useActiveLayer(projectId as string);
   const open = Boolean(anchorEl);
 
   const theme = useTheme();

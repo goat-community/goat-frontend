@@ -16,6 +16,8 @@ enum SingleColorType {
 }
 
 const CustomStyledSingleColorSelector = styled("div")(({ theme }) => ({
+    paddingLeft: `${theme.spacing(3)}`,
+    paddingRight: `${theme.spacing(3)}`,
   ".side-panel-section-group": {
     marginBottom: `${theme.spacing(3)}`,
   },

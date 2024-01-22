@@ -51,7 +51,6 @@ const ColorSelector = (props: ColorSelectorProps) => {
           <>
             <Paper
               sx={{
-                px: 3,
                 py: 3,
                 boxShadow: "rgba(0, 0, 0, 0.16) 0px 6px 12px 0px",
                 width: "235px",
@@ -63,6 +62,7 @@ const ColorSelector = (props: ColorSelectorProps) => {
                   selectedColorRange={colorSet.selectedColor as ColorRange}
                   onSelectColorRange={onSelectColor}
                   setIsBusy={(busy) => setIsClickAwayEnabled(!busy)}
+                  setIsOpen={setOpen}
                 />
               ) : (
                 <SingleColorSelector
@@ -106,6 +106,7 @@ const ColorSelector = (props: ColorSelectorProps) => {
               },
             }}
           >
+            
             {colorSet.isRange ? (
               <ColorPalette
                 colors={(colorSet.selectedColor as ColorRange).colors}

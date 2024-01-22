@@ -55,8 +55,29 @@ const ColorRange = z.object({
   colorLegends: ColorLegends.optional(),
 });
 
+export const TextLabelSchema = z.object({
+  size: z.number().min(1).max(100).default(14),
+  color: z.array(z.number().min(0).max(255)).optional().default([0, 0, 0]),
+  field: z.string().optional(),
+  offset: z.array(z.number().min(0).max(100)).optional().default([0, 0]),
+  anchor: z.enum(["start", "middle", "end"]).optional().default("middle"),
+  alignment: z.enum(["center", "left", "right"]).optional().default("center"),
+  background: z.boolean().optional().default(false),
+  background_color: z
+    .array(z.number().min(0).max(255))
+    .optional()
+    .default([0, 0, 200, 255]),
+  outline_color: z
+    .array(z.number().min(0).max(255))
+    .optional()
+    .default([255, 0, 0, 255]),
+  outline_width: z.number().min(0).max(100).optional().default(0),
+});
+
+export const TextLabel = z.array(TextLabelSchema);
+
 export const layerPropertiesBaseSchema = z.object({
-  opacity: z.number().min(0).max(1),
+  opacity: z.number().min(0).max(1).default(0.8),
   visibility: z.boolean(),
   min_zoom: z.number().min(0).max(23).default(0),
   max_zoom: z.number().min(0).max(23).default(21),
@@ -104,6 +125,7 @@ export const featureLayerBasePropertiesSchema = z
   .object({
     filled: z.boolean().default(true),
     stroked: z.boolean().default(true),
+    text_label: TextLabel.optional(),
   })
   .merge(layerPropertiesBaseSchema)
   .merge(colorSchema)

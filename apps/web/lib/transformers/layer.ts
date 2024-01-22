@@ -11,7 +11,7 @@ export function getMapboxStyleColor(
   data: ProjectLayer,
   type: "color" | "stroke_color",
 ) {
-  const colors = data.properties[`${type}_range`].colors;
+  const colors = data.properties[`${type}_range`]?.colors;
   const fieldName = data.properties[`${type}_field`]?.name;
   if (
     !fieldName ||
@@ -35,9 +35,7 @@ export function getMapboxStyleColor(
       }
     })
     .flat();
-  console.log(colorSteps);
   const config = ["step", ["get", fieldName], ...colorSteps];
-
   return config;
 }
 
@@ -45,12 +43,11 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
   const type = data.feature_layer_geometry_type;
   if (type === "point") {
     const pointProperties = data.properties as FeatureLayerPointProperties;
-
     return {
       type: "circle",
       paint: {
         "circle-color": getMapboxStyleColor(data, "color"),
-        "circle-opacity": 1, //todo
+        "circle-opacity": pointProperties.opacity,
         "circle-radius": pointProperties.radius || 5,
         "circle-stroke-color": getMapboxStyleColor(data, "stroke_color"),
         "circle-stroke-width": pointProperties.stroked
@@ -60,13 +57,13 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
     };
   } else if (type === "polygon") {
     const polygonProperties = data.properties as FeatureLayerLineProperties;
-    console.log(polygonProperties);
     return {
       type: "fill",
       paint: {
         "fill-color": getMapboxStyleColor(data, "color"),
-        "fill-opacity": 1, // todo
+        "fill-opacity": polygonProperties.opacity,
         "fill-outline-color": getMapboxStyleColor(data, "stroke_color"),
+        "fill-antialias": polygonProperties.stroked,
       },
     };
   } else if (type === "line") {
@@ -75,8 +72,8 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
     return {
       type: "line",
       paint: {
-        "line-color": getMapboxStyleColor(data, "color"),
-        "line-opacity": 1, // todo
+        "line-color": getMapboxStyleColor(data, "stroke_color"),
+        "line-opacity": lineProperties.opacity,
         "line-width": lineProperties.stroke_width || 1,
       },
     };
