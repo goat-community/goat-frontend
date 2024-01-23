@@ -47,7 +47,7 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
       type: "circle",
       paint: {
         "circle-color": getMapboxStyleColor(data, "color"),
-        "circle-opacity": pointProperties.opacity,
+        "circle-opacity": pointProperties.filled ? pointProperties.opacity : 0,
         "circle-radius": pointProperties.radius || 5,
         "circle-stroke-color": getMapboxStyleColor(data, "stroke_color"),
         "circle-stroke-width": pointProperties.stroked
@@ -61,7 +61,7 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
       type: "fill",
       paint: {
         "fill-color": getMapboxStyleColor(data, "color"),
-        "fill-opacity": polygonProperties.opacity,
+        "fill-opacity": polygonProperties.filled ? polygonProperties.opacity : 0,
         "fill-outline-color": getMapboxStyleColor(data, "stroke_color"),
         "fill-antialias": polygonProperties.stroked,
       },
