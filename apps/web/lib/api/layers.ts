@@ -113,7 +113,7 @@ export const getLayerClassBreaks = async (
   breaks: number,
 ): Promise<LayerClassBreaks> => {
   const response = await fetchWithAuth(
-    `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}/?breaks=${breaks}`,
+    `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`,
     {
       method: "GET",
     },
