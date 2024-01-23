@@ -60,7 +60,7 @@ export const useLayerClassBreaks = (
     () =>
       operation && column && breaks
         ? [
-            `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}/?breaks=${breaks}`,
+            `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`,
           ]
         : null,
     fetcher,
