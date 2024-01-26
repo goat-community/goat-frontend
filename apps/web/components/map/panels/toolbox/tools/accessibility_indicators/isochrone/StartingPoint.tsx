@@ -11,6 +11,8 @@ import {
   TextField,
   Button,
   Autocomplete,
+  Stack,
+  Divider,
 } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { v4 } from "uuid";
@@ -33,7 +35,6 @@ import type { SelectChangeEvent } from "@mui/material";
 
 interface PickLayerProps {
   register: UseFormRegister<PostIsochrone>;
-  // getValues: UseFormGetValues<PostIsochrone>;
   setValue: UseFormSetValue<PostIsochrone>;
   watch: PostIsochrone;
   startingType: StartingPointType | undefined;
@@ -43,13 +44,12 @@ interface PickLayerProps {
 const StartingPoint = (props: PickLayerProps) => {
   const {
     register,
-    // getValues,
     setValue: setFormValue,
     startingType,
     watch,
     setStartingType,
   } = props;
-  // const { projectLayers } = useProjectLayers();
+
   const { projectId } = useParams();
   const { layers: projectLayers } = useProjectLayers(
     typeof projectId === "string" ? projectId : "",
@@ -122,7 +122,6 @@ const StartingPoint = (props: PickLayerProps) => {
       return undefined;
     }
     const resultCoordinates = testForCoordinates(inputValue);
-    console.log(resultCoordinates)
     if (resultCoordinates[0]) {
       const [_, latitude, longitude] = resultCoordinates;
 
@@ -130,7 +129,8 @@ const StartingPoint = (props: PickLayerProps) => {
         latitude: [latitude.toString()],
         longitude: [longitude.toString()],
       });
-      map.setCenter([latitude, longitude]);
+
+
       setOptions([
         {
           feature: {
@@ -189,6 +189,22 @@ const StartingPoint = (props: PickLayerProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, inputValue, fetch]);
 
+  useEffect(() => {
+    if(value){
+      map.flyTo({ center: [value?.feature.center[0], value?.feature.center[1]] });
+      dispatch(removeMarker());
+      dispatch(
+        addMarker({
+          id: `isochrone-${value.label}`,
+          lat: value?.feature.center[1],
+          long: value?.feature.center[0],
+          iconName: ICON_NAME.LOCATION,
+        }),
+      );
+    }
+  }, [value])
+  
+
   return (
     <Box
       sx={{
@@ -209,61 +225,16 @@ const StartingPoint = (props: PickLayerProps) => {
         <Icon iconName={ICON_NAME.LOCATION} fontSize="small" />
         {t("panels.isochrone.starting.starting")}
       </Typography>
-      <Typography
-        variant="body2"
-        sx={{ fontStyle: "italic", marginBottom: theme.spacing(2) }}
-      >
-        {t("panels.isochrone.starting.starting_point_desc")}
-      </Typography>
-      <Box>
-        <FormControl
-          size="small"
-          fullWidth
-          sx={{
-            margin: `${theme.spacing(1)} 0`,
-          }}
-        >
-          <InputLabel id="demo-simple-select-label">
-            {t("panels.isochrone.starting.type")}
-          </InputLabel>
-          <Select
-            label={t("panels.isochrone.starting.type")}
-            onChange={(event: SelectChangeEvent) => {
-              setStartingType(event.target.value as StartingPointType);
-              setFormValue(
-                "starting_points",
-                ["place_on_map", "address_input"].includes(
-                  event.target.value as StartingPointType,
-                )
-                  ? { latitude: [], longitude: [] }
-                  : { layer_id: "" },
-              );
-              dispatch(removeMarker());
-            }}
-          >
-            <MenuItem value="place_on_map">
-              {t("panels.isochrone.starting.pick_on_map")}
-            </MenuItem>
-            <MenuItem value="browse_layers">
-              {t("panels.isochrone.starting.pick_layer")}
-            </MenuItem>
-            <MenuItem value="address_input">
-              {t("panels.isochrone.starting.search_address")}
-            </MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      {/* Pick layer in browse_layer */}
-      {startingType === "browse_layers" ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: theme.spacing(2),
-            marginBottom: theme.spacing(4),
-          }}
-        >
+      <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
+        <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
+        <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
           <Box>
+            <Typography
+              variant="body2"
+              sx={{ fontStyle: "italic", marginBottom: theme.spacing(2) }}
+            >
+              {t("panels.isochrone.starting.starting_point_desc")}
+            </Typography>
             <FormControl
               size="small"
               fullWidth
@@ -272,101 +243,151 @@ const StartingPoint = (props: PickLayerProps) => {
               }}
             >
               <InputLabel id="demo-simple-select-label">
-                {t("panels.isochrone.starting.layer")}
+                {t("panels.isochrone.starting.type")}
               </InputLabel>
               <Select
-                label={t("panels.isochrone.starting.layer")}
-                {...register("starting_points.layer_id")}
-              >
-                {projectLayers
-                  ? projectLayers.map((layer) =>
-                      layer.feature_layer_geometry_type === "point" ? (
-                        <MenuItem value={layer.layer_id} key={v4()}>
-                          {layer.name}
-                        </MenuItem>
-                      ) : null,
+                label={t("panels.isochrone.starting.type")}
+                onChange={(event: SelectChangeEvent) => {
+                  setStartingType(event.target.value as StartingPointType);
+                  setFormValue(
+                    "starting_points",
+                    ["place_on_map", "address_input"].includes(
+                      event.target.value as StartingPointType,
                     )
-                  : null}
+                      ? { latitude: [], longitude: [] }
+                      : { layer_id: "" },
+                  );
+                  dispatch(removeMarker());
+                }}
+              >
+                <MenuItem value="place_on_map">
+                  {t("panels.isochrone.starting.pick_on_map")}
+                </MenuItem>
+                <MenuItem value="browse_layers">
+                  {t("panels.isochrone.starting.pick_layer")}
+                </MenuItem>
+                <MenuItem value="address_input">
+                  {t("panels.isochrone.starting.search_address")}
+                </MenuItem>
               </Select>
             </FormControl>
           </Box>
-        </Box>
-      ) : null}
-      {/* select point on map in place_on_map */}
-      {startingType === "place_on_map" ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: theme.spacing(2),
-            marginBottom: theme.spacing(4),
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: theme.spacing(2),
-            }}
-          >
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              sx={{ flexGrow: "1" }}
-              onClick={() => {
-                dispatch(removeMarker());
-                setFormValue("starting_points.latitude", []);
-                setFormValue("starting_points.longitude", []);
+          {/* Pick layer in browse_layer */}
+          {startingType === "browse_layers" ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: theme.spacing(2),
+                marginBottom: theme.spacing(4),
               }}
             >
-              {t("panels.tools.reset")}
-            </Button>
-            <Button
-              variant={getCoordinates ? "contained" : "outlined"}
-              color="primary"
-              size="small"
-              sx={{ flexGrow: "1" }}
-              onClick={() => {
-                setGetCoordinates(!getCoordinates);
+              <Box>
+                <FormControl
+                  size="small"
+                  fullWidth
+                  sx={{
+                    margin: `${theme.spacing(1)} 0`,
+                  }}
+                >
+                  <InputLabel id="demo-simple-select-label">
+                    {t("panels.isochrone.starting.layer")}
+                  </InputLabel>
+                  <Select
+                    label={t("panels.isochrone.starting.layer")}
+                    {...register("starting_points.layer_id")}
+                  >
+                    {projectLayers
+                      ? projectLayers.map((layer) =>
+                          layer.feature_layer_geometry_type === "point" ? (
+                            <MenuItem value={layer.layer_id} key={v4()}>
+                              {layer.name}
+                            </MenuItem>
+                          ) : null,
+                        )
+                      : null}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Box>
+          ) : null}
+          {/* select point on map in place_on_map */}
+          {startingType === "place_on_map" ? (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: theme.spacing(2),
+                marginTop: theme.spacing(4),
               }}
             >
-              <Icon iconName={ICON_NAME.LOCATION} />
-            </Button>
-          </Box>
-        </Box>
-      ) : null}
-      {/* Pick layer in address_search */}
-      {startingType === "address_input" ? (
-        <Box>
-          <Autocomplete
-            disablePortal
-            id="geocoder"
-            size="small"
-            filterOptions={(x) => x}
-            options={options}
-            fullWidth
-            sx={{
-              margin: `${theme.spacing(1)} 0`,
-            }}
-            onChange={(_event: unknown, newValue: Result | null) => {
-              setOptions(newValue ? [newValue, ...options] : options);
-              setValue(newValue);
-            }}
-            onInputChange={(_event, newInputValue) => {
-              setInputValue(newInputValue);
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t("panels.isochrone.starting.search_address")}
-                value={inputValue ? { label: inputValue } : { label: "" }}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: theme.spacing(2),
+                }}
+              >
+                <Button
+                  variant="contained"
+                  size="small"
+                  color="primary"
+                  sx={{ flexGrow: "1" }}
+                  onClick={() => {
+                    dispatch(removeMarker());
+                    setFormValue("starting_points.latitude", []);
+                    setFormValue("starting_points.longitude", []);
+                  }}
+                >
+                  {t("panels.tools.reset")}
+                </Button>
+                <Button
+                  variant={getCoordinates ? "contained" : "outlined"}
+                  color="primary"
+                  size="small"
+                  sx={{ flexGrow: "1" }}
+                  onClick={() => {
+                    setGetCoordinates(!getCoordinates);
+                  }}
+                >
+                  <Icon iconName={ICON_NAME.LOCATION} />
+                </Button>
+              </Box>
+            </Box>
+          ) : null}
+          {/* Pick layer in address_search */}
+          {startingType === "address_input" ? (
+            <Box>
+              <Autocomplete
+                disablePortal
+                id="geocoder"
+                size="small"
+                filterOptions={(x) => x}
+                options={options}
+                fullWidth
+                sx={{
+                  margin: `${theme.spacing(1)} 0`,
+                }}
+                onChange={(_event: unknown, newValue: Result | null) => {
+                  setOptions(newValue ? [newValue, ...options] : options);
+                  setValue(newValue);
+                }}
+                onInputChange={(_event, newInputValue) => {
+                  setInputValue(newInputValue);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label={t("panels.isochrone.starting.search_address")}
+                    value={inputValue ? { label: inputValue } : { label: "" }}
+                  />
+                )}
               />
-            )}
-          />
-        </Box>
-      ) : null}
+            </Box>
+          ) : null}
+        </Stack>
+      </Stack>
     </Box>
   );
 };

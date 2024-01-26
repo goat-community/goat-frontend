@@ -9,6 +9,11 @@ import AccordionWrapper from "@/components/common/AccordionWrapper";
 import Join from "@/components/map/panels/toolbox/tools/join/Join";
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
 import Isochrone from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/Isochrone";
+import AggregatePolygon from "@/components/map/panels/toolbox/tools/aggregatePolygon/AggregatePolygon";
+import Buffer from "@/components/map/panels/toolbox/tools/buffer/Buffer";
+import OevGuetenklassen from "@/components/map/panels/toolbox/tools/oevGuetenklassen/OevGuetenklassen";
+import TripCount from "@/components/map/panels/toolbox/tools/tripCount/TripCount";
+import OriginDestination from "@/components/map/panels/toolbox/tools/originDestination/OriginDestination";
 
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("maps");
@@ -85,7 +90,7 @@ const ToolTabs = (props: ToolTabsProps) => {
     {
       name: "Accessibility Indicators",
       value: "accessibility_indicators",
-      children: ["catchment_area"],
+      children: ["catchment_area", "oev_gutenklassen", "trip_count"],
       icon: ICON_NAME.RUN,
     },
     {
@@ -97,7 +102,7 @@ const ToolTabs = (props: ToolTabsProps) => {
     {
       name: "Geoanalysis",
       value: "geoanalysis",
-      children: ["aggregate"],
+      children: ["aggregate", "aggregate_polygon", "origin_destination"],
       icon: ICON_NAME.CHART,
     },
     {
@@ -125,6 +130,17 @@ const ToolTabs = (props: ToolTabsProps) => {
         />
       ),
     },
+    aggregate_polygon: {
+      name: t("panels.tools.aggregate_polygon.aggregate_polygon"),
+      value: "aggregate_polygon",
+      element: (
+        <AggregatePolygon
+          projectId={
+            typeof params.projectId === "string" ? params.projectId : ""
+          }
+        />
+      ),
+    },
     catchment_area: {
       name: t("panels.tools.catchment_area.catchment_area"),
       value: "catchment_area",
@@ -133,12 +149,27 @@ const ToolTabs = (props: ToolTabsProps) => {
     buffer: {
       name: "Buffer features",
       value: "buffer",
-      element: <p>summarize</p>,
+      element: <Buffer />,
     },
     origin_to_destination: {
       name: "Origin to destination",
       value: "origin_to_destination",
       element: <p>origin</p>,
+    },
+    oev_gutenklassen: {
+      name: "Oev-Gutenklassen",
+      value: "oev_gutenklassen",
+      element: <OevGuetenklassen />,
+    },
+    trip_count: {
+      name: "Trip Count",
+      value: "trip_count",
+      element: <TripCount />,
+    },
+    origin_destination: {
+      name: "Origin Destination",
+      value: "origin_destination",
+      element: <OriginDestination />,
     },
   };
 
@@ -163,8 +194,19 @@ const ToolTabs = (props: ToolTabsProps) => {
           <AccordionWrapper
             key={v4()}
             header={
-              <Typography sx={{ flexShrink: 0, display: "flex", gap: theme.spacing(2), alignItems: "center" }}>
-                <Icon iconName={tab.icon} sx={{fontSize: "18px"}} htmlColor={theme.palette.secondary.dark}/>
+              <Typography
+                sx={{
+                  flexShrink: 0,
+                  display: "flex",
+                  gap: theme.spacing(2),
+                  alignItems: "center",
+                }}
+              >
+                <Icon
+                  iconName={tab.icon}
+                  sx={{ fontSize: "18px" }}
+                  htmlColor={theme.palette.secondary.dark}
+                />
                 {tab.name}
               </Typography>
             }

@@ -1,146 +1,67 @@
-import React, { useState, useEffect } from "react";
-import Histogram from "./Histogram";
+import React, { useState } from "react";
+import sample from "./sample2.json";
 import RangeSlider from "./RangeSlider";
-import { ClassNames } from "@emotion/react";
+import Histogram from "./Histogram";
+// import RangeInput from "./RangeInput";
+import { Box } from "@mui/material";
 
-interface HistogramSliderProps {
-  data: number[];
-  value: [number, number];
-  min: number;
-  max: number;
-  step: number;
-  distance: number;
-  debounceDelay?: number;
-  colors: {
-    in: string;
-    out: string;
-  };
-  onApply?: (value: [number, number]) => void;
-  onChange?: (value: [number, number]) => void;
+interface HistogramSlider {
+  countData: number[];
 }
 
-const HistogramSlider: React.FC<HistogramSliderProps> = (props) => {
-  const [value, setValue] = useState<[number, number]>([
-    props.value[0],
-    props.value[1],
-  ]);
-  const [timeout, setTimeoutHandle] = useState<number | null>(null);
+function HistogramSlider(props: HistogramSlider) {
+  const {countData} = props;
+  const responseData = sample.range;
+  const maxData = sample.max;
+  const priceData = [];
 
-  useEffect(() => {
-    if (props.value !== value) {
-      setValue(props.value);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.value]);
-
-  const reset = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setValue([props.min, props.max]);
-    if (typeof props.onApply === "function") {
-      props.onApply([props.min, props.max]);
-    } else if (typeof props.onChange === "function") {
-      props.onChange([props.min, props.max]);
-    }
-  };
-
-  const isDisabled = () => {
-    return value[0] === props.min && value[1] === props.max;
-  };
-
-  const handleSliderChange = (newValue: [number, number]) => {
-    setValue(newValue);
-
-    if (typeof props.onChange === "function") {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-      const newTimeout = window.setTimeout(() => {
-        props?.onChange ? props.onChange(newValue) : null;
-      }, props.debounceDelay || 500);
-      setTimeoutHandle(newTimeout);
-    }
-  };
-
-  const handleApply = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (typeof props.onApply === "function") {
-      props.onApply(value);
-    }
-  };
-
-  if (props.min >= props.max) {
-    console.error(`The prop "min" should not be greater than the props "max".`);
-    return null;
+  for (let i = 0; i < responseData.length; i += 1) {
+    const thisPrice = responseData[i].from ? responseData[i].from : 0;
+    // const thisCount = responseData[i].doc_count;
+    // countData.push(thisCount || 0);
+    priceData.push(thisPrice || 0);
   }
+  // countData[countData.length] = countData[countData.length - 1];
+  priceData[priceData.length] = maxData;
 
-  if (props.value[0] >= props.value[1]) {
-    console.error(
-      `The [0] of the prop "value" should not be greater than the [1].`,
-    );
-    return null;
-  }
+  const range = [0, countData.length - 1];
+  const domain = range;
+  const defaultInputValue = [
+    Number(priceData[0]),
+    Number(priceData[priceData.length - 1]),
+  ];
+  // console.log(countData.length);
+  const [updateValue, setUpdateValue] = useState(domain);
+  const [_, setInputValue] = useState(defaultInputValue);
+  const onUpdateCallBack = (v) => {
+    setUpdateValue(v);
+    // console.log(v);
+    setInputValue([].concat(Number(priceData[v[0]]), Number(priceData[v[1]])));
+  };
+  const onChangeCallBack = (v) => {
+    setUpdateValue(v);
+    setInputValue([].concat(Number(priceData[v[0]]), Number(priceData[v[1]])));
+  };
 
-  const isComponentDisabled = isDisabled();
+  console.log(countData)
 
   return (
-    <ClassNames>
-      {({ css }) => (
-        <div
-          className={css({
-            maxWidth: "240px",
-            minWidth: "240px",
-            padding: "10px",
-            boxSizing: "border-box",
-          })}
-        >
-          <Histogram
-            colors={props.colors}
-            data={props.data}
-            value={value}
-            min={props.min}
-            max={props.max}
-          />
-          <div className={css({ marginTop: "-5px" })}>
-            <RangeSlider
-              {...props}
-              value={value}
-              onChange={handleSliderChange}
-            />
-          </div>
-          <div className={css({ marginTop: "20px" })}>
-            <div
-              className={css({
-                marginBottom: "10px",
-                fontSize: "12px",
-                color: "#666666",
-              })}
-            >
-              ${value[0]} AUD - ${value[1]} AUD
-            </div>
-
-            {typeof props.onApply === "function" && (
-              <div
-                className={css({
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: isComponentDisabled
-                    ? "flex-end"
-                    : "space-between",
-                })}
-              >
-                {!isComponentDisabled && (
-                  <button onClick={reset} disabled={isComponentDisabled}>
-                    Reset
-                  </button>
-                )}
-                <button onClick={handleApply}>Apply</button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </ClassNames>
+    <Box
+      sx={{
+        padding: "15px",
+      }}
+    >
+      <Histogram data={countData} highlight={updateValue} domain={domain} />
+      <RangeSlider
+        values={updateValue}
+        mode={2}
+        step={1}
+        domain={domain}
+        onChange={onChangeCallBack}
+        onUpdate={onUpdateCallBack}
+      />
+    </Box>
   );
-};
+}
 
 export default HistogramSlider;

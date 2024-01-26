@@ -11,6 +11,7 @@ import {
   Checkbox,
   Stack,
   Divider,
+  Switch,
 } from "@mui/material";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
@@ -29,13 +30,13 @@ import type {
   UseFormSetValue,
   FieldErrors,
 } from "react-hook-form";
-import type { PostAggregate } from "@/lib/validations/tools";
+import type { PostAggregatePolygon } from "@/lib/validations/tools";
 
 interface StatisticsProps {
-  register: UseFormRegister<PostAggregate>;
-  setValue: UseFormSetValue<PostAggregate>;
-  watch: PostAggregate;
-  errors: FieldErrors<PostAggregate>;
+  register: UseFormRegister<PostAggregatePolygon>;
+  setValue: UseFormSetValue<PostAggregatePolygon>;
+  watch: PostAggregatePolygon;
+  errors: FieldErrors<PostAggregatePolygon>;
 }
 
 const Statistics = (props: StatisticsProps) => {
@@ -246,6 +247,22 @@ const Statistics = (props: StatisticsProps) => {
                   </Typography>
                 )}
               </FormControl>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1">
+                Weigthed by intersecting area
+              </Typography>
+              <Switch
+                checked={watch.weigthed_by_intersecting_area}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setValue(
+                    "weigthed_by_intersecting_area",
+                    event.target.checked,
+                  );
+                }}
+                // {...register()}
+                inputProps={{ "aria-label": "controlled" }}
+              />
             </Box>
           </Box>
         </Stack>

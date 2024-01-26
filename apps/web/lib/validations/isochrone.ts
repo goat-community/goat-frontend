@@ -18,14 +18,15 @@ const StartingPoint = z
 const TraveltimeCost = z.object({
   max_traveltime: z.number().min(1).max(45),
   traveltime_step: z
-    .number()
-    .refine((value) => value !== 0 && value % 50 === 0, {
-      message: "The steps must be a multiple of 50",
-    }),
+    .number(),
+    // .refine((value) => value !== 0 && value % 50 === 0, {
+    //   message: "The steps must be a multiple of 50",
+    // }),
   speed: z.number().min(1).max(25).optional(),
 });
 
 const DistanceCost = z
+
   .object({
     max_distance: z
       .number()
