@@ -88,9 +88,9 @@ const Statistics = (props: StatisticsProps) => {
   const selectAreaLayerKeys = useGetLayerKeys(
     `user_data.${getLayerStringIdById(
       layers ? layers : [],
-      "aggregation_layer_project_id" in watch
+      "aggregation_layer_project_id" in watch && watch.aggregation_layer_project_id
         ? watch.aggregation_layer_project_id
-        : "",
+        : 0,
     )
       .split("-")
       .join("")}`,

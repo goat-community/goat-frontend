@@ -84,7 +84,11 @@ const InputLayer = (props: PickLayerProps) => {
               >
                 {projectLayers
                   ? projectLayers.map((layer) =>
-                      ["polygon"].includes(layer.feature_layer_geometry_type) ? (
+                      ["polygon"].includes(
+                        layer.feature_layer_geometry_type
+                          ? layer.feature_layer_geometry_type
+                          : "",
+                      ) ? (
                         <MenuItem value={layer.id} key={v4()}>
                           {layer.name}
                         </MenuItem>

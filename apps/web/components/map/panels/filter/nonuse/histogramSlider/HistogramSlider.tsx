@@ -10,10 +10,10 @@ interface HistogramSlider {
 }
 
 function HistogramSlider(props: HistogramSlider) {
-  const {countData} = props;
+  const { countData } = props;
   const responseData = sample.range;
   const maxData = sample.max;
-  const priceData = [];
+  const priceData: number[] = [];
 
   for (let i = 0; i < responseData.length; i += 1) {
     const thisPrice = responseData[i].from ? responseData[i].from : 0;
@@ -32,18 +32,17 @@ function HistogramSlider(props: HistogramSlider) {
   ];
   // console.log(countData.length);
   const [updateValue, setUpdateValue] = useState(domain);
-  const [_, setInputValue] = useState(defaultInputValue);
-  const onUpdateCallBack = (v) => {
+  const [_, setInputValue] = useState<number[]>(defaultInputValue);
+  const onUpdateCallBack = (v: number[]) => {
     setUpdateValue(v);
-    // console.log(v);
-    setInputValue([].concat(Number(priceData[v[0]]), Number(priceData[v[1]])));
+    setInputValue([Number(priceData[v[0]]), Number(priceData[v[1]])]);
   };
   const onChangeCallBack = (v) => {
     setUpdateValue(v);
-    setInputValue([].concat(Number(priceData[v[0]]), Number(priceData[v[1]])));
+    setInputValue([Number(priceData[v[0]]), Number(priceData[v[1]])]);
   };
 
-  console.log(countData)
+  console.log(countData);
 
   return (
     <Box
@@ -51,7 +50,7 @@ function HistogramSlider(props: HistogramSlider) {
         padding: "15px",
       }}
     >
-      <Histogram data={countData} highlight={updateValue} domain={domain} />
+      <Histogram data={countData} highlight={updateValue} />
       <RangeSlider
         values={updateValue}
         mode={2}

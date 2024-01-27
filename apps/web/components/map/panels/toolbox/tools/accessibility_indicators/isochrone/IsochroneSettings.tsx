@@ -134,11 +134,11 @@ const IsochroneSettings = (props: PickLayerProps) => {
             "max_distance" in errors.travel_cost &&
             !!errors.travel_cost.max_distance
           }
-          helperText={
-            !!errors.travel_cost &&
-            "max_distance" in errors.travel_cost &&
-            errors.travel_cost?.max_distance?.message
-          }
+          // helperText={
+          //   !!errors.travel_cost &&
+          //   "max_distance" in errors.travel_cost &&
+          //   errors.travel_cost.max_distance.message
+          // }
           type="number"
           sx={{
             margin: `${theme.spacing(1)} 0`,
@@ -190,8 +190,8 @@ const IsochroneSettings = (props: PickLayerProps) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              error={!!errors.travel_cost?.max_traveltime}
-              helperText={errors.travel_cost?.max_traveltime?.message}
+              // error={!!errors.travel_cost?.max_traveltime}
+              // helperText={errors.travel_cost?.max_traveltime?.message}
               label={`${t("panels.isochrone.travelTime")} (min)`}
             />
           )}
@@ -234,16 +234,16 @@ const IsochroneSettings = (props: PickLayerProps) => {
                 value === "" ? undefined : parseInt(value),
             },
           )}
-          error={
-            "distance_step" in watch.travel_cost
-              ? !!errors.travel_cost?.distance_step
-              : !!errors.travel_cost?.traveltime_step
-          }
-          helperText={
-            "distance_step" in watch.travel_cost
-              ? errors.travel_cost?.distance_step?.message
-              : errors.travel_cost?.traveltime_step?.message
-          }
+          // error={
+          //   "distance_step" in watch.travel_cost
+          //     ? !!errors.travel_cost?.distance_step
+          //     : !!errors.travel_cost?.traveltime_step
+          // }
+          // helperText={
+          //   "distance_step" in watch.travel_cost
+          //     ? errors.travel_cost?.distance_step?.message
+          //     : errors.travel_cost?.traveltime_step?.message
+          // }
           size="small"
           fullWidth
           type="number"
@@ -394,8 +394,8 @@ const IsochroneSettings = (props: PickLayerProps) => {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    error={!!errors.routing_type?.mode}
-                    helperText={errors.routing_type?.mode?.message}
+                    // error={!!errors.routing_type?.mode}
+                    // helperText={errors.routing_type?.mode?.message}
                     label={t("panels.isochrone.routing.pt_type")}
                     placeholder={
                       typeof watch.routing_type !== "string" &&

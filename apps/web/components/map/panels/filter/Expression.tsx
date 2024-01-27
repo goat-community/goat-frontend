@@ -63,14 +63,12 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   const { activeLayer } = useActiveLayer(projectId as string);
   const open = Boolean(anchorEl);
   const quentiles = useClassBreak(
-    activeLayer?.layer_id,
+    activeLayer ? activeLayer.layer_id : "",
     "quantile",
     "radius_size",
   );
   const { map } = useMap();
   const theme = useTheme();
-
-  console.log(quentiles);
 
   const { data } = useUniqueValues(
     activeLayer ? activeLayer.layer_id : "",
@@ -267,15 +265,15 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
     if (field) {
       modifyExpression(expression, "attribute", field.name);
       if (field.name === "Bounding Box") {
-        const bounginBox = map.getBounds();
+
         expression.attribute = field.name;
-        expression.value = `${bounginBox._ne.lng},${bounginBox._sw.lat},${bounginBox._sw.lng},${bounginBox._ne.lat}`;
+        expression.value = `${map.getBounds().getSouthWest().toArray()[0]},${map.getBounds().getSouthWest().toArray()[1]},${map.getBounds().getNorthEast().toArray()[0]},${map.getBounds().getNorthEast().toArray()[1]}`;
         modifyExpression(expression, "expression", "is");
         expression.expression = "is";
         debounceEffect(
           expression,
           "value",
-          `${bounginBox._ne.lng},${bounginBox._sw.lat},${bounginBox._sw.lng},${bounginBox._ne.lat}`,
+          `${map.getBounds().getSouthWest().toArray()[0]},${map.getBounds().getSouthWest().toArray()[1]},${map.getBounds().getNorthEast().toArray()[0]},${map.getBounds().getNorthEast().toArray()[1]}`,
         );
       }
     } else {
@@ -364,7 +362,9 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         </Select>
       </FormControl>
       {getValueCollector()}
-      {quentiles.data ? <HistogramSlider countData={quentiles.data.breaks} /> : null}
+      {quentiles.data ? (
+        <HistogramSlider countData={typeof quentiles.data.breaks === "number" ? [] : quentiles.data.breaks} />
+      ) : null}
       {/* <HistogramSlider
         min={histogramState.data.min}
         max={histogramState.data.max}

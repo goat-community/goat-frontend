@@ -9,16 +9,16 @@ const Histogram = ({ data, highlight }) => {
   const trimData = data;
   trimData.pop();
 
-  const handleClick = (c, i) => {
+  const handleClick = (_, i) => {
     console.log(i[0]._index);
   };
   const barData = {
-    labels: trimData.map((val, i) => i),
+    labels: trimData.map((_, i) => i),
     datasets: [
       {
         categoryPercentage: 1,
         barPercentage: 1,
-        backgroundColor: trimData.map((val, i) =>
+        backgroundColor: trimData.map((_, i) =>
           i >= highlight[0] && i < highlight[1] ? "#dde7de" : "#C8CED5",
         ),
         hoverBackgroundColor: "#FCE1D3",
