@@ -1,4 +1,5 @@
 import { useTranslation } from "@/i18n/client";
+import { formatNumber } from "@/lib/utils/helpers";
 import type { ClassBreaks, ColorRange } from "@/lib/validations/layer";
 import { classBreaks } from "@/lib/validations/layer";
 import type { ColorMap, ColorScaleSelectorProps } from "@/types/map/color";
@@ -16,6 +17,7 @@ import { useMemo } from "react";
 
 type NumericColorScaleProps = ColorScaleSelectorProps & {
   setIsClickAwayEnabled: (isClickAwayEnabled: boolean) => void;
+  onCancel?: () => void;
 };
 
 const NumericColorScale = (props: NumericColorScaleProps) => {
@@ -32,9 +34,7 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
     classBreaksValues.breaks.forEach((value, index) => {
       const colors = (props.colorSet.selectedColor as ColorRange).colors;
       const color = colors[index] !== undefined ? colors[index] : staticColor;
-      const roundedValue = Number.isInteger(value)
-        ? value
-        : Number(Number(value).toFixed(1));
+      const roundedValue = formatNumber(value, 2);
       intervalValues.push([roundedValue, color]);
       if (index === classBreaksValues.breaks.length - 1) {
         intervalValues.push([
@@ -48,7 +48,7 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
   }, [classBreaksValues, props.colorSet.selectedColor]);
 
   return (
-    <>
+    <Box sx={{ p: 3 }}>
       <Select
         fullWidth
         size="small"
@@ -68,13 +68,11 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
           props.setSelectedColorScaleMethod(e.target.value as ClassBreaks);
         }}
       >
-        {classBreaks.options
-          .filter((value) => value !== "ordinal")
-          .map((option, index) => (
-            <MenuItem key={index} value={String(option)}>
-              {t(`${option}`)}
-            </MenuItem>
-          ))}
+        {classBreaks.options.map((option, index) => (
+          <MenuItem key={index} value={String(option)}>
+            {t(`${option}`)}
+          </MenuItem>
+        ))}
       </Select>
       <Stack
         direction="row"
@@ -83,10 +81,16 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
         py={2}
       >
         <Typography variant="caption">
-          Min: <b>{classBreaksValues?.min}</b>
+          Min:{" "}
+          <b>
+            {classBreaksValues?.min ? formatNumber(classBreaksValues?.min) : ""}
+          </b>
         </Typography>
         <Typography variant="caption">
-          Max: <b>{classBreaksValues?.max}</b>
+          Max:{" "}
+          <b>
+            {classBreaksValues?.max ? formatNumber(classBreaksValues?.max) : ""}
+          </b>
         </Typography>
       </Stack>
       <Box sx={{ maxHeight: "240px", overflowY: "auto", pt: 2 }}>
@@ -154,7 +158,7 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
           {t("maps:change_colors_and_steps")}
         </Typography>
       </Stack>
-    </>
+    </Box>
   );
 };
 

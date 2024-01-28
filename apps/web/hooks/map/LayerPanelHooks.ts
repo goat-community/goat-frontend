@@ -40,6 +40,11 @@ export const useLayerSettingsMoreMenu = () => {
       icon: ICON_NAME.EDIT,
     },
     {
+      id: ContentActions.DOWNLOAD,
+      label: t("maps:download"),
+      icon: ICON_NAME.DOWNLOAD,
+    },
+    {
       id: ContentActions.DELETE,
       label: t("common:remove"),
       icon: ICON_NAME.TRASH,
@@ -111,29 +116,3 @@ export const useSortedLayers = (projectId: string) => {
   }, [projectLayers, project]);
   return sortedLayers;
 };
-
-// export const useOptionsStatistics = (expressions: Expression[]) => {
-//   const [data, _] = useState();
-//   const [optionsStatistics, setOptionsStatistics] = useState();
-
-//   if (expressions) {
-//     expressions.map((expression) => {
-//       const optionsStatistic = Object.keys(data ? data : {}).map((option) => ({
-//         value: option,
-//         label: option,
-//       }));
-
-//       setOptionsStatistics([
-//         optionsStatistic,
-//         {
-//           id: expression.id,
-//           optionsStatistic: optionsStatistic,
-//         },
-//       ]);
-//     });
-//   }
-
-//   console.log(optionsStatistics)
-
-//   return { optionsStatistics };
-// };

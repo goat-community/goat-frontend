@@ -36,10 +36,30 @@ export const featureLayerType = z.enum([
   "street_network",
 ]);
 
+export const tableDataExchangeType = z.enum(["csv", "xlsx"]);
+export const featureDataExchangeType = z.enum([
+  "csv",
+  "xlsx",
+  "geojson",
+  "gpkg",
+  "kml",
+  "shp",
+]);
+
+export const featureDataExchangeCRS = z.enum([
+  "4326",
+  "3857",
+  "4258",
+  "27700",
+  "4269",
+]);
+
 export const featureLayerGeometryType = z.enum(["point", "line", "polygon"]);
 
 export const data_type = z.enum(["wms", "mvt"]);
 
 export type LayerType = z.infer<typeof layerType>;
 export type FeatureLayerGeometryType = z.infer<typeof featureLayerGeometryType>;
+export type TableDataExchangeType = z.infer<typeof tableDataExchangeType>;
+export type FeatureDataExchangeType = z.infer<typeof featureDataExchangeType>;
 export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;

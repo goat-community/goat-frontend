@@ -13,12 +13,12 @@ import {
 import { toast } from "react-toastify";
 import { mutate } from "swr";
 
-interface DeleteContentDialogProps extends ContentDialogBaseProps {
+interface ContentDeleteDialogProps extends ContentDialogBaseProps {
   disabled?: boolean;
   onDelete?: () => void;
 }
 
-const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
+const ContentDeleteModal: React.FC<ContentDeleteDialogProps> = ({
   open,
   disabled,
   onClose,
@@ -79,4 +79,4 @@ const DeleteContentModal: React.FC<DeleteContentDialogProps> = ({
   );
 };
 
-export default DeleteContentModal;
+export default ContentDeleteModal;

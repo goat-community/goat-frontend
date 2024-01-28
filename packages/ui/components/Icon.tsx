@@ -79,6 +79,8 @@ import {
   faSliders,
   faMagnifyingGlassPlus,
   faMagnifyingGlassMinus,
+  faLink,
+  faRefresh
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -179,6 +181,8 @@ export enum ICON_NAME {
   SLIDERS = "sliders",
   ZOOM_IN = "zoom-in",
   ZOOM_OUT = "zoom-out",
+  LINK = "link",
+  REFRESH = "refresh",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -275,6 +279,8 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.SLIDERS]: faSliders,
   [ICON_NAME.ZOOM_IN]: faMagnifyingGlassPlus,
   [ICON_NAME.ZOOM_OUT]: faMagnifyingGlassMinus,
+  [ICON_NAME.LINK]: faLink,
+  [ICON_NAME.REFRESH]: faRefresh,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

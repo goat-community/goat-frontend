@@ -57,6 +57,7 @@ const ColorOptions = ({
       active={!!active}
       baseOptions={
         <ColorSelector
+          scaleType={layerStyle?.[`${type}_scale`]}
           colorSet={colorSet}
           label={
             layerStyle?.[`${type}_field`] ? t("maps:palette") : t("maps:color")

@@ -1,11 +1,16 @@
 import MetadataModal from "@/components/modals/Metadata";
-import DeleteContentModal from "@/components/modals/DeleteContent";
+import ContentDeleteModal from "@/components/modals/ContentDelete";
 import type { ContentDialogBaseProps } from "@/types/dashboard/content";
 import { ContentActions } from "@/types/common";
+import DatasetDownloadModal from "@/components/modals/DatasetDownload";
+import type { Layer } from "@/lib/validations/layer";
+import ContentMoveToFolderModal from "@/components/modals/MoveToFolder";
 
 interface ContentDialogProps extends Omit<ContentDialogBaseProps, "open"> {
   action: ContentActions;
   onContentDelete?: () => void;
+  onContentDownload?: () => void;
+  onMoveToFolder?: () => void;
 }
 
 export default function ContentDialogWrapper(props: ContentDialogProps) {
@@ -22,9 +27,23 @@ export default function ContentDialogWrapper(props: ContentDialogProps) {
         <MetadataModal {...commonModalProps} />
       )}
       {props.action === ContentActions.DELETE && (
-        <DeleteContentModal
+        <ContentDeleteModal
           onDelete={props.onContentDelete}
           {...commonModalProps}
+        />
+      )}
+      {props.action === ContentActions.MOVE_TO_FOLDER && (
+        <ContentMoveToFolderModal
+          onContentMove={props.onMoveToFolder}
+          {...commonModalProps}
+        />
+      )}
+      {props.action === ContentActions.DOWNLOAD && (
+        <DatasetDownloadModal
+          {...commonModalProps}
+          type="dataset"
+          dataset={props.content as Layer}
+          onDownload={props.onContentDownload}
         />
       )}
     </>

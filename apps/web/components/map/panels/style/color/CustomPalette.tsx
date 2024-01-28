@@ -20,38 +20,19 @@
 
 import ColorPalette from "@/components/map/panels/style/color/ColorPalette";
 import type { ColorRange } from "@/lib/validations/layer";
-import { DragIndicator } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Fade,
-  Grid,
-  IconButton,
-  MenuItem,
-  Popper,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import {
-  useSortable,
-  SortableContext,
-  verticalListSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
-import { DragHandle } from "@/components/common/DragHandle";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-
-import { CSS } from "@dnd-kit/utilities";
+import { Box, IconButton, Stack, TextField, useTheme } from "@mui/material";
+import { arrayMove } from "@dnd-kit/sortable";
 
 import React, { useMemo, useState } from "react";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { v4 } from "uuid";
-import { useTranslation } from "@/i18n/client";
-import { isValidHex, rgbToHex } from "@/lib/utils/helpers";
-import SingleColorSelector from "@/components/map/panels/style/color/SingleColorSelector";
+import { isValidHex } from "@/lib/utils/helpers";
+import SortableWrapper from "@/components/map/panels/style/other/SortableWrapper";
+import type { DragEndEvent } from "@dnd-kit/core";
+import { SortableItem } from "@/components/map/panels/style/other/SortableItem";
+import { SingleColorPopper } from "@/components/map/panels/style/other/SingleColorPopper";
+import type { ColorItem } from "@/types/map/color";
+import StyleDropdownFooter from "@/components/map/panels/style/other/StyleDropdownFooter";
 
 type CustomPaletteProps = {
   customPalette: ColorRange;
@@ -59,175 +40,12 @@ type CustomPaletteProps = {
   onCancel: () => void;
 };
 
-type ColorItem = {
-  id: string;
-  color: string;
-};
-
-type SortableItemProps = {
-  item: ColorItem;
-  active?: boolean;
-  label: string;
-  onDelete?: (item: ColorItem) => void;
-  onAdd?: (item: ColorItem) => void;
-  onChange?: (item: ColorItem) => void;
-  onClick?: (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    item: ColorItem,
-  ) => void;
-};
-
-export function SortableItem(props: SortableItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.item.id });
-  const theme = useTheme();
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition: `${transition}, border-color 0.2s ease-in-out`,
-  };
-  return (
-    <MenuItem
-      key={props.item.id}
-      ref={setNodeRef}
-      selected={props.active}
-      style={style}
-      disableGutters
-      disableRipple
-      sx={{
-        pr: 2,
-        py: 1,
-        ":hover": {
-          "& div, & button": {
-            opacity: 1,
-          },
-        },
-      }}
-    >
-      <Grid container alignItems="center" justifyContent="start" spacing={2}>
-        <Grid item xs={1} sx={{ mx: 1 }}>
-          <DragHandle {...attributes} listeners={listeners}>
-            <DragIndicator fontSize="small" />
-          </DragHandle>
-        </Grid>
-        <Grid item xs={2} zeroMinWidth>
-          <Box
-            onClick={(e) => {
-              e.stopPropagation();
-              props.onClick && props.onClick(e, props.item);
-            }}
-            sx={{
-              height: "20px",
-              width: "32px",
-              borderRadius: "4px",
-              backgroundColor: props.item.color,
-              "&:hover": {
-                cursor: "pointer",
-              },
-            }}
-          />
-        </Grid>
-        <Grid item xs={6} zeroMinWidth>
-          <TextField
-            InputProps={{ sx: { height: "32px", ml: 2 } }}
-            sx={{
-              "& .MuiOutlinedInput-input": {
-                padding: `0 ${theme.spacing(2)}`,
-              },
-            }}
-            onChange={(e) => {
-              props.onChange &&
-                props.onChange({
-                  ...props.item,
-                  color: e.target.value.toUpperCase(),
-                });
-            }}
-            variant="outlined"
-            value={props.item.color}
-          />
-        </Grid>
-        <Grid item xs={2}>
-          <Stack direction="row">
-            <IconButton
-              size="small"
-              onClick={() => props.onAdd && props.onAdd(props.item)}
-            >
-              <Icon
-                iconName={ICON_NAME.PLUS}
-                style={{
-                  fontSize: 12,
-                }}
-                htmlColor="inherit"
-              />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => props.onDelete && props.onDelete(props.item)}
-            >
-              <Icon
-                iconName={ICON_NAME.TRASH}
-                style={{
-                  fontSize: 12,
-                }}
-                htmlColor="inherit"
-              />
-            </IconButton>
-          </Stack>
-        </Grid>
-      </Grid>
-    </MenuItem>
-  );
-}
-
-export function SingleColorPopper(props: {
-  editingItem: ColorItem | null;
-  anchorEl: HTMLDivElement | null;
-  onInputHexChange: (item: ColorItem) => void;
-}) {
-  return (
-    <Popper
-      open={props.editingItem !== null}
-      anchorEl={props.anchorEl}
-      transition
-      sx={{ zIndex: 1200 }}
-      placement="left"
-      disablePortal
-      modifiers={[
-        {
-          name: "offset",
-          options: {
-            offset: [0, 75],
-          },
-        },
-      ]}
-    >
-      {({ TransitionProps }) => (
-        <Fade {...TransitionProps}>
-          <Box sx={{ py: 3, bgcolor: "background.paper", borderRadius: 1 }}>
-            {props.editingItem && (
-              <SingleColorSelector
-                selectedColor={props.editingItem?.color || "#000000"}
-                onSelectColor={(color) => {
-                  if (props.editingItem)
-                    props.onInputHexChange({
-                      ...props.editingItem,
-                      color: rgbToHex(color),
-                    });
-                }}
-              />
-            )}
-          </Box>
-        </Fade>
-      )}
-    </Popper>
-  );
-}
-
 const CustomPalette = ({
   customPalette,
   onApply,
   onCancel,
 }: CustomPaletteProps) => {
-  const { t } = useTranslation(["common"]);
+  const theme = useTheme();
 
   const [colors, setColors] = useState(
     customPalette.colors.map((color) => {
@@ -248,15 +66,15 @@ const CustomPalette = ({
     return isValid;
   }, [colors]);
 
-  async function handleDragEnd(event) {
+  function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     const oldIndex = colors.findIndex((color) => color.id === active.id);
-    const newIndex = colors.findIndex((color) => color.id === over.id);
+    const newIndex = colors.findIndex((color) => color.id === over?.id);
     const newOrderArray = arrayMove(colors, oldIndex, newIndex);
     setColors(newOrderArray);
   }
 
-  async function deleteColor(item: ColorItem) {
+  function deleteColor(item: ColorItem) {
     if (colors.length === 2) {
       return;
     }
@@ -267,7 +85,7 @@ const CustomPalette = ({
     }
   }
 
-  async function duplicateColor(item: ColorItem) {
+  function duplicateColor(item: ColorItem) {
     const index = colors.findIndex((color) => color.id === item.id);
     if (index !== -1) {
       const newColors = colors.toSpliced(index + 1, 0, {
@@ -291,7 +109,7 @@ const CustomPalette = ({
     onApply(newColorRange);
   }
 
-  function _onInputHexChange(item: ColorItem) {
+  function onInputHexChange(item: ColorItem) {
     const index = colors.findIndex((color) => color.id === item.id);
     if (index !== -1) {
       const newColors = colors.toSpliced(index, 1, {
@@ -302,7 +120,7 @@ const CustomPalette = ({
   }
 
   const [editingItem, setEditingItem] = React.useState<ColorItem | null>(null);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handleColorPicker = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -317,7 +135,7 @@ const CustomPalette = ({
       <SingleColorPopper
         editingItem={editingItem}
         anchorEl={anchorEl}
-        onInputHexChange={_onInputHexChange}
+        onInputHexChange={onInputHexChange}
       />
 
       <Box sx={{ px: 2 }}>
@@ -327,63 +145,80 @@ const CustomPalette = ({
         onClick={() => setEditingItem(null)}
         sx={{ maxHeight: "240px", overflowY: "auto" }}
       >
-        <DndContext
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis]}
-          onDragEnd={handleDragEnd}
-          autoScroll={false}
-        >
-          <SortableContext
-            items={colors}
-            strategy={verticalListSortingStrategy}
-          >
-            {colors?.map((item) => (
-              <SortableItem
-                active={item.id === editingItem?.id}
-                key={item.id}
-                item={item}
-                label={item.color}
-                onAdd={duplicateColor}
-                onDelete={deleteColor}
-                onChange={_onInputHexChange}
-                onClick={handleColorPicker}
+        <SortableWrapper handleDragEnd={handleDragEnd} items={colors}>
+          {colors?.map((item) => (
+            <SortableItem
+              active={item.id === editingItem?.id}
+              key={item.id}
+              item={item}
+              label={item.color}
+              colorLegend={
+                <>
+                  <Box
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleColorPicker(e, item);
+                    }}
+                    sx={{
+                      height: "20px",
+                      width: "32px",
+                      borderRadius: "4px",
+                      backgroundColor: item.color,
+                      "&:hover": {
+                        cursor: "pointer",
+                      },
+                    }}
+                  />
+                </>
+              }
+              actions={
+                <Stack direction="row">
+                  <IconButton size="small" onClick={() => duplicateColor(item)}>
+                    <Icon
+                      iconName={ICON_NAME.PLUS}
+                      style={{
+                        fontSize: 12,
+                      }}
+                      htmlColor="inherit"
+                    />
+                  </IconButton>
+                  <IconButton size="small" onClick={() => deleteColor(item)}>
+                    <Icon
+                      iconName={ICON_NAME.TRASH}
+                      style={{
+                        fontSize: 12,
+                      }}
+                      htmlColor="inherit"
+                    />
+                  </IconButton>
+                </Stack>
+              }
+            >
+              <TextField
+                InputProps={{ sx: { height: "32px", ml: 0, mr: 2 } }}
+                sx={{
+                  "& .MuiOutlinedInput-input": {
+                    padding: `0 ${theme.spacing(2)}`,
+                  },
+                }}
+                onChange={(e) => {
+                  onInputHexChange({
+                    ...item,
+                    color: e.target.value.toUpperCase(),
+                  });
+                }}
+                variant="outlined"
+                value={item.color}
               />
-            ))}
-          </SortableContext>
-        </DndContext>
+            </SortableItem>
+          ))}
+        </SortableWrapper>
       </Box>
-      <Box sx={{ px: 1 }}>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-end"
-          sx={{ px: 2 }}
-          spacing={1}
-        >
-          <Button
-            variant="text"
-            size="small"
-            sx={{ borderRadius: 0 }}
-            onClick={_onCancel}
-          >
-            <Typography variant="body2" fontWeight="bold">
-              {t("common:cancel")}
-            </Typography>
-          </Button>
-          <Button
-            variant="text"
-            size="small"
-            color="primary"
-            disabled={!areColorsValid}
-            sx={{ borderRadius: 0 }}
-            onClick={_onApply}
-          >
-            <Typography variant="body2" fontWeight="bold" color="inherit">
-              {t("common:apply")}
-            </Typography>
-          </Button>
-        </Stack>
-      </Box>
+      <StyleDropdownFooter
+        isValid={areColorsValid}
+        onCancel={_onCancel}
+        onApply={_onApply}
+      />
     </>
   );
 };

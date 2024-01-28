@@ -43,7 +43,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
 }) => {
   const [folderName, setFolderName] = useState<string>("");
   const { t } = useTranslation("dashboard");
-  
+
   const handleFolderEdit = async () => {
     try {
       if (type === "create") {
@@ -80,15 +80,13 @@ const FolderModal: React.FC<FolderDialogProps> = ({
       }}
     >
       <DialogTitle>
-        <Typography variant="h6">
+        {
           {
-            {
-              create: t("projects.folder.create_folder"),
-              update: t("projects.folder.update_folder"),
-              delete: t("projects.folder.delete_folder"),
-            }[type]
-          }
-        </Typography>
+            create: t("projects.folder.create_folder"),
+            update: t("projects.folder.update_folder"),
+            delete: t("projects.folder.delete_folder"),
+          }[type]
+        }
       </DialogTitle>
       <DialogContent>
         {["update", "create"].includes(type) && (

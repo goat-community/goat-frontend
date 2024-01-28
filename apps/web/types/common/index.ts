@@ -18,6 +18,11 @@ export enum MapLayerActions {
   PROPERTIES = "properties",
 }
 
+export enum LayerStyleActions {
+  RESET = "reset",
+  SAVE_AS_DEFAULT = "saveAsDefault"
+}
+
 export enum OrgMemberActions {
   EDIT = "edit",
   DELETE = "delete",

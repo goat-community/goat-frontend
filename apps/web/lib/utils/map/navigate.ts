@@ -1,8 +1,16 @@
+import { wktToGeoJSON } from "@/lib/utils/map/wkt";
+import bbox from "@turf/bbox";
 import type { MapRef } from "react-map-gl";
+
+export function zoomToLayer(map: MapRef, wkt_extent: string) {
+  const geojson = wktToGeoJSON(wkt_extent);
+  const boundingBox = bbox(geojson);
+  fitBounds(map, boundingBox as [number, number, number, number]);
+}
 
 export function fitBounds(
   map: MapRef,
-  bounds: [number, number, number, number]
+  bounds: [number, number, number, number],
 ) {
   map.fitBounds(bounds, {
     padding: 40,

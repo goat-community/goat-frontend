@@ -266,6 +266,10 @@ export function numberSort(a: number, b: number): number {
   return a - b;
 }
 
+export const formatNumber = (num: number, digits = 2): number => {
+  return Number.isInteger(num) ? num : Number(Number(num).toFixed(digits));
+};
+
 export function getLayerStringIdById(layers: ProjectLayer[], id: number) {
   const filteredLayers = layers.filter((layer) => layer.id === id);
 
