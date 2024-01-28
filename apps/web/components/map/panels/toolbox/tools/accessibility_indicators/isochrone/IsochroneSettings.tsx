@@ -76,7 +76,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Autocomplete
             disablePortal
-            id="combo-box-demo"
             size="small"
             options={allowedNumbers}
             value={
@@ -166,7 +165,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
         <Autocomplete
           fullWidth
           disablePortal
-          id="combo-box-demo"
           size="small"
           disabled={!watch.routing_type ? true : false}
           value={{
@@ -310,7 +308,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
                   margin: `${theme.spacing(1)} 0`,
                 }}
               >
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel>
                   {t("panels.filter.select_attribute")}
                 </InputLabel>
                 <Select
@@ -355,7 +353,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
             {typeof watch.routing_type !== "string" ? (
               <Autocomplete
                 multiple
-                id="checkboxes-tags-demo"
                 options={ptModes}
                 disableCloseOnSelect
                 defaultValue={ptModes.filter((mode) =>

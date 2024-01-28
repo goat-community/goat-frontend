@@ -71,7 +71,7 @@ const ReferenceAreLayer = (props: ReferenceAreLayerProps) => {
             marginTop={theme.spacing(3)}
           >
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">
+              <InputLabel>
                 {t("panels.tools.select_layer")}
               </InputLabel>
               <Select

@@ -65,18 +65,12 @@ const SelectArea = (props: SelectAreaProps) => {
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
         <Stack sx={{ pl: 4, py: 4, pr: 1, flexGrow: 1 }}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            gap={theme.spacing(2)}
-          >
+          <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
               {t("panels.tools.aggregate.select_area_text")}
             </Typography>
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">
-                {t("panels.tools.select_option")}
-              </InputLabel>
+              <InputLabel>{t("panels.tools.select_option")}</InputLabel>
               <Select
                 disabled={!watch.source_layer_project_id}
                 label={t("panels.tools.select_option")}
@@ -107,7 +101,7 @@ const SelectArea = (props: SelectAreaProps) => {
             </FormControl>
             {watch.area_type === "h3_grid" ? (
               <FormControl size="small" fullWidth>
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel>
                   {t("panels.tools.aggregate.hexagon_size")}
                 </InputLabel>
                 <Select
@@ -130,9 +124,7 @@ const SelectArea = (props: SelectAreaProps) => {
               </FormControl>
             ) : (
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
-                  {t("panels.tools.select_layer")}
-                </InputLabel>
+                <InputLabel>{t("panels.tools.select_layer")}</InputLabel>
                 <Select
                   label={t("panels.tools.select_layer")}
                   disabled={!watch.area_type}

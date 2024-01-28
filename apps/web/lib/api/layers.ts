@@ -140,9 +140,9 @@ export const useUniqueValues = (
   return { data, isLoading, error };
 };
 
-export const useClassBreak = (layerId: string, operation: string, column: string) => {
+export const useClassBreak = (layerId: string, operation: string, column: string, breaks: number) => {
   const { data, isLoading, error } = useSWR<Record<string, number>>(
-    [`${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=20`],
+    [`${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`],
     fetcher,
   );
   return { data, isLoading, error };

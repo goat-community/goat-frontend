@@ -127,7 +127,7 @@ const Statistics = (props: StatisticsProps) => {
             </Typography>
             <Box sx={{ marginTop: theme.spacing(2) }}>
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel>
                   {t("panels.tools.select_method")}
                 </InputLabel>
                 <Select

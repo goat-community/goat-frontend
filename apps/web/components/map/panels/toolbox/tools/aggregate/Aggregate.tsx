@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
 import SelectArea from "@/components/map/panels/toolbox/tools/aggregate/SelectArea";
 import Statistics from "@/components/map/panels/toolbox/tools/aggregate/Statistics";
-import { Box, Button, useTheme } from "@mui/material";
-import { useTranslation } from "@/i18n/client";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { sendAggregateFeatureRequest } from "@/lib/api/tools";
 import InputLayer from "@/components/map/panels/toolbox/tools/aggregate/InputLayer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AggregateBaseSchema } from "@/lib/validations/tools";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 
 import type { PostAggregate } from "@/lib/validations/tools";
 
@@ -18,9 +18,7 @@ interface AggregateProps {
 const Aggregate = (props: AggregateProps) => {
   const { projectId } = props;
 
-  const { t } = useTranslation("maps");
-
-  const theme = useTheme();
+  // const { t } = useTranslation("maps");
 
   const {
     register,
@@ -98,7 +96,23 @@ const Aggregate = (props: AggregateProps) => {
           errors={errors}
         />
       </Box>
-      <Box
+      <ToolboxActionButtons
+        runFunction={handleRun}
+        runDisabled={
+          !isValid
+        }
+        resetFunction={handleReset}
+        resetDisabled={
+          !getCurrentValues.aggregation_layer_project_id &&
+              !getCurrentValues.area_type &&
+              !getCurrentValues.column_statistics.operation &&
+              !getCurrentValues.column_statistics.field &&
+              !getCurrentValues.h3_resolution &&
+              !getCurrentValues.source_group_by_field.length &&
+              !getCurrentValues.source_layer_project_id
+        }
+      />
+      {/* <Box
         sx={{
           position: "relative",
           maxHeight: "5%",
@@ -143,7 +157,7 @@ const Aggregate = (props: AggregateProps) => {
             {t("panels.tools.run")}
           </Button>
         </Box>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

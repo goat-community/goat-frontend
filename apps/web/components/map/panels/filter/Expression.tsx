@@ -24,12 +24,10 @@ import {
   NumberOption,
   SelectOption,
   DualNumberOption,
-} from "@/components/map/panels/filter/nonuse/FilterOption";
-import { useUniqueValues, useClassBreak } from "@/lib/api/layers";
+} from "@/components/map/panels/filter/FilterOption";
+import { useUniqueValues } from "@/lib/api/layers";
 import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
 import { useMap } from "react-map-gl";
-import HistogramSlider from "@/components/map/panels/filter/nonuse/histogramSlider/HistogramSlider";
-
 import type { Expression as ExpressionType } from "@/lib/validations/filter";
 import type { SelectChangeEvent } from "@mui/material";
 import BoundingBoxInput from "@/components/map/panels/filter/BoundingBoxInput";
@@ -62,11 +60,6 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   const { t } = useTranslation("maps");
   const { activeLayer } = useActiveLayer(projectId as string);
   const open = Boolean(anchorEl);
-  const quentiles = useClassBreak(
-    activeLayer ? activeLayer.layer_id : "",
-    "quantile",
-    "radius_size",
-  );
   const { map } = useMap();
   const theme = useTheme();
 
@@ -265,15 +258,22 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
     if (field) {
       modifyExpression(expression, "attribute", field.name);
       if (field.name === "Bounding Box") {
-
         expression.attribute = field.name;
-        expression.value = `${map.getBounds().getSouthWest().toArray()[0]},${map.getBounds().getSouthWest().toArray()[1]},${map.getBounds().getNorthEast().toArray()[0]},${map.getBounds().getNorthEast().toArray()[1]}`;
+        expression.value = `${map.getBounds().getSouthWest().toArray()[0]},${
+          map.getBounds().getSouthWest().toArray()[1]
+        },${map.getBounds().getNorthEast().toArray()[0]},${
+          map.getBounds().getNorthEast().toArray()[1]
+        }`;
         modifyExpression(expression, "expression", "is");
         expression.expression = "is";
         debounceEffect(
           expression,
           "value",
-          `${map.getBounds().getSouthWest().toArray()[0]},${map.getBounds().getSouthWest().toArray()[1]},${map.getBounds().getNorthEast().toArray()[0]},${map.getBounds().getNorthEast().toArray()[1]}`,
+          `${map.getBounds().getSouthWest().toArray()[0]},${
+            map.getBounds().getSouthWest().toArray()[1]
+          },${map.getBounds().getNorthEast().toArray()[0]},${
+            map.getBounds().getNorthEast().toArray()[1]
+          }`,
         );
       }
     } else {
@@ -338,12 +338,8 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         fields={layerAttributes.keys}
       />
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">
-          {t("panels.filter.select_an_expression")}
-        </InputLabel>
+        <InputLabel>{t("panels.filter.select_an_expression")}</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
           value={expression.expression}
           label={t("panels.filter.select_an_expression")}
           onChange={(event: SelectChangeEvent) => {
@@ -362,26 +358,6 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         </Select>
       </FormControl>
       {getValueCollector()}
-      {quentiles.data ? (
-        <HistogramSlider countData={typeof quentiles.data.breaks === "number" ? [] : quentiles.data.breaks} />
-      ) : null}
-      {/* <HistogramSlider
-        min={histogramState.data.min}
-        max={histogramState.data.max}
-        step={histogramState.data.step}
-        value={histogramState.value as [number, number]}
-        distance={histogramState.data.distance}
-        data={histogramState.data.data}
-        colors={{
-          in: "#99ccc7",
-          out: "#cceae8",
-        }}
-        onChange={(value: [number, number]) => {
-          console.log(value);
-          histogramState.value = value;
-          setHistogramState(histogramState);
-        }}
-      /> */}
     </Box>
   );
 });

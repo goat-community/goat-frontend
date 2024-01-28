@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Box, Button, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/IsochroneSettings";
 import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
-import { useTranslation } from "@/i18n/client";
 import { useForm } from "react-hook-form";
 import {
   SendPTIsochroneRequest,
@@ -14,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IsochroneBaseSchema } from "@/lib/validations/isochrone";
 import { useDispatch } from "react-redux";
 import { removeMarker } from "@/lib/store/map/slice";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
@@ -23,8 +23,7 @@ const Isochrone = () => {
     StartingPointType | undefined
   >(undefined);
 
-  const theme = useTheme();
-  const { t } = useTranslation("maps");
+  // const { t } = useTranslation("maps");
   const { projectId } = useParams();
   const dispatch = useDispatch();
 
@@ -123,43 +122,21 @@ const Isochrone = () => {
           />
         ) : null}
       </Box>
-      <Box
-        sx={{
-          position: "relative",
-          maxHeight: "5%",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            gap: theme.spacing(2),
-            alignItems: "center",
-            position: "absolute",
-            bottom: "-25px",
-            left: "-8px",
-            width: "calc(100% + 16px)",
-            padding: "16px",
-            background: "white",
-            boxShadow: "0px -5px 10px -5px rgba(58, 53, 65, 0.1)",
-          }}
-        >
-          <Button
-            color="error"
-            variant="outlined"
-            sx={{ flexGrow: "1" }}
-            onClick={handleReset}
-          >
-            {t("panels.tools.reset")}
-          </Button>
-          <Button
-            sx={{ flexGrow: "1" }}
-            onClick={handleRun}
-            disabled={!isValid}
-          >
-            {t("panels.tools.run")}
-          </Button>
-        </Box>
-      </Box>
+      <ToolboxActionButtons
+        runFunction={handleRun}
+        runDisabled={
+          !isValid
+        }
+        resetFunction={handleReset}
+        // resetDisabled={
+        //   !getCurrentValues.join_layer_project_id &&
+        //       !getCurrentValues.join_field &&
+        //       !getCurrentValues.column_statistics.operation &&
+        //       !getCurrentValues.column_statistics.field &&
+        //       !getCurrentValues.target_layer_project_id &&
+        //       !getCurrentValues.target_field
+        // }
+      />
     </Box>
   );
 };

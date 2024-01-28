@@ -178,7 +178,7 @@ const Statistics = (props: StatisticsProps) => {
             </Box>
             <Box>
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel>
                   {t("panels.tools.select_method")}
                 </InputLabel>
                 <Select
@@ -204,12 +204,10 @@ const Statistics = (props: StatisticsProps) => {
             </Box>
             <Box sx={{ maxWidth: "100%" }}>
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-multiple-checkbox-label">
+                <InputLabel>
                   Select Field Group
                 </InputLabel>
                 <Select
-                  labelId="demo-multiple-checkbox-label"
-                  id="demo-multiple-checkbox"
                   disabled={!watch.source_layer_project_id}
                   multiple
                   error={!!errors.source_group_by_field}

@@ -74,7 +74,7 @@ const SelectArea = (props: SelectAreaProps) => {
               {t("panels.tools.aggregate.select_area_text")}
             </Typography>
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">
+              <InputLabel>
                 {t("panels.tools.select_option")}
               </InputLabel>
               <Select
@@ -107,7 +107,7 @@ const SelectArea = (props: SelectAreaProps) => {
             </FormControl>
             {watch.area_type === "h3_grid" ? (
               <FormControl size="small" fullWidth>
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel>
                   {t("panels.tools.aggregate.hexagon_size")}
                 </InputLabel>
                 <Select
@@ -130,7 +130,7 @@ const SelectArea = (props: SelectAreaProps) => {
               </FormControl>
             ) : (
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel>
                   {t("panels.tools.select_layer")}
                 </InputLabel>
                 <Select

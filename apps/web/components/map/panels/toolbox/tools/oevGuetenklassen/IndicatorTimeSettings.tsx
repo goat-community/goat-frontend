@@ -76,7 +76,7 @@ const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
             marginTop={theme.spacing(4)}
           >
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">Week Time</InputLabel>
+              <InputLabel>Week Time</InputLabel>
               <Select
                 fullWidth
                 label="Week Time"
@@ -103,8 +103,6 @@ const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
               </Typography>
               <TimeInput
                 type="time"
-                id="appt"
-                name="appt"
                 value={secondsToTime(watch.time_window.from_time)}
                 onChange={(e) => {
                   if (
@@ -129,8 +127,6 @@ const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
               </Typography>
               <TimeInput
                 type="time"
-                id="appt"
-                name="appt"
                 required
                 value={secondsToTime(watch.time_window.to_time)}
                 onChange={(e) => {

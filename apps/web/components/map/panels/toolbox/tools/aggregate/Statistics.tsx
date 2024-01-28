@@ -87,7 +87,8 @@ const Statistics = (props: StatisticsProps) => {
   const selectAreaLayerKeys = useGetLayerKeys(
     `user_data.${getLayerStringIdById(
       layers ? layers : [],
-      "aggregation_layer_project_id" in watch && watch.aggregation_layer_project_id
+      "aggregation_layer_project_id" in watch &&
+        watch.aggregation_layer_project_id
         ? watch.aggregation_layer_project_id
         : 0,
     )
@@ -177,9 +178,7 @@ const Statistics = (props: StatisticsProps) => {
             </Box>
             <Box>
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
-                  {t("panels.tools.select_method")}
-                </InputLabel>
+                <InputLabel>{t("panels.tools.select_method")}</InputLabel>
                 <Select
                   disabled={!watch.column_statistics.field}
                   label={t("panels.tools.select_method")}
@@ -203,12 +202,8 @@ const Statistics = (props: StatisticsProps) => {
             </Box>
             <Box sx={{ maxWidth: "100%" }}>
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-multiple-checkbox-label">
-                  Select Field Group
-                </InputLabel>
+                <InputLabel>Select Field Group</InputLabel>
                 <Select
-                  labelId="demo-multiple-checkbox-label"
-                  id="demo-multiple-checkbox"
                   disabled={!watch.source_layer_project_id}
                   multiple
                   error={!!errors.source_group_by_field}

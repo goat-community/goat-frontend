@@ -130,7 +130,6 @@ const StartingPoint = (props: PickLayerProps) => {
         longitude: [longitude.toString()],
       });
 
-
       setOptions([
         {
           feature: {
@@ -190,8 +189,10 @@ const StartingPoint = (props: PickLayerProps) => {
   }, [value, inputValue, fetch]);
 
   useEffect(() => {
-    if(value){
-      map.flyTo({ center: [value?.feature.center[0], value?.feature.center[1]] });
+    if (value) {
+      map.flyTo({
+        center: [value?.feature.center[0], value?.feature.center[1]],
+      });
       dispatch(removeMarker());
       dispatch(
         addMarker({
@@ -203,8 +204,7 @@ const StartingPoint = (props: PickLayerProps) => {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
-  
+  }, [value]);
 
   return (
     <Box
@@ -243,9 +243,7 @@ const StartingPoint = (props: PickLayerProps) => {
                 margin: `${theme.spacing(1)} 0`,
               }}
             >
-              <InputLabel id="demo-simple-select-label">
-                {t("panels.isochrone.starting.type")}
-              </InputLabel>
+              <InputLabel>{t("panels.isochrone.starting.type")}</InputLabel>
               <Select
                 label={t("panels.isochrone.starting.type")}
                 onChange={(event: SelectChangeEvent) => {
@@ -291,7 +289,7 @@ const StartingPoint = (props: PickLayerProps) => {
                     margin: `${theme.spacing(1)} 0`,
                   }}
                 >
-                  <InputLabel id="demo-simple-select-label">
+                  <InputLabel>
                     {t("panels.isochrone.starting.layer")}
                   </InputLabel>
                   <Select

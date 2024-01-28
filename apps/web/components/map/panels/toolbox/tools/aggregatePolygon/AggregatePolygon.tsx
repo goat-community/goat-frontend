@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
 import SelectArea from "@/components/map/panels/toolbox/tools/aggregatePolygon/SelectArea";
 import Statistics from "@/components/map/panels/toolbox/tools/aggregatePolygon/Statistics";
-import { Box, Button, useTheme } from "@mui/material";
-import { useTranslation } from "@/i18n/client";
+import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { sendAggregatePolygonRequest } from "@/lib/api/tools";
 import InputLayer from "@/components/map/panels/toolbox/tools/aggregatePolygon/InputLayer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AggregatePolygonSchema } from "@/lib/validations/tools";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 
 import type { PostAggregatePolygon } from "@/lib/validations/tools";
 
@@ -18,9 +18,7 @@ interface AggregateProps {
 const AggregatePolygon = (props: AggregateProps) => {
   const { projectId } = props;
 
-  const { t } = useTranslation("maps");
-
-  const theme = useTheme();
+  // const { t } = useTranslation("maps");
 
   const {
     register,
@@ -99,52 +97,20 @@ const AggregatePolygon = (props: AggregateProps) => {
           errors={errors}
         />
       </Box>
-      <Box
-        sx={{
-          position: "relative",
-          maxHeight: "5%",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            gap: theme.spacing(2),
-            alignItems: "center",
-            position: "absolute",
-            bottom: "-25px",
-            left: "-8px",
-            width: "calc(100% + 16px)",
-            padding: "16px",
-            background: "white",
-            boxShadow: "0px -5px 10px -5px rgba(58, 53, 65, 0.1)",
-          }}
-        >
-          <Button
-            color="error"
-            variant="outlined"
-            sx={{ flexGrow: "1" }}
-            onClick={handleReset}
-            disabled={
-              !getCurrentValues.aggregation_layer_project_id &&
+      <ToolboxActionButtons
+        runFunction={handleRun}
+        runDisabled={!isValid}
+        resetFunction={handleReset}
+        resetDisabled={
+          !getCurrentValues.aggregation_layer_project_id &&
               !getCurrentValues.area_type &&
               !getCurrentValues.column_statistics.operation &&
               !getCurrentValues.column_statistics.field &&
               !getCurrentValues.h3_resolution &&
               !getCurrentValues.source_group_by_field.length &&
               !getCurrentValues.source_layer_project_id
-            }
-          >
-            {t("panels.tools.reset")}
-          </Button>
-          <Button
-            sx={{ flexGrow: "1" }}
-            disabled={!isValid}
-            onClick={handleRun}
-          >
-            {t("panels.tools.run")}
-          </Button>
-        </Box>
-      </Box>
+        }
+      />
     </Box>
   );
 };

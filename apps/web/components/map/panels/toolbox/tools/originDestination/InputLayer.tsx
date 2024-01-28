@@ -88,7 +88,7 @@ const InputLayer = (props: PickLayerProps) => {
                 {t("panels.tools.join.target_layer_text")}
               </Typography>
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel>
                   Geometry Layer
                 </InputLabel>
                 <Select
@@ -122,7 +122,7 @@ const InputLayer = (props: PickLayerProps) => {
               gap={theme.spacing(2)}
             >
               <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
+                <InputLabel>
                   Matrix Layer
                 </InputLabel>
                 <Select

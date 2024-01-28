@@ -69,7 +69,7 @@ const InputLayer = (props: PickLayerProps) => {
               {t("panels.tools.aggregate.pick_layer_text")}
             </Typography>
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">
+              <InputLabel>
                 {t("panels.tools.select_layer")}
               </InputLabel>
               <Select
