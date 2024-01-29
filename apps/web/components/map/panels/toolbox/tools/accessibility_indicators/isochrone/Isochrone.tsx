@@ -1,9 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Box, Button, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/IsochroneSettings";
 import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
-import { useTranslation } from "@/i18n/client";
-import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
   SendPTIsochroneRequest,
@@ -11,19 +9,21 @@ import {
   SendIsochroneRequest,
 } from "@/lib/api/isochrone";
 import { useParams } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IsochroneBaseSchema } from "@/lib/validations/isochrone";
+import { useDispatch } from "react-redux";
 import { removeMarker } from "@/lib/store/map/slice";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 
 const Isochrone = () => {
-  // Sarting point states
   const [startingType, setStartingType] = useState<
     StartingPointType | undefined
   >(undefined);
 
-  const theme = useTheme();
-  const { t } = useTranslation("maps");
+  // const { t } = useTranslation("maps");
   const { projectId } = useParams();
   const dispatch = useDispatch();
 
@@ -33,8 +33,10 @@ const Isochrone = () => {
     watch,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { isValid, errors },
   } = useForm<PostIsochrone>({
+    mode: "onChange",
+    resolver: zodResolver(IsochroneBaseSchema),
     defaultValues: {
       routing_type: "",
       starting_points: {
@@ -42,24 +44,26 @@ const Isochrone = () => {
         longitude: [],
       },
       travel_cost: {
-        max_traveltime: 10,
-        traveltime_step: 50,
-        speed: 10,
-      }
+        max_traveltime: 0,
+        traveltime_step: 0,
+        speed: 0,
+      },
+      time_window: {
+        weekday: "monday",
+        from_time: 25200,
+        to_time: 32400,
+      },
     },
   });
-
-  console.log(errors)
 
   const watchFormValues = watch();
 
   const handleReset = () => {
     reset();
+    dispatch(removeMarker());
   };
 
   const handleRun = () => {
-    console.log("body of the request: ", getValues());
-
     if (typeof watchFormValues.routing_type !== "string") {
       setValue("time_window", {
         weekday: "weekday",
@@ -77,8 +81,6 @@ const Isochrone = () => {
     } else {
       SendIsochroneRequest(getValues(), projectId as string);
     }
-    reset();
-    dispatch(removeMarker());
   };
 
   const getCurrentValues = useMemo(() => {
@@ -94,6 +96,7 @@ const Isochrone = () => {
     >
       <Box
         sx={{
+          // px: 3,
           height: "95%",
           maxHeight: "95%",
           overflow: "scroll",
@@ -107,6 +110,7 @@ const Isochrone = () => {
           getValues={getValues}
           watch={getCurrentValues}
           setValue={setValue}
+          errors={errors}
         />
         {getCurrentValues.routing_type ? (
           <StartingPoint
@@ -118,20 +122,21 @@ const Isochrone = () => {
           />
         ) : null}
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          gap: theme.spacing(2),
-          alignItems: "center",
-        }}
-      >
-        <Button variant="outlined" sx={{ flexGrow: "1" }} onClick={handleReset}>
-          {t("panels.tools.reset")}
-        </Button>
-        <Button sx={{ flexGrow: "1" }} onClick={handleRun}>
-          {t("panels.tools.run")}
-        </Button>
-      </Box>
+      <ToolboxActionButtons
+        runFunction={handleRun}
+        runDisabled={
+          !isValid
+        }
+        resetFunction={handleReset}
+        // resetDisabled={
+        //   !getCurrentValues.join_layer_project_id &&
+        //       !getCurrentValues.join_field &&
+        //       !getCurrentValues.column_statistics.operation &&
+        //       !getCurrentValues.column_statistics.field &&
+        //       !getCurrentValues.target_layer_project_id &&
+        //       !getCurrentValues.target_field
+        // }
+      />
     </Box>
   );
 };

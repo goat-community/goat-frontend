@@ -1,11 +1,18 @@
 import React from "react";
-import TextInputSelect from "./inputFields/TextInputSelect";
-import { Select, FormControl, InputLabel, MenuItem, Box, useTheme } from "@mui/material";
+import TextInputSelect from "@/components/map/panels/filter/TextInputSelect";
+import {
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Box,
+  useTheme,
+} from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 import { v4 } from "uuid";
 
 import type { SelectChangeEvent } from "@mui/material";
-import type { Option } from "./inputFields/TextInputSelect";
+import type { Option } from "@/components/map/panels/filter/TextInputSelect";
 
 interface simpleInput {
   value: string | number | undefined;
@@ -77,17 +84,13 @@ export const SelectOption = (props: SelectOptionProps) => {
   return (
     <div>
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">
-          {t("panels.filter.select_value")}
-        </InputLabel>
+        <InputLabel>{t("panels.filter.select_value")}</InputLabel>
         <Select
           MenuProps={{
             PaperProps: {
               onScroll: onScrolling,
             },
           }}
-          labelId="demo-multiple-name-label"
-          id="demo-multiple-name"
           multiple
           value={value as unknown as string}
           label={t("panels.filter.select_value")}
@@ -122,7 +125,9 @@ export const DualNumberOption = (props: DualNumberOptionProps) => {
   const theme = useTheme();
 
   return (
-    <Box sx={{display: "flex", flexDirection: "column", gap: theme.spacing(3)}}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", gap: theme.spacing(3) }}
+    >
       <TextInputSelect
         setInputValue={setChange1}
         inputValue={value1 ? value1 : ""}

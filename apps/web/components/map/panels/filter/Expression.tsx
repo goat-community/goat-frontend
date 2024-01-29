@@ -24,12 +24,13 @@ import {
   NumberOption,
   SelectOption,
   DualNumberOption,
-} from "@/components/map/panels/filter/nonuse/FilterOption";
+} from "@/components/map/panels/filter/FilterOption";
 import { useUniqueValues } from "@/lib/api/layers";
 import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
-
+import { useMap } from "react-map-gl";
 import type { Expression as ExpressionType } from "@/lib/validations/filter";
 import type { SelectChangeEvent } from "@mui/material";
+import BoundingBoxInput from "@/components/map/panels/filter/BoundingBoxInput";
 
 interface ExpressionProps {
   expression: ExpressionType;
@@ -59,7 +60,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   const { t } = useTranslation("maps");
   const { activeLayer } = useActiveLayer(projectId as string);
   const open = Boolean(anchorEl);
-
+  const { map } = useMap();
   const theme = useTheme();
 
   const { data } = useUniqueValues(
@@ -95,6 +96,12 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
     switch (expression.expression) {
       case "is":
       case "is_not":
+        if (
+          expression.expression === "is" &&
+          expression.attribute === "Bounding Box"
+        ) {
+          return <BoundingBoxInput bounds={expressionValue as string} />;
+        }
         if (attributeType === "string") {
           return (
             <TextOption
@@ -227,6 +234,11 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       .join("")}`,
   );
 
+  layerAttributes.keys.push({
+    name: "Bounding Box",
+    type: "number",
+  });
+
   const attributeType = layerAttributes.keys.filter(
     (attrib) => attrib.name === expression.attribute,
   ).length
@@ -238,6 +250,38 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   function toggleMorePopover() {
     setAnchorEl(!anchorEl);
   }
+
+  const targetFieldChangeHandler = (field: {
+    type: "string" | "number";
+    name: string;
+  }) => {
+    if (field) {
+      modifyExpression(expression, "attribute", field.name);
+      if (field.name === "Bounding Box") {
+        expression.attribute = field.name;
+        expression.value = `${map.getBounds().getSouthWest().toArray()[0]},${
+          map.getBounds().getSouthWest().toArray()[1]
+        },${map.getBounds().getNorthEast().toArray()[0]},${
+          map.getBounds().getNorthEast().toArray()[1]
+        }`;
+        modifyExpression(expression, "expression", "is");
+        expression.expression = "is";
+        debounceEffect(
+          expression,
+          "value",
+          `${map.getBounds().getSouthWest().toArray()[0]},${
+            map.getBounds().getSouthWest().toArray()[1]
+          },${map.getBounds().getNorthEast().toArray()[0]},${
+            map.getBounds().getNorthEast().toArray()[1]
+          }`,
+        );
+      }
+    } else {
+      modifyExpression(expression, "attribute", "");
+    }
+    setStatisticsData([]);
+    setExpressionValue("");
+  };
 
   return (
     <Box
@@ -290,35 +334,19 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
             (key) => key.name === expression.attribute,
           )[0]
         }
-        setSelectedField={(field: {
-          type: "string" | "number";
-          name: string;
-        }) => {
-          if (field) {
-            modifyExpression(expression, "attribute", field.name);
-            // setValue("target_field", field.name);
-          } else {
-            modifyExpression(expression, "attribute", "");
-          }
-          setStatisticsData([]);
-          setExpressionValue("");
-        }}
+        setSelectedField={targetFieldChangeHandler}
         fields={layerAttributes.keys}
       />
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">
-          {t("panels.filter.select_an_expression")}
-        </InputLabel>
+        <InputLabel>{t("panels.filter.select_an_expression")}</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
           value={expression.expression}
           label={t("panels.filter.select_an_expression")}
           onChange={(event: SelectChangeEvent) => {
             modifyExpression(expression, "expression", event.target.value);
             setExpressionValue("");
-            setStatisticsData([]);
           }}
+          disabled={expression.attribute === "Bounding Box"}
         >
           {attributeType
             ? comparerModes[attributeType].map((attr) => (

@@ -17,12 +17,12 @@ import { useParams } from "next/navigation";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 import type { UseFormRegister, FieldErrors } from "react-hook-form";
-import type { PostAggregate } from "@/lib/validations/tools";
+import type { PostBuffer } from "@/lib/validations/tools";
 
 interface PickLayerProps {
-  register: UseFormRegister<PostAggregate>;
-  watch: PostAggregate;
-  errors: FieldErrors<PostAggregate>;
+  register: UseFormRegister<PostBuffer>;
+  watch: PostBuffer;
+  errors: FieldErrors<PostBuffer>;
 }
 const InputLayer = (props: PickLayerProps) => {
   const { register, watch, errors } = props;
@@ -35,6 +35,7 @@ const InputLayer = (props: PickLayerProps) => {
   const { layers: projectLayers } = useProjectLayers(
     typeof projectId === "string" ? projectId : "",
   );
+
   return (
     <Box
       display="flex"
@@ -68,7 +69,9 @@ const InputLayer = (props: PickLayerProps) => {
               {t("panels.tools.aggregate.pick_layer_text")}
             </Typography>
             <FormControl fullWidth size="small">
-              <InputLabel>{t("panels.tools.select_layer")}</InputLabel>
+              <InputLabel>
+                {t("panels.tools.select_layer")}
+              </InputLabel>
               <Select
                 label={t("panels.tools.select_layer")}
                 error={!!errors.source_layer_project_id}
@@ -80,15 +83,11 @@ const InputLayer = (props: PickLayerProps) => {
                 {...register("source_layer_project_id")}
               >
                 {projectLayers
-                  ? projectLayers.map((layer) =>
-                      ["point"].includes(
-                        layer.feature_layer_geometry_type as string,
-                      ) ? (
-                        <MenuItem value={layer.id} key={v4()}>
-                          {layer.name}
-                        </MenuItem>
-                      ) : null,
-                    )
+                  ? projectLayers.map((layer) => (
+                      <MenuItem value={layer.id} key={v4()}>
+                        {layer.name}
+                      </MenuItem>
+                    ))
                   : null}
               </Select>
               {!!errors.source_layer_project_id && (

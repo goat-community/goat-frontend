@@ -5,6 +5,7 @@ import { v4 } from "uuid";
 import type { Expression } from "@/lib/validations/filter";
 
 function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
+  console.log(expressionsInsideLogicalOperator);
   return expressionsInsideLogicalOperator.map((expressionToBeProcessed) => {
     const expression: Expression = {
       expression: "",

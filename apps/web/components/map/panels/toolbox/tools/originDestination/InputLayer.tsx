@@ -21,13 +21,13 @@ import type {
   UseFormRegister,
   FieldErrors,
 } from "react-hook-form";
-import type { PostJoin } from "@/lib/validations/tools";
+import type { PostOriginDestination } from "@/lib/validations/tools";
 
 interface PickLayerProps {
-  setValue: UseFormSetValue<PostJoin>;
-  watch: PostJoin;
-  register: UseFormRegister<PostJoin>;
-  errors: FieldErrors<PostJoin>;
+  setValue: UseFormSetValue<PostOriginDestination>;
+  watch: PostOriginDestination;
+  register: UseFormRegister<PostOriginDestination>;
+  errors: FieldErrors<PostOriginDestination>;
 }
 const InputLayer = (props: PickLayerProps) => {
   const {
@@ -89,17 +89,17 @@ const InputLayer = (props: PickLayerProps) => {
               </Typography>
               <FormControl fullWidth size="small">
                 <InputLabel>
-                  Target Layer
+                  Geometry Layer
                 </InputLabel>
                 <Select
                   label="Target Layer"
-                  error={!!errors.target_layer_project_id}
+                  error={!!errors.geometry_layer_project_id}
                   value={
-                    watch.target_layer_project_id
-                      ? watch.target_layer_project_id
+                    watch.geometry_layer_project_id
+                      ? watch.geometry_layer_project_id
                       : ""
                   }
-                  {...register("target_layer_project_id")}
+                  {...register("geometry_layer_project_id")}
                 >
                   {projectLayers
                     ? projectLayers.map((layer) => (
@@ -109,9 +109,9 @@ const InputLayer = (props: PickLayerProps) => {
                       ))
                     : null}
                 </Select>
-                {!!errors.target_layer_project_id && (
+                {!!errors.geometry_layer_project_id && (
                   <Typography sx={{ fontSize: "10px" }} color="error">
-                    {errors.target_layer_project_id.message}
+                    {errors.geometry_layer_project_id.message}
                   </Typography>
                 )}
               </FormControl>
@@ -123,17 +123,17 @@ const InputLayer = (props: PickLayerProps) => {
             >
               <FormControl fullWidth size="small">
                 <InputLabel>
-                  Join Layer
+                  Matrix Layer
                 </InputLabel>
                 <Select
                   label="Join Layer"
-                  error={!!errors.join_layer_project_id}
+                  error={!!errors.origin_destination_matrix_layer_project_id}
                   value={
-                    watch.join_layer_project_id
-                      ? watch.join_layer_project_id
+                    watch.origin_destination_matrix_layer_project_id
+                      ? watch.origin_destination_matrix_layer_project_id
                       : ""
                   }
-                  {...register("join_layer_project_id")}
+                  {...register("origin_destination_matrix_layer_project_id")}
                 >
                   {projectLayers
                     ? projectLayers.map((layer) => (
@@ -143,9 +143,9 @@ const InputLayer = (props: PickLayerProps) => {
                       ))
                     : null}
                 </Select>
-                {!!errors.join_layer_project_id && (
+                {!!errors.origin_destination_matrix_layer_project_id && (
                   <Typography sx={{ fontSize: "10px" }} color="error">
-                    {errors.join_layer_project_id.message}
+                    {errors.origin_destination_matrix_layer_project_id.message}
                   </Typography>
                 )}
               </FormControl>

@@ -11,6 +11,7 @@ import {
   Checkbox,
   Stack,
   Divider,
+  Switch,
 } from "@mui/material";
 import { v4 } from "uuid";
 import { useTranslation } from "@/i18n/client";
@@ -29,13 +30,13 @@ import type {
   UseFormSetValue,
   FieldErrors,
 } from "react-hook-form";
-import type { PostAggregate } from "@/lib/validations/tools";
+import type { PostAggregatePolygon } from "@/lib/validations/tools";
 
 interface StatisticsProps {
-  register: UseFormRegister<PostAggregate>;
-  setValue: UseFormSetValue<PostAggregate>;
-  watch: PostAggregate;
-  errors: FieldErrors<PostAggregate>;
+  register: UseFormRegister<PostAggregatePolygon>;
+  setValue: UseFormSetValue<PostAggregatePolygon>;
+  watch: PostAggregatePolygon;
+  errors: FieldErrors<PostAggregatePolygon>;
 }
 
 const Statistics = (props: StatisticsProps) => {
@@ -87,8 +88,7 @@ const Statistics = (props: StatisticsProps) => {
   const selectAreaLayerKeys = useGetLayerKeys(
     `user_data.${getLayerStringIdById(
       layers ? layers : [],
-      "aggregation_layer_project_id" in watch &&
-        watch.aggregation_layer_project_id
+      "aggregation_layer_project_id" in watch && watch.aggregation_layer_project_id
         ? watch.aggregation_layer_project_id
         : 0,
     )
@@ -178,7 +178,9 @@ const Statistics = (props: StatisticsProps) => {
             </Box>
             <Box>
               <FormControl fullWidth size="small">
-                <InputLabel>{t("panels.tools.select_method")}</InputLabel>
+                <InputLabel>
+                  {t("panels.tools.select_method")}
+                </InputLabel>
                 <Select
                   disabled={!watch.column_statistics.field}
                   label={t("panels.tools.select_method")}
@@ -202,7 +204,9 @@ const Statistics = (props: StatisticsProps) => {
             </Box>
             <Box sx={{ maxWidth: "100%" }}>
               <FormControl fullWidth size="small">
-                <InputLabel>Select Field Group</InputLabel>
+                <InputLabel>
+                  Select Field Group
+                </InputLabel>
                 <Select
                   disabled={!watch.source_layer_project_id}
                   multiple
@@ -241,6 +245,22 @@ const Statistics = (props: StatisticsProps) => {
                   </Typography>
                 )}
               </FormControl>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography variant="body1">
+                Weigthed by intersecting area
+              </Typography>
+              <Switch
+                checked={watch.weigthed_by_intersecting_area}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setValue(
+                    "weigthed_by_intersecting_area",
+                    event.target.checked,
+                  );
+                }}
+                // {...register()}
+                inputProps={{ "aria-label": "controlled" }}
+              />
             </Box>
           </Box>
         </Stack>

@@ -65,7 +65,6 @@ const LayerMobile = () => {
       <Typography variant="h6">Layers</Typography>
       <Autocomplete
         multiple
-        id="checkboxes-tags-demo"
         options={sampleLayers}
         disableCloseOnSelect
         getOptionLabel={(option) => option.value}

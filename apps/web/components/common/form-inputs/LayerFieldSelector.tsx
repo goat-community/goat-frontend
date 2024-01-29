@@ -47,6 +47,7 @@ export const FieldTypeTag = styled("div")<{ fieldType: string }>(({ fieldType })
   lineHeight: "20px",
 }));
 
+
 const LayerFieldSelector = (props: SelectorProps) => {
   // const theme = useTheme();
   const [searchText, setSearchText] = useState("");
@@ -58,6 +59,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
     });
     return filtered;
   }, [fields, searchText]);
+  
   return (
     <FormControl 
       fullWidth 

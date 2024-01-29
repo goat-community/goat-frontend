@@ -17,12 +17,12 @@ import { useParams } from "next/navigation";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 import type { UseFormRegister, FieldErrors } from "react-hook-form";
-import type { PostAggregate } from "@/lib/validations/tools";
+import type { PostAggregatePolygon } from "@/lib/validations/tools";
 
 interface PickLayerProps {
-  register: UseFormRegister<PostAggregate>;
-  watch: PostAggregate;
-  errors: FieldErrors<PostAggregate>;
+  register: UseFormRegister<PostAggregatePolygon>;
+  watch: PostAggregatePolygon;
+  errors: FieldErrors<PostAggregatePolygon>;
 }
 const InputLayer = (props: PickLayerProps) => {
   const { register, watch, errors } = props;
@@ -35,6 +35,7 @@ const InputLayer = (props: PickLayerProps) => {
   const { layers: projectLayers } = useProjectLayers(
     typeof projectId === "string" ? projectId : "",
   );
+
   return (
     <Box
       display="flex"
@@ -81,8 +82,10 @@ const InputLayer = (props: PickLayerProps) => {
               >
                 {projectLayers
                   ? projectLayers.map((layer) =>
-                      ["point"].includes(
-                        layer.feature_layer_geometry_type as string,
+                      ["polygon"].includes(
+                        layer.feature_layer_geometry_type
+                          ? layer.feature_layer_geometry_type
+                          : "",
                       ) ? (
                         <MenuItem value={layer.id} key={v4()}>
                           {layer.name}

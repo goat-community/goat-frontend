@@ -1,41 +1,34 @@
 import React, { useMemo } from "react";
-import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
-import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
 import { Box } from "@mui/material";
-import { sendJoinFeatureRequest } from "@/lib/api/tools";
-import { useForm } from "react-hook-form";
-import { useParams } from "next/navigation";
-import InputLayer from "@/components/map/panels/toolbox/tools/join/InputLayer";
+import { originDestinationBaseSchema } from "@/lib/validations/tools";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { joinBaseSchema } from "@/lib/validations/tools";
+import { useForm } from "react-hook-form";
+import InputLayer from "@/components/map/panels/toolbox/tools/originDestination/InputLayer";
+import ODSettings from "@/components/map/panels/toolbox/tools/originDestination/ODSettings";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 
-import type { PostJoin } from "@/lib/validations/tools";
+import type { PostOriginDestination } from "@/lib/validations/tools";
 
-const Join = () => {
+const OriginDestination = () => {
   // const { t } = useTranslation("maps");
-
-  const { projectId } = useParams();
 
   const {
     register,
     reset,
     watch,
-    getValues,
+    // getValues,
     setValue,
     formState: { errors, isValid },
-  } = useForm<PostJoin>({
+  } = useForm<PostOriginDestination>({
     mode: "onChange",
-    resolver: zodResolver(joinBaseSchema),
+    resolver: zodResolver(originDestinationBaseSchema),
     defaultValues: {
-      target_layer_project_id: 0,
-      target_field: "",
-      join_layer_project_id: 0,
-      join_field: "",
-      column_statistics: {
-        operation: "",
-        field: "",
-      },
+      geometry_layer_project_id: 0,
+      origin_destination_matrix_layer_project_id: 0,
+      unique_id_column: "",
+      origin_column: "",
+      destination_column: "",
+      weight_column: "",
     },
   });
 
@@ -50,7 +43,7 @@ const Join = () => {
   };
 
   const handleRun = () => {
-    sendJoinFeatureRequest(getValues(), projectId as string);
+    // sendJoinFeatureRequest(getValues(), projectId as string);
   };
 
   return (
@@ -71,20 +64,14 @@ const Join = () => {
         }}
       >
         <InputLayer
-          watch={getCurrentValues}
-          setValue={setValue}
-          register={register}
-          errors={errors}
-        />
-        <FieldsToMatch
           register={register}
           watch={getCurrentValues}
           errors={errors}
           setValue={setValue}
         />
-        <Statistics
+
+        <ODSettings
           register={register}
-          getValues={getValues}
           watch={getCurrentValues}
           errors={errors}
           setValue={setValue}
@@ -95,16 +82,16 @@ const Join = () => {
         runDisabled={!isValid}
         resetFunction={handleReset}
         resetDisabled={
-          !getCurrentValues.join_layer_project_id &&
-          !getCurrentValues.join_field &&
-          !getCurrentValues.column_statistics.operation &&
-          !getCurrentValues.column_statistics.field &&
-          !getCurrentValues.target_layer_project_id &&
-          !getCurrentValues.target_field
+          !getCurrentValues.geometry_layer_project_id &&
+          !getCurrentValues.destination_column &&
+          !getCurrentValues.origin_column &&
+          !getCurrentValues.origin_destination_matrix_layer_project_id &&
+          !getCurrentValues.unique_id_column &&
+          !getCurrentValues.weight_column
         }
       />
     </Box>
   );
 };
 
-export default Join;
+export default OriginDestination;

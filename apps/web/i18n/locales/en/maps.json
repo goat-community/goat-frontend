@@ -110,6 +110,18 @@
         "polygon_layer": "Polygon Layer",
         "unit": "Unit"
       },
+      "aggregate_polygon": {
+        "aggregate_polygon": "Aggregate polygon"
+      },
+      "oev_gutenklassen": {
+        "oev_gutenklassen": "Oev-Gutenklassen"
+      },
+      "trip_count": {
+        "trip_count": "Trip Count"
+      },
+      "origin_destination": {
+        "origin_destination": "Origin Destination"
+      },
       "accessibility_indicators": {
         "accessibility_indicators": "Accessibility Indicators",
         "isochrone": "Isochrone"
