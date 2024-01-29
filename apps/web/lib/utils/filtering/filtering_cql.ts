@@ -107,7 +107,6 @@ export function is_at_least(key: string, value: number) {
 }
 
 export function is_at_most(key: string, value: number) {
-  console.log(createComparisonCondition("<=", key, value));
   return createComparisonCondition("<=", key, value);
 }
 
@@ -123,6 +122,11 @@ export function is_between(key: string, value1: number, value2: number) {
   return `{"op":"and","args":[{"op":">=","args":[{"property":"${key}"},${value1}]},{"op":"<=","args":[{"property":"${key}"},${value2}]}]}`;
 }
 
+export function bbox(value: string) {
+  const coordinates = value.split(",");
+  return `{"op":"s_intersects","args":[{"property":"geometry"},{"coordinates":[[[${coordinates[3]},${coordinates[0]}],[${coordinates[1]},${coordinates[0]}],[${coordinates[1]},${coordinates[2]}],[${coordinates[3]},${coordinates[2]}],[${coordinates[3]},${coordinates[0]}]]],"type":"Polygon"}]}`;
+}
+
 export function and_operator(args: string[]) {
   return `{"op":"and","args": [${args.map((arg) => `${arg}`)}]}`;
 }
@@ -133,7 +137,7 @@ export function or_operator(args: string[]) {
 
 export function createTheCQLBasedOnExpression(
   expressions,
-  layerAttributes: {keys: {name: string, type: string}[]},
+  layerAttributes: { keys: { name: string; type: string }[] },
   logicalOperator?: "and" | "or",
 ) {
   const queries = expressions
@@ -147,11 +151,13 @@ export function createTheCQLBasedOnExpression(
           )[0].type
         : undefined;
 
-      console.log(attributeType);
-
       switch (expression.expression) {
         case "is":
-          return is(expression.attribute, expression.value);
+          if (expression.attribute === "Bounding Box") {
+            return bbox(expression.value);
+          } else {
+            return is(expression.attribute, expression.value);
+          }
         case "is_not":
           return is_not(expression.attribute, expression.value);
         case "is_empty_string":
@@ -194,7 +200,6 @@ export function createTheCQLBasedOnExpression(
         case "is_not_blank":
           return is_not_blank(expression.attribute);
         case "is_between":
-          console.log(expression.value);
           return is_between(
             expression.attribute,
             parseInt(expression.value.split("-")[0]),
@@ -204,7 +209,6 @@ export function createTheCQLBasedOnExpression(
     });
 
   if (logicalOperator === "and") {
-    console.log(and_operator(queries));
     return JSON.parse(and_operator(queries));
   } else {
     return JSON.parse(or_operator(queries));

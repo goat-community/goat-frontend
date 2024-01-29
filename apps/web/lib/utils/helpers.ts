@@ -279,3 +279,42 @@ export function getLayerStringIdById(layers: ProjectLayer[], id: number) {
     return "";
   }
 }
+
+export function timeToSeconds(timeString) {
+  const [hours, minutes] = timeString.split(":").map(Number);
+
+  // Validate the input format
+  if (
+    isNaN(hours) ||
+    isNaN(minutes) ||
+    hours < 0 ||
+    hours >= 24 ||
+    minutes < 0 ||
+    minutes >= 60
+  ) {
+    throw new Error('Invalid time format. Please use "HH:MM".');
+  }
+
+  // Convert hours and minutes to seconds
+  const totalSeconds = hours * 3600 + minutes * 60;
+
+  return totalSeconds;
+}
+
+export function secondsToTime(seconds) {
+  // Ensure the input is a non-negative number
+  seconds = Math.max(0, seconds);
+
+  // Calculate the hours and minutes
+  const totalSecondsInHour = 60 * 60; // 60 minutes * 60 seconds
+  const hours = Math.floor(
+    (seconds % (24 * totalSecondsInHour)) / totalSecondsInHour,
+  );
+  const minutes = Math.floor((seconds % totalSecondsInHour) / 60);
+
+  // Format the result as HH:MM
+  const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+    minutes,
+  ).padStart(2, "0")}`;
+  return formattedTime;
+}

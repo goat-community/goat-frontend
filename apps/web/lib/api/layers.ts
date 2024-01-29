@@ -43,7 +43,10 @@ export const useDataset = (datasetId: string) => {
   return { dataset: data, isLoading, isError: error, mutate };
 };
 
-export const updateDataset = async (datasetId: string, payload: PostDataset) => {
+export const updateDataset = async (
+  datasetId: string,
+  payload: PostDataset,
+) => {
   const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/${datasetId}`, {
     method: "PUT",
     body: JSON.stringify(payload),
@@ -200,4 +203,18 @@ export const downloadDataset = async (payload: DatasetDownloadRequest) => {
     throw new Error("Failed to download layer");
   }
   return await response.blob();
+};
+export const useClassBreak = (
+  layerId: string,
+  operation: string,
+  column: string,
+  breaks: number,
+) => {
+  const { data, isLoading, error } = useSWR<Record<string, number>>(
+    [
+      `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`,
+    ],
+    fetcher,
+  );
+  return { data, isLoading, error };
 };

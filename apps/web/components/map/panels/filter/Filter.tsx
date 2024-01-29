@@ -160,12 +160,8 @@ const FilterPanel = (props: FilterProps) => {
           <ProjectLayerDropdown projectId={projectId} />
           {expressions && expressions.length > 1 ? (
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
-                Logical Operator
-              </InputLabel>
+              <InputLabel>Logical Operator</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
                 value={logicalOperator}
                 label="Logical Operator"
                 onChange={(event: SelectChangeEvent) => {
