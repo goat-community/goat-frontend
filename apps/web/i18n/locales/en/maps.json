@@ -214,7 +214,9 @@
   "ordinal": "Custom Ordinal",
   "change_colors_and_steps": " To change the colors and number of steps, make adjustments in the  palette field above.",
   "fill_color": "Fill Color",
+  "fill_color_based_on": "Fill Color based on",
   "stroke_color": "Stroke Color",
+  "stroke_color_based_on": "Stroke Color based on",
   "stroke_width": "Stroke Width",
   "radius": "Radius",
   "outline": "Outline",
@@ -241,5 +243,7 @@
   "27700": "British National Grid (EPSG:27700)",
   "move_to": "Move to",
   "error_moving_content": "Error moving content",
-  "move": "Move"
+  "move": "Move",
+  "zoom_level": "Zoom level",
+  "zoom_level_legend_tooltip": "Zoom levels at which the layer will be visible"
 }
