@@ -1,5 +1,5 @@
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
-import { Box, Divider, IconButton, Paper, Stack } from "@mui/material";
+import { Box, Divider, IconButton, Link, Paper, Stack } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { Popup } from "react-map-gl";
 
@@ -48,9 +48,9 @@ const Row: React.FC<RowProps> = ({ name, value }) => {
           }}
         >
           {url ? (
-            <a target="_blank" rel="noopener noreferrer" href={url}>
+            <Link target="_blank" rel="noopener noreferrer" href={url}>
               {value}
-            </a>
+            </Link>
           ) : (
             <>{value}</>
           )}
@@ -99,8 +99,8 @@ const MapPopover: React.FC<MapPopoverProps> = ({
               <Icon iconName={ICON_NAME.XCLOSE} style={{ fontSize: 16 }} />
             </IconButton>
           </Stack>
-          <Divider />
-          <Box sx={{ maxHeight: "300px", overflowY: "auto" }}>
+          <Divider sx={{ mb: 0 }} />
+          <Box sx={{ maxHeight: "280px", overflowY: "auto" }}>
             {properties && (
               <table
                 style={{

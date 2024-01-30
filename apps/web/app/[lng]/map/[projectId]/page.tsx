@@ -173,6 +173,7 @@ export default function MapPage({ params: { projectId } }) {
                 height: `calc(100% - ${toolbarHeight}px)`,
                 ".mapboxgl-popup-content": {
                   padding: 0,
+                  borderRadius: "6px",
                   background: theme.palette.background.paper,
                 },
                 ".mapboxgl-popup-anchor-top .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip":
