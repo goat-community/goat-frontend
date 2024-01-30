@@ -60,7 +60,7 @@ import DatasetUploadModal from "@/components/modals/DatasetUpload";
 import DatasetExplorerModal from "@/components/modals/DatasetExplorer";
 import { DragHandle } from "@/components/common/DragHandle";
 import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
-import { PanelProps } from "@/types/map/sidebar";
+import type { PanelProps } from "@/types/map/sidebar";
 
 type SortableLayerTileProps = {
   id: number;
