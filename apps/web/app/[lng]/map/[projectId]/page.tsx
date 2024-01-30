@@ -62,7 +62,7 @@ export default function MapPage({ params: { projectId } }) {
           min_zoom: initialView?.min_zoom ?? 0,
           max_zoom: initialView?.max_zoom ?? 24,
         });
-      }, 2000),
+      }, 3000),
     [initialView?.max_zoom, initialView?.min_zoom, projectId],
   );
 

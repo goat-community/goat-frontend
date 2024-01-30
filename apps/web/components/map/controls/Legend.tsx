@@ -1,3 +1,4 @@
+import EmptySection from "@/components/common/EmptySection";
 import { useTranslation } from "@/i18n/client";
 import { formatNumber, rgbToHex } from "@/lib/utils/helpers";
 import type {
@@ -7,6 +8,7 @@ import type {
 import type { ProjectLayer } from "@/lib/validations/project";
 import type { RGBColor } from "@/types/map/color";
 import { Stack, Tooltip, Typography } from "@mui/material";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMemo } from "react";
 
 const DEFAULT_COLOR = "#000000";
@@ -321,6 +323,10 @@ export function Legend(props: LegendProps) {
             </Stack>
           </Stack>
         ))}
+
+        {props.layers?.length === 0 && (
+          <EmptySection label={t("no_active_layers")} icon={ICON_NAME.LAYERS} />
+        )}
       </>
     )
   );

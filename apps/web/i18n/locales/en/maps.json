@@ -245,5 +245,6 @@
   "error_moving_content": "Error moving content",
   "move": "Move",
   "zoom_level": "Zoom level",
-  "zoom_level_legend_tooltip": "Zoom levels at which the layer will be visible"
+  "zoom_level_legend_tooltip": "Zoom levels at which the layer will be visible",
+  "no_active_layers": "No active layers"
 }
