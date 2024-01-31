@@ -65,6 +65,7 @@ jobs:
       dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
       dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
     with:
+      context: ${{ github.workspace }}
       dockerhub-enable: true
       ghcr-enable: false
       push: ${{ github.event_name != 'pull_request' }}
