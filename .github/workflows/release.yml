@@ -14,38 +14,42 @@ jobs:
     uses: ./.github/workflows/checks.yml
     secrets: inherit
 
-  # release-docker-test:
-  #   name: release-docker-test
-  #   needs: file-changes
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 📥 Checkout
-  #       uses: actions/checkout@v4
+  release-docker-test:
+    name: release-docker-test
+    needs: file-changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📂 Directory structure
+        run: |
+          pwd
+          ls -la
+          ls -la ${{ github.workspace }}  
+          ls -la ${{ github.workspace }}/apps/web
 
-  #     - name: 🐳 Setup Docker Buildx
-  #       uses: docker/setup-buildx-action@v1
-  #     # we need qemu and buildx so we can build multiple platforms later
-  #     - name: 🐳 Set up QEMU
-  #       id: qemu
-  #       uses: docker/setup-qemu-action@v2.2.0
+      # - name: 🐳 Setup Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
+      # # we need qemu and buildx so we can build multiple platforms later
+      # - name: 🐳 Set up QEMU
+      #   id: qemu
+      #   uses: docker/setup-qemu-action@v2.2.0
 
-  #       # BuildKit (used with `docker buildx`) is the best way to build images
-  #     - name: 🐳 Set up Docker Buildx
-  #       id: buildx
-  #       uses: docker/setup-buildx-action@v3
+      #   # BuildKit (used with `docker buildx`) is the best way to build images
+      # - name: 🐳 Set up Docker Buildx
+      #   id: buildx
+      #   uses: docker/setup-buildx-action@v3
 
-  #     - name: 🐳 Build changed
-  #       uses: docker/build-push-action@v4
-  #       with:
-  #         context: ${{ github.workspace }}
-  #         file: ${{ github.workspace }}/apps/web/Dockerfile
-  #         push: false
-  #         platforms: linux/amd64
-  #         tags: |
-  #           goatcommunity/goat-frontend-test:latest
-  #           goatcommunity/goat-frontend-test:${{ needs.file-changes.outputs.sha-short }}
-  #         cache-from: type=gha
-  #         cache-to: type=gha,mode=max
+      # - name: 🐳 Build changed
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: ${{ github.workspace }}
+      #     file: ${{ github.workspace }}/apps/web/Dockerfile
+      #     push: false
+      #     platforms: linux/amd64
+      #     tags: |
+      #       goatcommunity/goat-frontend-test:latest
+      #       goatcommunity/goat-frontend-test:${{ needs.file-changes.outputs.sha-short }}
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
   
   release-docker-goat:
     name: release-docker-goat
