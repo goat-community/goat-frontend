@@ -1,23 +1,40 @@
 import Container from "@/components/map/panels/Container";
-import { Box, Stack } from "@mui/material";
+import { Box, IconButton, Stack, Tooltip } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "@/i18n/client";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
-import type { FeatureLayerProperties } from "@/lib/validations/layer";
+import type {
+  FeatureLayerProperties,
+  LayerUniqueValues,
+} from "@/lib/validations/layer";
 import { useCallback, useMemo, useState } from "react";
-import { getLayerClassBreaks, useLayerQueryables } from "@/lib/api/layers";
+import {
+  getLayerClassBreaks,
+  getLayerUniqueValues,
+  updateDataset,
+  useDataset,
+  useLayerQueryables,
+} from "@/lib/api/layers";
 import Header from "@/components/map/panels/style/other/Header";
 import ColorOptions from "@/components/map/panels/style/color/ColorOptions";
 import SizeOptions from "@/components/map/panels/style/size/SizeOptions";
 import type { ProjectLayer } from "@/lib/validations/project";
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import MoreMenu from "@/components/common/PopperMenu";
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { LayerStyleActions } from "@/types/common";
+import { toast } from "react-toastify";
 
 const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation(["maps", "common"]);
   const dispatch = useDispatch();
   const { activeLayer } = useActiveLayer(projectId);
+  const { dataset, mutate: mutateDataset } = useDataset(
+    activeLayer?.layer_id || "",
+  );
   const { layers: projectLayers, mutate: mutateProjectLayers } =
     useProjectLayers(projectId);
 
@@ -86,6 +103,42 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     [activeLayer],
   );
 
+  const updateOrdinalValues = useCallback(
+    async (
+      updateType: "color" | "stroke_color",
+      newStyle: FeatureLayerProperties,
+    ) => {
+      if (!activeLayer) return;
+      if (!newStyle[`${updateType}_field`]?.name) return;
+      const oldFieldName = activeLayer.properties[`${updateType}_field`]?.name;
+      const newFieldName = newStyle[`${updateType}_field`]?.name;
+      if (
+        (newStyle[`${updateType}_scale`] === "ordinal" &&
+          newStyle[`${updateType}_range`]?.name !==
+            activeLayer.properties[`${updateType}_range`]?.name) ||
+        !newStyle[`${updateType}_range`]?.color_map ||
+        oldFieldName !== newFieldName
+      ) {
+        const colors = newStyle[`${updateType}_range`]?.colors;
+        // const _existingColorMap = newStyle[`${updateType}_range`]?.color_map;
+        // fetch unique values
+        const uniqueValues = await getLayerUniqueValues(
+          activeLayer.layer_id,
+          newStyle[`${updateType}_field`]?.name as string,
+          colors?.length,
+        );
+
+        const colorMap = [] as [string, string][];
+        uniqueValues.items.forEach((item: LayerUniqueValues, index: number) => {
+          colorMap.push([item.value, colors[index]]);
+        });
+        newStyle[`${updateType}_range`].color_map = colorMap;
+      }
+      updateLayerStyle(newStyle);
+    },
+    [activeLayer, updateLayerStyle],
+  );
+
   const onToggleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>, property: string) => {
       const newStyle =
@@ -95,6 +148,43 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     },
     [activeLayer, updateLayerStyle],
   );
+
+  const resetStyle = useCallback(async () => {
+    if (dataset?.properties) {
+      const newStyle = JSON.parse(JSON.stringify(dataset.properties));
+      await updateLayerStyle(newStyle);
+    }
+  }, [dataset, updateLayerStyle]);
+
+  const saveStyleAsDatasetDefault = useCallback(async () => {
+    if (dataset?.properties && activeLayer?.properties) {
+      dataset.properties = JSON.parse(JSON.stringify(activeLayer.properties));
+      try {
+        await updateDataset(dataset.id, dataset);
+        await mutateDataset(dataset, false);
+        toast.success(t("maps:style_saved_as_dataset_default_success"));
+      } catch (err) {
+        toast.error(t("maps:style_saved_as_dataset_default_error"));
+      }
+    }
+  }, [dataset, activeLayer?.properties, mutateDataset, t]);
+
+  const layerStyleMoreMenuOptions = useMemo(() => {
+    const layerStyleMoreMenuOptions: PopperMenuItem[] = [
+      {
+        id: LayerStyleActions.SAVE_AS_DEFAULT,
+        label: t("common:save_as_default"),
+        icon: ICON_NAME.SAVE,
+      },
+      {
+        id: LayerStyleActions.RESET,
+        label: t("common:reset"),
+        icon: ICON_NAME.REFRESH,
+      },
+    ];
+
+    return layerStyleMoreMenuOptions;
+  }, [t]);
 
   const [collapseFillOptions, setCollapseFillOptions] = useState(true);
   const [collapseStrokeColorOptions, setCollapseStrokeColorOptions] =
@@ -112,10 +202,39 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       body={
         <>
           {activeLayer && (
-            <ProjectLayerDropdown
-              projectId={projectId}
-              layerTypes={["feature"]}
-            />
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={2}
+              sx={{ mb: 4 }}
+            >
+              <ProjectLayerDropdown
+                projectId={projectId}
+                layerTypes={["feature"]}
+              />
+              <MoreMenu
+                menuItems={layerStyleMoreMenuOptions}
+                menuButton={
+                  <Tooltip title={t("maps:more_options")} arrow placement="top">
+                    <IconButton>
+                      <Icon
+                        iconName={ICON_NAME.MORE_VERT}
+                        style={{ fontSize: 15 }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                }
+                onSelect={async (menuItem: PopperMenuItem) => {
+                  if (menuItem.id === LayerStyleActions.RESET) {
+                    resetStyle();
+                  } else if (
+                    menuItem.id === LayerStyleActions.SAVE_AS_DEFAULT
+                  ) {
+                    saveStyleAsDatasetDefault();
+                  }
+                }}
+              />
+            </Stack>
           )}
           <Box
             sx={{
@@ -154,10 +273,18 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         onStyleChange={async (
                           newStyle: FeatureLayerProperties,
                         ) => {
-                          await updateColorClassificationBreaks(
-                            "color",
-                            newStyle,
-                          );
+                          if (
+                            newStyle.color_field?.type === "number" &&
+                            newStyle.color_scale !== "ordinal"
+                          ) {
+                            await updateColorClassificationBreaks(
+                              "color",
+                              newStyle,
+                            );
+                          } else if (newStyle.color_scale === "ordinal") {
+                            await updateOrdinalValues("color", newStyle);
+                          }
+
                           updateLayerStyle(newStyle);
                         }}
                         layerId={activeLayer?.layer_id}
@@ -191,10 +318,17 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   collapsed={collapseStrokeColorOptions}
                   selectedField={activeLayer?.properties.stroke_color_field}
                   onStyleChange={async (newStyle: FeatureLayerProperties) => {
-                    await updateColorClassificationBreaks(
-                      "stroke_color",
-                      newStyle,
-                    );
+                    if (
+                      newStyle.stroke_color_field?.type === "number" &&
+                      newStyle.color_scale !== "ordinal"
+                    ) {
+                      await updateColorClassificationBreaks(
+                        "stroke_color",
+                        newStyle,
+                      );
+                    } else if (newStyle.color_scale === "ordinal") {
+                      await updateOrdinalValues("stroke_color", newStyle);
+                    }
                     updateLayerStyle(newStyle);
                   }}
                   layerId={activeLayer?.layer_id}

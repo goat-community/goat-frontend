@@ -13,6 +13,34 @@ export function getMapboxStyleColor(
 ) {
   const colors = data.properties[`${type}_range`]?.colors;
   const fieldName = data.properties[`${type}_field`]?.name;
+  const colorScale = data.properties[`${type}_scale`];
+  const colorMaps = data.properties[`${type}_range`]?.color_map;
+
+  if (
+    colorMaps &&
+    fieldName &&
+    Array.isArray(colorMaps) &&
+    colorScale === "ordinal"
+  ) {
+    const valuesAndColors = [] as (string | number)[];
+    colorMaps.forEach((colorMap) => {
+      const colorMapValue = colorMap[0];
+      const colorMapHex = colorMap[1];
+      if (!colorMapValue || !colorMapHex) return;
+      if (Array.isArray(colorMapValue)) {
+        colorMapValue.forEach((value: string) => {
+          valuesAndColors.push(value);
+          valuesAndColors.push(colorMapHex);
+        });
+      } else {
+        valuesAndColors.push(colorMapValue);
+        valuesAndColors.push(colorMapHex);
+      }
+    });
+
+    return ["match", ["get", fieldName], ...valuesAndColors, "#AAAAAA"];
+  }
+
   if (
     !fieldName ||
     !colors ||
@@ -20,7 +48,7 @@ export function getMapboxStyleColor(
   ) {
     return data.properties[type]
       ? rgbToHex(data.properties[type] as RGBColor)
-      : "#000000";
+      : "#AAAAAA";
   }
 
   const colorSteps = colors
@@ -45,6 +73,9 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
     const pointProperties = data.properties as FeatureLayerPointProperties;
     return {
       type: "circle",
+      layout: {
+        visibility: data.properties.visibility ? "visible" : "none",
+      },
       paint: {
         "circle-color": getMapboxStyleColor(data, "color"),
         "circle-opacity": pointProperties.filled ? pointProperties.opacity : 0,
@@ -59,9 +90,14 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
     const polygonProperties = data.properties as FeatureLayerLineProperties;
     return {
       type: "fill",
+      layout: {
+        visibility: data.properties.visibility ? "visible" : "none",
+      },
       paint: {
         "fill-color": getMapboxStyleColor(data, "color"),
-        "fill-opacity": polygonProperties.filled ? polygonProperties.opacity : 0,
+        "fill-opacity": polygonProperties.filled
+          ? polygonProperties.opacity
+          : 0,
         "fill-outline-color": getMapboxStyleColor(data, "stroke_color"),
         "fill-antialias": polygonProperties.stroked,
       },
@@ -71,6 +107,9 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
 
     return {
       type: "line",
+      layout: {
+        visibility: data.properties.visibility ? "visible" : "none",
+      },
       paint: {
         "line-color": getMapboxStyleColor(data, "stroke_color"),
         "line-opacity": lineProperties.opacity,

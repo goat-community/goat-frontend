@@ -59,7 +59,7 @@ const ProjectNavigation = ({ projectId }) => {
         id: MapSidebarItemID.LEGEND,
         icon: ICON_NAME.LEGEND,
         name: t("panels.legend.legend"),
-        component: <Legend />,
+        component: <Legend projectId={projectId} />,
       },
       {
         id: MapSidebarItemID.CHARTS,

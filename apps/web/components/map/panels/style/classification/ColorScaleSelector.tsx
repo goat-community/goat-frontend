@@ -26,21 +26,25 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
           <>
             <Paper
               sx={{
-                px: 3,
-                py: 3,
                 boxShadow: "rgba(0, 0, 0, 0.16) 0px 6px 12px 0px",
                 width: "235px",
                 maxHeight: "500px",
               }}
             >
-              {props.activeLayerField.type === "number" && (
-                <NumericColorScale
+              {props.activeLayerField.type === "number" &&
+                props.selectedColorScaleMethod !== "ordinal" && (
+                  <NumericColorScale
+                    {...props}
+                    onCancel={() => setOpen(false)}
+                    setIsClickAwayEnabled={setIsClickAwayEnabled}
+                  />
+                )}
+              {props.selectedColorScaleMethod === "ordinal" && (
+                <OrdinalColorScale
                   {...props}
+                  onCancel={() => setOpen(false)}
                   setIsClickAwayEnabled={setIsClickAwayEnabled}
                 />
-              )}
-              {props.activeLayerField.type === "string" && (
-                <OrdinalColorScale {...props} />
               )}
             </Paper>
           </>

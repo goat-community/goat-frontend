@@ -11,6 +11,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import { useCallback, useState } from "react";
 
 type ColorSelectorProps = {
+  scaleType?: string;
   colorSet: ColorSet;
   label?: string;
   tooltip?: string;
@@ -59,6 +60,7 @@ const ColorSelector = (props: ColorSelectorProps) => {
             >
               {colorSet.isRange ? (
                 <ColorRangeSelector
+                  scaleType={props.scaleType}
                   selectedColorRange={colorSet.selectedColor as ColorRange}
                   onSelectColorRange={onSelectColor}
                   setIsBusy={(busy) => setIsClickAwayEnabled(!busy)}

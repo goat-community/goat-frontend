@@ -21,6 +21,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useMap } from "react-map-gl";
+import { zoomToLayer } from "@/lib/utils/map/navigate";
 
 interface DatasetExplorerProps {
   open: boolean;
@@ -47,6 +49,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
   const { mutate: mutateProjectLayers } = useProjectLayers(projectId);
 
   const [selectedDataset, setSelectedDataset] = useState<Layer>();
+  const { map } = useMap();
 
   const handleOnClose = () => {
     onClose && onClose();
@@ -57,6 +60,9 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
       setIsBusy(true);
       await addProjectLayers(projectId, [selectedDataset.id]);
       mutateProjectLayers();
+      if (map) {
+        zoomToLayer(map, selectedDataset.extent);
+      }
     } catch (error) {
       toast.error("Error adding layer");
     } finally {

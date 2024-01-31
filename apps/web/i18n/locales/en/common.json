@@ -14,5 +14,6 @@
     "info": "Info",
     "properties": "Properties",
     "rename": "Rename",
-    "apply": "Apply"
+    "apply": "Apply",
+    "save_as_default": "Save as default"
 }

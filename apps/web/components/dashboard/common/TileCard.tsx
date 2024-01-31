@@ -85,6 +85,7 @@ const TileCard = (props: TileCard) => {
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const moreMenu = (
     <MoreMenu
+      disablePortal={false}
       menuItems={props.moreMenuOptions ?? []}
       menuButton={
         <IconButton

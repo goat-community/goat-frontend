@@ -12,11 +12,10 @@ interface LayersProps {
 
 const Layers = (props: LayersProps) => {
   const sortedLayers = useSortedLayers(props.projectId);
-
   return (
     <>
       {sortedLayers?.length
-        ? sortedLayers.map((layer: ProjectLayer) =>
+        ? sortedLayers.map((layer: ProjectLayer, index: number) =>
             (() => {
               if (["feature", "external_vector_tile"].includes(layer.type)) {
                 return (
@@ -38,9 +37,15 @@ const Layers = (props: LayersProps) => {
                     ]}
                   >
                     <MapLayer
+                      id={layer.id.toString()}
                       {...(transformToMapboxLayerStyleSpec(
                         layer,
                       ) as LayerProps)}
+                      beforeId={
+                        index === 0
+                          ? undefined
+                          : sortedLayers[index - 1].id.toString()
+                      }
                       source-layer="default"
                     />
                   </Source>

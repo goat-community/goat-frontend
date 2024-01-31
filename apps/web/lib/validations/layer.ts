@@ -3,6 +3,7 @@ import { responseSchema } from "@/lib/validations/response";
 import {
   contentMetadataSchema,
   data_type,
+  featureDataExchangeType,
   featureLayerGeometryType,
   featureLayerType,
   getContentQueryParamsSchema,
@@ -31,6 +32,7 @@ export const classBreaks = z.enum([
   "ordinal",
   "custom_breaks",
 ]);
+
 export const sizeScale = z.enum(["linear", "logarithmic", "exponential"]);
 const layerFieldType = z.object({
   name: z.string(),
@@ -51,8 +53,8 @@ const ColorRange = z.object({
   category: z.string().optional(),
   colors: z.array(HexColor),
   reversed: z.boolean().optional(),
-  colorMap: ColorMap.optional(),
-  colorLegends: ColorLegends.optional(),
+  color_map: ColorMap.optional(),
+  color_legends: ColorLegends.optional(),
 });
 
 export const TextLabelSchema = z.object({
@@ -168,6 +170,8 @@ export const layerSchema = layerMetadataSchema.extend({
   created_at: z.string(),
 });
 
+export const postDatasetSchema = layerSchema.partial()
+
 export const getLayersQueryParamsSchema = getContentQueryParamsSchema.extend({
   layer_type: layerType.array().optional(),
   feature_layer_type: featureLayerType.optional(),
@@ -213,12 +217,31 @@ export const layerQueryables = z.object({
   $id: z.string(),
 });
 
+export const uniqueValuesSchema = z.object({
+  value: z.string(),
+  count: z.number(),
+});
+export const uniqueValuesResponseSchema = responseSchema(uniqueValuesSchema);
+
+export const datasetDownloadRequestSchema = z.object({
+  id: z.string().uuid(),
+  file_type: featureDataExchangeType.optional(),
+  file_name: z.string().optional(),
+  crs: z.string().optional(),
+  query: z.string().optional(),
+});
+
+export type DatasetDownloadRequest = z.infer<
+  typeof datasetDownloadRequestSchema
+>;
+
 export const layerResponseSchema = responseSchema(layerSchema);
 export const layerTypesArray = Object.values(layerType.Values);
 export const featureLayerTypesArray = Object.values(featureLayerType.Values);
 
 export type ColorRange = z.infer<typeof ColorRange>;
 export type Layer = z.infer<typeof layerSchema>;
+export type PostDataset = z.infer<typeof postDatasetSchema>;
 export type FeatureLayerProperties = z.infer<typeof featureLayerProperties>;
 export type FeatureLayerPointProperties = z.infer<
   typeof featureLayerPointPropertiesSchema
@@ -230,6 +253,10 @@ export type FeatureLayerPolygonProperties = z.infer<
   typeof featureLayerPolygonPropertiesSchema
 >;
 export type LayerPaginated = z.infer<typeof layerResponseSchema>;
+export type LayerUniqueValues = z.infer<typeof uniqueValuesSchema>;
+export type LayerUniqueValuesPaginated = z.infer<
+  typeof uniqueValuesResponseSchema
+>;
 export type LayerType = z.infer<typeof layerType>;
 export type LayerQueryables = z.infer<typeof layerQueryables>;
 export type ClassBreaks = z.infer<typeof classBreaks>;

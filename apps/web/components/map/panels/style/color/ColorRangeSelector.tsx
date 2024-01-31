@@ -20,7 +20,14 @@
 
 import { useMemo, useState } from "react";
 
-import { MenuItem, Select, Stack, Switch, Typography } from "@mui/material";
+import {
+  MenuItem,
+  Select,
+  Stack,
+  Switch,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 // eslint-disable-next-line you-dont-need-lodash-underscore/uniq
 import uniq from "lodash.uniq";
 import { COLOR_RANGES } from "@/lib/constants/color";
@@ -33,6 +40,7 @@ import CustomPalette from "@/components/map/panels/style/color/CustomPalette";
 type ColorRangeSelectorProps = {
   selectedColorRange: ColorRange;
   onSelectColorRange: (p: ColorRange) => void;
+  scaleType?: string;
   setIsBusy?: (p: boolean) => void;
   setIsOpen?: (p: boolean) => void;
 };
@@ -40,7 +48,7 @@ type ColorRangeSelectorProps = {
 export const ALL_TYPES: string[] = uniq(
   COLOR_RANGES.map((c) => c.type)
     .filter((ctype) => ctype)
-    .concat(["all", "custom"]) as string[],
+    .concat(["all"]) as string[],
 );
 
 export const ALL_STEPS: number[] = uniq(
@@ -68,6 +76,7 @@ const CONFIG_SETTINGS = {
 };
 
 type PaletteConfigProps = {
+  disabled?: boolean;
   label: string;
   value: string | number | boolean;
   config: {
@@ -79,9 +88,8 @@ type PaletteConfigProps = {
 };
 
 const PaletteConfig = (props: PaletteConfigProps) => {
-  const { label, value, config, onChange } = props;
+  const { label, value, config, onChange, disabled } = props;
   const { t } = useTranslation("maps");
-
   return (
     <Stack
       direction="row"
@@ -91,38 +99,54 @@ const PaletteConfig = (props: PaletteConfigProps) => {
     >
       <Typography variant="body2">{t(`${label}`)}</Typography>
       {config.type === "select" && (
-        <Select
-          size="small"
-          IconComponent={() => null}
-          value={value}
-          onOpen={() => {
-            props.setIsBusy && props.setIsBusy(true);
-          }}
-          MenuProps={{
-            TransitionProps: {
-              onExited: () => {
-                props.setIsBusy && props.setIsBusy(false);
-              },
-            },
-          }}
-          onChange={(e) => {
-            onChange(e.target.value);
-          }}
+        <Tooltip
+          title={t("steps_disabled_tooltip")}
+          placement="left"
+          disableHoverListener={!disabled}
         >
-          {config.options.map((option, index) => (
-            <MenuItem key={index} value={String(option)}>
-              {t(`${option}`)}
-            </MenuItem>
-          ))}
-        </Select>
+          <Select
+            disabled={disabled}
+            size="small"
+            IconComponent={() => null}
+            value={value}
+            onOpen={() => {
+              props.setIsBusy && props.setIsBusy(true);
+            }}
+            MenuProps={{
+              TransitionProps: {
+                onExited: () => {
+                  props.setIsBusy && props.setIsBusy(false);
+                },
+              },
+            }}
+            onChange={(e) => {
+              onChange(e.target.value);
+            }}
+          >
+            {config.options.map((option, index) => (
+              <MenuItem key={index} value={String(option)}>
+                {t(`${option}`)}
+              </MenuItem>
+            ))}
+          </Select>
+        </Tooltip>
       )}
       {config.type === "switch" && (
-        <Switch
-          checked={value as boolean}
-          id={`${label}-toggle`}
-          onChange={() => onChange(!value)}
-          size="small"
-        />
+        <Tooltip
+          title={t("steps_disabled_tooltip")}
+          placement="left"
+          disableHoverListener={!disabled}
+        >
+          <div>
+            <Switch
+              disabled={disabled}
+              checked={value as boolean}
+              id={`${label}-toggle`}
+              onChange={() => onChange(!value)}
+              size="small"
+            />
+          </div>
+        </Tooltip>
       )}
     </Stack>
   );
@@ -132,7 +156,11 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
   const { selectedColorRange, onSelectColorRange } = props;
 
   const [colorRangeConfig, setColorRangeConfig] = useState({
-    type: selectedColorRange.type,
+    type:
+      ["ordinal", "custom_breaks"].includes(props.scaleType as string) ||
+      selectedColorRange.type === "custom"
+        ? "all"
+        : selectedColorRange.type,
     steps: selectedColorRange.colors.length || 6,
     reversed: selectedColorRange.reversed || false,
     custom: selectedColorRange.type === "custom",
@@ -152,11 +180,16 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
 
   return (
     <Stack spacing={2}>
-      {(colorRangeConfig.custom
+      {(colorRangeConfig.custom &&
+      !["ordinal", "custom_breaks"].includes(props.scaleType as string)
         ? ["custom"]
         : Object.keys(colorRangeConfig)
       ).map((key) => (
         <PaletteConfig
+          disabled={
+            ["ordinal", "custom_breaks"].includes(props.scaleType as string) &&
+            ["steps", "custom"].includes(key)
+          }
           key={key}
           label={CONFIG_SETTINGS[key].label || key}
           config={CONFIG_SETTINGS[key]}
@@ -170,7 +203,8 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
           setIsBusy={props.setIsBusy}
         />
       ))}
-      {colorRangeConfig.custom ? (
+      {colorRangeConfig.custom &&
+      !["ordinal", "custom_breaks"].includes(props.scaleType as string) ? (
         <CustomPalette
           onApply={(colorRange: ColorRange) => {
             onSelectColorRange(colorRange);

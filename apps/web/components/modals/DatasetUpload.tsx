@@ -4,16 +4,12 @@ import type { GetContentQueryParams } from "@/lib/validations/common";
 import type { Folder } from "@/lib/validations/folder";
 
 import {
-  Autocomplete,
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Stack,
   Step,
   StepLabel,
@@ -24,8 +20,6 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 
 import { useEffect, useMemo, useState } from "react";
-import InputAdornment from "@mui/material/InputAdornment";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useForm } from "react-hook-form";
 import type { LayerMetadata } from "@/lib/validations/layer";
 import {
@@ -37,6 +31,7 @@ import { createInternalLayer, layerFileUpload } from "@/lib/api/layers";
 import { toast } from "react-toastify";
 import { useJobs } from "@/lib/api/jobs";
 import { useTranslation } from "@/i18n/client";
+import FolderSelect from "@/components/dashboard/common/FolderSelect";
 
 interface DatasetUploadDialogProps {
   open: boolean;
@@ -226,63 +221,10 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         {activeStep === 1 && (
           <>
             <Stack direction="column" spacing={4}>
-              <Autocomplete
-                fullWidth
-                value={selectedFolder}
-                onChange={(_event, newValue) => {
-                  setSelectedFolder(newValue);
-                }}
-                autoHighlight
-                id="folder-select"
-                options={folders ? [...folders] : []}
-                getOptionLabel={(option) => {
-                  if (typeof option === "string") {
-                    return option;
-                  }
-                  return option.name;
-                }}
-                renderOption={(props, option) => (
-                  <ListItem {...props}>
-                    <ListItemIcon>
-                      <Icon
-                        iconName={
-                          option?.id === "0"
-                            ? ICON_NAME.HOUSE
-                            : ICON_NAME.FOLDER
-                        }
-                        style={{ marginLeft: 2 }}
-                        fontSize="small"
-                      />
-                    </ListItemIcon>
-                    <ListItemText primary={option.name} />
-                  </ListItem>
-                )}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    fullWidth
-                    sx={{
-                      mt: 4,
-                    }}
-                    InputProps={{
-                      ...params.InputProps,
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Icon
-                            iconName={
-                              selectedFolder?.id === "0"
-                                ? ICON_NAME.HOUSE
-                                : ICON_NAME.FOLDER
-                            }
-                            style={{ marginLeft: 2 }}
-                            fontSize="small"
-                          />
-                        </InputAdornment>
-                      ),
-                    }}
-                    label={t("projects.dataset.select_folder_destination")}
-                  />
-                )}
+              <FolderSelect
+                folders={folders}
+                selectedFolder={selectedFolder}
+                setSelectedFolder={setSelectedFolder}
               />
 
               <TextField

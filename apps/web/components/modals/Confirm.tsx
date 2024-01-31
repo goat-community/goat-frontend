@@ -64,7 +64,7 @@ const ConfirmModal: React.FC<ConfirmDialogProps> = ({
           pb: 2,
         }}
       >
-        <Button onClick={onClose} variant="text" sx={{ borderRadius: 0 }}>
+        <Button onClick={onClose} variant="text">
           <Typography variant="body2" fontWeight="bold">
             {closeText || "Close"}
           </Typography>
@@ -74,7 +74,6 @@ const ConfirmModal: React.FC<ConfirmDialogProps> = ({
           variant="text"
           color="error"
           disabled={!!matchText && matchTextValue !== matchText}
-          sx={{ borderRadius: 0 }}
         >
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {confirmText || "Confirm"}

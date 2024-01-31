@@ -4,9 +4,13 @@ import type { GetContentQueryParams } from "@/lib/validations/common";
 import type {
   ClassBreaks,
   CreateFeatureLayer,
+  DatasetDownloadRequest,
+  Layer,
   LayerClassBreaks,
   LayerPaginated,
   LayerQueryables,
+  LayerUniqueValuesPaginated,
+  PostDataset,
 } from "@/lib/validations/layer";
 
 export const LAYERS_API_BASE_URL = new URL(
@@ -29,6 +33,31 @@ export const useLayers = (queryParams?: GetContentQueryParams) => {
     mutate,
     isValidating,
   };
+};
+
+export const useDataset = (datasetId: string) => {
+  const { data, isLoading, error, mutate } = useSWR<Layer>(
+    () => (datasetId ? [`${LAYERS_API_BASE_URL}/${datasetId}`] : null),
+    fetcher,
+  );
+  return { dataset: data, isLoading, isError: error, mutate };
+};
+
+export const updateDataset = async (
+  datasetId: string,
+  payload: PostDataset,
+) => {
+  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/${datasetId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    await response.json();
+  }
+  return response;
 };
 
 export const useLayerQueryables = (layerId: string) => {
@@ -124,6 +153,25 @@ export const getLayerClassBreaks = async (
   return await response.json();
 };
 
+export const getLayerUniqueValues = async (
+  layerId: string,
+  column: string,
+  size?: number,
+): Promise<LayerUniqueValuesPaginated> => {
+  const response = await fetchWithAuth(
+    `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${
+      size ? `?size=${size}` : ""
+    }`,
+    {
+      method: "GET",
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to get unique values");
+  }
+  return await response.json();
+};
+
 export const useUniqueValues = (
   layerId: string,
   column: string,
@@ -140,10 +188,33 @@ export const useUniqueValues = (
   return { data, isLoading, error };
 };
 
-export const useClassBreak = (layerId: string, operation: string, column: string, breaks: number) => {
+export const downloadDataset = async (payload: DatasetDownloadRequest) => {
+  const response = await fetchWithAuth(
+    `${LAYERS_API_BASE_URL}/internal/${payload.id}/export`,
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to download layer");
+  }
+  return await response.blob();
+};
+export const useClassBreak = (
+  layerId: string,
+  operation: string,
+  column: string,
+  breaks: number,
+) => {
   const { data, isLoading, error } = useSWR<Record<string, number>>(
-    [`${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`],
+    [
+      `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`,
+    ],
     fetcher,
   );
   return { data, isLoading, error };
-}
+};

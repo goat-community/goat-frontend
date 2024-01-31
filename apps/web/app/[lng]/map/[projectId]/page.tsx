@@ -3,8 +3,13 @@
 import { MAPBOX_TOKEN } from "@/lib/constants";
 import { Box, debounce, useTheme } from "@mui/material";
 import "mapbox-gl/dist/mapbox-gl.css";
-import React, { useMemo } from "react";
-import type { ViewStateChangeEvent } from "react-map-gl";
+import React, { useMemo, useRef, useState } from "react";
+import type {
+  MapGeoJSONFeature,
+  MapLayerMouseEvent,
+  MapRef,
+  ViewStateChangeEvent,
+} from "react-map-gl";
 import Map, { MapProvider } from "react-map-gl";
 import Layers from "@/components/map/Layers";
 import Markers from "@/components/map/Markers";
@@ -19,14 +24,18 @@ import {
 import { LoadingPage } from "@/components/common/LoadingPage";
 import { useAppSelector } from "@/hooks/store/ContextHooks";
 import { selectActiveBasemap } from "@/lib/store/map/selectors";
+import MapPopover from "@/components/map/controls/Popover";
+import { v4 } from "uuid";
+import HighlightLayer from "@/components/map/HighlighLayer";
 
 const sidebarWidth = 52;
 const toolbarHeight = 52;
+const UPDATE_VIEW_STATE_DEBOUNCE_TIME = 3000;
 
 export default function MapPage({ params: { projectId } }) {
   const theme = useTheme();
   const activeBasemap = useAppSelector(selectActiveBasemap);
-
+  const mapRef = useRef<MapRef | null>(null);
   const {
     project,
     isLoading: isProjectLoading,
@@ -38,8 +47,11 @@ export default function MapPage({ params: { projectId } }) {
     isError: projectInitialViewError,
   } = useProjectInitialViewState(projectId);
 
-  const { isLoading: areProjectLayersLoading, isError: projectLayersError } =
-    useProjectLayers(projectId);
+  const {
+    isLoading: areProjectLayersLoading,
+    isError: projectLayersError,
+    layers: projectLayers,
+  } = useProjectLayers(projectId);
 
   const isLoading = useMemo(
     () => isProjectLoading || isInitialViewLoading || areProjectLayersLoading,
@@ -50,6 +62,12 @@ export default function MapPage({ params: { projectId } }) {
     () => projectError || projectInitialViewError || projectLayersError,
     [projectError, projectInitialViewError, projectLayersError],
   );
+
+  const interactiveLayerIds = useMemo(
+    () => projectLayers?.map((layer) => layer.id.toString()),
+    [projectLayers],
+  );
+
   const updateViewState = useMemo(
     () =>
       debounce((e: ViewStateChangeEvent) => {
@@ -62,9 +80,63 @@ export default function MapPage({ params: { projectId } }) {
           min_zoom: initialView?.min_zoom ?? 0,
           max_zoom: initialView?.max_zoom ?? 24,
         });
-      }, 2000),
+      }, UPDATE_VIEW_STATE_DEBOUNCE_TIME),
     [initialView?.max_zoom, initialView?.min_zoom, projectId],
   );
+
+  const [highlightedFeature, setHighlightedFeature] =
+    useState<MapGeoJSONFeature | null>(null);
+
+  const [popupInfo, setPopupInfo] = useState<{
+    lngLat: [number, number];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    properties: { [name: string]: any } | null;
+    title: string;
+  } | null>(null);
+
+  const handleMapClick = (e: MapLayerMouseEvent) => {
+    const features = e.features;
+    if (features && features.length > 0) {
+      const feature = features[0];
+      setHighlightedFeature(feature);
+      const layerName = projectLayers?.find(
+        (layer) => layer.id === Number(feature.layer.id),
+      )?.name;
+      let lngLat = [e.lngLat.lng, e.lngLat.lat] as [number, number];
+      if (feature.geometry.type === "Point" && feature.geometry.coordinates) {
+        lngLat = [
+          feature.geometry.coordinates[0],
+          feature.geometry.coordinates[1],
+        ];
+      }
+      setPopupInfo({
+        lngLat,
+        properties: feature.properties,
+        title: layerName ?? "",
+      });
+    } else {
+      setHighlightedFeature(null);
+      setPopupInfo(null);
+    }
+  };
+
+  const handlePopoverClose = () => {
+    setPopupInfo(null);
+    setHighlightedFeature(null);
+  };
+
+  const handleMapOverImmediate = (e: MapLayerMouseEvent) => {
+    // Extract features immediately
+    const features = e.features;
+    if (mapRef.current) {
+      // This is a hack to change the cursor to a pointer when hovering over a feature
+      // It's not recommended to change the state of a component without using a state
+      // However, this is the only way to do it with the current version of react-map-gl
+      // See https://github.com/visgl/react-map-gl/issues/579#issuecomment-1275163348
+      const map = mapRef.current.getMap();
+      map.getCanvas().style.cursor = features?.length ? "pointer" : "";
+    }
+  };
 
   return (
     <>
@@ -99,10 +171,30 @@ export default function MapPage({ params: { projectId } }) {
                   display: "none",
                 },
                 height: `calc(100% - ${toolbarHeight}px)`,
+                ".mapboxgl-popup-content": {
+                  padding: 0,
+                  borderRadius: "6px",
+                  background: theme.palette.background.paper,
+                },
+                ".mapboxgl-popup-anchor-top .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip":
+                  {
+                    borderBottomColor: theme.palette.background.paper,
+                  },
+                ".mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip":
+                  {
+                    borderTopColor: theme.palette.background.paper,
+                  },
+                ".mapboxgl-popup-anchor-left .mapboxgl-popup-tip": {
+                  borderRightColor: theme.palette.background.paper,
+                },
+                ".mapboxgl-popup-anchor-right .mapboxgl-popup-tip": {
+                  borderLeftColor: theme.palette.background.paper,
+                },
               }}
             >
               <Map
                 id="map"
+                ref={mapRef}
                 style={{ width: "100%", height: "100%" }}
                 onMoveEnd={updateViewState}
                 initialViewState={{
@@ -121,9 +213,21 @@ export default function MapPage({ params: { projectId } }) {
                 }
                 attributionControl={false}
                 mapboxAccessToken={MAPBOX_TOKEN}
+                onClick={handleMapClick}
+                onMouseMove={handleMapOverImmediate}
+                interactiveLayerIds={interactiveLayerIds}
               >
-                <Layers projectId={projectId} />
+                <HighlightLayer highlightFeature={highlightedFeature} />
                 <Markers />
+                <Layers projectId={projectId} />
+
+                {popupInfo && (
+                  <MapPopover
+                    key={highlightedFeature?.id ?? v4()}
+                    {...popupInfo}
+                    onClose={handlePopoverClose}
+                  />
+                )}
               </Map>
             </Box>
           </Box>

@@ -4,7 +4,6 @@ import type { ColorRange } from "@/lib/validations/layer";
 import type { ClassBreaks } from "@/lib/validations/layer";
 import type { LayerFieldType } from "@/lib/validations/layer";
 
-
 export type SingleColorSelectorProps = {
   onSelectColor: (color: RGBColor | ColorRange, e?: MouseEvent) => void;
   selectedColor: string;
@@ -36,3 +35,12 @@ export type ColorSet = {
 export type RGBColor = [number, number, number];
 export type RGBAColor = [number, number, number, number];
 export type HexColor = string;
+
+export type ColorItem = {
+  id: string;
+  color: string;
+};
+
+export type ColorMapItem = ColorItem & {
+  value: string | string[];
+};

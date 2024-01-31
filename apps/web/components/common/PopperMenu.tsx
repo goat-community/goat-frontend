@@ -16,6 +16,7 @@ export interface PopperMenuItem {
   label: string;
   icon?: ICON_NAME;
   color?: string;
+  disabled?: boolean;
 }
 
 export interface PopperMenuProps {
@@ -23,18 +24,19 @@ export interface PopperMenuProps {
   selectedItem?: PopperMenuItem;
   menuButton: React.ReactNode;
   onSelect: (item: PopperMenuItem) => void;
+  disablePortal?: boolean;
 }
 
 export default function PopperMenu(props: PopperMenuProps) {
-  const { menuItems, menuButton, selectedItem } = props;
+  const { menuItems, menuButton, selectedItem, disablePortal = true } = props;
   const theme = useTheme();
   const [popperMenuOpen, setPopperMenuOpen] = useState<boolean>(false);
-
   return (
     <ArrowPopper
       open={popperMenuOpen}
       placement="bottom"
       onClose={() => setPopperMenuOpen(false)}
+      disablePortal={disablePortal}
       arrow={false}
       content={
         <Paper
@@ -49,6 +51,7 @@ export default function PopperMenu(props: PopperMenuProps) {
           <List dense={true} disablePadding>
             {menuItems.map((item, index) => (
               <ListItemButton
+                disabled={item.disabled}
                 selected={selectedItem?.label === item.label}
                 key={index}
                 onClick={(event) => {

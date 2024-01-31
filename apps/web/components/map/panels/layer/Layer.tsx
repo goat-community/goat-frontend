@@ -51,21 +51,16 @@ import { toast } from "react-toastify";
 import { ContentActions, MapLayerActions } from "@/types/common";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 import { setActiveLayer } from "@/lib/store/layer/slice";
-import { wktToGeoJSON } from "@/lib/utils/map/wkt";
-import bbox from "@turf/bbox";
 import { useMap } from "react-map-gl";
-import { fitBounds } from "@/lib/utils/map/navigate";
+import { zoomToLayer } from "@/lib/utils/map/navigate";
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 import { setActiveLeftPanel, setActiveRightPanel } from "@/lib/store/map/slice";
 import { MapSidebarItemID } from "@/types/map/common";
 import DatasetUploadModal from "@/components/modals/DatasetUpload";
 import DatasetExplorerModal from "@/components/modals/DatasetExplorer";
 import { DragHandle } from "@/components/common/DragHandle";
-
-interface PanelProps {
-  onCollapse?: () => void;
-  projectId: string;
-}
+import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
+import type { PanelProps } from "@/types/map/sidebar";
 
 type SortableLayerTileProps = {
   id: number;
@@ -132,6 +127,7 @@ export function SortableLayerTile(props: SortableLayerTileProps) {
 enum AddLayerSourceType {
   DatasourceExplorer,
   DatasourceUpload,
+  DataSourceExternal,
 }
 
 const AddLayerSection = ({ projectId }: { projectId: string }) => {
@@ -226,6 +222,21 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
                   </ListItemIcon>
                   <Typography variant="body2">Dataset Upload</Typography>
                 </MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    openAddLayerSourceDialog(
+                      AddLayerSourceType.DataSourceExternal,
+                    )
+                  }
+                >
+                  <ListItemIcon>
+                    <Icon
+                      iconName={ICON_NAME.LINK}
+                      style={{ fontSize: "15px" }}
+                    />
+                  </ListItemIcon>
+                  <Typography variant="body2">Dataset External</Typography>
+                </MenuItem>
               </MenuList>
             </ClickAwayListener>
           </Box>
@@ -268,7 +279,13 @@ const LayerPanel = ({ projectId }: PanelProps) => {
     undefined,
   );
   const [newLayerName, setNewLayerName] = useState<string>("");
-  const { layerMoreMenuOptions, openMoreMenu } = useLayerSettingsMoreMenu();
+  const {
+    layerMoreMenuOptions,
+    openMoreMenu,
+    closeMoreMenu,
+    moreMenuState,
+    activeLayer: activeLayerMoreMenu,
+  } = useLayerSettingsMoreMenu();
   async function toggleLayerVisibility(layer: ProjectLayer) {
     const layers = JSON.parse(JSON.stringify(projectLayers));
     const index = layers.findIndex((l) => l.id === layer.id);
@@ -355,12 +372,6 @@ const LayerPanel = ({ projectId }: PanelProps) => {
     }
   }
 
-  function zoomToLayer(layer: ProjectLayer) {
-    const geojson = wktToGeoJSON(layer.extent);
-    const boundingBox = bbox(geojson);
-    fitBounds(map, boundingBox as [number, number, number, number]);
-  }
-
   function openPropertiesPanel(layer: ProjectLayer) {
     if (layer.id !== activeLayerId) {
       dispatch(setActiveLayer(layer.id));
@@ -375,6 +386,18 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       direction="left"
       body={
         <>
+          {moreMenuState?.id === ContentActions.DOWNLOAD &&
+            activeLayerMoreMenu && (
+              <>
+                <ContentDialogWrapper
+                  content={activeLayerMoreMenu}
+                  action={moreMenuState.id as ContentActions}
+                  onClose={closeMoreMenu}
+                  onContentDelete={closeMoreMenu}
+                  type="layer"
+                />
+              </>
+            )}
           <Box>
             {sortedLayers && sortedLayers?.length > 0 && (
               <DndContext
@@ -516,7 +539,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                             menuItems={layerMoreMenuOptions}
                             menuButton={
                               <Tooltip
-                                title={t("layer_more_options")}
+                                title={t("more_options")}
                                 arrow
                                 placement="top"
                               >
@@ -546,7 +569,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               } else if (
                                 menuItem.id === MapLayerActions.ZOOM_TO
                               ) {
-                                zoomToLayer(layer);
+                                zoomToLayer(map, layer.extent);
                               } else {
                                 openMoreMenu(menuItem, layer);
                               }
