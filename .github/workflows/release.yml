@@ -14,53 +14,80 @@ jobs:
     uses: ./.github/workflows/checks.yml
     secrets: inherit
 
-  release-docker-goat:
-    name: release-docker-goat
+  release-docker-test:
+    name: release-docker-test
     needs: file-changes
-    if: ${{ needs.file-changes.outputs.client-goat == 'true' }}
-    uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
-    permissions:
-      contents: read
-      packages: write
-      pull-requests: write
-    secrets:
-      dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
-      dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
-    with:
-      dockerhub-enable: true
-      ghcr-enable: false
-      push: ${{ github.event_name != 'pull_request' }}
-      file: ${{ github.workspace }}/apps/web/Dockerfile
-      image-names: |
-        goatcommunity/goat-frontend
+    runs-on: ubuntu-latest
+    steps:
+      # we need qemu and buildx so we can build multiple platforms later
+      - name: 🐳 Set up QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v2.2.0
 
-  release-docker-storybook:
-    name: release-docker-storybook
-    needs: file-changes
-    if: ${{ needs.file-changes.outputs.storybook == 'true' }}
-    uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
-    permissions:
-      contents: read
-      packages: write
-      pull-requests: write
-    secrets:
-      dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
-      dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
-    with:
-      dockerhub-enable: true
-      ghcr-enable: false
-      push: ${{ github.event_name != 'pull_request' }}
-      file: ${{ github.workspace }}/apps/storybook/Dockerfile
-      image-names: |
-        goatcommunity/goat-storybook
+        # BuildKit (used with `docker buildx`) is the best way to build images
+      - name: 🐳 Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
 
+      - name: 🐳 Build changed
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ github.workspace }}
+          file: ${{ github.workspace }}/apps/web/Dockerfile
+          push: false
+          platforms: linux/amd64
+          tags: |
+            goatcommunity/goat-frontend-test:latest
+            goatcommunity/goat-frontend-test:${{ needs.file-changes.outputs.sha-short }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-  release-keycloak-theme:
-    name: release-keycloak-theme
-    needs: file-changes
-    if: ${{ needs.file-changes.outputs.keycloak-theme == 'true' }}
-    uses: ./.github/workflows/keycloak-build.yml
-    secrets: inherit
-    with:
-      keycloak-theme-artifact-id: "p4b-keyclok-theme-${{ needs.file-changes.outputs.sha-short}}"
-      push: true
+  # release-docker-goat:
+  #   name: release-docker-goat
+  #   needs: file-changes
+  #   if: ${{ needs.file-changes.outputs.client-goat == 'true' }}
+  #   uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     pull-requests: write
+  #   secrets:
+  #     dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
+  #     dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
+  #   with:
+  #     dockerhub-enable: true
+  #     ghcr-enable: false
+  #     push: ${{ github.event_name != 'pull_request' }}
+  #     file: ${{ github.workspace }}/apps/web/Dockerfile
+  #     image-names: |
+  #       goatcommunity/goat-frontend
+
+  # release-docker-storybook:
+  #   name: release-docker-storybook
+  #   needs: file-changes
+  #   if: ${{ needs.file-changes.outputs.storybook == 'true' }}
+  #   uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     pull-requests: write
+  #   secrets:
+  #     dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
+  #     dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
+  #   with:
+  #     dockerhub-enable: true
+  #     ghcr-enable: false
+  #     push: ${{ github.event_name != 'pull_request' }}
+  #     file: ${{ github.workspace }}/apps/storybook/Dockerfile
+  #     image-names: |
+  #       goatcommunity/goat-storybook
+
+  # release-keycloak-theme:
+  #   name: release-keycloak-theme
+  #   needs: file-changes
+  #   if: ${{ needs.file-changes.outputs.keycloak-theme == 'true' }}
+  #   uses: ./.github/workflows/keycloak-build.yml
+  #   secrets: inherit
+  #   with:
+  #     keycloak-theme-artifact-id: "p4b-keyclok-theme-${{ needs.file-changes.outputs.sha-short}}"
+  #     push: true
