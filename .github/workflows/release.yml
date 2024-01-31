@@ -47,6 +47,7 @@ jobs:
   #         cache-from: type=gha
   #         cache-to: type=gha,mode=max
   
+  
   release-docker-goat:
     name: release-docker-goat
     needs: file-changes
@@ -67,7 +68,7 @@ jobs:
       file: ${{ github.workspace }}/apps/web/Dockerfile
       image-names: |
         goatcommunity/goat-frontend
-        
+
 
   # release-docker-storybook:
   #   name: release-docker-storybook
