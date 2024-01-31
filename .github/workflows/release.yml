@@ -46,11 +46,11 @@ jobs:
   #           goatcommunity/goat-frontend-test:${{ needs.file-changes.outputs.sha-short }}
   #         cache-from: type=gha
   #         cache-to: type=gha,mode=max
-
+  
   release-docker-goat:
     name: release-docker-goat
     needs: file-changes
-    if: ${{ needs.file-changes.outputs.client-goat == 'true' }}
+    # if: ${{ needs.file-changes.outputs.client-goat == 'true' }}
     uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
     permissions:
       contents: read
