@@ -72,7 +72,14 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
         payload["query"] = dataset["query"];
       }
 
-      await downloadDataset(payload as DatasetDownloadRequest);
+      const dataBlob = await downloadDataset(payload as DatasetDownloadRequest);
+      const url = window.URL.createObjectURL(new Blob([dataBlob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${dataset.name}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch {
       toast.error(`${t("error_downloading")} ${dataset.name}`);
     } finally {
