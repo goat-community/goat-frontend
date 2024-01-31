@@ -14,58 +14,59 @@ jobs:
     uses: ./.github/workflows/checks.yml
     secrets: inherit
 
-  release-docker-test:
-    name: release-docker-test
-    needs: file-changes
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
-
-      - name: 🐳 Setup Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      # we need qemu and buildx so we can build multiple platforms later
-      - name: 🐳 Set up QEMU
-        id: qemu
-        uses: docker/setup-qemu-action@v2.2.0
-
-        # BuildKit (used with `docker buildx`) is the best way to build images
-      - name: 🐳 Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: 🐳 Build changed
-        uses: docker/build-push-action@v4
-        with:
-          context: ${{ github.workspace }}
-          file: ${{ github.workspace }}/apps/web/Dockerfile
-          push: false
-          platforms: linux/amd64
-          tags: |
-            goatcommunity/goat-frontend-test:latest
-            goatcommunity/goat-frontend-test:${{ needs.file-changes.outputs.sha-short }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  # release-docker-goat:
-  #   name: release-docker-goat
+  # release-docker-test:
+  #   name: release-docker-test
   #   needs: file-changes
-  #   if: ${{ needs.file-changes.outputs.client-goat == 'true' }}
-  #   uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #     pull-requests: write
-  #   secrets:
-  #     dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
-  #     dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
-  #   with:
-  #     dockerhub-enable: true
-  #     ghcr-enable: false
-  #     push: ${{ github.event_name != 'pull_request' }}
-  #     file: ${{ github.workspace }}/apps/web/Dockerfile
-  #     image-names: |
-  #       goatcommunity/goat-frontend
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 📥 Checkout
+  #       uses: actions/checkout@v4
+
+  #     - name: 🐳 Setup Docker Buildx
+  #       uses: docker/setup-buildx-action@v1
+  #     # we need qemu and buildx so we can build multiple platforms later
+  #     - name: 🐳 Set up QEMU
+  #       id: qemu
+  #       uses: docker/setup-qemu-action@v2.2.0
+
+  #       # BuildKit (used with `docker buildx`) is the best way to build images
+  #     - name: 🐳 Set up Docker Buildx
+  #       id: buildx
+  #       uses: docker/setup-buildx-action@v3
+
+  #     - name: 🐳 Build changed
+  #       uses: docker/build-push-action@v4
+  #       with:
+  #         context: ${{ github.workspace }}
+  #         file: ${{ github.workspace }}/apps/web/Dockerfile
+  #         push: false
+  #         platforms: linux/amd64
+  #         tags: |
+  #           goatcommunity/goat-frontend-test:latest
+  #           goatcommunity/goat-frontend-test:${{ needs.file-changes.outputs.sha-short }}
+  #         cache-from: type=gha
+  #         cache-to: type=gha,mode=max
+
+  release-docker-goat:
+    name: release-docker-goat
+    needs: file-changes
+    if: ${{ needs.file-changes.outputs.client-goat == 'true' }}
+    uses: goat-community/.github/.github/workflows/reusable-docker-build.yml@main
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: write
+    secrets:
+      dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
+      dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
+    with:
+      context: ${{ github.workspace }}
+      dockerhub-enable: true
+      ghcr-enable: false
+      push: ${{ github.event_name != 'pull_request' }}
+      file: ${{ github.workspace }}/apps/web/Dockerfile
+      image-names: |
+        goatcommunity/goat-frontend
 
   # release-docker-storybook:
   #   name: release-docker-storybook
