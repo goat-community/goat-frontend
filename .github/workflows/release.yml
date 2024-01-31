@@ -19,6 +19,11 @@ jobs:
     needs: file-changes
     runs-on: ubuntu-latest
     steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐳 Setup Docker Buildx
+        uses: docker/setup-buildx-action@v1
       # we need qemu and buildx so we can build multiple platforms later
       - name: 🐳 Set up QEMU
         id: qemu
