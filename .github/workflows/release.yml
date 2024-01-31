@@ -47,7 +47,6 @@ jobs:
   #         cache-from: type=gha
   #         cache-to: type=gha,mode=max
   
-  
   release-docker-goat:
     name: release-docker-goat
     needs: file-changes
