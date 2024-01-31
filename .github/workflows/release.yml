@@ -67,6 +67,7 @@ jobs:
       file: ${{ github.workspace }}/apps/web/Dockerfile
       image-names: |
         goatcommunity/goat-frontend
+        
 
   # release-docker-storybook:
   #   name: release-docker-storybook
