@@ -19,7 +19,12 @@ interface RowProps {
 const Row: React.FC<RowProps> = ({ name, value }) => {
   // Set 'url' to 'value' if it looks like a url
   let url = "";
-  if (!url && value && typeof value === "string" && value.match(/^http/)) {
+  if (
+    !url &&
+    value &&
+    typeof value === "string" &&
+    value.match(/^(http|www)/)
+  ) {
     url = value;
   }
 

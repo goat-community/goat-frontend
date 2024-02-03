@@ -7,6 +7,7 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { Toolbar } from "./Toolbar";
 import JobsPopper from "@/components/jobs/JobsPopper";
 import { parseISO, format } from "date-fns";
+import { useTranslation } from "@/i18n/client";
 
 export type HeaderProps = {
   title: string;
@@ -19,6 +20,7 @@ export type HeaderProps = {
 
 export default function Header(props: HeaderProps) {
   const theme = useTheme();
+  const { t } = useTranslation(["maps"]);
   const {
     tags,
     title,
@@ -40,8 +42,11 @@ export default function Header(props: HeaderProps) {
           </Typography>
           <Divider orientation="vertical" flexItem />
           {lastSaved && (
-            <Typography variant="body2">
-              Last saved: {format(parseISO(lastSaved), "hh:mma dd/MM/yyyy")}
+            <Typography variant="caption">
+              {`${t("maps:last_saved")}: ${format(
+                parseISO(lastSaved),
+                "hh:mma dd/MM/yyyy",
+              )}`}
             </Typography>
           )}
           {tags &&

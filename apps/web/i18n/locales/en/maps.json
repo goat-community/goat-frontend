@@ -220,6 +220,8 @@
   "stroke_width": "Stroke Width",
   "radius": "Radius",
   "outline": "Outline",
+  "custom_marker": "Custom Marker",
+  "marker_size": "Marker Size",
   "opacity": "Opacity",
   "labels": "Labels",
   "add_step": "Add Step",
