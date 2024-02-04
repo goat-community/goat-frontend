@@ -496,45 +496,47 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                       }
                       actions={
                         <Stack direction="row">
-                          <Tooltip
-                            key={layer.id}
-                            title={
-                              layer.properties.visibility
-                                ? t("show_layer")
-                                : t("hide_layer")
-                            }
-                            arrow
-                            placement="top"
-                          >
-                            <IconButton
-                              size="small"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                toggleLayerVisibility(layer);
-                              }}
-                              sx={{
-                                transition: theme.transitions.create(
-                                  ["opacity"],
-                                  {
-                                    duration:
-                                      theme.transitions.duration.standard,
-                                  },
-                                ),
-                                opacity: !layer.properties.visibility ? 1 : 0,
-                              }}
+                          {layer.type === "table" ? null : (
+                            <Tooltip
+                              key={layer.id}
+                              title={
+                                layer.properties.visibility
+                                  ? t("show_layer")
+                                  : t("hide_layer")
+                              }
+                              arrow
+                              placement="top"
                             >
-                              <Icon
-                                iconName={
-                                  !layer.properties.visibility
-                                    ? ICON_NAME.EYE_SLASH
-                                    : ICON_NAME.EYE
-                                }
-                                style={{
-                                  fontSize: 15,
+                              <IconButton
+                                size="small"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  toggleLayerVisibility(layer);
                                 }}
-                              />
-                            </IconButton>
-                          </Tooltip>
+                                sx={{
+                                  transition: theme.transitions.create(
+                                    ["opacity"],
+                                    {
+                                      duration:
+                                        theme.transitions.duration.standard,
+                                    },
+                                  ),
+                                  opacity: !layer.properties.visibility ? 1 : 0,
+                                }}
+                              >
+                                <Icon
+                                  iconName={
+                                    !layer.properties.visibility
+                                      ? ICON_NAME.EYE_SLASH
+                                      : ICON_NAME.EYE
+                                  }
+                                  style={{
+                                    fontSize: 15,
+                                  }}
+                                />
+                              </IconButton>
+                            </Tooltip>
+                          )}
                           <MoreMenu
                             menuItems={layerMoreMenuOptions}
                             menuButton={

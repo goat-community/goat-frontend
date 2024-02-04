@@ -23,6 +23,7 @@ import type {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
+  UseFormTrigger
 } from "react-hook-form";
 import type { PostOriginDestination } from "@/lib/validations/tools";
 
@@ -31,10 +32,11 @@ interface FieldsToMatchProps {
   watch: PostOriginDestination;
   errors: FieldErrors<PostOriginDestination>;
   setValue: UseFormSetValue<PostOriginDestination>;
+  trigger: UseFormTrigger<PostOriginDestination>;
 }
 
 const ODSettings = (props: FieldsToMatchProps) => {
-  const { watch, setValue } = props;
+  const { watch, setValue, trigger } = props;
   const { t } = useTranslation("maps");
 
   const theme = useTheme();
@@ -97,7 +99,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
               <LayerFieldSelector
                 label="Origin Field"
                 selectedField={
-                  firstLayerKeys.keys.filter(
+                  secondLayerKeys.keys.filter(
                     (key) => key.name === watch.origin_column,
                   )[0]
                 }
@@ -110,8 +112,9 @@ const ODSettings = (props: FieldsToMatchProps) => {
                   } else {
                     setValue("origin_column", "");
                   }
+                  trigger("origin_column");
                 }}
-                fields={firstLayerKeys.keys}
+                fields={secondLayerKeys.keys}
               />
             </Box>
             <Box>
@@ -131,6 +134,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
                   } else {
                     setValue("destination_column", "");
                   }
+                  trigger("destination_column");
                 }}
                 fields={secondLayerKeys.keys}
               />
@@ -139,8 +143,8 @@ const ODSettings = (props: FieldsToMatchProps) => {
               <LayerFieldSelector
                 label="Unique Id Field"
                 selectedField={
-                  secondLayerKeys.keys.filter(
-                    (key) => key.name === watch.destination_column,
+                  firstLayerKeys.keys.filter(
+                    (key) => key.name === watch.unique_id_column,
                   )[0]
                 }
                 setSelectedField={(field: {
@@ -148,12 +152,13 @@ const ODSettings = (props: FieldsToMatchProps) => {
                   name: string;
                 }) => {
                   if (field) {
-                    setValue("destination_column", field.name);
+                    setValue("unique_id_column", field.name);
                   } else {
-                    setValue("destination_column", "");
+                    setValue("unique_id_column", "");
                   }
+                  trigger("unique_id_column");
                 }}
-                fields={secondLayerKeys.keys}
+                fields={firstLayerKeys.keys}
               />
             </Box>
             <Box>
@@ -161,7 +166,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
                 label="Weight Field"
                 selectedField={
                   secondLayerKeys.keys.filter(
-                    (key) => key.name === watch.destination_column,
+                    (key) => key.name === watch.weight_column,
                   )[0]
                 }
                 setSelectedField={(field: {
@@ -169,10 +174,11 @@ const ODSettings = (props: FieldsToMatchProps) => {
                   name: string;
                 }) => {
                   if (field) {
-                    setValue("destination_column", field.name);
+                    setValue("weight_column", field.name);
                   } else {
-                    setValue("destination_column", "");
+                    setValue("weight_column", "");
                   }
+                  trigger("weight_column");
                 }}
                 fields={secondLayerKeys.keys}
               />

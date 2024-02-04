@@ -8,32 +8,33 @@ interface BoundingProps {
 const BoundingBoxInput = (props: BoundingProps) => {
   const {bounds} = props;
 
+  console.log(bounds);
   const theme = useTheme();
-  console.log(bounds)
+  const boundsArray = bounds.split(',');
   return (
     <Box sx={{display: "flex", flexDirection: "column", gap: theme.spacing(4)}}>
       <Box sx={{display: "flex", gap: theme.spacing(3)}}>
         <TextField
           sx={{flexGrow: 1}}
-          label="North (lon)"
-          value={11.435354}
+          label="North (lat)"
+          value={boundsArray[3]}
         />
         <TextField 
           sx={{flexGrow: 1}}
-          label="West (lat)"
-          value={11.435354}
+          label="West (lon)"
+          value={boundsArray[0]}
         />
       </Box>
       <Box sx={{display: "flex", gap: theme.spacing(3)}}>
         <TextField 
           sx={{flexGrow: 1}}
-          label="South (lon)"
-          value={11.435354}
+          label="South (lat)"
+          value={boundsArray[1]}
         />
         <TextField 
           sx={{flexGrow: 1}}
-          label="East (lat)"
-          value={11.435354}
+          label="East (lon)"
+          value={boundsArray[2]}
         />
       </Box>
     </Box>

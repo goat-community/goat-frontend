@@ -177,7 +177,7 @@ export const useUniqueValues = (
   column: string,
   page?: number,
 ) => {
-  const { data, isLoading, error } = useSWR<Record<string, number>>(
+  const { data, isLoading, error } = useSWR(
     [
       `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${
         page ? `?page=${page}` : ""

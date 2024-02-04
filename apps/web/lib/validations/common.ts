@@ -29,7 +29,7 @@ export const layerType = z.enum([
   "table",
 ]);
 
-export const featureLayerType = z.enum(["standard", "tools", "scenario"]);
+export const featureLayerType = z.enum(["standard", "tool", "scenario"]);
 
 export const tableDataExchangeType = z.enum(["csv", "xlsx"]);
 export const featureDataExchangeType = z.enum([

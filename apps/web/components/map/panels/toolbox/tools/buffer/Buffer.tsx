@@ -6,6 +6,7 @@ import { Box } from "@mui/material";
 import { sendBufferRequest } from "@/lib/api/tools";
 import { useParams } from "next/navigation";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import { toast } from "react-toastify";
 
 import InputLayer from "@/components/map/panels/toolbox/tools/buffer/InputLayer";
 import BufferSettings from "@/components/map/panels/toolbox/tools/buffer/BufferSettings";
@@ -40,8 +41,17 @@ const Buffer = () => {
   };
 
   const handleRun = () => {
-    console.log(getValues());
-    sendBufferRequest(getValues(), projectId as string);
+    toast.info("Buffer tool is running");
+    sendBufferRequest(getValues(), projectId as string)
+      .then((data) =>
+        data.ok
+          ? toast.success("Buffer tool is successful")
+          : toast.error("Buffer tool failed"),
+      )
+      .catch(() => {
+        toast.error("Buffer tool failed");
+      });
+    reset();
   };
 
   const watchFormValues = watch();
@@ -49,8 +59,6 @@ const Buffer = () => {
   const getCurrentValues = useMemo(() => {
     return watchFormValues;
   }, [watchFormValues]);
-
-  console.log(isValid, errors);
 
   return (
     <Box

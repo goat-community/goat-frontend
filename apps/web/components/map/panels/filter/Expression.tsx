@@ -70,8 +70,11 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   );
 
   useEffect(() => {
-    if (data && Object.keys(data) !== statisticsData) {
-      setStatisticsData([...statisticsData, ...Object.keys(data)]);
+    if (data) {
+      setStatisticsData([
+        ...statisticsData,
+        ...data.items.map((val) => val.value),
+      ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
@@ -100,7 +103,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           expression.expression === "is" &&
           expression.attribute === "Bounding Box"
         ) {
-          return <BoundingBoxInput bounds={expressionValue as string} />;
+          return <BoundingBoxInput bounds={expression.value as string} />;
         }
         if (attributeType === "string") {
           return (
@@ -234,6 +237,13 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       .join("")}`,
   );
 
+  const layerSpatialAttributes = [
+    {
+      name: "Bounding Box",
+      type: "number",
+    },
+  ];
+
   layerAttributes.keys.push({
     name: "Bounding Box",
     type: "number",
@@ -264,6 +274,13 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         },${map.getBounds().getNorthEast().toArray()[0]},${
           map.getBounds().getNorthEast().toArray()[1]
         }`;
+        setExpressionValue(
+          `${map.getBounds().getSouthWest().toArray()[0]},${
+            map.getBounds().getSouthWest().toArray()[1]
+          },${map.getBounds().getNorthEast().toArray()[0]},${
+            map.getBounds().getNorthEast().toArray()[1]
+          }`,
+        );
         modifyExpression(expression, "expression", "is");
         expression.expression = "is";
         debounceEffect(
@@ -303,8 +320,17 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           color={theme.palette.secondary.dark}
           sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}
         >
-          <Icon iconName={ICON_NAME.EDITPEN} sx={{ fontSize: "18px" }} />
-          {t("panels.filter.expression")}
+          <Icon
+            iconName={
+              expression.type === "regular"
+                ? ICON_NAME.EDITPEN
+                : ICON_NAME.MOUNTAIN
+            }
+            sx={{ fontSize: "18px" }}
+          />
+          {expression.type === "regular"
+            ? t("panels.filter.expression")
+            : "Spatial Expression"}
         </Typography>
         <Box sx={{ position: "relative" }}>
           <IconButton
@@ -330,12 +356,20 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       <LayerFieldSelector
         label="Target Field"
         selectedField={
-          layerAttributes.keys.filter(
-            (key) => key.name === expression.attribute,
-          )[0]
+          expression.type === "regular"
+            ? layerAttributes.keys.filter(
+                (key) => key.name === expression.attribute,
+              )[0]
+            : layerSpatialAttributes.filter(
+                (key) => key.name === expression.attribute,
+              )[0]
         }
         setSelectedField={targetFieldChangeHandler}
-        fields={layerAttributes.keys}
+        fields={
+          expression.type === "regular"
+            ? layerAttributes.keys
+            : layerSpatialAttributes
+        }
       />
       <FormControl fullWidth>
         <InputLabel>{t("panels.filter.select_an_expression")}</InputLabel>

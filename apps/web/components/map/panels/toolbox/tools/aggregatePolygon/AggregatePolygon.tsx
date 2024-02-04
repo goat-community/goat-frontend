@@ -8,6 +8,7 @@ import InputLayer from "@/components/map/panels/toolbox/tools/aggregatePolygon/I
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AggregatePolygonSchema } from "@/lib/validations/tools";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import { toast } from "react-toastify";
 
 import type { PostAggregatePolygon } from "@/lib/validations/tools";
 
@@ -26,6 +27,7 @@ const AggregatePolygon = (props: AggregateProps) => {
     watch,
     getValues,
     setValue,
+    trigger,
     formState: { errors, isValid },
   } = useForm<PostAggregatePolygon>({
     mode: "onChange",
@@ -60,7 +62,18 @@ const AggregatePolygon = (props: AggregateProps) => {
     } else {
       delete aggregateBodyRequest.h3_resolution;
     }
-    sendAggregatePolygonRequest(getValues(), projectId);
+
+    toast.info("Aggregate Polygon tool is running");
+    sendAggregatePolygonRequest(getValues(), projectId)
+      .then((data) =>
+        data.ok
+          ? toast.success("Aggregate Polygon tool is successful")
+          : toast.error("Aggregate Polygon tool failed"),
+      )
+      .catch(() => {
+        toast.error("Aggregate Polygon tool failed");
+      });
+    reset();
   };
 
   return (
@@ -95,6 +108,7 @@ const AggregatePolygon = (props: AggregateProps) => {
           setValue={setValue}
           watch={getCurrentValues}
           errors={errors}
+          trigger={trigger}
         />
       </Box>
       <ToolboxActionButtons
@@ -103,12 +117,12 @@ const AggregatePolygon = (props: AggregateProps) => {
         resetFunction={handleReset}
         resetDisabled={
           !getCurrentValues.aggregation_layer_project_id &&
-              !getCurrentValues.area_type &&
-              !getCurrentValues.column_statistics.operation &&
-              !getCurrentValues.column_statistics.field &&
-              !getCurrentValues.h3_resolution &&
-              !getCurrentValues.source_group_by_field.length &&
-              !getCurrentValues.source_layer_project_id
+          !getCurrentValues.area_type &&
+          !getCurrentValues.column_statistics.operation &&
+          !getCurrentValues.column_statistics.field &&
+          !getCurrentValues.h3_resolution &&
+          !getCurrentValues.source_group_by_field.length &&
+          !getCurrentValues.source_layer_project_id
         }
       />
     </Box>
