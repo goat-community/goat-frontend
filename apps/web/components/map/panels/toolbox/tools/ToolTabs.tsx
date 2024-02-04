@@ -91,13 +91,13 @@ const ToolTabs = (props: ToolTabsProps) => {
       name: "Accessibility Indicators",
       value: "accessibility_indicators",
       children: ["catchment_area", "oev_gutenklassen", "trip_count"],
-      icon: ICON_NAME.RUN,
+      icon: ICON_NAME.ACCESSIBILITY,
     },
     {
       name: "Data Management",
       value: "data_management",
       children: ["join"],
-      icon: ICON_NAME.DATABASE,
+      icon: ICON_NAME.TABLE,
     },
     {
       name: "Geoanalysis",
@@ -109,7 +109,7 @@ const ToolTabs = (props: ToolTabsProps) => {
       name: "Geoprocessing",
       value: "geoprocessing",
       children: ["buffer"],
-      icon: ICON_NAME.LAYERS,
+      icon: ICON_NAME.DRAW_POLYGON,
     },
   ];
 

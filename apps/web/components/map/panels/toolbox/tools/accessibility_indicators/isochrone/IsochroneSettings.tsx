@@ -14,8 +14,6 @@ import {
   Chip,
   Divider,
   Stack,
-  IconButton,
-  Tooltip,
 } from "@mui/material";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 import { useTranslation } from "@/i18n/client";
@@ -24,15 +22,15 @@ import { useDispatch } from "react-redux";
 import { removeMarker } from "@/lib/store/map/slice";
 import { ptModes, routingModes } from "@/public/assets/data/isochroneModes";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import OptionsCollapse from "@/components/map/panels/style/other/OptionsCollapse";
 
-import type { SelectChangeEvent } from "@mui/material";
 import type {
   UseFormRegister,
   UseFormGetValues,
   UseFormSetValue,
   FieldErrors,
 } from "react-hook-form";
+
+import type { SelectChangeEvent } from "@mui/material";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 import type { PTModeTypes } from "@/types/map/isochrone";
 
@@ -434,197 +432,126 @@ const IsochroneSettings = (props: PickLayerProps) => {
               />
               Configuration
             </Typography>
-            {/* <IconButton>
-              <Icon iconName={ICON_NAME.SLIDERS} />
-            </IconButton> */}
-            <Tooltip title={t("maps:more_options")} arrow placement="top">
-              <IconButton>
-                <Icon iconName={ICON_NAME.MORE_VERT} style={{ fontSize: 15 }} />
-              </IconButton>
-            </Tooltip>
           </Box>
         </Box>
-        <OptionsCollapse
-          active={true}
-          collapsed={true}
-          advancedOptions={
-            <>
-              <FormControl
-                fullWidth
-                size="small"
-                sx={{
-                  margin: `${theme.spacing(1)} 0`,
-                }}
-              >
-                <InputLabel>
-                  {/* {t("panels.filter.select_attribute")} */}
-                  Isochrone type
-                </InputLabel>
-                <Select
-                  label="Isochrone type"
-                  value={watch.isochrone_type}
-                  error={!!errors.isochrone_type}
-                  onChange={(event: SelectChangeEvent<string>) => {
-                    if (event.target.value === "pt") {
-                      setValue("routing_type", {
-                        mode: [
-                          "bus",
-                          "tram",
-                          "rail",
-                          "subway",
-                          "ferry",
-                          "cable_car",
-                          "gondola",
-                          "funicular",
-                        ],
-                        egress_mode: "walk",
-                        access_mode: "walk",
-                      });
-                    } else {
-                      setValue("isochrone_type", event.target.value);
-                    }
-                    dispatch(removeMarker());
-                  }}
-                >
-                  <MenuItem key={v4()} value="polygon">
-                    Polygon
-                  </MenuItem>
-                  <MenuItem key={v4()} value="network">
-                    Network
-                  </MenuItem>
-                  <MenuItem key={v4()} value="rectangular_grid">
-                    Rectangular Grid
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </>
-          }
-          baseOptions={
-            <>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Typography
-                  variant="body2"
-                  sx={{ fontStyle: "italic", marginBottom: theme.spacing(2) }}
-                >
-                  {t("panels.isochrone.routing.chose_routing")}
-                </Typography>
-
-                <TabList
-                  onChange={(_: React.SyntheticEvent, newValue: string) => {
-                    setTab(newValue as "distance" | "time");
-                    setValue(
-                      "travel_cost",
-                      newValue === "distance"
-                        ? {
-                            max_distance: 500,
-                            distance_step: 50,
-                          }
-                        : {
-                            max_traveltime: 20,
-                            traveltime_step: 5,
-                            speed: 10,
-                          },
-                    );
-                  }}
-                  variant="fullWidth"
-                >
-                  <Tab
-                    label={
-                      <Typography
-                        variant="body2"
-                        fontWeight="bold"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: theme.spacing(2),
-                        }}
-                        color={
-                          tab !== "time" ? theme.palette.grey[400] : undefined
-                        }
-                      >
-                        <Icon iconName={ICON_NAME.CLOCK} fontSize="small" />{" "}
-                        {t("panels.isochrone.time")}
-                      </Typography>
-                    }
-                    disabled={!watch.routing_type ? true : false}
-                    value="time"
-                  />
-                  <Tab
-                    label={
-                      <Typography
-                        variant="body2"
-                        fontWeight="bold"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: theme.spacing(2),
-                        }}
-                        color={
-                          tab !== "distance"
-                            ? theme.palette.grey[400]
-                            : undefined
-                        }
-                      >
-                        <Icon
-                          iconName={ICON_NAME.MAP_LOCATION}
-                          fontSize="small"
-                        />{" "}
-                        {t("panels.isochrone.distance")}
-                      </Typography>
-                    }
-                    disabled={
-                      !watch.routing_type ||
-                      ["car_peak", "pt"].includes(
-                        typeof watch.routing_type === "string"
-                          ? watch.routing_type
-                          : "pt",
-                      )
-                        ? true
-                        : false
-                    }
-                    value="distance"
-                  />
-                </TabList>
-              </Box>
-              <TabPanel
-                value="time"
-                sx={{
-                  padding: "0",
-                }}
-              >
-                {typeof watch.routing_type === "string"
-                  ? speedFunctionality()
-                  : null}
-                {travelTimeFunctionality()}
-                {stepFunctionality()}
-                {"max_traveltime" in watch.travel_cost &&
-                watch.travel_cost.max_traveltime <
-                  watch.travel_cost.traveltime_step ? (
-                  <Typography variant="caption" color="error">
-                    Step should be smaller than Traveltime
-                  </Typography>
-                ) : null}
-              </TabPanel>
-              <TabPanel value="distance" sx={{ padding: "0" }}>
-                {distanceFunctionality()}
-                {stepFunctionality()}
-                {"max_distance" in watch.travel_cost &&
-                watch.travel_cost.max_distance <
-                  watch.travel_cost.distance_step ? (
-                  <Typography variant="caption" color="error">
-                    Step should be smaller than Distance
-                  </Typography>
-                ) : null}
-              </TabPanel>
-            </>
-          }
-        />
-        {/* <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 3 }}>
+        <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 3 }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
           <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
-            
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <Typography
+                variant="body2"
+                sx={{ fontStyle: "italic", marginBottom: theme.spacing(2) }}
+              >
+                {t("panels.isochrone.routing.chose_routing")}
+              </Typography>
+
+              <TabList
+                onChange={(_: React.SyntheticEvent, newValue: string) => {
+                  setTab(newValue as "distance" | "time");
+                  setValue(
+                    "travel_cost",
+                    newValue === "distance"
+                      ? {
+                          max_distance: 500,
+                          distance_step: 50,
+                        }
+                      : {
+                          max_traveltime: 20,
+                          traveltime_step: 5,
+                          speed: 10,
+                        },
+                  );
+                }}
+                variant="fullWidth"
+              >
+                <Tab
+                  label={
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: theme.spacing(2),
+                      }}
+                      color={
+                        tab !== "time" ? theme.palette.grey[400] : undefined
+                      }
+                    >
+                      <Icon iconName={ICON_NAME.CLOCK} fontSize="small" />{" "}
+                      {t("panels.isochrone.time")}
+                    </Typography>
+                  }
+                  disabled={!watch.routing_type ? true : false}
+                  value="time"
+                />
+                <Tab
+                  label={
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: theme.spacing(2),
+                      }}
+                      color={
+                        tab !== "distance" ? theme.palette.grey[400] : undefined
+                      }
+                    >
+                      <Icon
+                        iconName={ICON_NAME.MAP_LOCATION}
+                        fontSize="small"
+                      />{" "}
+                      {t("panels.isochrone.distance")}
+                    </Typography>
+                  }
+                  disabled={
+                    !watch.routing_type ||
+                    ["car_peak", "pt"].includes(
+                      typeof watch.routing_type === "string"
+                        ? watch.routing_type
+                        : "pt",
+                    )
+                      ? true
+                      : false
+                  }
+                  value="distance"
+                />
+              </TabList>
+            </Box>
+            <TabPanel
+              value="time"
+              sx={{
+                padding: "0",
+              }}
+            >
+              {typeof watch.routing_type === "string"
+                ? speedFunctionality()
+                : null}
+              {travelTimeFunctionality()}
+              {stepFunctionality()}
+              {"max_traveltime" in watch.travel_cost &&
+              watch.travel_cost.max_traveltime <
+                watch.travel_cost.traveltime_step ? (
+                <Typography variant="caption" color="error">
+                  Step should be smaller than Traveltime
+                </Typography>
+              ) : null}
+            </TabPanel>
+            <TabPanel value="distance" sx={{ padding: "0" }}>
+              {distanceFunctionality()}
+              {stepFunctionality()}
+              {"max_distance" in watch.travel_cost &&
+              watch.travel_cost.max_distance <
+                watch.travel_cost.distance_step ? (
+                <Typography variant="caption" color="error">
+                  Step should be smaller than Distance
+                </Typography>
+              ) : null}
+            </TabPanel>
           </Stack>
-        </Stack> */}
+        </Stack>
       </TabContext>
     </>
   );

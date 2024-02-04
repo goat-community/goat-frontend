@@ -123,7 +123,7 @@ export function is_between(key: string, value1: number, value2: number) {
 }
 
 export function bbox(value: string) {
-  const coordinates = value.split(",").map((coord)=>parseFloat(coord));
+  const coordinates = value.split(",").map((coord) => parseFloat(coord));
   // console.log(value, `{"op":"s_intersects","args":[{"property":"geometry"},{"coordinates":[[[${coordinates[2]},${coordinates[3]}],[${coordinates[0]},${coordinates[3]}],[${coordinates[0]},${coordinates[1]}],[${coordinates[2]},${coordinates[1]}],[${coordinates[2]},${coordinates[3]}]]],"type":"Polygon"}]}`)
   return `{"op":"s_intersects","args":[{"property":"geometry"},{"coordinates":[[[${coordinates[2]},${coordinates[3]}],[${coordinates[0]},${coordinates[3]}],[${coordinates[0]},${coordinates[1]}],[${coordinates[2]},${coordinates[1]}],[${coordinates[2]},${coordinates[3]}]]],"type":"Polygon"}]}`;
 }
@@ -211,7 +211,7 @@ export function createTheCQLBasedOnExpression(
     });
 
   if (logicalOperator === "and") {
-    console.log(queries, and_operator(queries))
+    console.log(and_operator(queries));
     return JSON.parse(and_operator(queries));
   } else {
     return JSON.parse(or_operator(queries));

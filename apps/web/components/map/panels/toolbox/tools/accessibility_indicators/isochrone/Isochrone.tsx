@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from "react";
 import { Box } from "@mui/material";
-import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/IsochroneSettings";
-import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
 import { useForm } from "react-hook-form";
 import {
   SendPTIsochroneRequest,
@@ -14,6 +12,10 @@ import { IsochroneBaseSchema } from "@/lib/validations/isochrone";
 import { useDispatch } from "react-redux";
 import { removeMarker } from "@/lib/store/map/slice";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+
+import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/IsochroneSettings";
+import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
+import AdvancedSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/AdvancedSettings";
 
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
@@ -117,6 +119,11 @@ const Isochrone = () => {
             setStartingType={setStartingType}
           />
         ) : null}
+        <AdvancedSettings 
+          setValue={setValue}
+          watch={getCurrentValues}
+          errors={errors}
+        />
       </Box>
       <ToolboxActionButtons
         runFunction={handleRun}

@@ -343,10 +343,33 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
             <CustomMenu close={toggleMorePopover}>
               <MenuList>
                 <MenuItem onClick={() => deleteOneExpression(expression)}>
-                  {t("panels.filter.delete_expression")}
+                  <Icon
+                    iconName={ICON_NAME.TRASH}
+                    htmlColor={theme.palette.secondary.dark}
+                    sx={{ fontSize: "14px" }}
+                  />
+                  {/* {t("panels.filter.delete_expression")} */}
+                  <Typography
+                    variant="body1"
+                    sx={{ ml: 2, fontWeight: 600 }}
+                    color={theme.palette.secondary.dark}
+                  >
+                    Delete
+                  </Typography>
                 </MenuItem>
                 <MenuItem onClick={() => duplicateExpression(expression)}>
-                  {t("panels.filter.duplicate")}
+                  <Icon
+                    iconName={ICON_NAME.CLONE}
+                    htmlColor={theme.palette.secondary.dark}
+                    sx={{ fontSize: "14px" }}
+                  />
+                  <Typography
+                    variant="body1"
+                    sx={{ ml: 2, fontWeight: 600 }}
+                    color={theme.palette.secondary.dark}
+                  >
+                    {t("panels.filter.duplicate")}
+                  </Typography>
                 </MenuItem>
               </MenuList>
             </CustomMenu>
