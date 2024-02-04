@@ -14,8 +14,6 @@ import {
   Chip,
   Divider,
   Stack,
-  IconButton,
-  Tooltip,
 } from "@mui/material";
 import { TabContext, TabPanel, TabList } from "@mui/lab";
 import { useTranslation } from "@/i18n/client";
@@ -24,15 +22,15 @@ import { useDispatch } from "react-redux";
 import { removeMarker } from "@/lib/store/map/slice";
 import { ptModes, routingModes } from "@/public/assets/data/isochroneModes";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import OptionsCollapse from "@/components/map/panels/style/other/OptionsCollapse";
 
-import type { SelectChangeEvent } from "@mui/material";
 import type {
   UseFormRegister,
   UseFormGetValues,
   UseFormSetValue,
   FieldErrors,
 } from "react-hook-form";
+
+import type { SelectChangeEvent } from "@mui/material";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 import type { PTModeTypes } from "@/types/map/isochrone";
 
@@ -436,53 +434,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
             </Typography>
           </Box>
         </Box>
-        {/* <FormControl
-                fullWidth
-                size="small"
-                sx={{
-                  margin: `${theme.spacing(1)} 0`,
-                }}
-              >
-                <InputLabel>
-                  Isochrone type
-                </InputLabel>
-                <Select
-                  label="Isochrone type"
-                  value={watch.isochrone_type}
-                  error={!!errors.isochrone_type}
-                  onChange={(event: SelectChangeEvent<string>) => {
-                    if (event.target.value === "pt") {
-                      setValue("routing_type", {
-                        mode: [
-                          "bus",
-                          "tram",
-                          "rail",
-                          "subway",
-                          "ferry",
-                          "cable_car",
-                          "gondola",
-                          "funicular",
-                        ],
-                        egress_mode: "walk",
-                        access_mode: "walk",
-                      });
-                    } else {
-                      setValue("isochrone_type", event.target.value);
-                    }
-                    dispatch(removeMarker());
-                  }}
-                >
-                  <MenuItem key={v4()} value="polygon">
-                    Polygon
-                  </MenuItem>
-                  <MenuItem key={v4()} value="network">
-                    Network
-                  </MenuItem>
-                  <MenuItem key={v4()} value="rectangular_grid">
-                    Rectangular Grid
-                  </MenuItem>
-                </Select>
-                </FormControl> */}
         <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 3 }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
           <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
