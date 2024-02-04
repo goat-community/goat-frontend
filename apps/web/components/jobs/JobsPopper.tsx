@@ -9,6 +9,7 @@ import {
   Paper,
   Stack,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useEffect, useState } from "react";
@@ -65,7 +66,6 @@ export default function JobsPopper() {
       setIsBusy(false);
     }
   };
-
   return (
     <>
       {jobs?.items && jobs.items.length > 0 && (
@@ -105,6 +105,7 @@ export default function JobsPopper() {
                         type={job.type}
                         status={job.status_simple}
                         name={job.id}
+                        date={job.updated_at}
                       />
                       {index < jobs.items.length - 1 && <Divider />}
                     </Box>
@@ -154,6 +155,10 @@ export default function JobsPopper() {
                 iconName={ICON_NAME.BARS_PROGRESS}
                 htmlColor="inherit"
               />
+              {jobs.items.filter((job) => job.status_simple === "running")
+                .length ? (
+                <CircularProgress color="primary" size={10} sx={{position: "absolute", bottom: 0, right: 0}}/>
+              ) : null}
             </IconButton>
           ) : (
             <></>

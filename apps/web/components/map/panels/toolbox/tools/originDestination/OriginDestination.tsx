@@ -6,18 +6,22 @@ import { useForm } from "react-hook-form";
 import InputLayer from "@/components/map/panels/toolbox/tools/originDestination/InputLayer";
 import ODSettings from "@/components/map/panels/toolbox/tools/originDestination/ODSettings";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import { sendODRequest } from "@/lib/api/tools";
+import { useParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 import type { PostOriginDestination } from "@/lib/validations/tools";
 
 const OriginDestination = () => {
-  // const { t } = useTranslation("maps");
+  const { projectId } = useParams();
 
   const {
     register,
     reset,
     watch,
-    // getValues,
+    getValues,
     setValue,
+    trigger,
     formState: { errors, isValid },
   } = useForm<PostOriginDestination>({
     mode: "onChange",
@@ -43,7 +47,17 @@ const OriginDestination = () => {
   };
 
   const handleRun = () => {
-    // sendJoinFeatureRequest(getValues(), projectId as string);
+    toast.info("Origin Destination is running");
+    sendODRequest(getValues(), projectId as string)
+      .then((data) =>
+        data.ok
+          ? toast.success("Origin Destination tool is successful")
+          : toast.error("Origin Destination tool failed"),
+      )
+      .catch(() => {
+        toast.error("Origin Destination tool failed");
+      });
+    reset();
   };
 
   return (
@@ -75,6 +89,7 @@ const OriginDestination = () => {
           watch={getCurrentValues}
           errors={errors}
           setValue={setValue}
+          trigger={trigger}
         />
       </Box>
       <ToolboxActionButtons

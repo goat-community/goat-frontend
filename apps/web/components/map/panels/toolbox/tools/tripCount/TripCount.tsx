@@ -7,9 +7,10 @@ import { sendPostTripCountStationRequest } from "@/lib/api/tools";
 import { useParams } from "next/navigation";
 import { accessibilityIndicatorsStaticPayload } from "@/lib/constants/payloads";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import { toast } from "react-toastify";
 
-import ReferenceAreLayer from "@/components/map/panels/toolbox/tools/oevGuetenklassen/ReferenceAreLayer";
-import IndicatorTimeSettings from "@/components/map/panels/toolbox/tools/oevGuetenklassen/IndicatorTimeSettings";
+import ReferenceAreLayer from "@/components/map/panels/toolbox/tools/tripCount/ReferenceAreLayer";
+import IndicatorTimeSettings from "@/components/map/panels/toolbox/tools/tripCount/IndicatorTimeSettings";
 
 import type { PostTripCountStation } from "@/lib/validations/tools";
 
@@ -20,7 +21,7 @@ const TripCount = () => {
 
   const {
     register,
-    // reset,
+    reset,
     watch,
     getValues,
     setValue,
@@ -47,10 +48,22 @@ const TripCount = () => {
 
   console.log(errors, isValid, getCurrentValues);
 
-  function handleReset() {}
+  function handleReset() {
+    reset();
+  }
 
   function handleRun() {
-    sendPostTripCountStationRequest(getValues(), projectId as string);
+    toast.info("Trip-Count is loading");
+    sendPostTripCountStationRequest(getValues(), projectId as string)
+      .then((data) =>
+        data.ok
+          ? toast.success("Trip-Count tool is successful")
+          : toast.error("Trip-Count tool failed"),
+      )
+      .catch(() => {
+        toast.error("Trip-Count has failed");
+      });
+    reset();
   }
 
   return (

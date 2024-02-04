@@ -89,6 +89,7 @@ const StartingPoint = (props: PickLayerProps) => {
 
   useEffect(() => {
     const handleMapClick = (event) => {
+      console.log(event);
       if (getCoordinates && "latitude" in watch.starting_points) {
         dispatch(
           addMarker({
@@ -99,7 +100,7 @@ const StartingPoint = (props: PickLayerProps) => {
           }),
         );
         watch.starting_points.latitude.push(event.lngLat.lat);
-        watch.starting_points.longitude.push(event.lngLat.lat);
+        watch.starting_points.longitude.push(event.lngLat.lng);
         setFormValue("starting_points", {
           latitude: watch.starting_points.latitude,
           longitude: watch.starting_points.longitude,
@@ -254,7 +255,7 @@ const StartingPoint = (props: PickLayerProps) => {
                       event.target.value as StartingPointType,
                     )
                       ? { latitude: [], longitude: [] }
-                      : { layer_id: "" },
+                      : { layer_project_id: 0 },
                   );
                   dispatch(removeMarker());
                 }}
@@ -294,12 +295,12 @@ const StartingPoint = (props: PickLayerProps) => {
                   </InputLabel>
                   <Select
                     label={t("panels.isochrone.starting.layer")}
-                    {...register("starting_points.layer_id")}
+                    {...register("starting_points.layer_project_id")}
                   >
                     {projectLayers
                       ? projectLayers.map((layer) =>
                           layer.feature_layer_geometry_type === "point" ? (
-                            <MenuItem value={layer.layer_id} key={v4()}>
+                            <MenuItem value={layer.id} key={v4()}>
                               {layer.name}
                             </MenuItem>
                           ) : null,

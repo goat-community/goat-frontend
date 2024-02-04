@@ -85,11 +85,13 @@ const ReferenceAreLayer = (props: ReferenceAreLayerProps) => {
                 {...register("reference_area_layer_project_id")}
               >
                 {projectLayers
-                  ? projectLayers.map((layer) => (
-                      <MenuItem value={layer.id} key={v4()}>
-                        {layer.name}
-                      </MenuItem>
-                    ))
+                  ? projectLayers.map((layer) =>
+                      layer.feature_layer_geometry_type === "polygon" ? (
+                        <MenuItem value={layer.id} key={v4()}>
+                          {layer.name}
+                        </MenuItem>
+                      ) : null,
+                    )
                   : null}
               </Select>
               {!!errors.reference_area_layer_project_id && (

@@ -23,7 +23,6 @@ const Isochrone = () => {
     StartingPointType | undefined
   >(undefined);
 
-  // const { t } = useTranslation("maps");
   const { projectId } = useParams();
   const dispatch = useDispatch();
 
@@ -44,15 +43,12 @@ const Isochrone = () => {
         longitude: [],
       },
       travel_cost: {
-        max_traveltime: 0,
-        traveltime_step: 0,
-        speed: 0,
+        max_traveltime: 45,
+        traveltime_step: 5,
+        speed: 10,
       },
-      time_window: {
-        weekday: "monday",
-        from_time: 25200,
-        to_time: 32400,
-      },
+      isochrone_type: "polygon",
+      polygon_difference: true,
     },
   });
 
@@ -81,6 +77,7 @@ const Isochrone = () => {
     } else {
       SendIsochroneRequest(getValues(), projectId as string);
     }
+    reset();
   };
 
   const getCurrentValues = useMemo(() => {
@@ -96,7 +93,6 @@ const Isochrone = () => {
     >
       <Box
         sx={{
-          // px: 3,
           height: "95%",
           maxHeight: "95%",
           overflow: "scroll",
@@ -124,9 +120,7 @@ const Isochrone = () => {
       </Box>
       <ToolboxActionButtons
         runFunction={handleRun}
-        runDisabled={
-          !isValid
-        }
+        runDisabled={!isValid}
         resetFunction={handleReset}
         // resetDisabled={
         //   !getCurrentValues.join_layer_project_id &&

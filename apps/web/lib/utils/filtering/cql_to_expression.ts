@@ -5,13 +5,13 @@ import { v4 } from "uuid";
 import type { Expression } from "@/lib/validations/filter";
 
 function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
-  console.log(expressionsInsideLogicalOperator);
   return expressionsInsideLogicalOperator.map((expressionToBeProcessed) => {
     const expression: Expression = {
       expression: "",
       attribute: "",
       value: "",
       id: v4(),
+      type: "",
     };
 
     const value =
@@ -61,7 +61,15 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
       }
       expression.attribute = expressionToBeProcessed.args[0].args[0].property;
       expression.value = expressionToBeProcessed.args.map((arg) => arg.args[1]);
-    } else {
+    } else if(expressionToBeProcessed.op === "s_intersects"){
+      const bboxCoordinates = expressionToBeProcessed.args[1].coordinates[0];
+      console.log(expressionToBeProcessed, bboxCoordinates)
+      expression.value = `${bboxCoordinates[1][0]},${bboxCoordinates[2][1]},${bboxCoordinates[0][0]},${bboxCoordinates[1][0]}`;
+      expression.attribute = "Bounding Box";
+      expression.expression = "is";
+      
+      //translate bounding box here
+    }else {
       expression.expression = Object.keys(
         comparisonAndInclussionOpperators,
       ).filter(
@@ -73,6 +81,13 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
       expression.value = value;
     }
 
+
+    if(expressionToBeProcessed.op === "s_intersects"){
+      expression.type = "spatial";
+    }else {
+      expression.type = "regular";
+    }
+
     return expression;
   });
 }
@@ -81,7 +96,7 @@ export function parseCQLQueryToObject(condition?: {
   op: string;
   args: unknown[];
 }) {
-  if (condition) {
+  if (condition && Object.keys(condition).length) {
     let expressions: Expression[] = [];
     const expressionsInsideLogicalOperator =
       condition.args;

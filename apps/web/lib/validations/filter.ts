@@ -5,6 +5,7 @@ export const updateLayerFilters = z.object({
 });
 
 export const expression = z.object({
+  type: z.string(),
   attribute: z.string(),
   expression: z.string(),
   value: z.string().or(z.number()),

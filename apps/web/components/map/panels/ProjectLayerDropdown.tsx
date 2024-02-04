@@ -15,11 +15,13 @@ import { useMemo } from "react";
 interface ProjectLayerDropdownProps {
   projectId: string;
   layerTypes?: LayerType[];
+  onChange?: (id: number) => void;
 }
 
 const ProjectLayerDropdown = ({
   projectId,
   layerTypes,
+  onChange
 }: ProjectLayerDropdownProps) => {
   const { layers: projectLayers } = useProjectLayers(projectId);
   const filteredLayers = useMemo(() => {
@@ -43,6 +45,9 @@ const ProjectLayerDropdown = ({
             onChange={(event) => {
               const id = event.target.value as number;
               dispatch(setActiveLayer(id));
+              if(onChange){
+                onChange(id)
+              }
             }}
             MenuProps={{
               MenuListProps: {

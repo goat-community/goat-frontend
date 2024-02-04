@@ -70,7 +70,7 @@ const InputLayer = (props: PickLayerProps) => {
         Pick Layers
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
-        <Box sx={{height: "100%"}}>
+        <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
         <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
@@ -88,9 +88,7 @@ const InputLayer = (props: PickLayerProps) => {
                 {t("panels.tools.join.target_layer_text")}
               </Typography>
               <FormControl fullWidth size="small">
-                <InputLabel>
-                  Geometry Layer
-                </InputLabel>
+                <InputLabel>Geometry Layer</InputLabel>
                 <Select
                   label="Target Layer"
                   error={!!errors.geometry_layer_project_id}
@@ -102,11 +100,13 @@ const InputLayer = (props: PickLayerProps) => {
                   {...register("geometry_layer_project_id")}
                 >
                   {projectLayers
-                    ? projectLayers.map((layer) => (
-                        <MenuItem value={layer.id} key={v4()}>
-                          {layer.name}
-                        </MenuItem>
-                      ))
+                    ? projectLayers.map((layer) =>
+                        layer.feature_layer_geometry_type === "polygon" ? (
+                          <MenuItem value={layer.id} key={v4()}>
+                            {layer.name}
+                          </MenuItem>
+                        ) : null,
+                      )
                     : null}
                 </Select>
                 {!!errors.geometry_layer_project_id && (
@@ -116,15 +116,9 @@ const InputLayer = (props: PickLayerProps) => {
                 )}
               </FormControl>
             </Box>
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap={theme.spacing(2)}
-            >
+            <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
               <FormControl fullWidth size="small">
-                <InputLabel>
-                  Matrix Layer
-                </InputLabel>
+                <InputLabel>Matrix Layer</InputLabel>
                 <Select
                   label="Join Layer"
                   error={!!errors.origin_destination_matrix_layer_project_id}
@@ -136,11 +130,13 @@ const InputLayer = (props: PickLayerProps) => {
                   {...register("origin_destination_matrix_layer_project_id")}
                 >
                   {projectLayers
-                    ? projectLayers.map((layer) => (
-                        <MenuItem value={layer.id} key={v4()}>
-                          {layer.name}
-                        </MenuItem>
-                      ))
+                    ? projectLayers.map((layer) =>
+                        layer.type === "table" ? (
+                          <MenuItem value={layer.id} key={v4()}>
+                            {layer.name}
+                          </MenuItem>
+                        ) : null,
+                      )
                     : null}
                 </Select>
                 {!!errors.origin_destination_matrix_layer_project_id && (
