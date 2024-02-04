@@ -28,11 +28,11 @@ const ToolboxActionButtons = (props: ToolboxActionButtonsProps) => {
           gap: theme.spacing(2),
           alignItems: "center",
           position: "absolute",
-          bottom: "-25px",
+          bottom: "-28px",
           left: "-8px",
           width: "calc(100% + 16px)",
           padding: "16px",
-          background: "white",
+          background: theme.palette.background.paper,
           boxShadow: "0px -5px 10px -5px rgba(58, 53, 65, 0.1)",
         }}
       >

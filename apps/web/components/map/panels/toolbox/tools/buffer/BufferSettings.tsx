@@ -59,7 +59,7 @@ const BufferSettings = (props: BufferSettingsProps) => {
         }}
       >
         <Icon
-          iconName={ICON_NAME.LAYERS}
+          iconName={ICON_NAME.SETTINGS}
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
