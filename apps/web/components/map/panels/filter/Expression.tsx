@@ -103,7 +103,14 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           expression.expression === "is" &&
           expression.attribute === "Bounding Box"
         ) {
-          return <BoundingBoxInput bounds={expression.value as string} />;
+          return (
+            <BoundingBoxInput
+              bounds={expression.value as string}
+              onChange={(value: string) =>
+                debounceEffect(expression, "value", value)
+              }
+            />
+          );
         }
         if (attributeType === "string") {
           return (
@@ -317,7 +324,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       >
         <Typography
           fontWeight="bold"
-          color={theme.palette.secondary.dark}
+          color={theme.palette.text.secondary}
           sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}
         >
           <Icon
@@ -329,7 +336,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
             sx={{ fontSize: "18px" }}
           />
           {expression.type === "regular"
-            ? t("panels.filter.expression")
+            ? "Logical Expression"
             : "Spatial Expression"}
         </Typography>
         <Box sx={{ position: "relative" }}>
@@ -345,14 +352,14 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                 <MenuItem onClick={() => deleteOneExpression(expression)}>
                   <Icon
                     iconName={ICON_NAME.TRASH}
-                    htmlColor={theme.palette.secondary.dark}
+                    htmlColor={theme.palette.text.secondary}
                     sx={{ fontSize: "14px" }}
                   />
                   {/* {t("panels.filter.delete_expression")} */}
                   <Typography
                     variant="body1"
                     sx={{ ml: 2, fontWeight: 600 }}
-                    color={theme.palette.secondary.dark}
+                    color={theme.palette.text.secondary}
                   >
                     Delete
                   </Typography>
@@ -360,13 +367,13 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                 <MenuItem onClick={() => duplicateExpression(expression)}>
                   <Icon
                     iconName={ICON_NAME.CLONE}
-                    htmlColor={theme.palette.secondary.dark}
+                    htmlColor={theme.palette.text.secondary}
                     sx={{ fontSize: "14px" }}
                   />
                   <Typography
                     variant="body1"
                     sx={{ ml: 2, fontWeight: 600 }}
-                    color={theme.palette.secondary.dark}
+                    color={theme.palette.text.secondary}
                   >
                     {t("panels.filter.duplicate")}
                   </Typography>

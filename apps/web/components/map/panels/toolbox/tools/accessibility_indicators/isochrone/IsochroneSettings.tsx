@@ -430,7 +430,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
                 htmlColor={theme.palette.grey[700]}
                 sx={{ fontSize: "16px" }}
               />
-              Configuration
+              {t("panels.isochrone.configuration")}
             </Typography>
           </Box>
         </Box>
@@ -535,7 +535,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
               watch.travel_cost.max_traveltime <
                 watch.travel_cost.traveltime_step ? (
                 <Typography variant="caption" color="error">
-                  Step should be smaller than Traveltime
+                  {t("panels.isochrone.validation.stepError")}
                 </Typography>
               ) : null}
             </TabPanel>
@@ -546,7 +546,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
               watch.travel_cost.max_distance <
                 watch.travel_cost.distance_step ? (
                 <Typography variant="caption" color="error">
-                  Step should be smaller than Distance
+                  {t("panels.isochrone.validation.stepError")}
                 </Typography>
               ) : null}
             </TabPanel>

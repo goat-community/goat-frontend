@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { timeToSeconds, secondsToTime } from "@/lib/utils/helpers";
+import { useTranslation } from "@/i18n/client";
 
 import type { UseFormSetValue, FieldErrors } from "react-hook-form";
 import type { PostOevGuetenKlassen } from "@/lib/validations/tools";
@@ -37,7 +38,9 @@ interface IndicatorTimeSettingsProps {
 const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
   const { setValue, watch, errors } = props;
 
+  const { t } = useTranslation("maps");
   const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -60,7 +63,7 @@ const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Calculation Time
+        {t("panels.tools.oev_gutenklassen.calculation_time")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>
@@ -76,18 +79,27 @@ const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
             marginTop={theme.spacing(4)}
           >
             <FormControl fullWidth size="small">
-              <InputLabel>Week Time</InputLabel>
+              <InputLabel>
+                {t("panels.tools.oev_gutenklassen.week_time")}
+              </InputLabel>
               <Select
                 fullWidth
-                label="Week Time"
+                label={t("panels.tools.oev_gutenklassen.week_time")}
                 error={!!errors.time_window?.weekday}
                 value={watch.time_window.weekday}
                 onChange={(e) => {
                   setValue("time_window.weekday", e.target.value as string);
                 }}
               >
-                <MenuItem value="weekday">Weekday</MenuItem>
-                <MenuItem value="saturday">Saturday</MenuItem>
+                <MenuItem value="weekday">
+                  {t("panels.tools.oev_gutenklassen.weekday")}
+                </MenuItem>
+                <MenuItem value="saturday">
+                  {t("panels.tools.oev_gutenklassen.saturday")}
+                </MenuItem>
+                <MenuItem value="saturday">
+                  {t("panels.tools.oev_gutenklassen.sunday")}
+                </MenuItem>
               </Select>
               {!!errors.time_window?.weekday && (
                 <Typography sx={{ fontSize: "10px" }} color="error">
@@ -99,7 +111,7 @@ const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
           <Box sx={{ display: "flex", gap: theme.spacing(2) }}>
             <Box sx={{ width: "50%" }}>
               <Typography variant="body2" fontWeight={600}>
-                From
+                {t("panels.tools.oev_gutenklassen.from")}
               </Typography>
               <TimeInput
                 type="time"
@@ -123,7 +135,7 @@ const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
             </Box>
             <Box sx={{ width: "50%" }}>
               <Typography variant="body2" fontWeight={600}>
-                To
+                {t("panels.tools.oev_gutenklassen.to")}
               </Typography>
               <TimeInput
                 type="time"

@@ -57,7 +57,7 @@ const InputLayer = (props: PickLayerProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Pick a Layer
+        {t("panels.tools.aggregate.pick_layer")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
         <Box sx={{ height: "100%" }}>
