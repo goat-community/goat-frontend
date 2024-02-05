@@ -158,7 +158,7 @@ const Statistics = (props: StatisticsProps) => {
             {watch.column_statistics.operation.length ? (
               <Box sx={{ mt: 2 }}>
                 <LayerFieldSelector
-                  label="Join Field"
+                  label={t("panels.tools.join.join_field")}
                   selectedField={
                     checkType().filter(
                       (key) => key.name === watch.column_statistics.field,

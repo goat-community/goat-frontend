@@ -58,7 +58,7 @@ const SelectArea = (props: SelectAreaProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Select Area
+        {t("panels.tools.aggregate.select_area")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
         <Box sx={{ height: "100%" }}>

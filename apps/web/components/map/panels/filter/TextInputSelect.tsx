@@ -4,7 +4,6 @@ import {
   Select,
   InputBase,
   TextField,
-  useTheme,
   ListSubheader,
   InputAdornment,
   Box,
@@ -12,7 +11,6 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { v4 } from "uuid";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { filterSearch } from "@/lib/utils/helpers";
 
 export type Option = {
@@ -41,7 +39,6 @@ const TextInputSelect = (props: TextInputSelectProps) => {
   const [searchText, setSearchText] = useState("");
   const input = useRef<HTMLInputElement | null>(null);
 
-  const theme = useTheme();
 
   const mapLoading = false;
 
@@ -51,20 +48,6 @@ const TextInputSelect = (props: TextInputSelectProps) => {
 
   const handleSelectChange = (event) => {
     setInputValue(event.target.value);
-  };
-
-  const increaseNumber = () => {
-    if (input.current) {
-      input.current.stepUp();
-      setInputValue(input.current.value);
-    }
-  };
-
-  const decreaseNumber = () => {
-    if (input.current) {
-      input.current.stepDown();
-      setInputValue(input.current.value);
-    }
   };
 
   let debounceTimer;
@@ -88,7 +71,7 @@ const TextInputSelect = (props: TextInputSelectProps) => {
     <Box
       sx={{
         display: "flex",
-        border: `1px solid ${theme.palette.secondary.main}`,
+        border: `1px solid rgba(58, 53, 65, 0.22)`,
         borderRadius: "4px",
         overflow: "hidden",
         position: "relative",
@@ -116,32 +99,6 @@ const TextInputSelect = (props: TextInputSelectProps) => {
           disableUnderline: true,
         }}
       />
-      {type === "number" ? (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            padding: "0 8px",
-            borderLeft: `1px solid ${theme.palette.secondary.main}`,
-          }}
-        >
-          <Icon
-            iconName={ICON_NAME.STEPUP}
-            viewBox="0 0 10 5"
-            htmlColor={theme.palette.text.primary}
-            style={{ height: "13px", cursor: "pointer" }}
-            onClick={increaseNumber}
-          />
-          <Icon
-            iconName={ICON_NAME.STEPDOWN}
-            viewBox="0 0 45 24"
-            htmlColor={theme.palette.text.primary}
-            style={{ height: "13px", cursor: "pointer" }}
-            onClick={decreaseNumber}
-          />
-        </Box>
-      ) : null}
       <Box
         sx={{
           flex: 1,
@@ -150,7 +107,7 @@ const TextInputSelect = (props: TextInputSelectProps) => {
           alignItems: "center",
           justifyContent: "center",
           paddingLeft: "7px",
-          borderLeft: `1px solid ${theme.palette.secondary.main}`,
+          borderLeft: `1px solid rgba(58, 53, 65, 0.22)`,
         }}
       >
         {options ? (

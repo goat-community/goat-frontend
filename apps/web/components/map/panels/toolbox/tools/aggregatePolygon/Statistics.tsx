@@ -262,12 +262,12 @@ const Statistics = (props: StatisticsProps) => {
             {watch.column_statistics.field && (
               <Box sx={{ maxWidth: "100%" }}>
                 <FormControl fullWidth size="small">
-                  <InputLabel>Select Field Group</InputLabel>
+                  <InputLabel>{t("panels.tools.aggregate.field_group")}</InputLabel>
                   <Select
                     disabled={!watch.source_layer_project_id}
                     multiple
                     error={!!errors.source_group_by_field}
-                    label="Select Field Group"
+                    label={t("panels.tools.aggregate.field_group")}
                     value={
                       watch.source_group_by_field
                         ? watch.source_group_by_field
@@ -314,7 +314,7 @@ const Statistics = (props: StatisticsProps) => {
                 variant="body2"
                 sx={{ fontSize: "13px", fontWeight: "bold" }}
               >
-                Weigthed by intersecting area
+                {t("panels.tools.aggregate_polygon.weighted_by_intersecting_area")}
               </Typography>
               <Switch
                 checked={watch.weigthed_by_intersecting_area}

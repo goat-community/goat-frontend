@@ -91,7 +91,7 @@ const ToolTabs = (props: ToolTabsProps) => {
       name: "Accessibility Indicators",
       value: "accessibility_indicators",
       children: ["catchment_area", "oev_gutenklassen", "trip_count"],
-      icon: ICON_NAME.ACCESSIBILITY,
+      icon: ICON_NAME.BULLSEYE,
     },
     {
       name: "Data Management",
@@ -147,27 +147,27 @@ const ToolTabs = (props: ToolTabsProps) => {
       element: <Isochrone />,
     },
     buffer: {
-      name: "Buffer features",
+      name: t("panels.tools.buffer.buffer"),
       value: "buffer",
       element: <Buffer />,
     },
     origin_to_destination: {
-      name: "Origin to destination",
+      name: t("panels.tools.origin_to_destination.origin_to_destination"),
       value: "origin_to_destination",
       element: <p>origin</p>,
     },
     oev_gutenklassen: {
-      name: "Oev-Gutenklassen",
+      name: t("panels.tools.oev_gutenklassen.oev_gutenklassen"),
       value: "oev_gutenklassen",
       element: <OevGuetenklassen />,
     },
     trip_count: {
-      name: "Trip Count",
+      name: t("panels.tools.trip_count.trip_count"),
       value: "trip_count",
       element: <TripCount />,
     },
     origin_destination: {
-      name: "Origin Destination",
+      name: t("panels.tools.origin_destination.origin_destination"),
       value: "origin_destination",
       element: <OriginDestination />,
     },

@@ -14,8 +14,6 @@ import { toast } from "react-toastify";
 import type { PostJoin } from "@/lib/validations/tools";
 
 const Join = () => {
-  // const { t } = useTranslation("maps");
-
   const { projectId } = useParams();
 
   const {

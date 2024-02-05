@@ -57,7 +57,7 @@ const ReferenceAreLayer = (props: ReferenceAreLayerProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Reference Area Layer
+        {t("panels.tools.oev_gutenklassen.reference_area_layer")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>

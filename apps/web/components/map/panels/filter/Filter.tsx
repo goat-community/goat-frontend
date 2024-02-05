@@ -297,7 +297,7 @@ const FilterPanel = (props: FilterProps) => {
                           style={{ fontSize: "15px" }}
                         />
                       </ListItemIcon>
-                      <Typography variant="body2">Regular expression</Typography>
+                      <Typography variant="body2">Logical expression</Typography>
                     </MenuItem>
                     <MenuItem
                       onClick={() =>
@@ -306,7 +306,7 @@ const FilterPanel = (props: FilterProps) => {
                     >
                       <ListItemIcon>
                         <Icon
-                          iconName={ICON_NAME.UPLOAD}
+                          iconName={ICON_NAME.MOUNTAIN}
                           style={{ fontSize: "15px" }}
                         />
                       </ListItemIcon>

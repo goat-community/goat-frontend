@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { v4 } from "uuid";
+import { useTranslation } from "@/i18n/client";
 
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 import type { UseFormSetValue, FieldErrors } from "react-hook-form";
@@ -27,6 +28,8 @@ interface AdvancedSettingsProps {
 const AdvancedSettings = (props: AdvancedSettingsProps) => {
   const { watch, setValue, errors } = props;
   const theme = useTheme();
+
+  const { t } = useTranslation("maps");
 
   return (
     <>
@@ -58,7 +61,7 @@ const AdvancedSettings = (props: AdvancedSettingsProps) => {
               htmlColor={theme.palette.grey[700]}
               sx={{ fontSize: "16px" }}
             />
-            Advanced Settings
+            {t("panels.isochrone.advanced_settings")}
           </Typography>{" "}
         </Box>
       </Box>
@@ -72,7 +75,7 @@ const AdvancedSettings = (props: AdvancedSettingsProps) => {
               margin: `${theme.spacing(1)} 0`,
             }}
           >
-            <InputLabel>Isochrone type</InputLabel>
+            <InputLabel>{t("panels.isochrone.isochrone_type")}</InputLabel>
             <Select
               label="Isochrone type"
               value={watch.isochrone_type}
@@ -85,13 +88,13 @@ const AdvancedSettings = (props: AdvancedSettingsProps) => {
               }}
             >
               <MenuItem key={v4()} value="polygon">
-                Polygon
+                {t("panels.isochrone.polygon")}
               </MenuItem>
               <MenuItem key={v4()} value="network">
-                Network
+                {t("panels.isochrone.network")}
               </MenuItem>
               <MenuItem key={v4()} value="rectangular_grid">
-                Rectangular Grid
+                {t("panels.isochrone.rectangular_grid")}
               </MenuItem>
             </Select>
           </FormControl>
@@ -100,14 +103,11 @@ const AdvancedSettings = (props: AdvancedSettingsProps) => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              mt: 2
+              mt: 2,
             }}
           >
-            <Typography
-              variant="body2"
-              sx={{ fontWeight: "bold" }}
-            >
-              Isochrone Difference
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+            {t("panels.isochrone.isochrone_difference")}
             </Typography>
             <Switch
               checked={watch.polygon_difference}
