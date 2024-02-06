@@ -31,7 +31,6 @@ interface PickLayerProps {
 }
 const InputLayer = (props: PickLayerProps) => {
   const {
-    // setValue,
     watch,
     register,
     errors,
@@ -67,13 +66,13 @@ const InputLayer = (props: PickLayerProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        {t("tools.panels.buffer.pick_layer")}
+        {t("panels.tools.buffer.pick_layer")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
+        <Stack sx={{ pl: 4, py: 4, pr: 1, flexGrow: 1 }}>
           <Box>
             <Box
               display="flex"
@@ -85,12 +84,13 @@ const InputLayer = (props: PickLayerProps) => {
                 variant="body2"
                 sx={{ fontStyle: "italic", marginBottom: theme.spacing(2) }}
               >
-                {t("panels.tools.join.target_layer_text")}
+                {t("panels.tools.origin_to_destination.layer_desc")}
               </Typography>
               <FormControl fullWidth size="small">
-                <InputLabel>{t("tools.panels.origin_destination.geometry_layer")}</InputLabel>
+                <InputLabel>{t("panels.tools.origin_to_destination.geometry_layer")}</InputLabel>
                 <Select
-                  label={t("tools.panels.origin_destination.geometry_layer")}
+                  label={t("panels.tools.origin_to_destination.geometry_layer")}
+                  fullWidth
                   error={!!errors.geometry_layer_project_id}
                   value={
                     watch.geometry_layer_project_id
@@ -118,10 +118,11 @@ const InputLayer = (props: PickLayerProps) => {
             </Box>
             <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
               <FormControl fullWidth size="small">
-                <InputLabel>{t("tools.panels.origin_destination.matrix_layer")}</InputLabel>
+                <InputLabel>{t("panels.tools.origin_to_destination.matrix_layer")}</InputLabel>
                 <Select
-                  label={t("tools.panels.origin_destination.matrix_layer")}
+                  label={t("panels.tools.origin_to_destination.matrix_layer")}
                   error={!!errors.origin_destination_matrix_layer_project_id}
+                  fullWidth
                   value={
                     watch.origin_destination_matrix_layer_project_id
                       ? watch.origin_destination_matrix_layer_project_id

@@ -155,7 +155,6 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
             }}
           />
         );
-        break;
       case "includes":
       case "excludes":
         return (
@@ -336,8 +335,8 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
             sx={{ fontSize: "18px" }}
           />
           {expression.type === "regular"
-            ? "Logical Expression"
-            : "Spatial Expression"}
+            ? t("panels.filter.logical_expression")
+            : t("panels.filter.spatial_expression")}
         </Typography>
         <Box sx={{ position: "relative" }}>
           <IconButton
@@ -361,7 +360,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                     sx={{ ml: 2, fontWeight: 600 }}
                     color={theme.palette.text.secondary}
                   >
-                    Delete
+                    {t("panels.filter.delete")}
                   </Typography>
                 </MenuItem>
                 <MenuItem onClick={() => duplicateExpression(expression)}>
@@ -415,7 +414,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           {attributeType
             ? comparerModes[attributeType].map((attr) => (
                 <MenuItem key={v4()} value={attr.value}>
-                  {attr.label}
+                  {t(`panels.filter.expressions.${attr.value}`)}
                 </MenuItem>
               ))
             : null}

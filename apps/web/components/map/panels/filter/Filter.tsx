@@ -177,19 +177,19 @@ const FilterPanel = (props: FilterProps) => {
           />
           {expressions && expressions.length > 1 ? (
             <FormControl fullWidth>
-              <InputLabel>Logical Operator</InputLabel>
+              <InputLabel>{t("panels.filter.logical_operator")}</InputLabel>
               <Select
                 value={logicalOperator}
-                label="Logical Operator"
+                label={t("panels.filter.logical_operator")}
                 onChange={(event: SelectChangeEvent) => {
                   setLogicalOperator(event.target.value as "or" | "and");
                 }}
               >
                 <MenuItem key={v4()} value="and">
-                  And
+                  {t("panels.filter.and")}
                 </MenuItem>
                 <MenuItem key={v4()} value="or">
-                  Or
+                  {t("panels.filter.and")}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -264,7 +264,7 @@ const FilterPanel = (props: FilterProps) => {
               }
             >
               <Typography variant="body2" fontWeight="bold" color="inherit">
-                Create Expression
+                {t("panels.filter.create_expression")}
               </Typography>
             </Button>
             <Menu
@@ -286,31 +286,27 @@ const FilterPanel = (props: FilterProps) => {
               <Box>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList>
-                    <MenuItem
-                      onClick={() =>
-                        createExpression("regular")
-                      }
-                    >
+                    <MenuItem onClick={() => createExpression("regular")}>
                       <ListItemIcon>
                         <Icon
                           iconName={ICON_NAME.EDITPEN}
                           style={{ fontSize: "15px" }}
                         />
                       </ListItemIcon>
-                      <Typography variant="body2">Logical expression</Typography>
+                      <Typography variant="body2">
+                      {t("panels.filter.logical_expression")}
+                      </Typography>
                     </MenuItem>
-                    <MenuItem
-                      onClick={() =>
-                        createExpression("spatial")
-                      }
-                    >
+                    <MenuItem onClick={() => createExpression("spatial")}>
                       <ListItemIcon>
                         <Icon
                           iconName={ICON_NAME.MOUNTAIN}
                           style={{ fontSize: "15px" }}
                         />
                       </ListItemIcon>
-                      <Typography variant="body2">Spatial expression</Typography>
+                      <Typography variant="body2">
+                        {t("panels.filter.spatial_expression")}
+                      </Typography>
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
@@ -323,7 +319,7 @@ const FilterPanel = (props: FilterProps) => {
               disabled={!expressions || !expressions.length}
               onClick={() => setExpressions([])}
             >
-              Clear Expression
+              {t("panels.filter.clear_filter")}
             </Button>
           </Box>
         </>
