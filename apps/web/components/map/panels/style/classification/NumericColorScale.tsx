@@ -1,8 +1,8 @@
 import { useTranslation } from "@/i18n/client";
 import { formatNumber } from "@/lib/utils/helpers";
-import type { ClassBreaks, ColorRange } from "@/lib/validations/layer";
+import type { ClassBreaks, ColorMap, ColorRange } from "@/lib/validations/layer";
 import { classBreaks } from "@/lib/validations/layer";
-import type { ColorMap, ColorScaleSelectorProps } from "@/types/map/color";
+import type { ColorScaleSelectorProps } from "@/types/map/color";
 import {
   Box,
   Grid,
@@ -34,11 +34,11 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
     classBreaksValues.breaks.forEach((value, index) => {
       const colors = (props.colorSet.selectedColor as ColorRange).colors;
       const color = colors[index] !== undefined ? colors[index] : staticColor;
-      const roundedValue = formatNumber(value, 2);
-      intervalValues.push([roundedValue, color]);
+      const roundedValue = formatNumber(value, 2).toString();
+      intervalValues.push([[roundedValue], color]);
       if (index === classBreaksValues.breaks.length - 1) {
         intervalValues.push([
-          "null",
+          null,
           colors[index + 1] !== undefined ? colors[index + 1] : staticColor,
         ]);
       }
@@ -135,7 +135,7 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
                     <TextField
                       margin="dense"
                       value={
-                        colorMapValues[index][0] === "null"
+                        colorMapValues[index][0] === null
                           ? `>${classBreaksValues?.max}`
                           : colorMapValues[index][0]
                       }

@@ -32,7 +32,7 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { SortableItem } from "@/components/map/panels/style/other/SortableItem";
 import { SingleColorPopper } from "@/components/map/panels/style/other/SingleColorPopper";
 import type { ColorItem } from "@/types/map/color";
-import StyleDropdownFooter from "@/components/map/panels/style/other/StyleDropdownFooter";
+import DropdownFooter from "@/components/map/panels/style/other/DropdownFooter";
 
 type CustomPaletteProps = {
   customPalette: ColorRange;
@@ -152,7 +152,7 @@ const CustomPalette = ({
               key={item.id}
               item={item}
               label={item.color}
-              colorLegend={
+              picker={
                 <>
                   <Box
                     onClick={(e) => {
@@ -214,7 +214,7 @@ const CustomPalette = ({
           ))}
         </SortableWrapper>
       </Box>
-      <StyleDropdownFooter
+      <DropdownFooter
         isValid={areColorsValid}
         onCancel={_onCancel}
         onApply={_onApply}

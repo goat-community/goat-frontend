@@ -7,8 +7,11 @@ import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
 import type {
+  ColorMap,
+  FeatureLayerPointProperties,
   FeatureLayerProperties,
   LayerUniqueValues,
+  MarkerMap,
 } from "@/lib/validations/layer";
 import { useCallback, useMemo, useState } from "react";
 import {
@@ -27,9 +30,13 @@ import MoreMenu from "@/components/common/PopperMenu";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { LayerStyleActions } from "@/types/common";
 import { toast } from "react-toastify";
+import MarkerOptions from "@/components/map/panels/style/marker/MarkerOptions";
+import { useMap } from "react-map-gl";
+import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
 
 const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation(["maps", "common"]);
+  const { map } = useMap();
   const dispatch = useDispatch();
   const { activeLayer } = useActiveLayer(projectId);
   const { dataset, mutate: mutateDataset } = useDataset(
@@ -105,34 +112,48 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
   const updateOrdinalValues = useCallback(
     async (
-      updateType: "color" | "stroke_color",
+      updateType: "color" | "stroke_color" | "marker",
       newStyle: FeatureLayerProperties,
     ) => {
       if (!activeLayer) return;
       if (!newStyle[`${updateType}_field`]?.name) return;
       const oldFieldName = activeLayer.properties[`${updateType}_field`]?.name;
       const newFieldName = newStyle[`${updateType}_field`]?.name;
-      if (
-        (newStyle[`${updateType}_scale`] === "ordinal" &&
-          newStyle[`${updateType}_range`]?.name !==
-            activeLayer.properties[`${updateType}_range`]?.name) ||
-        !newStyle[`${updateType}_range`]?.color_map ||
-        oldFieldName !== newFieldName
-      ) {
-        const colors = newStyle[`${updateType}_range`]?.colors;
-        // const _existingColorMap = newStyle[`${updateType}_range`]?.color_map;
-        // fetch unique values
+      if (updateType === "marker" && oldFieldName !== newFieldName) {
         const uniqueValues = await getLayerUniqueValues(
           activeLayer.layer_id,
           newStyle[`${updateType}_field`]?.name as string,
-          colors?.length,
+          6,
         );
-
-        const colorMap = [] as [string, string][];
-        uniqueValues.items.forEach((item: LayerUniqueValues, index: number) => {
-          colorMap.push([item.value, colors[index]]);
+        const markerMap = [] as MarkerMap;
+        const emptyMarker = { name: "", url: "" };
+        uniqueValues.items.forEach((item: LayerUniqueValues) => {
+          markerMap.push([[item.value], emptyMarker]);
         });
-        newStyle[`${updateType}_range`].color_map = colorMap;
+        newStyle[`${updateType}_mapping`] = markerMap;
+      } else if (updateType !== "marker") {
+        if (
+          (newStyle[`${updateType}_scale`] === "ordinal" &&
+            newStyle[`${updateType}_range`]?.name !==
+              activeLayer.properties[`${updateType}_range`]?.name) ||
+          !newStyle[`${updateType}_range`]?.color_map ||
+          oldFieldName !== newFieldName
+        ) {
+          const colors = newStyle[`${updateType}_range`]?.colors;
+          const uniqueValues = await getLayerUniqueValues(
+            activeLayer.layer_id,
+            newStyle[`${updateType}_field`]?.name as string,
+            colors?.length,
+          );
+
+          const colorMap = [] as ColorMap;
+          uniqueValues.items.forEach(
+            (item: LayerUniqueValues, index: number) => {
+              colorMap.push([[item.value], colors[index]]);
+            },
+          );
+          newStyle[`${updateType}_range`].color_map = colorMap;
+        }
       }
       updateLayerStyle(newStyle);
     },
@@ -144,6 +165,19 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       const newStyle =
         JSON.parse(JSON.stringify(activeLayer?.properties)) || {};
       newStyle[property] = event.target.checked;
+      if (
+        property === "stroked" &&
+        activeLayer?.properties?.["custom_marker"]
+      ) {
+        newStyle["custom_marker"] = false;
+      }
+      if (
+        property === "custom_marker" &&
+        activeLayer?.properties?.["stroked"]
+      ) {
+        newStyle["stroked"] = false;
+      }
+
       updateLayerStyle(newStyle);
     },
     [activeLayer, updateLayerStyle],
@@ -186,10 +220,21 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     return layerStyleMoreMenuOptions;
   }, [t]);
 
+  const markerExists = useMemo(() => {
+    return (
+      activeLayer?.properties["custom_marker"] &&
+      (activeLayer?.properties["marker"]?.name ||
+        (activeLayer?.properties["marker_field"] &&
+          activeLayer?.properties["marker_mapping"]?.length > 0))
+    );
+  }, [activeLayer]);
+
   const [collapseFillOptions, setCollapseFillOptions] = useState(true);
   const [collapseStrokeColorOptions, setCollapseStrokeColorOptions] =
     useState(true);
   const [collapseStrokeWidthOptions, setCollapseStrokeWidthOptions] =
+    useState(true);
+  const [collapsedMarkerIconOptions, setCollapsedMarkerIconOptions] =
     useState(true);
   const [collapseRadiusOptions, setCollapseRadiusOptions] = useState(true);
   const [collapseLabelOptions, setCollapseLabelOptions] = useState(true);
@@ -292,7 +337,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                     </>
                   )}
 
-                {/* {STROKE COLOR} */}
+                {/* {STROKE} */}
                 <Header
                   active={!!activeLayer?.properties.stroked}
                   onToggleChange={(event) => {
@@ -334,10 +379,10 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   layerId={activeLayer?.layer_id}
                 />
 
-                {/* {STROKE WIDTH} */}
+                {/* {LINE STROKE} */}
                 {/* {fix: only for point and line. stroke_width doesn't yet work with polygon due to webgl limitation} */}
                 {activeLayer.feature_layer_geometry_type &&
-                  ["line", "point"].includes(
+                  ["line"].includes(
                     activeLayer.feature_layer_geometry_type,
                   ) && (
                     <>
@@ -371,37 +416,115 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                     </>
                   )}
 
-                {/* {RADIUS} */}
-                {activeLayer?.feature_layer_geometry_type &&
+                {/* {MARKER ICON} */}
+                {activeLayer.feature_layer_geometry_type &&
                   activeLayer.feature_layer_geometry_type === "point" && (
                     <>
                       <Header
-                        active={true}
-                        alwaysActive={true}
-                        label={t("maps:radius")}
-                        collapsed={collapseRadiusOptions}
-                        setCollapsed={setCollapseRadiusOptions}
-                        disableAdvanceOptions={true}
+                        active={activeLayer?.properties["custom_marker"]}
+                        alwaysActive={false}
+                        onToggleChange={(event) => {
+                          onToggleChange(event, "custom_marker");
+                        }}
+                        label={t("maps:custom_marker")}
+                        collapsed={collapsedMarkerIconOptions}
+                        setCollapsed={setCollapsedMarkerIconOptions}
                       />
 
-                      <SizeOptions
-                        type="radius"
+                      <MarkerOptions
+                        type="marker"
                         layerStyle={activeLayer?.properties}
-                        active={true}
-                        collapsed={collapseRadiusOptions}
-                        onStyleChange={(newStyle: FeatureLayerProperties) => {
+                        layerId={activeLayer?.layer_id}
+                        active={!!activeLayer?.properties["custom_marker"]}
+                        collapsed={collapsedMarkerIconOptions}
+                        onStyleChange={async (
+                          newStyle: FeatureLayerProperties,
+                        ) => {
+                          await updateOrdinalValues("marker", newStyle);
                           updateLayerStyle(newStyle);
+                          addOrUpdateMarkerImages(
+                            newStyle as FeatureLayerPointProperties,
+                            map,
+                          );
                         }}
                         layerFields={layerFields}
-                        selectedField={activeLayer?.properties["radius_field"]}
+                        selectedField={activeLayer?.properties["marker_field"]}
                       />
+                    </>
+                  )}
+
+                {/* {RADIUS/SIZE} */}
+                {activeLayer?.feature_layer_geometry_type &&
+                  activeLayer.feature_layer_geometry_type === "point" && (
+                    <>
+                      {activeLayer?.properties["custom_marker"] && (
+                        <>
+                          <Header
+                            active={markerExists}
+                            alwaysActive={true}
+                            label={t("maps:marker_size")}
+                            collapsed={collapseRadiusOptions}
+                            setCollapsed={setCollapseRadiusOptions}
+                            disableAdvanceOptions={true}
+                          />
+
+                          <SizeOptions
+                            type="marker_size"
+                            layerStyle={activeLayer?.properties}
+                            active={markerExists}
+                            collapsed={collapseRadiusOptions}
+                            onStyleChange={(
+                              newStyle: FeatureLayerProperties,
+                            ) => {
+                              updateLayerStyle(newStyle);
+                              addOrUpdateMarkerImages(
+                                newStyle as FeatureLayerPointProperties,
+                                map,
+                              );
+                            }}
+                            layerFields={layerFields}
+                            selectedField={
+                              activeLayer?.properties["marker_size_field"]
+                            }
+                          />
+                        </>
+                      )}
+
+                      {!activeLayer?.properties["custom_marker"] && (
+                        <>
+                          <Header
+                            active={true}
+                            alwaysActive={true}
+                            label={t("maps:radius")}
+                            collapsed={collapseStrokeWidthOptions}
+                            setCollapsed={setCollapseStrokeWidthOptions}
+                            disableAdvanceOptions={true}
+                          />
+
+                          <SizeOptions
+                            type="radius"
+                            layerStyle={activeLayer?.properties}
+                            active={true}
+                            collapsed={collapseRadiusOptions}
+                            onStyleChange={(
+                              newStyle: FeatureLayerProperties,
+                            ) => {
+                              updateLayerStyle(newStyle);
+                            }}
+                            layerFields={layerFields}
+                            selectedField={
+                              activeLayer?.properties["radius_field"]
+                            }
+                          />
+                        </>
+                      )}
                     </>
                   )}
 
                 {/* {LABELS} */}
 
                 <Header
-                  active={true}
+                  active={false}
                   alwaysActive={true}
                   label={t("maps:labels")}
                   collapsed={collapseLabelOptions}

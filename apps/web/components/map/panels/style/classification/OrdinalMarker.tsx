@@ -1,19 +1,18 @@
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
+import { MarkerPopper } from "@/components/map/panels/style/marker/MarkerPopper";
 import DropdownFooter from "@/components/map/panels/style/other/DropdownFooter";
 import { LayerValueSelectorPopper } from "@/components/map/panels/style/other/LayerValueSelectorPopper";
-import { SingleColorPopper } from "@/components/map/panels/style/other/SingleColorPopper";
+import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
 import { SortableItem } from "@/components/map/panels/style/other/SortableItem";
 import SortableWrapper from "@/components/map/panels/style/other/SortableWrapper";
 import { useTranslation } from "@/i18n/client";
-import { isValidHex } from "@/lib/utils/helpers";
-import type { ClassBreaks, ColorMap } from "@/lib/validations/layer";
-import { classBreaks } from "@/lib/validations/layer";
+import type { MarkerMap } from "@/lib/validations/layer";
 import type {
-  ColorItem,
-  ColorMapItem,
-  ColorScaleSelectorProps,
+  MarkerItem,
+  MarkerMapItem,
+  OrdinalMarkerSelectorProps,
   ValueItem,
-} from "@/types/map/color";
+} from "@/types/map/marker";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import {
@@ -21,8 +20,6 @@ import {
   Button,
   Chip,
   IconButton,
-  MenuItem,
-  Select,
   Stack,
   Tooltip,
   Typography,
@@ -32,116 +29,95 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import React from "react";
 import { v4 } from "uuid";
 
-type OrdinalColorScaleProps = ColorScaleSelectorProps & {
-  setIsClickAwayEnabled: (isClickAwayEnabled: boolean) => void;
-  onCancel?: () => void;
-};
-
-const OrdinalColorScale = (props: OrdinalColorScaleProps) => {
+const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
   const theme = useTheme();
-  const { colorSet, activeLayerField, activeLayerId } = props;
+  const { markerMaps, activeLayerField, activeLayerId } = props;
   const { t } = useTranslation("maps");
-  const [valueMaps, setValueMaps] = React.useState<ColorMapItem[]>(
-    colorSet.selectedColor.color_map?.map((colorMap: ColorMap) => {
+  const [valueMaps, setValueMaps] = React.useState<MarkerMapItem[]>(
+    markerMaps.map((markerMap) => {
       return {
         id: v4(),
-        value: colorMap[0],
-        color: colorMap[1],
+        value: markerMap[0],
+        marker: markerMap[1],
       };
     }) || [],
   );
 
-  const classBreakOptions = React.useMemo(() => {
-    return activeLayerField?.type === "number"
-      ? classBreaks.options
-      : [classBreaks.Enum.ordinal];
-  }, [activeLayerField]);
-
-  const [editingColorItem, setEditingColorItem] =
-    React.useState<ColorItem | null>(null);
+  const [editingMarkerItem, setEditingMarkerItem] =
+    React.useState<MarkerItem | null>(null);
   const [editingValues, setEditingValues] = React.useState<ValueItem | null>(
     null,
   );
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
-  function onInputHexChange(item: ColorItem) {
+  function onMarkerChange(item: MarkerItem) {
     const index = valueMaps.findIndex(
-      (color: ColorMapItem) => color.id === item.id,
+      (marker: MarkerMapItem) => marker.id === item.id,
     );
     if (index !== -1) {
-      const newColorMaps = [...valueMaps];
-      newColorMaps[index] = {
-        ...newColorMaps[index],
-        color: item.color,
+      const newMarkerMaps = [...valueMaps];
+      newMarkerMaps[index] = {
+        ...newMarkerMaps[index],
+        marker: item.marker,
       };
-      setValueMaps(newColorMaps);
+      setValueMaps(newMarkerMaps);
     }
+    setEditingMarkerItem(null);
   }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    const oldIndex = valueMaps.findIndex((color) => color.id === active.id);
-    const newIndex = valueMaps.findIndex((color) => color.id === over?.id);
+    const oldIndex = valueMaps.findIndex((marker) => marker.id === active.id);
+    const newIndex = valueMaps.findIndex((marker) => marker.id === over?.id);
     const newOrderArray = arrayMove(valueMaps, oldIndex, newIndex);
     setValueMaps(newOrderArray);
   }
 
-  function deleteStep(item: ColorItem) {
-    if (valueMaps.length === 2) {
+  function deleteStep(item: MarkerItem) {
+    if (valueMaps.length === 1) {
       return;
     }
-    const index = valueMaps.findIndex((color) => color.id === item.id);
+    const index = valueMaps.findIndex((marker) => marker.id === item.id);
     if (index !== -1) {
-      const newColorMaps = [...valueMaps];
-      newColorMaps.splice(index, 1);
-      setValueMaps(newColorMaps);
+      const newMarkerMaps = [...valueMaps];
+      newMarkerMaps.splice(index, 1);
+      setValueMaps(newMarkerMaps);
     }
   }
 
-  const handleColorPicker = (
+  const handleMarkerPicker = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
-    item: ColorItem,
+    item: MarkerItem,
   ) => {
-    setEditingColorItem(item);
+    setEditingMarkerItem(item);
     setAnchorEl(event.currentTarget);
   };
 
   const handleValueSelector = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
-    item: ColorMapItem,
+    item: MarkerMapItem,
   ) => {
     const valueItem = {
       id: item.id,
       values: item.value,
-    } as ValueItem;
+    };
     setEditingValues(valueItem);
     setAnchorEl(event.currentTarget);
   };
 
   const handleAddStep = () => {
-    const newColorMaps = [...valueMaps];
-    const lastColorMap = newColorMaps[newColorMaps.length - 1];
-    newColorMaps.push({
+    const newMarkerMaps = [...valueMaps];
+    const lastMarkerMap = newMarkerMaps[newMarkerMaps.length - 1];
+    newMarkerMaps.push({
       id: v4(),
       value: null,
-      color: lastColorMap.color,
+      marker: { name: "", url: "" },
     });
-    setValueMaps(newColorMaps);
+    setValueMaps(newMarkerMaps);
   };
 
-  const isValid = React.useMemo(() => {
-    let isValid = true;
-    valueMaps.forEach((item) => {
-      if (!isValidHex(item.color)) {
-        isValid = false;
-      }
-    });
-    return isValid;
-  }, [valueMaps]);
-
   const handleValueSelectorChange = (values: string[] | null) => {
-    console.log(values);
-    const updatedValues = [] as ColorMapItem[];
+    const updatedValues = [] as MarkerMapItem[];
     valueMaps.forEach((value) => {
       if (value.id === editingValues?.id) {
         const updatedSelectedValue = {
@@ -175,19 +151,19 @@ const OrdinalColorScale = (props: OrdinalColorScaleProps) => {
   }
 
   function onApply() {
-    const colorMaps = [] as ColorMap;
+    const markerMaps = [] as MarkerMap;
     valueMaps.forEach((item) => {
-      colorMaps.push([item.value, item.color]);
+      markerMaps.push([item.value, item.marker]);
     });
-    props.onCustomOrdinalApply && props.onCustomOrdinalApply(colorMaps);
+    props.onCustomOrdinalApply && props.onCustomOrdinalApply(markerMaps);
   }
 
   return (
     <>
-      <SingleColorPopper
-        editingItem={editingColorItem}
+      <MarkerPopper
+        editingItem={editingMarkerItem}
         anchorEl={anchorEl}
-        onInputHexChange={onInputHexChange}
+        onMarkerChange={onMarkerChange}
       />
       {editingValues && (
         <LayerValueSelectorPopper
@@ -204,71 +180,51 @@ const OrdinalColorScale = (props: OrdinalColorScaleProps) => {
         sx={{ py: 3 }}
         onClick={() => {
           setEditingValues(null);
-          setEditingColorItem(null);
+          setEditingMarkerItem(null);
         }}
       >
-        <Box sx={{ px: 3, pb: 3 }}>
-          <Select
-            fullWidth
-            size="small"
-            IconComponent={() => null}
-            value={props.selectedColorScaleMethod}
-            onOpen={() => {
-              props.setIsClickAwayEnabled && props.setIsClickAwayEnabled(false);
-            }}
-            MenuProps={{
-              TransitionProps: {
-                onExited: () => {
-                  props.setIsClickAwayEnabled &&
-                    props.setIsClickAwayEnabled(true);
-                },
-              },
-            }}
-            onChange={(e) => {
-              props.setSelectedColorScaleMethod(e.target.value as ClassBreaks);
-            }}
-          >
-            {classBreakOptions.map((option, index) => (
-              <MenuItem key={index} value={String(option)}>
-                {t(`${option}`)}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-
         <Box sx={{ maxHeight: "340px", overflowY: "auto" }}>
           <SortableWrapper handleDragEnd={handleDragEnd} items={valueMaps}>
-            {valueMaps?.map((item: ColorMapItem) => (
+            {valueMaps?.map((item: MarkerMapItem) => (
               <SortableItem
                 active={
-                  item.id === editingColorItem?.id ||
+                  item.id === editingMarkerItem?.id ||
                   item.id === editingValues?.id
                 }
                 key={item.id}
                 item={item}
-                label={item.color}
+                label={item.marker?.name || t("select_marker")}
                 picker={
                   <>
-                    <Box
+                    <IconButton
+                      size="small"
+                      color="secondary"
                       onClick={(e) => {
                         setEditingValues(null);
                         e.stopPropagation();
-                        const colorItem = {
+                        const markerItem = {
                           id: item.id,
-                          color: item.color,
-                        } as ColorItem;
-                        handleColorPicker(e, colorItem);
+                          marker: item.marker,
+                        } as MarkerItem;
+                        handleMarkerPicker(e, markerItem);
                       }}
-                      sx={{
-                        height: "20px",
-                        width: "32px",
-                        borderRadius: "4px",
-                        backgroundColor: item.color,
-                        "&:hover": {
-                          cursor: "pointer",
-                        },
-                      }}
-                    />
+                    >
+                      {!item.marker.name && (
+                        <Icon
+                          iconName={ICON_NAME.ADD_IMAGE}
+                          style={{
+                            fontSize: 19,
+                          }}
+                          htmlColor="inherit"
+                        />
+                      )}
+                      {item.marker.url && (
+                        <MaskedImageIcon
+                          imageUrl={`${item.marker.url}`}
+                          dimension="19px"
+                        />
+                      )}
+                    </IconButton>
                   </>
                 }
                 actions={
@@ -299,7 +255,7 @@ const OrdinalColorScale = (props: OrdinalColorScaleProps) => {
                     variant="body2"
                     fontWeight="bold"
                     onClick={(e) => {
-                      setEditingColorItem(null);
+                      setEditingMarkerItem(null);
                       e.stopPropagation();
                       handleValueSelector(e, item);
                     }}
@@ -364,14 +320,10 @@ const OrdinalColorScale = (props: OrdinalColorScaleProps) => {
             </Typography>
           </Button>
         </Box>
-        <DropdownFooter
-          isValid={isValid}
-          onCancel={onCancel}
-          onApply={onApply}
-        />
+        <DropdownFooter isValid={true} onCancel={onCancel} onApply={onApply} />
       </Box>
     </>
   );
 };
 
-export default OrdinalColorScale;
+export default OrdinalMarker;

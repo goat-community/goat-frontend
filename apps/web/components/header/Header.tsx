@@ -1,9 +1,8 @@
 "use client";
 
 import UserInfoMenu from "@/components/UserInfoMenu";
-import { Chip, useTheme, Typography, IconButton, Stack } from "@mui/material";
+import { Chip, useTheme, Typography, Stack } from "@mui/material";
 import Divider from "@mui/material/Divider";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { Toolbar } from "./Toolbar";
 import JobsPopper from "@/components/jobs/JobsPopper";
 import { parseISO, format } from "date-fns";
@@ -71,15 +70,6 @@ export default function Header(props: HeaderProps) {
             alignItems="center"
           >
             <JobsPopper />
-            <Divider orientation="vertical" flexItem />
-            <IconButton
-              size="small"
-              onClick={() => {
-                window.open("https://docs.goat.plan4better.de", "_blank");
-              }}
-            >
-              <Icon iconName={ICON_NAME.HELP} fontSize="inherit" />
-            </IconButton>
             <Divider orientation="vertical" flexItem />
             <UserInfoMenu />
           </Stack>

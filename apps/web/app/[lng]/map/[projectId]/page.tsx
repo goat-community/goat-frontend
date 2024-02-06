@@ -3,7 +3,13 @@
 import { MAPBOX_TOKEN } from "@/lib/constants";
 import { Box, debounce, useTheme } from "@mui/material";
 import "mapbox-gl/dist/mapbox-gl.css";
-import React, { useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type {
   MapGeoJSONFeature,
   MapLayerMouseEvent,
@@ -27,6 +33,8 @@ import { selectActiveBasemap } from "@/lib/store/map/selectors";
 import MapPopover from "@/components/map/controls/Popover";
 import { v4 } from "uuid";
 import HighlightLayer from "@/components/map/HighlighLayer";
+import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
+import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 
 const sidebarWidth = 52;
 const toolbarHeight = 52;
@@ -120,6 +128,31 @@ export default function MapPage({ params: { projectId } }) {
     }
   };
 
+  const handleMapLoad = useCallback(() => {
+    // get all icon layers and add icons to map using addOrUpdateMarkerImages method
+    if (mapRef.current) {
+      console.log("loading map");
+      projectLayers?.forEach((layer) => {
+        if (
+          layer.type === "feature" &&
+          layer.feature_layer_geometry_type === "point"
+        ) {
+          const pointFeatureProperties =
+            layer.properties as FeatureLayerPointProperties;
+          addOrUpdateMarkerImages(pointFeatureProperties, mapRef.current);
+        }
+      });
+    }
+  }, [projectLayers]);
+
+  useEffect(() => {
+    // icons are added to the style, so if the basestyle changes we have to reload icons to the style
+    // it takes forever for certain styles to load so we have to wait a bit. 
+    // Couldn't find an event that catches the basemap change
+    const debouncedHandleMapLoad = debounce(handleMapLoad, 200);
+    debouncedHandleMapLoad();
+  }, [activeBasemap.url, handleMapLoad]);
+
   const handlePopoverClose = () => {
     setPopupInfo(null);
     setHighlightedFeature(null);
@@ -130,7 +163,7 @@ export default function MapPage({ params: { projectId } }) {
     const features = e.features;
     if (mapRef.current) {
       // This is a hack to change the cursor to a pointer when hovering over a feature
-      // It's not recommended to change the state of a component without using a state
+      // It's not recommended to change the state of a component through internal methods
       // However, this is the only way to do it with the current version of react-map-gl
       // See https://github.com/visgl/react-map-gl/issues/579#issuecomment-1275163348
       const map = mapRef.current.getMap();
@@ -196,7 +229,6 @@ export default function MapPage({ params: { projectId } }) {
                 id="map"
                 ref={mapRef}
                 style={{ width: "100%", height: "100%" }}
-                onMoveEnd={updateViewState}
                 initialViewState={{
                   zoom: initialView?.zoom ?? 3,
                   latitude: initialView?.latitude ?? 48.13,
@@ -213,9 +245,11 @@ export default function MapPage({ params: { projectId } }) {
                 }
                 attributionControl={false}
                 mapboxAccessToken={MAPBOX_TOKEN}
+                interactiveLayerIds={interactiveLayerIds}
+                onMoveEnd={updateViewState}
                 onClick={handleMapClick}
                 onMouseMove={handleMapOverImmediate}
-                interactiveLayerIds={interactiveLayerIds}
+                onLoad={handleMapLoad}
               >
                 <HighlightLayer highlightFeature={highlightedFeature} />
                 <Markers />

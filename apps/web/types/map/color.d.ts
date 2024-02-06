@@ -1,6 +1,6 @@
 import type { RGBColor } from "@/lib/constants/color";
 import type { MouseEvent } from "react";
-import type { ColorRange } from "@/lib/validations/layer";
+import type { ColorMap, ColorRange } from "@/lib/validations/layer";
 import type { ClassBreaks } from "@/lib/validations/layer";
 import type { LayerFieldType } from "@/lib/validations/layer";
 
@@ -13,6 +13,7 @@ export type ColorScaleSelectorProps = {
   selectedColorScaleMethod?: ClassBreaks;
   classBreaksValues?: LayerClassBreaks;
   setSelectedColorScaleMethod: (colorScale: ClassBreaks) => void;
+  onCustomOrdinalApply?: (colorMaps: ColorMap) => void;
   colorSet: ColorSet;
   label?: string;
   tooltip?: string;
@@ -21,7 +22,6 @@ export type ColorScaleSelectorProps = {
   intervals: number;
 };
 
-export type ColorMap = [string[] | string | number | null, HexColor][];
 // Key is HexColor but as key we can use only string
 export type ColorLegends = { [key: string]: string };
 
@@ -41,6 +41,11 @@ export type ColorItem = {
   color: string;
 };
 
+export type ValueItem = {
+  id: string;
+  values: string[] | null;
+};
+
 export type ColorMapItem = ColorItem & {
-  value: string | string[];
+  value: string[] | null;
 };

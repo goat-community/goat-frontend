@@ -1,13 +1,15 @@
 import { useTranslation } from "@/i18n/client";
 import { Box, Button, Stack, Typography } from "@mui/material";
 
-type StyleDropdownFooterProps = {
+type DropdownFooterProps = {
   isValid: boolean;
-  onCancel: () => void;
-  onApply: () => void;
+  onCancel?: () => void;
+  onApply?: () => void;
+  cancelLabel?: string;
+  applyLabel?: string;
 };
 
-const StyleDropdownFooter = (props: StyleDropdownFooterProps) => {
+const DropdownFooter = (props: DropdownFooterProps) => {
   const { t } = useTranslation(["common", "map"]);
   return (
     <>
@@ -26,7 +28,7 @@ const StyleDropdownFooter = (props: StyleDropdownFooterProps) => {
             onClick={props.onCancel}
           >
             <Typography variant="body2" fontWeight="bold">
-              {t("common:cancel")}
+              {props.cancelLabel || t("common:cancel")}
             </Typography>
           </Button>
           <Button
@@ -38,7 +40,7 @@ const StyleDropdownFooter = (props: StyleDropdownFooterProps) => {
             onClick={props.onApply}
           >
             <Typography variant="body2" fontWeight="bold" color="inherit">
-              {t("common:apply")}
+              {props.applyLabel || t("common:apply")}
             </Typography>
           </Button>
         </Stack>
@@ -46,4 +48,4 @@ const StyleDropdownFooter = (props: StyleDropdownFooterProps) => {
     </>
   );
 };
-export default StyleDropdownFooter;
+export default DropdownFooter;

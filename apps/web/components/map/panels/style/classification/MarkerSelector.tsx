@@ -1,14 +1,13 @@
 import { ArrowPopper } from "@/components/ArrowPoper";
 import FormLabelHelper from "@/components/common/FormLabelHelper";
-import NumericColorScale from "@/components/map/panels/style/classification/NumericColorScale";
-import OrdinalColorScale from "@/components/map/panels/style/classification/OrdinalColorScale";
+import OrdinalMarker from "@/components/map/panels/style/classification/OrdinalMarker";
 import { useTranslation } from "@/i18n/client";
-import type { ColorScaleSelectorProps } from "@/types/map/color";
+import type { OrdinalMarkerSelectorProps } from "@/types/map/marker";
 import { Paper, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useState } from "react";
 
-const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
+const MarkerSelector = (props: OrdinalMarkerSelectorProps) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const { t } = useTranslation("maps");
@@ -20,6 +19,7 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
         open={open}
         placement="bottom"
         arrow={false}
+        disablePortal
         isClickAwayEnabled={isClickAwayEnabled}
         onClose={() => setOpen(false)}
         content={
@@ -31,26 +31,16 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
                 maxHeight: "500px",
               }}
             >
-              {props.activeLayerField.type === "number" &&
-                props.selectedColorScaleMethod !== "ordinal" && (
-                  <NumericColorScale
-                    {...props}
-                    onCancel={() => setOpen(false)}
-                    setIsClickAwayEnabled={setIsClickAwayEnabled}
-                  />
-                )}
-              {props.selectedColorScaleMethod === "ordinal" && (
-                <OrdinalColorScale
-                  {...props}
-                  onCancel={() => setOpen(false)}
-                  onCustomOrdinalApply={(colorMaps) => {
-                    props.onCustomOrdinalApply &&
-                      props.onCustomOrdinalApply(colorMaps);
-                    setOpen(false);
-                  }}
-                  setIsClickAwayEnabled={setIsClickAwayEnabled}
-                />
-              )}
+              <OrdinalMarker
+                {...props}
+                onCancel={() => setOpen(false)}
+                onCustomOrdinalApply={(colorMaps) => {
+                  props.onCustomOrdinalApply &&
+                    props.onCustomOrdinalApply(colorMaps);
+                  setOpen(false);
+                }}
+                setIsClickAwayEnabled={setIsClickAwayEnabled}
+              />
             </Paper>
           </>
         }
@@ -89,7 +79,7 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
             }}
           >
             <Typography variant="body2" fontWeight="bold">
-              {t(`${props.selectedColorScaleMethod}`)}
+              {t(`ordinal_marker`)}
             </Typography>
           </Stack>
         </Stack>
@@ -98,4 +88,4 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
   );
 };
 
-export default ColorScaleSelector;
+export default MarkerSelector;

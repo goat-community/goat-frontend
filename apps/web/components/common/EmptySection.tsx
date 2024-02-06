@@ -17,6 +17,7 @@ const EmptySection: React.FC<Props> = ({ icon, label }) => {
       spacing={4}
       sx={{
         mt: 10,
+        textAlign: "center",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

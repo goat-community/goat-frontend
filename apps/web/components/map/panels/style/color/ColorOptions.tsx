@@ -1,6 +1,7 @@
 import { useTranslation } from "@/i18n/client";
 import ColorSelector from "@/components/map/panels/style/color/ColorSelector";
 import type {
+  ColorRange,
   FeatureLayerProperties,
   LayerFieldType,
 } from "@/lib/validations/layer";
@@ -106,6 +107,18 @@ const ColorOptions = ({
                 activeLayerField={
                   layerStyle[`${type}_field`] || { name: "", type: "string" }
                 }
+                onCustomOrdinalApply={(colorMaps) => {
+                  const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
+                  const colorRange = newStyle[`${type}_range`] as ColorRange;
+                  colorRange.name = "Custom";
+                  colorRange.category = "Custom";
+                  colorRange.color_map = colorMaps;
+                  // We have to overwrite the color range colors with the new ones from the colorMaps.
+                  // This are considered custom colors.
+                  colorRange.colors = colorMaps.map((colorMap) => colorMap[1]);
+                  colorRange.type = "custom";
+                  onStyleChange && onStyleChange(newStyle);
+                }}
                 intervals={layerStyle?.[`${type}_range`]?.colors.length}
               />
             )}

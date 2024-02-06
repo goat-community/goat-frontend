@@ -88,11 +88,12 @@ const ColorSelector = (props: ColorSelectorProps) => {
           <Stack
             onClick={() => setOpen(!open)}
             direction="row"
-            className="MuiInputBase-colorPrimary"
+            alignItems="center"
             sx={{
               borderRadius: theme.spacing(1.2),
               border: "1px solid",
               outline: "2px solid transparent",
+              minHeight: "40px",
               borderColor:
                 theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
               ...(open && {

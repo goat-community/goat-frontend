@@ -17,7 +17,7 @@ const SizeOptions = ({
   selectedField,
   layerFields,
 }: {
-  type: "stroke_width" | "radius";
+  type: "stroke_width" | "radius" | "marker_size";
   layerStyle?: FeatureLayerProperties;
   active: boolean;
   collapsed?: boolean;

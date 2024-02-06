@@ -61,6 +61,7 @@ import DatasetExplorerModal from "@/components/modals/DatasetExplorer";
 import { DragHandle } from "@/components/common/DragHandle";
 import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import type { PanelProps } from "@/types/map/sidebar";
+import EmptySection from "@/components/common/EmptySection";
 
 type SortableLayerTileProps = {
   id: number;
@@ -583,6 +584,12 @@ const LayerPanel = ({ projectId }: PanelProps) => {
               </DndContext>
             )}
           </Box>
+          {sortedLayers?.length === 0 && (
+            <EmptySection
+              label={t("no_layers_added")}
+              icon={ICON_NAME.LAYERS}
+            />
+          )}
         </>
       }
       action={<AddLayerSection projectId={projectId} />}

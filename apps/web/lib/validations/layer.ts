@@ -8,6 +8,7 @@ import {
   featureLayerType,
   getContentQueryParamsSchema,
   layerType,
+  paginatedSchema,
 } from "@/lib/validations/common";
 import { DEFAULT_COLOR, DEFAULT_COLOR_RANGE } from "@/lib/constants/color";
 
@@ -19,7 +20,7 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
 const HexColor = z.string();
 const ColorMap = z.array(
   z.tuple([
-    z.union([z.array(z.string()), z.string(), z.number(), z.null()]),
+    z.union([z.array(z.string()), z.null()]),
     HexColor,
   ]),
 );
@@ -119,8 +120,26 @@ export const radiusSchema = z.object({
   radius_scale: sizeScale.optional().default("linear"),
 });
 
+export const marker = z.object({
+  name: z.string(),
+  url: z.string(),
+});
+
+const MarkerMap = z.array(
+  z.tuple([
+    z.union([z.array(z.string()), z.null()]),
+    marker,
+  ]),
+);
+
 export const markerSchema = z.object({
   custom_marker: z.boolean().default(false),
+  marker: marker.optional(),
+  marker_field: layerFieldType.optional(),
+  marker_mapping: MarkerMap.optional(),
+  marker_size: z.number().min(0).max(100).default(10),
+  marker_size_range: z.array(z.number().min(0).max(500)).default([0, 10]),
+  marker_size_field: layerFieldType.optional(),
 });
 
 export const featureLayerBasePropertiesSchema = z
@@ -170,11 +189,15 @@ export const layerSchema = layerMetadataSchema.extend({
   created_at: z.string(),
 });
 
-export const postDatasetSchema = layerSchema.partial()
+export const postDatasetSchema = layerSchema.partial();
 
 export const getLayersQueryParamsSchema = getContentQueryParamsSchema.extend({
   layer_type: layerType.array().optional(),
   feature_layer_type: featureLayerType.optional(),
+});
+
+export const getLayerUniqueValuesQueryParamsSchema = paginatedSchema.extend({
+  query: z.string().optional(),
 });
 
 export const createLayerBaseSchema = layerMetadataSchema.extend({
@@ -240,6 +263,7 @@ export const layerTypesArray = Object.values(layerType.Values);
 export const featureLayerTypesArray = Object.values(featureLayerType.Values);
 
 export type ColorRange = z.infer<typeof ColorRange>;
+export type ColorMap = z.infer<typeof ColorMap>;
 export type Layer = z.infer<typeof layerSchema>;
 export type PostDataset = z.infer<typeof postDatasetSchema>;
 export type FeatureLayerProperties = z.infer<typeof featureLayerProperties>;
@@ -257,6 +281,8 @@ export type LayerUniqueValues = z.infer<typeof uniqueValuesSchema>;
 export type LayerUniqueValuesPaginated = z.infer<
   typeof uniqueValuesResponseSchema
 >;
+export type Marker = z.infer<typeof marker>;
+export type MarkerMap = z.infer<typeof MarkerMap>;
 export type LayerType = z.infer<typeof layerType>;
 export type LayerQueryables = z.infer<typeof layerQueryables>;
 export type ClassBreaks = z.infer<typeof classBreaks>;
@@ -265,6 +291,10 @@ export type LayerFieldType = z.infer<typeof layerFieldType>;
 export type LayerMetadata = z.infer<typeof layerMetadataSchema>;
 export type FeatureLayerType = z.infer<typeof featureLayerType>;
 export type GetLayersQueryParams = z.infer<typeof getLayersQueryParamsSchema>;
+export type GetLayerUniqueValuesQueryParams = z.infer<
+  typeof getLayerUniqueValuesQueryParamsSchema
+>;
+
 export type CreateFeatureLayer = z.infer<typeof createFeatureLayerSchema>;
 export type CreateNewScenarioLayer = z.infer<
   typeof createNewScenarioLayerSchema

@@ -150,7 +150,7 @@ function LegendRow({
               y1="10"
               x2="20"
               y2="10"
-              stroke={fillColor}
+              stroke={strokeColor}
               strokeWidth="2"
             />
           )}

@@ -5,6 +5,7 @@ import type { ProjectLayer } from "@/lib/validations/project";
 import { GEOAPI_BASE_URL } from "@/lib/constants";
 import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
 import { transformToMapboxLayerStyleSpec } from "@/lib/transformers/layer";
+import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 
 interface LayersProps {
   projectId: string;
@@ -12,6 +13,25 @@ interface LayersProps {
 
 const Layers = (props: LayersProps) => {
   const sortedLayers = useSortedLayers(props.projectId);
+
+  const getLayerKey = (layer: ProjectLayer) => {
+    let id = layer.id.toString();
+    if (layer.type === "feature") {
+      const geometry_type = layer.feature_layer_geometry_type;
+      if (geometry_type === "point") {
+        const pointFeature = layer.properties as FeatureLayerPointProperties;
+        const renderAs =
+          pointFeature.custom_marker &&
+          (pointFeature.marker?.name || pointFeature.marker_field)
+            ? "marker"
+            : "circle";
+        id = `${id}-${renderAs}`;
+      }
+    }
+
+    return id;
+  };
+
   return (
     <>
       {sortedLayers?.length
@@ -37,6 +57,7 @@ const Layers = (props: LayersProps) => {
                     ]}
                   >
                     <MapLayer
+                      key={getLayerKey(layer)}
                       id={layer.id.toString()}
                       {...(transformToMapboxLayerStyleSpec(
                         layer,

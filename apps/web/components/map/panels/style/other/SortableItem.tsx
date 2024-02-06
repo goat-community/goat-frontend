@@ -1,5 +1,5 @@
 import { useSortable } from "@dnd-kit/sortable";
-import { Grid, MenuItem, Stack } from "@mui/material";
+import { Grid, MenuItem, Stack, useTheme } from "@mui/material";
 import { CSS } from "@dnd-kit/utilities";
 import { DragHandle } from "@/components/common/DragHandle";
 import { DragIndicator } from "@mui/icons-material";
@@ -9,7 +9,7 @@ type SortableItemProps = {
   item: any;
   active?: boolean;
   label: string;
-  colorLegend?: React.ReactNode;
+  picker?: React.ReactNode;
   children?: React.ReactNode;
   actions?: React.ReactNode;
 };
@@ -17,6 +17,7 @@ type SortableItemProps = {
 export function SortableItem(props: SortableItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props.item.id });
+  const theme = useTheme();
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: `${transition}, border-color 0.2s ease-in-out`,
@@ -31,6 +32,9 @@ export function SortableItem(props: SortableItemProps) {
       disableRipple
       sx={{
         pr: 0,
+        transition: theme.transitions.create(["opacity"], {
+          duration: theme.transitions.duration.standard,
+        }),
         py: 1,
         ":hover": {
           "& div, & button": {
@@ -46,7 +50,7 @@ export function SortableItem(props: SortableItemProps) {
           </DragHandle>
         </Grid>
         <Grid item xs={2} zeroMinWidth>
-          {props.colorLegend}
+          {props.picker}
         </Grid>
         <Grid item xs={6} zeroMinWidth>
           {props.children}

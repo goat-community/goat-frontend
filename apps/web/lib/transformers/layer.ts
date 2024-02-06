@@ -1,3 +1,4 @@
+import { MARKER_IMAGE_PREFIX } from "@/lib/transformers/marker";
 import { rgbToHex } from "@/lib/utils/helpers";
 import type {
   FeatureLayerLineProperties,
@@ -67,10 +68,53 @@ export function getMapboxStyleColor(
   return config;
 }
 
+export function getMapboxStyleMarker(data: ProjectLayer) {
+  const properties = data.properties as FeatureLayerPointProperties;
+  const markerMaps = properties.marker_mapping;
+  const fieldName = properties.marker_field?.name;
+  const marker = `${MARKER_IMAGE_PREFIX}${properties.marker?.name}`;
+  if (markerMaps && fieldName) {
+    const valuesAndIcons = [] as (string | number)[];
+    markerMaps.forEach((markerMap) => {
+      const markerMapValue = markerMap[0];
+      const markerMapIcon = markerMap[1];
+      if (!markerMapValue || !markerMapIcon) return;
+      if (Array.isArray(markerMapValue)) {
+        markerMapValue.forEach((value: string) => {
+          valuesAndIcons.push(value);
+          valuesAndIcons.push(`${MARKER_IMAGE_PREFIX}${markerMapIcon.name}`);
+        });
+      } else {
+        valuesAndIcons.push(markerMapValue);
+        valuesAndIcons.push(`${MARKER_IMAGE_PREFIX}${markerMapIcon.name}`);
+      }
+    });
+
+    return ["match", ["get", fieldName], ...valuesAndIcons, marker];
+  }
+
+  return marker;
+}
+
 export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
   const type = data.feature_layer_geometry_type;
   if (type === "point") {
     const pointProperties = data.properties as FeatureLayerPointProperties;
+    if (pointProperties.custom_marker) {
+      return {
+        type: "symbol",
+        layout: {
+          visibility: data.properties.visibility ? "visible" : "none",
+          "icon-image": getMapboxStyleMarker(data),
+          "icon-size": 1, // This is a scale factor not in px
+        },
+        paint: {
+          "icon-opacity": pointProperties.filled ? pointProperties.opacity : 1,
+          "icon-color": getMapboxStyleColor(data, "color"),
+        },
+      };
+    }
+
     return {
       type: "circle",
       layout: {

@@ -5,6 +5,7 @@ import type {
   ClassBreaks,
   CreateFeatureLayer,
   DatasetDownloadRequest,
+  GetLayerUniqueValuesQueryParams,
   Layer,
   LayerClassBreaks,
   LayerPaginated,
@@ -177,7 +178,7 @@ export const useUniqueValues = (
   column: string,
   page?: number,
 ) => {
-  const { data, isLoading, error } = useSWR<Record<string, number>>(
+  const { data, isLoading, error } = useSWR<LayerUniqueValuesPaginated>(
     [
       `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${
         page ? `?page=${page}` : ""
@@ -186,6 +187,22 @@ export const useUniqueValues = (
     fetcher,
   );
   return { data, isLoading, error };
+};
+
+export const useLayerUniqueValues = (
+  layerId: string,
+  column: string,
+  queryParams?: GetLayerUniqueValuesQueryParams,
+) => {
+  const { data, isLoading, error, mutate, isValidating } =
+    useSWR<LayerUniqueValuesPaginated>(
+      [
+        `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}`,
+        queryParams,
+      ],
+      fetcher,
+    );
+  return { data, isLoading, error, mutate, isValidating };
 };
 
 export const downloadDataset = async (payload: DatasetDownloadRequest) => {

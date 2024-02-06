@@ -80,7 +80,7 @@ import {
   faMagnifyingGlassPlus,
   faMagnifyingGlassMinus,
   faLink,
-  faRefresh
+  faRefresh,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -100,6 +100,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SvgIcon } from "@mui/material";
 import type { SvgIconProps } from "@mui/material";
+import { addImageIcon } from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
   // Solid icons
@@ -173,7 +174,7 @@ export enum ICON_NAME {
   CREDIT_CARD = "credit-card",
   RULES_COMBINED = "rules-combined",
   CROWN = "crown",
-  BULLSEYE="bullsey",
+  BULLSEYE = "bullsey",
   COPY = "copy",
   PEDELEC = "pedelec",
   BICYCLE = "bicycle",
@@ -196,6 +197,8 @@ export enum ICON_NAME {
   BITBUCKET = "bitbucket",
   PAYPAL = "paypal",
   REVERSE = "reverse",
+  // Custom icons
+  ADD_IMAGE = "add-image",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -293,6 +296,8 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.INSTAGRAM]: faInstagram,
   [ICON_NAME.BITBUCKET]: faBitbucket,
   [ICON_NAME.PAYPAL]: faPaypal,
+  // Custom icons
+  [ICON_NAME.ADD_IMAGE]: addImageIcon,
 };
 
 interface BrandColors {

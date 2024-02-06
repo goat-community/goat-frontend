@@ -2,6 +2,9 @@
   "last_saved": "Last Saved",
   "search": "Search",
   "close": "Close",
+  "clear": "Clear",
+  "clear_all": "Clear all",
+  "done": "Done",
   "help": "Help",
   "cancel": "Cancel",
   "controls": {
@@ -208,6 +211,11 @@
   "color_scale": "Color scale",
   "quantile": "Quantile",
   "custom_breaks": "Custom Breaks",
+  "single_marker": "Single Marker",
+  "ordinal_marker": "Ordinal Markers",
+  "marker_based_on": "Marker based on",
+  "marker_based_on_desc": "Assign a marker on a field value",
+  "select_marker": "Select Marker",
   "standard_deviation": "Standard Deviation",
   "equal_interval": "Equal Interval",
   "heads_and_tails": "Heads and Tails",
@@ -248,5 +256,7 @@
   "move": "Move",
   "zoom_level": "Zoom level",
   "zoom_level_legend_tooltip": "Zoom levels at which the layer will be visible",
-  "no_active_layers": "No active layers"
+  "no_active_layers": "No active layers", 
+  "no_values_found": "No values found",
+  "no_layers_added": "No layers added"
 }

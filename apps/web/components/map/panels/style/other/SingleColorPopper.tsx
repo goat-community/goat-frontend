@@ -13,9 +13,8 @@ export function SingleColorPopper(props: {
       open={props.editingItem !== null}
       anchorEl={props.anchorEl}
       transition
-      sx={{ zIndex: 1200 }}
+      sx={{ zIndex: 2000, maxWidth: "240px"}}
       placement="left"
-      disablePortal
       modifiers={[
         {
           name: "offset",
