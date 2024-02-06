@@ -82,7 +82,7 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Fields to match
+        {t("panels.tools.join.set_field_to_match")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>
@@ -97,7 +97,7 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
             </Typography>
             <Box sx={{ width: "100%", mt: 2 }}>
               <LayerFieldSelector
-                label="Target Field"
+                label={t("panels.tools.join.target_field")}
                 selectedField={
                   firstLayerKeys.keys.filter(
                     (key) => key.name === watch.target_field,
@@ -130,7 +130,7 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
             </Box>
             <Box>
               <LayerFieldSelector
-                label="Join Field"
+                label={t("panels.tools.join.join_field")}
                 selectedField={
                   secondLayerKeys.keys.filter(
                     (key) => key.name === watch.join_field,

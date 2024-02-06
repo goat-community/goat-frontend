@@ -3,27 +3,23 @@ import * as z from "zod";
 const StartingPoint = z
   .object({
     latitude: z.string().array(),
-    // .nonempty("Starting point should not be empty"),
-    longitude: z
-      .string()
-      .array()
-      // .nonempty("Starting point should not be empty"),
+    longitude: z.string().array(),
   })
   .or(
     z.object({
-      layer_id: z.string().nonempty("Starting point should not be empty"),
+      layer_project_id: z.number().min(1),
     }),
   );
 
-const TraveltimeCost = z.object({
-  max_traveltime: z.number().min(1).max(45),
-  traveltime_step: z
-    .number(),
-    // .refine((value) => value !== 0 && value % 50 === 0, {
-    //   message: "The steps must be a multiple of 50",
-    // }),
-  speed: z.number().min(1).max(25).optional(),
-});
+const TraveltimeCost = z
+  .object({
+    max_traveltime: z.number().min(1).max(45),
+    traveltime_step: z.number(),
+    speed: z.number().min(1).max(25).optional(),
+  })
+  .refine((schema) => schema.traveltime_step <= schema.max_traveltime, {
+    message: "The steps must be less than or equal to max_distance",
+  });
 
 const DistanceCost = z
 
@@ -35,23 +31,18 @@ const DistanceCost = z
       .multipleOf(50, { message: "Distance should be a multiple of 50." }),
     distance_step: z
       .number()
-      .refine((value) => value !== 0 && value % 50 === 0, {
-        message: "Steps must be a multiple of 50",
-      }),
+      .min(50, { message: "Steps should be bigger than 50." })
+      .multipleOf(50, { message: "Steps must be a multiple of 50." }),
     speed: z.number().optional(),
   })
-  // .transform((data) => {
-  //   if (data.distance_step > data.max_distance) {
-  //     throw new Error("distance_step must be less than or equal to max_distance");
-  //   }
-  //   return data;
-  // })
   .refine((schema) => schema.distance_step <= schema.max_distance, {
     message: "The steps must be less than or equal to max_distance",
   });
 
 export const IsochroneBaseSchema = z.object({
   starting_points: StartingPoint,
+  isochrone_type: z.string(),
+  polygon_difference: z.boolean(),
   routing_type: z
     .string()
     .nonempty("Routing should not be empty")
@@ -62,7 +53,6 @@ export const IsochroneBaseSchema = z.object({
         access_mode: z.string(),
       }),
     ),
-  // travel_cost: TraveltimeCost.or(DistanceCost),
   travel_cost: z.union([TraveltimeCost, DistanceCost]),
   time_window: z
     .object({

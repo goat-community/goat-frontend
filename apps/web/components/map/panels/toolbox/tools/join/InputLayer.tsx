@@ -67,10 +67,10 @@ const InputLayer = (props: PickLayerProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Pick Layers
+        {t("panels.tools.join.pick_join_layer")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
-        <Box sx={{height: "100%"}}>
+        <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
         <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
@@ -88,11 +88,9 @@ const InputLayer = (props: PickLayerProps) => {
                 {t("panels.tools.join.target_layer_text")}
               </Typography>
               <FormControl fullWidth size="small">
-                <InputLabel>
-                  Target Layer
-                </InputLabel>
+                <InputLabel>{t("panels.tools.join.target_layer")}</InputLabel>
                 <Select
-                  label="Target Layer"
+                  label={t("panels.tools.join.target_layer")}
                   error={!!errors.target_layer_project_id}
                   value={
                     watch.target_layer_project_id
@@ -116,17 +114,11 @@ const InputLayer = (props: PickLayerProps) => {
                 )}
               </FormControl>
             </Box>
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap={theme.spacing(2)}
-            >
+            <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
               <FormControl fullWidth size="small">
-                <InputLabel>
-                  Join Layer
-                </InputLabel>
+                <InputLabel>{t("panels.tools.join.join_layer")}</InputLabel>
                 <Select
-                  label="Join Layer"
+                  label={t("panels.tools.join.join_layer")}
                   error={!!errors.join_layer_project_id}
                   value={
                     watch.join_layer_project_id

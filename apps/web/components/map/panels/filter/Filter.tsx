@@ -14,7 +14,11 @@ import {
   FormControl,
   InputLabel,
   Select,
+  ListItemIcon,
   MenuItem,
+  MenuList,
+  Menu,
+  ClickAwayListener,
 } from "@mui/material";
 import { v4 } from "uuid";
 import Expression from "@/components/map/panels/filter/Expression";
@@ -22,9 +26,10 @@ import { createTheCQLBasedOnExpression } from "@/lib/utils/filtering/filtering_c
 import { updateProjectLayer } from "@/lib/api/projects";
 import { parseCQLQueryToObject } from "@/lib/utils/filtering/cql_to_expression";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
+import { useFilterQueries } from "@/hooks/map/LayerPanelHooks";
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 import type { Expression as ExpressionType } from "@/lib/validations/filter";
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import type { SelectChangeEvent } from "@mui/material";
 import type { ProjectLayer } from "@/lib/validations/project";
 
@@ -38,14 +43,24 @@ const FilterPanel = (props: FilterProps) => {
   const [expressions, setExpressions] = useState<ExpressionType[] | undefined>(
     undefined,
   );
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [logicalOperator, setLogicalOperator] = useState<"and" | "or">("and");
 
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const dispatch = useAppDispatch();
-  const { activeLayer, mutate } = useActiveLayer(projectId as string);
+  const { activeLayer, mutate } = useFilterQueries(projectId as string);
   const { t } = useTranslation("maps");
   const theme = useTheme();
 
-  function createExpression() {
+  function createExpression(type: "spatial" | "regular") {
     if (expressions) {
       setExpressions([
         ...expressions,
@@ -54,6 +69,7 @@ const FilterPanel = (props: FilterProps) => {
           attribute: "",
           expression: "",
           value: "",
+          type,
         },
       ]);
     }
@@ -83,7 +99,6 @@ const FilterPanel = (props: FilterProps) => {
   };
 
   const duplicateExpression = (expression: ExpressionType) => {
-    // const newExpressions = expressions?.filter((expr)=>expr.id !== expression.id)
     if (expressions) {
       setExpressions([
         ...expressions,
@@ -92,6 +107,7 @@ const FilterPanel = (props: FilterProps) => {
           attribute: expression.attribute,
           value: expression.value,
           id: v4(),
+          type: expression.type,
         },
       ]);
     }
@@ -140,16 +156,14 @@ const FilterPanel = (props: FilterProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expressions, logicalOperator]);
 
-  useEffect(() => {
-    // setExpressions(undefined);
+  function handleLayerChange() {
     const existingExpressions = parseCQLQueryToObject(
       activeLayer && "query" in activeLayer
         ? (activeLayer.query as { op: string; args: unknown[] })
         : undefined,
     );
     setExpressions(existingExpressions);
-    // updateExpressions();
-  }, [activeLayer]);
+  }
 
   return (
     <Container
@@ -157,7 +171,10 @@ const FilterPanel = (props: FilterProps) => {
       close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <>
-          <ProjectLayerDropdown projectId={projectId} />
+          <ProjectLayerDropdown
+            projectId={projectId}
+            onChange={handleLayerChange}
+          />
           {expressions && expressions.length > 1 ? (
             <FormControl fullWidth>
               <InputLabel>Logical Operator</InputLabel>
@@ -239,9 +256,66 @@ const FilterPanel = (props: FilterProps) => {
               marginTop: theme.spacing(5),
             }}
           >
-            <Button variant="outlined" fullWidth onClick={createExpression}>
-              Create Expression
+            <Button
+              onClick={handleClick}
+              fullWidth
+              startIcon={
+                <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />
+              }
+            >
+              <Typography variant="body2" fontWeight="bold" color="inherit">
+                Create Expression
+              </Typography>
             </Button>
+            <Menu
+              anchorEl={anchorEl}
+              sx={{
+                "& .MuiPaper-root": {
+                  boxShadow: "0px 0px 10px 0px rgba(58, 53, 65, 0.1)",
+                },
+              }}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
+              transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+              open={open}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+                sx: { width: anchorEl && anchorEl.offsetWidth - 10, p: 0 },
+              }}
+              onClose={handleClose}
+            >
+              <Box>
+                <ClickAwayListener onClickAway={handleClose}>
+                  <MenuList>
+                    <MenuItem
+                      onClick={() =>
+                        createExpression("regular")
+                      }
+                    >
+                      <ListItemIcon>
+                        <Icon
+                          iconName={ICON_NAME.EDITPEN}
+                          style={{ fontSize: "15px" }}
+                        />
+                      </ListItemIcon>
+                      <Typography variant="body2">Logical expression</Typography>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() =>
+                        createExpression("spatial")
+                      }
+                    >
+                      <ListItemIcon>
+                        <Icon
+                          iconName={ICON_NAME.MOUNTAIN}
+                          style={{ fontSize: "15px" }}
+                        />
+                      </ListItemIcon>
+                      <Typography variant="body2">Spatial expression</Typography>
+                    </MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Box>
+            </Menu>
             <Button
               variant="outlined"
               fullWidth
@@ -254,7 +328,6 @@ const FilterPanel = (props: FilterProps) => {
           </Box>
         </>
       }
-      // disablePadding
     />
   );
 };

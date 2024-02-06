@@ -15,6 +15,7 @@ import {
   faMap,
   faMapLocationDot,
   faClose,
+  faClone,
   faHouse,
   faFolder,
   faGears,
@@ -81,6 +82,9 @@ import {
   faMagnifyingGlassMinus,
   faLink,
   faRefresh,
+  faMountain,
+  faStreetView,
+  faDrawPolygon
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -184,6 +188,10 @@ export enum ICON_NAME {
   ZOOM_OUT = "zoom-out",
   LINK = "link",
   REFRESH = "refresh",
+  DRAW_POLYGON = "draw-polygon",
+  CLONE = "clone",
+  MOUNTAIN = "mountain",
+  ACCESSIBILITY = "accessibility",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -284,6 +292,10 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.ZOOM_OUT]: faMagnifyingGlassMinus,
   [ICON_NAME.LINK]: faLink,
   [ICON_NAME.REFRESH]: faRefresh,
+  [ICON_NAME.MOUNTAIN]: faMountain,
+  [ICON_NAME.ACCESSIBILITY]: faStreetView,
+  [ICON_NAME.DRAW_POLYGON]: faDrawPolygon,
+  [ICON_NAME.CLONE]: faClone,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

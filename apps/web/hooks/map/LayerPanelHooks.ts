@@ -104,6 +104,16 @@ export const useActiveLayer = (projectId: string) => {
   return { activeLayer, mutate };
 };
 
+export const useFilterQueries = (projectId: string) => {
+  const { layers: projectLayers, mutate } = useProjectLayers(projectId);
+  const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
+  const activeLayer = projectLayers?.find(
+    (layer) => layer.id === activeLayerId,
+  );
+
+  return { activeLayer, mutate };
+};
+
 export const useSortedLayers = (projectId: string) => {
   const { layers: projectLayers } = useProjectLayers(projectId);
   const { project } = useProject(projectId);

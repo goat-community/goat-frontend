@@ -8,6 +8,7 @@ import InputLayer from "@/components/map/panels/toolbox/tools/aggregate/InputLay
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AggregateBaseSchema } from "@/lib/validations/tools";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import { toast } from "react-toastify";
 
 import type { PostAggregate } from "@/lib/validations/tools";
 
@@ -18,14 +19,13 @@ interface AggregateProps {
 const Aggregate = (props: AggregateProps) => {
   const { projectId } = props;
 
-  // const { t } = useTranslation("maps");
-
   const {
     register,
     reset,
     watch,
     getValues,
     setValue,
+    trigger,
     formState: { errors, isValid },
   } = useForm<PostAggregate>({
     mode: "onChange",
@@ -59,7 +59,18 @@ const Aggregate = (props: AggregateProps) => {
     } else {
       delete aggregateBodyRequest.h3_resolution;
     }
-    sendAggregateFeatureRequest(getValues(), projectId);
+
+    toast.info("Aggregate Feature tool is running");
+    sendAggregateFeatureRequest(getValues(), projectId)
+      .then((data) =>
+        data.ok
+          ? toast.success("Aggregate Feature tool is successful")
+          : toast.error("Aggregate Feature tool failed"),
+      )
+      .catch(() => {
+        toast.error("Aggregate Feature tool failed");
+      });
+    reset();
   };
 
   return (
@@ -94,70 +105,23 @@ const Aggregate = (props: AggregateProps) => {
           setValue={setValue}
           watch={getCurrentValues}
           errors={errors}
+          trigger={trigger}
         />
       </Box>
       <ToolboxActionButtons
         runFunction={handleRun}
-        runDisabled={
-          !isValid
-        }
+        runDisabled={!isValid}
         resetFunction={handleReset}
         resetDisabled={
           !getCurrentValues.aggregation_layer_project_id &&
-              !getCurrentValues.area_type &&
-              !getCurrentValues.column_statistics.operation &&
-              !getCurrentValues.column_statistics.field &&
-              !getCurrentValues.h3_resolution &&
-              !getCurrentValues.source_group_by_field.length &&
-              !getCurrentValues.source_layer_project_id
+          !getCurrentValues.area_type &&
+          !getCurrentValues.column_statistics.operation &&
+          !getCurrentValues.column_statistics.field &&
+          !getCurrentValues.h3_resolution &&
+          !getCurrentValues.source_group_by_field.length &&
+          !getCurrentValues.source_layer_project_id
         }
       />
-      {/* <Box
-        sx={{
-          position: "relative",
-          maxHeight: "5%",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            gap: theme.spacing(2),
-            alignItems: "center",
-            position: "absolute",
-            bottom: "-25px",
-            left: "-8px",
-            width: "calc(100% + 16px)",
-            padding: "16px",
-            background: "white",
-            boxShadow: "0px -5px 10px -5px rgba(58, 53, 65, 0.1)",
-          }}
-        >
-          <Button
-            color="error"
-            variant="outlined"
-            sx={{ flexGrow: "1" }}
-            onClick={handleReset}
-            disabled={
-              !getCurrentValues.aggregation_layer_project_id &&
-              !getCurrentValues.area_type &&
-              !getCurrentValues.column_statistics.operation &&
-              !getCurrentValues.column_statistics.field &&
-              !getCurrentValues.h3_resolution &&
-              !getCurrentValues.source_group_by_field.length &&
-              !getCurrentValues.source_layer_project_id
-            }
-          >
-            {t("panels.tools.reset")}
-          </Button>
-          <Button
-            sx={{ flexGrow: "1" }}
-            disabled={!isValid}
-            onClick={handleRun}
-          >
-            {t("panels.tools.run")}
-          </Button>
-        </Box>
-      </Box> */}
     </Box>
   );
 };

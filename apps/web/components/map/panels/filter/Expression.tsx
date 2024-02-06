@@ -70,8 +70,11 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   );
 
   useEffect(() => {
-    if (data && Object.keys(data) !== statisticsData) {
-      setStatisticsData([...statisticsData, ...Object.keys(data)]);
+    if (data) {
+      setStatisticsData([
+        ...statisticsData,
+        ...data.items.map((val) => val.value),
+      ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
@@ -100,7 +103,14 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           expression.expression === "is" &&
           expression.attribute === "Bounding Box"
         ) {
-          return <BoundingBoxInput bounds={expressionValue as string} />;
+          return (
+            <BoundingBoxInput
+              bounds={expression.value as string}
+              onChange={(value: string) =>
+                debounceEffect(expression, "value", value)
+              }
+            />
+          );
         }
         if (attributeType === "string") {
           return (
@@ -234,6 +244,13 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       .join("")}`,
   );
 
+  const layerSpatialAttributes = [
+    {
+      name: "Bounding Box",
+      type: "number",
+    },
+  ];
+
   layerAttributes.keys.push({
     name: "Bounding Box",
     type: "number",
@@ -264,6 +281,13 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         },${map.getBounds().getNorthEast().toArray()[0]},${
           map.getBounds().getNorthEast().toArray()[1]
         }`;
+        setExpressionValue(
+          `${map.getBounds().getSouthWest().toArray()[0]},${
+            map.getBounds().getSouthWest().toArray()[1]
+          },${map.getBounds().getNorthEast().toArray()[0]},${
+            map.getBounds().getNorthEast().toArray()[1]
+          }`,
+        );
         modifyExpression(expression, "expression", "is");
         expression.expression = "is";
         debounceEffect(
@@ -300,11 +324,20 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       >
         <Typography
           fontWeight="bold"
-          color={theme.palette.secondary.dark}
+          color={theme.palette.text.secondary}
           sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}
         >
-          <Icon iconName={ICON_NAME.EDITPEN} sx={{ fontSize: "18px" }} />
-          {t("panels.filter.expression")}
+          <Icon
+            iconName={
+              expression.type === "regular"
+                ? ICON_NAME.EDITPEN
+                : ICON_NAME.MOUNTAIN
+            }
+            sx={{ fontSize: "18px" }}
+          />
+          {expression.type === "regular"
+            ? "Logical Expression"
+            : "Spatial Expression"}
         </Typography>
         <Box sx={{ position: "relative" }}>
           <IconButton
@@ -317,10 +350,33 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
             <CustomMenu close={toggleMorePopover}>
               <MenuList>
                 <MenuItem onClick={() => deleteOneExpression(expression)}>
-                  {t("panels.filter.delete_expression")}
+                  <Icon
+                    iconName={ICON_NAME.TRASH}
+                    htmlColor={theme.palette.text.secondary}
+                    sx={{ fontSize: "14px" }}
+                  />
+                  {/* {t("panels.filter.delete_expression")} */}
+                  <Typography
+                    variant="body1"
+                    sx={{ ml: 2, fontWeight: 600 }}
+                    color={theme.palette.text.secondary}
+                  >
+                    Delete
+                  </Typography>
                 </MenuItem>
                 <MenuItem onClick={() => duplicateExpression(expression)}>
-                  {t("panels.filter.duplicate")}
+                  <Icon
+                    iconName={ICON_NAME.CLONE}
+                    htmlColor={theme.palette.text.secondary}
+                    sx={{ fontSize: "14px" }}
+                  />
+                  <Typography
+                    variant="body1"
+                    sx={{ ml: 2, fontWeight: 600 }}
+                    color={theme.palette.text.secondary}
+                  >
+                    {t("panels.filter.duplicate")}
+                  </Typography>
                 </MenuItem>
               </MenuList>
             </CustomMenu>
@@ -330,12 +386,20 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       <LayerFieldSelector
         label="Target Field"
         selectedField={
-          layerAttributes.keys.filter(
-            (key) => key.name === expression.attribute,
-          )[0]
+          expression.type === "regular"
+            ? layerAttributes.keys.filter(
+                (key) => key.name === expression.attribute,
+              )[0]
+            : layerSpatialAttributes.filter(
+                (key) => key.name === expression.attribute,
+              )[0]
         }
         setSelectedField={targetFieldChangeHandler}
-        fields={layerAttributes.keys}
+        fields={
+          expression.type === "regular"
+            ? layerAttributes.keys
+            : layerSpatialAttributes
+        }
       />
       <FormControl fullWidth>
         <InputLabel>{t("panels.filter.select_an_expression")}</InputLabel>

@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from "react";
 import { Box } from "@mui/material";
-import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/IsochroneSettings";
-import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
 import { useForm } from "react-hook-form";
 import {
   SendPTIsochroneRequest,
@@ -15,6 +13,10 @@ import { useDispatch } from "react-redux";
 import { removeMarker } from "@/lib/store/map/slice";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 
+import IsochroneSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/IsochroneSettings";
+import StartingPoint from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/StartingPoint";
+import AdvancedSettings from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/AdvancedSettings";
+
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 
@@ -23,7 +25,6 @@ const Isochrone = () => {
     StartingPointType | undefined
   >(undefined);
 
-  // const { t } = useTranslation("maps");
   const { projectId } = useParams();
   const dispatch = useDispatch();
 
@@ -44,15 +45,12 @@ const Isochrone = () => {
         longitude: [],
       },
       travel_cost: {
-        max_traveltime: 0,
-        traveltime_step: 0,
-        speed: 0,
+        max_traveltime: 45,
+        traveltime_step: 5,
+        speed: 10,
       },
-      time_window: {
-        weekday: "monday",
-        from_time: 25200,
-        to_time: 32400,
-      },
+      isochrone_type: "polygon",
+      polygon_difference: true,
     },
   });
 
@@ -81,6 +79,7 @@ const Isochrone = () => {
     } else {
       SendIsochroneRequest(getValues(), projectId as string);
     }
+    reset();
   };
 
   const getCurrentValues = useMemo(() => {
@@ -96,7 +95,6 @@ const Isochrone = () => {
     >
       <Box
         sx={{
-          // px: 3,
           height: "95%",
           maxHeight: "95%",
           overflow: "scroll",
@@ -121,12 +119,15 @@ const Isochrone = () => {
             setStartingType={setStartingType}
           />
         ) : null}
+        <AdvancedSettings 
+          setValue={setValue}
+          watch={getCurrentValues}
+          errors={errors}
+        />
       </Box>
       <ToolboxActionButtons
         runFunction={handleRun}
-        runDisabled={
-          !isValid
-        }
+        runDisabled={!isValid}
         resetFunction={handleReset}
         // resetDisabled={
         //   !getCurrentValues.join_layer_project_id &&

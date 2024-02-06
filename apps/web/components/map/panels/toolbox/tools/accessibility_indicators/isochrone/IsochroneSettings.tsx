@@ -23,13 +23,14 @@ import { removeMarker } from "@/lib/store/map/slice";
 import { ptModes, routingModes } from "@/public/assets/data/isochroneModes";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
-import type { SelectChangeEvent } from "@mui/material";
 import type {
   UseFormRegister,
   UseFormGetValues,
   UseFormSetValue,
   FieldErrors,
 } from "react-hook-form";
+
+import type { SelectChangeEvent } from "@mui/material";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 import type { PTModeTypes } from "@/types/map/isochrone";
 
@@ -75,6 +76,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
       >
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Autocomplete
+            disableClearable
             disablePortal
             size="small"
             options={allowedNumbers}
@@ -133,11 +135,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
             "max_distance" in errors.travel_cost &&
             !!errors.travel_cost.max_distance
           }
-          // helperText={
-          //   !!errors.travel_cost &&
-          //   "max_distance" in errors.travel_cost &&
-          //   errors.travel_cost.max_distance.message
-          // }
           type="number"
           sx={{
             margin: `${theme.spacing(1)} 0`,
@@ -163,6 +160,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
         }}
       >
         <Autocomplete
+          disableClearable
           fullWidth
           disablePortal
           size="small"
@@ -188,8 +186,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
           renderInput={(params) => (
             <TextField
               {...params}
-              // error={!!errors.travel_cost?.max_traveltime}
-              // helperText={errors.travel_cost?.max_traveltime?.message}
               label={`${t("panels.isochrone.travelTime")} (min)`}
             />
           )}
@@ -205,7 +201,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
           display: "flex",
           flexDirection: "column",
           gap: theme.spacing(2),
-          // marginBottom: theme.spacing(4),
         }}
       >
         <TextField
@@ -232,16 +227,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
                 value === "" ? undefined : parseInt(value),
             },
           )}
-          // error={
-          //   "distance_step" in watch.travel_cost
-          //     ? !!errors.travel_cost?.distance_step
-          //     : !!errors.travel_cost?.traveltime_step
-          // }
-          // helperText={
-          //   "distance_step" in watch.travel_cost
-          //     ? errors.travel_cost?.distance_step?.message
-          //     : errors.travel_cost?.traveltime_step?.message
-          // }
           size="small"
           fullWidth
           type="number"
@@ -308,9 +293,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
                   margin: `${theme.spacing(1)} 0`,
                 }}
               >
-                <InputLabel>
-                  {t("panels.filter.select_attribute")}
-                </InputLabel>
+                <InputLabel>{t("panels.filter.select_attribute")}</InputLabel>
                 <Select
                   label={t("panels.filter.select_attribute")}
                   value={
@@ -352,6 +335,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
             {/*--------------------------PT Options--------------------------*/}
             {typeof watch.routing_type !== "string" ? (
               <Autocomplete
+                disableClearable
                 multiple
                 options={ptModes}
                 disableCloseOnSelect
@@ -370,29 +354,24 @@ const IsochroneSettings = (props: PickLayerProps) => {
                     {t(`panels.isochrone.routing.modes.${option.name}`)}
                   </li>
                 )}
-                renderTags={
-                  (value, getTagProps) => (
-                    <>
-                      {value.slice(0, 2).map((option, index) => (
-                        <Chip
-                          label={option.name}
-                          {...getTagProps({ index })}
-                          key={index}
-                        />
-                      ))}
-                      {value.length > 2 ? <Chip label="..." /> : null}
-                    </>
-                  )
-                  // </Stack>
-                }
+                renderTags={(value, getTagProps) => (
+                  <>
+                    {value.slice(0, 2).map((option, index) => (
+                      <Chip
+                        label={option.name}
+                        {...getTagProps({ index })}
+                        key={index}
+                      />
+                    ))}
+                    {value.length > 2 ? <Chip label="..." /> : null}
+                  </>
+                )}
                 fullWidth
                 {...register("routing_type.mode")}
                 size="small"
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    // error={!!errors.routing_type?.mode}
-                    // helperText={errors.routing_type?.mode?.message}
                     label={t("panels.isochrone.routing.pt_type")}
                     placeholder={
                       typeof watch.routing_type !== "string" &&
@@ -404,7 +383,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
                   />
                 )}
                 sx={{
-                  mt: 4
+                  mt: 4,
                 }}
               />
             ) : (
@@ -430,22 +409,30 @@ const IsochroneSettings = (props: PickLayerProps) => {
             gap: theme.spacing(2),
           }}
         >
-          <Typography
-            variant="body1"
-            fontWeight="bold"
+          <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: theme.spacing(2),
+              justifyContent: "space-between",
             }}
           >
-            <Icon
-              iconName={ICON_NAME.SLIDERS}
-              htmlColor={theme.palette.grey[700]}
-              sx={{ fontSize: "16px" }}
-            />
-            Configuration
-          </Typography>
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: theme.spacing(2),
+              }}
+            >
+              <Icon
+                iconName={ICON_NAME.SETTINGS}
+                htmlColor={theme.palette.grey[700]}
+                sx={{ fontSize: "16px" }}
+              />
+              {t("panels.isochrone.configuration")}
+            </Typography>
+          </Box>
         </Box>
         <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 3 }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
@@ -457,6 +444,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
               >
                 {t("panels.isochrone.routing.chose_routing")}
               </Typography>
+
               <TabList
                 onChange={(_: React.SyntheticEvent, newValue: string) => {
                   setTab(newValue as "distance" | "time");
@@ -464,13 +452,13 @@ const IsochroneSettings = (props: PickLayerProps) => {
                     "travel_cost",
                     newValue === "distance"
                       ? {
-                          max_distance: 0,
-                          distance_step: 0,
+                          max_distance: 500,
+                          distance_step: 50,
                         }
                       : {
-                          max_traveltime: 0,
-                          traveltime_step: 0,
-                          speed: 0,
+                          max_traveltime: 20,
+                          traveltime_step: 5,
+                          speed: 10,
                         },
                   );
                 }}
@@ -543,10 +531,24 @@ const IsochroneSettings = (props: PickLayerProps) => {
                 : null}
               {travelTimeFunctionality()}
               {stepFunctionality()}
+              {"max_traveltime" in watch.travel_cost &&
+              watch.travel_cost.max_traveltime <
+                watch.travel_cost.traveltime_step ? (
+                <Typography variant="caption" color="error">
+                  {t("panels.isochrone.validation.stepError")}
+                </Typography>
+              ) : null}
             </TabPanel>
             <TabPanel value="distance" sx={{ padding: "0" }}>
               {distanceFunctionality()}
               {stepFunctionality()}
+              {"max_distance" in watch.travel_cost &&
+              watch.travel_cost.max_distance <
+                watch.travel_cost.distance_step ? (
+                <Typography variant="caption" color="error">
+                  {t("panels.isochrone.validation.stepError")}
+                </Typography>
+              ) : null}
             </TabPanel>
           </Stack>
         </Stack>

@@ -45,7 +45,9 @@ export default function Header(props: HeaderProps) {
               {`${t("maps:last_saved")}: ${format(
                 parseISO(lastSaved),
                 "hh:mma dd/MM/yyyy",
-              )}`}
+              )
+                .replace("PM", " PM")
+                .replace("AM", " AM")}`}
             </Typography>
           )}
           {tags &&

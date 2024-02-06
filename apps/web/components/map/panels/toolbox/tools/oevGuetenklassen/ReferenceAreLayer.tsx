@@ -57,7 +57,7 @@ const ReferenceAreLayer = (props: ReferenceAreLayerProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Reference Area Layer
+        {t("panels.tools.oev_gutenklassen.reference_area_layer")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>
@@ -71,9 +71,7 @@ const ReferenceAreLayer = (props: ReferenceAreLayerProps) => {
             marginTop={theme.spacing(3)}
           >
             <FormControl fullWidth size="small">
-              <InputLabel>
-                {t("panels.tools.select_layer")}
-              </InputLabel>
+              <InputLabel>{t("panels.tools.select_layer")}</InputLabel>
               <Select
                 label={t("panels.tools.select_layer")}
                 error={!!errors.reference_area_layer_project_id}
@@ -85,11 +83,13 @@ const ReferenceAreLayer = (props: ReferenceAreLayerProps) => {
                 {...register("reference_area_layer_project_id")}
               >
                 {projectLayers
-                  ? projectLayers.map((layer) => (
-                      <MenuItem value={layer.id} key={v4()}>
-                        {layer.name}
-                      </MenuItem>
-                    ))
+                  ? projectLayers.map((layer) =>
+                      layer.feature_layer_geometry_type === "polygon" ? (
+                        <MenuItem value={layer.id} key={v4()}>
+                          {layer.name}
+                        </MenuItem>
+                      ) : null,
+                    )
                   : null}
               </Select>
               {!!errors.reference_area_layer_project_id && (

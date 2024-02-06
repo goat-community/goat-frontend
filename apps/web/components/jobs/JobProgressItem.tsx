@@ -8,12 +8,14 @@ import {
   useTheme,
 } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import { parseISO, format } from "date-fns";
 
 interface JobProgressItemProps {
   id: string;
   type: JobType;
   status: JobStatusType;
   name: string;
+  date: string
 }
 
 const statusIcons: Record<JobStatusType, ICON_NAME> = {
@@ -26,7 +28,7 @@ const statusIcons: Record<JobStatusType, ICON_NAME> = {
 
 export default function JobProgressItem(props: JobProgressItemProps) {
   const theme = useTheme();
-  const { type, status, name } = props;
+  const { type, status, name, date } = props;
 
   const statusColors: Record<JobStatusType, string> = {
     killed: theme.palette.error.main,
@@ -52,7 +54,7 @@ export default function JobProgressItem(props: JobProgressItemProps) {
         <Stack spacing={2}>
           <Box textOverflow="ellipsis" overflow="hidden">
             <Typography variant="body2" fontWeight="bold" noWrap>
-              {type} - {name}
+              {type} - {format(parseISO(date), "hh:mma dd/MM/yyyy").replace("PM", " PM").replace("AM", " AM")}
             </Typography>
           </Box>
           <LinearProgress

@@ -34,7 +34,9 @@ export const AggregatePolygonSchema = AggregateBaseSchema.extend({
 
 export const BufferBaseSchema = z
   .object({
-    source_layer_project_id: z.number(),
+    source_layer_project_id: z
+      .number()
+      .min(1, { message: "Source Layer should not be empty." }),
     max_distance: z
       .number()
       .min(50, { message: "Distance should be 50 or more" })
@@ -71,10 +73,9 @@ export const accessibilityIndicatorBaseSchema = z.object({
 });
 
 export const originDestinationBaseSchema = z.object({
-  geometry_layer_project_id: z.number().positive("Layer invalid."),
-  origin_destination_matrix_layer_project_id: z
-    .number()
-    .positive("Layer invalid."),
+  geometry_layer_project_id: z.number(),
+  origin_destination_matrix_layer_project_id: z.number(),
+  // .positive("Layer invalid."),
   unique_id_column: z.string().nonempty("Unique Id Column should not be empty"),
   origin_column: z.string().nonempty("Origin Column should not be empty"),
   destination_column: z

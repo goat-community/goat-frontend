@@ -9,12 +9,11 @@ import InputLayer from "@/components/map/panels/toolbox/tools/join/InputLayer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { joinBaseSchema } from "@/lib/validations/tools";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import { toast } from "react-toastify";
 
 import type { PostJoin } from "@/lib/validations/tools";
 
 const Join = () => {
-  // const { t } = useTranslation("maps");
-
   const { projectId } = useParams();
 
   const {
@@ -23,6 +22,7 @@ const Join = () => {
     watch,
     getValues,
     setValue,
+    trigger,
     formState: { errors, isValid },
   } = useForm<PostJoin>({
     mode: "onChange",
@@ -50,7 +50,19 @@ const Join = () => {
   };
 
   const handleRun = () => {
-    sendJoinFeatureRequest(getValues(), projectId as string);
+    toast.info("Join tool is running");
+    sendJoinFeatureRequest(getValues(), projectId as string)
+      .then((response) => {
+        if (response.ok) {
+          toast.success("Join layer has been created");
+        } else {
+          toast.error("Join tool has failed");
+        }
+      })
+      .catch((err) => {
+        toast.error(err);
+      });
+    reset();
   };
 
   return (
@@ -88,6 +100,7 @@ const Join = () => {
           watch={getCurrentValues}
           errors={errors}
           setValue={setValue}
+          trigger={trigger}
         />
       </Box>
       <ToolboxActionButtons

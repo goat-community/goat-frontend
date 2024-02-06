@@ -7,6 +7,7 @@ import { sendOevGuetenKlassenRequest } from "@/lib/api/tools";
 import { useParams } from "next/navigation";
 import { accessibilityIndicatorsStaticPayload } from "@/lib/constants/payloads";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import { toast } from "react-toastify";
 
 import ReferenceAreLayer from "@/components/map/panels/toolbox/tools/oevGuetenklassen/ReferenceAreLayer";
 import IndicatorTimeSettings from "@/components/map/panels/toolbox/tools/oevGuetenklassen/IndicatorTimeSettings";
@@ -14,13 +15,12 @@ import IndicatorTimeSettings from "@/components/map/panels/toolbox/tools/oevGuet
 import type { PostOevGuetenKlassen } from "@/lib/validations/tools";
 
 const OevGuetenklassen = () => {
-  // const { t } = useTranslation("maps");
 
   const { projectId } = useParams();
 
   const {
     register,
-    // reset,
+    reset,
     watch,
     getValues,
     setValue,
@@ -45,12 +45,22 @@ const OevGuetenklassen = () => {
     return watchFormValues;
   }, [watchFormValues]);
 
-  console.log(errors, isValid, getCurrentValues);
-
-  function handleReset() {}
+  function handleReset() {
+    reset();
+  }
 
   function handleRun() {
-    sendOevGuetenKlassenRequest(getValues(), projectId as string);
+    toast.info("Oev-GutenKlassen is running");
+    sendOevGuetenKlassenRequest(getValues(), projectId as string)
+    .then((data) =>
+    data.ok
+    ? toast.success("Oev-GutenKlassen tool is successful")
+    : toast.error("Oev-GutenKlassen tool failed"),
+    )
+    .catch(() => {
+      toast.error("Oev-GutenKlassen has failed");
+    });
+    reset();
   }
 
   return (
@@ -88,54 +98,11 @@ const OevGuetenklassen = () => {
         resetFunction={handleReset}
         resetDisabled={
           !getCurrentValues.time_window.weekday &&
-              !getCurrentValues.time_window.from_time &&
-              !getCurrentValues.time_window.to_time &&
-              !getCurrentValues.reference_area_layer_project_id
+          !getCurrentValues.time_window.from_time &&
+          !getCurrentValues.time_window.to_time &&
+          !getCurrentValues.reference_area_layer_project_id
         }
       />
-      {/* <Box
-        sx={{
-          position: "relative",
-          maxHeight: "5%",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            gap: theme.spacing(2),
-            alignItems: "center",
-            position: "absolute",
-            bottom: "-25px",
-            left: "-8px",
-            width: "calc(100% + 16px)",
-            padding: "16px",
-            background: "white",
-            boxShadow: "0px -5px 10px -5px rgba(58, 53, 65, 0.1)",
-          }}
-        >
-          <Button
-            color="error"
-            variant="outlined"
-            sx={{ flexGrow: "1" }}
-            onClick={handleReset}
-            disabled={
-              !getCurrentValues.time_window.weekday &&
-              !getCurrentValues.time_window.from_time &&
-              !getCurrentValues.time_window.to_time &&
-              !getCurrentValues.reference_area_layer_project_id
-            }
-          >
-            {t("panels.tools.reset")}
-          </Button>
-          <Button
-            sx={{ flexGrow: "1" }}
-            onClick={handleRun}
-            disabled={!isValid}
-          >
-            {t("panels.tools.run")}
-          </Button>
-        </Box>
-      </Box> */}
     </Box>
   );
 };

@@ -23,6 +23,7 @@ import type {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
+  UseFormTrigger
 } from "react-hook-form";
 import type { PostOriginDestination } from "@/lib/validations/tools";
 
@@ -31,10 +32,11 @@ interface FieldsToMatchProps {
   watch: PostOriginDestination;
   errors: FieldErrors<PostOriginDestination>;
   setValue: UseFormSetValue<PostOriginDestination>;
+  trigger: UseFormTrigger<PostOriginDestination>;
 }
 
 const ODSettings = (props: FieldsToMatchProps) => {
-  const { watch, setValue } = props;
+  const { watch, setValue, trigger } = props;
   const { t } = useTranslation("maps");
 
   const theme = useTheme();
@@ -82,7 +84,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Origin Destination Settings
+        {t("tools.panels.origin_destination.origin_to_destination")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>
@@ -91,13 +93,13 @@ const ODSettings = (props: FieldsToMatchProps) => {
         <Stack sx={{ pl: 4, py: 4, pr: 1, marginTop: theme.spacing(2) }}>
           <Box sx={{display: "flex", flexDirection: "column", gap: theme.spacing(3)}}>
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-              {t("panels.tools.join.field_to_match_text")}
+              {t("panels.tools.join.od_settings")}
             </Typography>
             <Box sx={{ width: "100%", mt: 2 }}>
               <LayerFieldSelector
-                label="Origin Field"
+                label={t("tools.panels.origin_destination.origin_field")}
                 selectedField={
-                  firstLayerKeys.keys.filter(
+                  secondLayerKeys.keys.filter(
                     (key) => key.name === watch.origin_column,
                   )[0]
                 }
@@ -110,16 +112,61 @@ const ODSettings = (props: FieldsToMatchProps) => {
                   } else {
                     setValue("origin_column", "");
                   }
+                  trigger("origin_column");
+                }}
+                fields={secondLayerKeys.keys}
+              />
+            </Box>
+            <Box>
+              <LayerFieldSelector
+                label={t("panels.tools.join.destination_field")}
+                selectedField={
+                  secondLayerKeys.keys.filter(
+                    (key) => key.name === watch.destination_column,
+                  )[0]
+                }
+                setSelectedField={(field: {
+                  type: "string" | "number";
+                  name: string;
+                }) => {
+                  if (field) {
+                    setValue("destination_column", field.name);
+                  } else {
+                    setValue("destination_column", "");
+                  }
+                  trigger("destination_column");
+                }}
+                fields={secondLayerKeys.keys}
+              />
+            </Box>
+            <Box>
+              <LayerFieldSelector
+                label={t("panels.tools.join.unique_id_field")}
+                selectedField={
+                  firstLayerKeys.keys.filter(
+                    (key) => key.name === watch.unique_id_column,
+                  )[0]
+                }
+                setSelectedField={(field: {
+                  type: "string" | "number";
+                  name: string;
+                }) => {
+                  if (field) {
+                    setValue("unique_id_column", field.name);
+                  } else {
+                    setValue("unique_id_column", "");
+                  }
+                  trigger("unique_id_column");
                 }}
                 fields={firstLayerKeys.keys}
               />
             </Box>
             <Box>
               <LayerFieldSelector
-                label="Destination Field"
+                label={t("tools.panels.origin_destination.weight_field")}
                 selectedField={
                   secondLayerKeys.keys.filter(
-                    (key) => key.name === watch.destination_column,
+                    (key) => key.name === watch.weight_column,
                   )[0]
                 }
                 setSelectedField={(field: {
@@ -127,52 +174,11 @@ const ODSettings = (props: FieldsToMatchProps) => {
                   name: string;
                 }) => {
                   if (field) {
-                    setValue("destination_column", field.name);
+                    setValue("weight_column", field.name);
                   } else {
-                    setValue("destination_column", "");
+                    setValue("weight_column", "");
                   }
-                }}
-                fields={secondLayerKeys.keys}
-              />
-            </Box>
-            <Box>
-              <LayerFieldSelector
-                label="Unique Id Field"
-                selectedField={
-                  secondLayerKeys.keys.filter(
-                    (key) => key.name === watch.destination_column,
-                  )[0]
-                }
-                setSelectedField={(field: {
-                  type: "string" | "number";
-                  name: string;
-                }) => {
-                  if (field) {
-                    setValue("destination_column", field.name);
-                  } else {
-                    setValue("destination_column", "");
-                  }
-                }}
-                fields={secondLayerKeys.keys}
-              />
-            </Box>
-            <Box>
-              <LayerFieldSelector
-                label="Weight Field"
-                selectedField={
-                  secondLayerKeys.keys.filter(
-                    (key) => key.name === watch.destination_column,
-                  )[0]
-                }
-                setSelectedField={(field: {
-                  type: "string" | "number";
-                  name: string;
-                }) => {
-                  if (field) {
-                    setValue("destination_column", field.name);
-                  } else {
-                    setValue("destination_column", "");
-                  }
+                  trigger("weight_column");
                 }}
                 fields={secondLayerKeys.keys}
               />

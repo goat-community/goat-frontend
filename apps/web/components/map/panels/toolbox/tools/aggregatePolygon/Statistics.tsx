@@ -29,6 +29,7 @@ import type {
   UseFormRegister,
   UseFormSetValue,
   FieldErrors,
+  UseFormTrigger
 } from "react-hook-form";
 import type { PostAggregatePolygon } from "@/lib/validations/tools";
 
@@ -37,10 +38,11 @@ interface StatisticsProps {
   setValue: UseFormSetValue<PostAggregatePolygon>;
   watch: PostAggregatePolygon;
   errors: FieldErrors<PostAggregatePolygon>;
+  trigger: UseFormTrigger<PostAggregatePolygon>;
 }
 
 const Statistics = (props: StatisticsProps) => {
-  const { register, setValue, watch, errors } = props;
+  const { register, setValue, watch, errors, trigger } = props;
 
   const theme = useTheme();
   const { t } = useTranslation("maps");
@@ -88,7 +90,8 @@ const Statistics = (props: StatisticsProps) => {
   const selectAreaLayerKeys = useGetLayerKeys(
     `user_data.${getLayerStringIdById(
       layers ? layers : [],
-      "aggregation_layer_project_id" in watch && watch.aggregation_layer_project_id
+      "aggregation_layer_project_id" in watch &&
+        watch.aggregation_layer_project_id
         ? watch.aggregation_layer_project_id
         : 0,
     )
@@ -104,17 +107,15 @@ const Statistics = (props: StatisticsProps) => {
     watch.area_type === "feature" ? selectAreaLayerKeys.keys : hexagonKeys.keys;
 
   function checkType() {
-    return methodsKeys.map((key) =>
-      key.types.includes(
-        keysToSelect.filter(
-          (layerKey) => layerKey.name === watch.column_statistics.field,
-        )[0].type,
-      ) ? (
-        <MenuItem value={key.name} key={v4()}>
-          {key.name}
-        </MenuItem>
-      ) : null,
-    );
+    return keysToSelect
+      .map((key) =>
+        methodsKeys
+          .filter((meth) => meth.name === watch.column_statistics.operation)[0]
+          .types.includes(key.type)
+          ? key
+          : null,
+      )
+      .filter((n) => n) as { type: "string" | "number"; name: string }[];
   }
 
   return (
@@ -155,7 +156,7 @@ const Statistics = (props: StatisticsProps) => {
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
               {t("panels.tools.aggregate.statistics_text")}
             </Typography>
-            <Box>
+            {/* <Box>
               <LayerFieldSelector
                 label={t("panels.tools.select_field")}
                 selectedField={
@@ -201,54 +202,119 @@ const Statistics = (props: StatisticsProps) => {
                     </Typography>
                   )}
               </FormControl>
-            </Box>
-            <Box sx={{ maxWidth: "100%" }}>
+            </Box> */}
+            <Box>
               <FormControl fullWidth size="small">
-                <InputLabel>
-                  Select Field Group
-                </InputLabel>
+                <InputLabel>{t("panels.tools.select_method")}</InputLabel>
                 <Select
-                  disabled={!watch.source_layer_project_id}
-                  multiple
-                  error={!!errors.source_group_by_field}
-                  label="Select Field Group"
+                  disabled={
+                    !watch.aggregation_layer_project_id && !watch.h3_resolution
+                  }
+                  label={t("panels.tools.select_method")}
+                  error={!!errors.column_statistics?.field}
                   value={
-                    watch.source_group_by_field
-                      ? watch.source_group_by_field
+                    watch.column_statistics.operation
+                      ? watch.column_statistics.operation
                       : ""
                   }
-                  renderValue={(selected) =>
-                    selected ? selected.join(", ") : ""
-                  }
-                  {...register("source_group_by_field")}
+                  {...register("column_statistics.operation")}
                 >
-                  {pointLayerKeys.keys.map((key) => (
-                    <MenuItem value={key.name} key={v4()}>
-                      <Checkbox
-                        checked={
-                          watch.source_group_by_field &&
-                          watch.source_group_by_field.indexOf(key.name) > -1
-                        }
-                      />
-                      {FieldTypeColors[key.type] && (
-                        <FieldTypeTag fieldType={key.type}>
-                          {key.type}
-                        </FieldTypeTag>
-                      )}
-                      <ListItemText primary={key.name} />
+                  {/* {watch.column_statistics.field ? checkType() : null}
+                   */}
+                  {methodsKeys.map((method) => (
+                    <MenuItem value={method.name} key={v4()}>
+                      {method.name}
                     </MenuItem>
                   ))}
                 </Select>
-                {!!errors.source_group_by_field && (
-                  <Typography sx={{ fontSize: "10px" }} color="error">
-                    {errors.source_group_by_field.message}
-                  </Typography>
-                )}
+                {!!errors.column_statistics &&
+                  errors.column_statistics.operation && (
+                    <Typography sx={{ fontSize: "10px" }} color="error">
+                      {errors.column_statistics.operation.message}
+                    </Typography>
+                  )}
               </FormControl>
             </Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography variant="body1">
-                Weigthed by intersecting area
+            {watch.column_statistics.operation && (
+              <Box>
+                <LayerFieldSelector
+                  label={t("panels.tools.select_field")}
+                  selectedField={
+                    checkType().filter(
+                      (key) => key.name === watch.column_statistics.field,
+                    )[0]
+                  }
+                  setSelectedField={(field: {
+                    type: "string" | "number";
+                    name: string;
+                  }) => {
+                    if (field) {
+                      setValue("column_statistics.field", field.name);
+                    } else {
+                      setValue("column_statistics.field", "");
+                    }
+                    trigger("column_statistics.field");
+                  }}
+                  fields={checkType()}
+                />
+              </Box>
+            )}
+            {watch.column_statistics.field && (
+              <Box sx={{ maxWidth: "100%" }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>{t("panels.tools.aggregate.field_group")}</InputLabel>
+                  <Select
+                    disabled={!watch.source_layer_project_id}
+                    multiple
+                    error={!!errors.source_group_by_field}
+                    label={t("panels.tools.aggregate.field_group")}
+                    value={
+                      watch.source_group_by_field
+                        ? watch.source_group_by_field
+                        : ""
+                    }
+                    renderValue={(selected) =>
+                      selected ? selected.join(", ") : ""
+                    }
+                    {...register("source_group_by_field")}
+                  >
+                    {pointLayerKeys.keys.map((key) => (
+                      <MenuItem value={key.name} key={v4()}>
+                        <Checkbox
+                          checked={
+                            watch.source_group_by_field &&
+                            watch.source_group_by_field.indexOf(key.name) > -1
+                          }
+                        />
+                        {FieldTypeColors[key.type] && (
+                          <FieldTypeTag fieldType={key.type}>
+                            {key.type}
+                          </FieldTypeTag>
+                        )}
+                        <ListItemText primary={key.name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {!!errors.source_group_by_field && (
+                    <Typography sx={{ fontSize: "10px" }} color="error">
+                      {errors.source_group_by_field.message}
+                    </Typography>
+                  )}
+                </FormControl>
+              </Box>
+            )}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{ fontSize: "13px", fontWeight: "bold" }}
+              >
+                {t("panels.tools.aggregate_polygon.weighted_by_intersecting_area")}
               </Typography>
               <Switch
                 checked={watch.weigthed_by_intersecting_area}
@@ -258,7 +324,6 @@ const Statistics = (props: StatisticsProps) => {
                     event.target.checked,
                   );
                 }}
-                // {...register()}
                 inputProps={{ "aria-label": "controlled" }}
               />
             </Box>

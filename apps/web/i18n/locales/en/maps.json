@@ -29,7 +29,14 @@
     },
     "isochrone": {
       "isochrone": "Isochrone",
+      "isochrone_type": "Isochrone Type",
       "isochrone_description": "Isochrones illustrate reachable areas within a set travel time or distance from a specific point, aiding in spatial analysis and route planning.",
+      "configuration": "Configuration",
+      "advanced_settings": "Advanced Settings",
+      "polygon": "Polygon",
+      "network": "Network",
+      "rectangular_grid": "Rectangular Grid",
+      "isochrone_difference": "Isochrone Difference",
       "routing": {
         "routing": "Routing",
         "chose_routing": "Chose a routing type for the isochrone.",
@@ -49,6 +56,9 @@
           "car": "Car",
           "pt": "PT"
         }
+      },
+      "validation": {
+        "stepError": "Step should be smaller than Traveltime"
       },
       "speed": "Speed",
       "unity": "Unity",
@@ -89,12 +99,14 @@
         "join": "Join",
         "pick_target_layer": "Pick a target layer",
         "target_layer_text": "Select the layer you want to add data",
-        "pick_join_layer": "Pick layer to join",
+        "pick_join_layer": "Pick layers",
+        "target_layer": "Target Layer",
+        "join_layer": "Join Layer",
         "join_layer_text": "Select the layer containing the data of interest",
-        "set_field_to_match": "Set fields to match",
+        "set_field_to_match": "fields to match",
         "field_to_match_text": "Select the layer you want to add data",
-        "target_field": "Pick a target field",
-        "join_field": "Pick a Join field",
+        "target_field": "Target field",
+        "join_field": "Join field",
         "statistics_text": "Select the method used to join the data"
       },
       "aggregate": {
@@ -106,7 +118,7 @@
         "select_area_text": "Select an input area of aggregation",
         "statistics_text": "Select the method used to aggregate the data",
         "field": "Field",
-        "field_group": "Field group",
+        "field_group": "Select Field group",
         "field_group_text": "You can select multiple fields to group your results",
         "hexagon_size": "Hexagon size",
         "select_fields": "Select fields",
@@ -115,10 +127,19 @@
         "unit": "Unit"
       },
       "aggregate_polygon": {
-        "aggregate_polygon": "Aggregate polygon"
+        "aggregate_polygon": "Aggregate polygon",
+        "weighted_by_intersecting_area": "Weigthed by intersecting area"
       },
       "oev_gutenklassen": {
-        "oev_gutenklassen": "Oev-Gutenklassen"
+        "oev_gutenklassen": "Oev-Gutenklassen",
+        "calculation_time": "Calculation Time",
+        "week_time": "Week Time",
+        "weekday": "Weekday",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
+        "from": "From",
+        "to": "To",
+        "reference_area_layer": "Reference Area Layer"
       },
       "trip_count": {
         "trip_count": "Trip Count"
@@ -136,11 +157,22 @@
       },
       "buffer": {
         "buffer": "Buffer",
-        "tooltip": "This is a tooltip for the Buffer feature."
+        "tooltip": "This is a tooltip for the Buffer feature.",
+        "pick_layer": "Pick a layer",
+        "buffer_settings": "Buffer Settings",
+        "polygon_union": "Polygon Union",
+        "polygon_difference": "Polygon Difference"
       },
       "origin_to_destination": {
         "origin_to_destination": "Origin to destination",
-        "tooltip": "This is a tooltip for the Origin to destination feature."
+        "tooltip": "This is a tooltip for the Origin to destination feature.",
+        "geometry_layer": "Geometry Layer",
+        "matrix_layer": "Matrix Layer",
+        "od_settings": "Origin Destination Settings",
+        "origin_field": "Origin Field",
+        "destination_field": "Destination Field",
+        "unique_id_field": "Unique Id Field",
+        "weight_field": "Weight Field"
       },
       "summarize_data": {
         "summarize_data": "Summarize data"

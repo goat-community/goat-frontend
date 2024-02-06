@@ -123,8 +123,9 @@ export function is_between(key: string, value1: number, value2: number) {
 }
 
 export function bbox(value: string) {
-  const coordinates = value.split(",");
-  return `{"op":"s_intersects","args":[{"property":"geometry"},{"coordinates":[[[${coordinates[3]},${coordinates[0]}],[${coordinates[1]},${coordinates[0]}],[${coordinates[1]},${coordinates[2]}],[${coordinates[3]},${coordinates[2]}],[${coordinates[3]},${coordinates[0]}]]],"type":"Polygon"}]}`;
+  const coordinates = value.split(",").map((coord) => parseFloat(coord));
+  // console.log(value, `{"op":"s_intersects","args":[{"property":"geometry"},{"coordinates":[[[${coordinates[2]},${coordinates[3]}],[${coordinates[0]},${coordinates[3]}],[${coordinates[0]},${coordinates[1]}],[${coordinates[2]},${coordinates[1]}],[${coordinates[2]},${coordinates[3]}]]],"type":"Polygon"}]}`)
+  return `{"op":"s_intersects","args":[{"property":"geom"},{"coordinates":[[[${coordinates[2]},${coordinates[3]}],[${coordinates[0]},${coordinates[3]}],[${coordinates[0]},${coordinates[1]}],[${coordinates[2]},${coordinates[1]}],[${coordinates[2]},${coordinates[3]}]]],"type":"Polygon"}]}`;
 }
 
 export function and_operator(args: string[]) {
@@ -140,6 +141,7 @@ export function createTheCQLBasedOnExpression(
   layerAttributes: { keys: { name: string; type: string }[] },
   logicalOperator?: "and" | "or",
 ) {
+  console.log(expressions);
   const queries = expressions
     .filter((exp) => exp.value && exp.expression && exp.attribute)
     .map((expression) => {
@@ -209,6 +211,7 @@ export function createTheCQLBasedOnExpression(
     });
 
   if (logicalOperator === "and") {
+    console.log(and_operator(queries));
     return JSON.parse(and_operator(queries));
   } else {
     return JSON.parse(or_operator(queries));
