@@ -107,7 +107,6 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
 
   const handleAddStep = () => {
     const newMarkerMaps = [...valueMaps];
-    const lastMarkerMap = newMarkerMaps[newMarkerMaps.length - 1];
     newMarkerMaps.push({
       id: v4(),
       value: null,
