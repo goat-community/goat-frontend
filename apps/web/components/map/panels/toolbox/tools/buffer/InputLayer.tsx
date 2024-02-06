@@ -57,7 +57,7 @@ const InputLayer = (props: PickLayerProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        {t("tools.panels.buffer.pick_target_layer")}
+        {t("panels.tools.buffer.pick_target_layer")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
         <Box sx={{ height: "100%" }}>

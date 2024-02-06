@@ -84,20 +84,20 @@ const ODSettings = (props: FieldsToMatchProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        {t("tools.panels.origin_destination.origin_to_destination")}
+        {t("panels.tools.origin_to_destination.origin_to_destination")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Stack sx={{ pl: 4, py: 4, pr: 1, marginTop: theme.spacing(2) }}>
+        <Stack sx={{ pl: 4, py: 4, pr: 1, marginTop: theme.spacing(2), flexGrow: 1 }}>
           <Box sx={{display: "flex", flexDirection: "column", gap: theme.spacing(3)}}>
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-              {t("panels.tools.join.od_settings")}
+              {t("panels.tools.origin_to_destination.od_settings")}
             </Typography>
             <Box sx={{ width: "100%", mt: 2 }}>
               <LayerFieldSelector
-                label={t("tools.panels.origin_destination.origin_field")}
+                label={t("panels.tools.origin_to_destination.origin_field")}
                 selectedField={
                   secondLayerKeys.keys.filter(
                     (key) => key.name === watch.origin_column,
@@ -119,7 +119,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
             </Box>
             <Box>
               <LayerFieldSelector
-                label={t("panels.tools.join.destination_field")}
+                label={t("panels.tools.origin_to_destination.destination_field")}
                 selectedField={
                   secondLayerKeys.keys.filter(
                     (key) => key.name === watch.destination_column,
@@ -141,7 +141,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
             </Box>
             <Box>
               <LayerFieldSelector
-                label={t("panels.tools.join.unique_id_field")}
+                label={t("panels.tools.origin_to_destination.unique_id_field")}
                 selectedField={
                   firstLayerKeys.keys.filter(
                     (key) => key.name === watch.unique_id_column,
@@ -163,7 +163,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
             </Box>
             <Box>
               <LayerFieldSelector
-                label={t("tools.panels.origin_destination.weight_field")}
+                label={t("panels.tools.origin_to_destination.weight_field")}
                 selectedField={
                   secondLayerKeys.keys.filter(
                     (key) => key.name === watch.weight_column,
