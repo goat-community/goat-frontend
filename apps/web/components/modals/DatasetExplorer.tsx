@@ -105,7 +105,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
                       setSelectedDataset(item as Layer);
                     }
                   }}
-                  items={datasets?.items ?? []}
+                  items={[]}
                   isLoading={isDatasetLoading}
                   type="layer"
                 />

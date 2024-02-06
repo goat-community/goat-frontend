@@ -84,7 +84,7 @@ import {
   faRefresh,
   faMountain,
   faStreetView,
-  faDrawPolygon
+  faDrawPolygon,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -104,7 +104,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SvgIcon } from "@mui/material";
 import type { SvgIconProps } from "@mui/material";
-import { addImageIcon } from "../assets/svg/OtherIcons";
+import { addImageIcon, comingSoonIcon } from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
   // Solid icons
@@ -207,6 +207,7 @@ export enum ICON_NAME {
   REVERSE = "reverse",
   // Custom icons
   ADD_IMAGE = "add-image",
+  COMING_SOON = "coming-soon",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -310,6 +311,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.PAYPAL]: faPaypal,
   // Custom icons
   [ICON_NAME.ADD_IMAGE]: addImageIcon,
+  [ICON_NAME.COMING_SOON]: comingSoonIcon,
 };
 
 interface BrandColors {

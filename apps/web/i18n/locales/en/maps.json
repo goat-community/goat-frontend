@@ -290,5 +290,6 @@
   "zoom_level_legend_tooltip": "Zoom levels at which the layer will be visible",
   "no_active_layers": "No active layers", 
   "no_values_found": "No values found",
-  "no_layers_added": "No layers added"
+  "no_layers_added": "No layers added",
+  "coming_soon": "Coming soon"
 }

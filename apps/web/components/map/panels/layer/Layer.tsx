@@ -223,7 +223,8 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
                   </ListItemIcon>
                   <Typography variant="body2">Dataset Upload</Typography>
                 </MenuItem>
-                <MenuItem
+                {/* <MenuItem
+                  disabled
                   onClick={() =>
                     openAddLayerSourceDialog(
                       AddLayerSourceType.DataSourceExternal,
@@ -237,7 +238,7 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
                     />
                   </ListItemIcon>
                   <Typography variant="body2">Dataset External</Typography>
-                </MenuItem>
+                </MenuItem> */}
               </MenuList>
             </ClickAwayListener>
           </Box>

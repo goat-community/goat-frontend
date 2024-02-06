@@ -20,3 +20,15 @@ export const addImageIcon: IconDefinition = {
   iconName: "add-image" as IconName,
   prefix: "fas" as IconPrefix,
 };
+
+export const comingSoonIcon: IconDefinition = {
+  icon: [
+    24,
+    24,
+    [],
+    "",
+    "M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8    S16.41,20,12,20z M12,6c-1.1,0-2,0.9-2,2s0.9,2,2,2s2-0.9,2-2S13.1,6,12,6z",
+  ],
+  iconName: "coming-soon" as IconName,
+  prefix: "fas" as IconPrefix,
+};
