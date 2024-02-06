@@ -46,7 +46,7 @@
     "filters": {
       "filter": "Filter",
       "clear_all": "Alle löschen",
-      "layer_types": "Ebenentypen"
+      "dataset_types": "Ebenentypen"
     },
     "folder": {
       "create_folder": "Ordner erstellen",

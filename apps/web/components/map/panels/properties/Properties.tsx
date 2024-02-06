@@ -1,3 +1,4 @@
+import { Legend } from "@/components/map/controls/Legend";
 import Container from "@/components/map/panels/Container";
 import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
@@ -200,11 +201,11 @@ const Visibility = ({
   );
 };
 
-const Symbology = () => {
+const Symbology = ({ layer }: { layer: ProjectLayer }) => {
   return (
     <AccordionWrapper
       header={<AccordionHeader title="Symbology" />}
-      body={<></>}
+      body={<>{layer && <Legend layers={[layer]} />}</>}
     />
   );
 };
@@ -224,7 +225,7 @@ const PropertiesPanel = ({ projectId }: { projectId: string }) => {
             <>
               <ProjectLayerDropdown projectId={projectId} />
               <LayerInfo layer={activeLayer} />
-              <Symbology />
+              <Symbology layer={activeLayer} />
               <Visibility layer={activeLayer} projectId={projectId} />
             </>
           )}

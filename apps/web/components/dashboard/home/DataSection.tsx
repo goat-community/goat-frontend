@@ -27,7 +27,7 @@ const DataSection = (props: DataSectionProps) => {
   const {t} = useTranslation("dashboard");
 
   const {
-    moreMenuOptions,
+    getMoreMenuOptions,
     activeContent,
     moreMenuState,
     closeMoreMenu,
@@ -98,7 +98,7 @@ const DataSection = (props: DataSectionProps) => {
                 <TileCard
                   cardType="grid"
                   item={item}
-                  moreMenuOptions={moreMenuOptions}
+                  moreMenuOptions={getMoreMenuOptions("layer")}
                   onMoreMenuSelect={openMoreMenu}
                 />
               )}

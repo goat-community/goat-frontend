@@ -33,7 +33,7 @@ const TileGrid = (props: TileGridProps) => {
   };
 
   const {
-    moreMenuOptions,
+    getMoreMenuOptions,
     activeContent,
     moreMenuState,
     closeMoreMenu,
@@ -99,7 +99,7 @@ const TileGrid = (props: TileGridProps) => {
                     enableActions={props.enableActions}
                     cardType={props.view}
                     item={item}
-                    moreMenuOptions={moreMenuOptions}
+                    moreMenuOptions={getMoreMenuOptions(props.type)}
                     onMoreMenuSelect={openMoreMenu}
                   />
                 )}

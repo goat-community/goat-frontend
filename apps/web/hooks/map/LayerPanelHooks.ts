@@ -18,39 +18,76 @@ import type { PopperMenuItem } from "@/components/common/PopperMenu";
 
 export const useLayerSettingsMoreMenu = () => {
   const { t } = useTranslation(["maps", "common"]);
-  const layerMoreMenuOptions: PopperMenuItem[] = [
-    {
-      id: MapLayerActions.PROPERTIES,
-      label: t("common:properties"),
-      icon: ICON_NAME.CIRCLEINFO,
-    },
-    {
-      id: MapLayerActions.ZOOM_TO,
-      label: t("maps:zoom_to"),
-      icon: ICON_NAME.ZOOM_IN,
-    },
-    {
-      id: MapLayerActions.DUPLICATE,
-      label: t("maps:duplicate"),
-      icon: ICON_NAME.COPY,
-    },
-    {
-      id: MapLayerActions.RENAME,
-      label: t("common:rename"),
-      icon: ICON_NAME.EDIT,
-    },
-    {
-      id: ContentActions.DOWNLOAD,
-      label: t("maps:download"),
-      icon: ICON_NAME.DOWNLOAD,
-    },
-    {
-      id: ContentActions.DELETE,
-      label: t("common:remove"),
-      icon: ICON_NAME.TRASH,
-      color: "error.main",
-    },
-  ];
+
+  function getLayerMoreMenuOptions(
+    layerType: ProjectLayer["type"],
+  ): PopperMenuItem[] {
+    if (layerType === "feature") {
+      const featureOptions: PopperMenuItem[] = [
+        {
+          id: MapLayerActions.PROPERTIES,
+          label: t("common:properties"),
+          icon: ICON_NAME.CIRCLEINFO,
+        },
+        {
+          id: MapLayerActions.ZOOM_TO,
+          label: t("maps:zoom_to"),
+          icon: ICON_NAME.ZOOM_IN,
+        },
+        {
+          id: MapLayerActions.DUPLICATE,
+          label: t("maps:duplicate"),
+          icon: ICON_NAME.COPY,
+        },
+        {
+          id: MapLayerActions.RENAME,
+          label: t("common:rename"),
+          icon: ICON_NAME.EDIT,
+        },
+        {
+          id: ContentActions.DOWNLOAD,
+          label: t("maps:download"),
+          icon: ICON_NAME.DOWNLOAD,
+        },
+        {
+          id: ContentActions.DELETE,
+          label: t("common:remove"),
+          icon: ICON_NAME.TRASH,
+          color: "error.main",
+        },
+      ];
+      return featureOptions;
+    }
+    if (layerType === "table") {
+      const tableOptions = [
+        {
+          id: MapLayerActions.PROPERTIES,
+          label: t("common:properties"),
+          icon: ICON_NAME.CIRCLEINFO,
+        },
+        {
+          id: MapLayerActions.RENAME,
+          label: t("common:rename"),
+          icon: ICON_NAME.EDIT,
+        },
+        {
+          id: ContentActions.DOWNLOAD,
+          label: t("maps:download"),
+          icon: ICON_NAME.DOWNLOAD,
+        },
+        {
+          id: ContentActions.DELETE,
+          label: t("common:remove"),
+          icon: ICON_NAME.TRASH,
+          color: "error.main",
+        },
+      ];
+
+      return tableOptions;
+    }
+
+    return [];
+  }
 
   const [activeLayer, setActiveLayer] = useState<ProjectLayer>();
   const [moreMenuState, setMoreMenuState] = useState<PopperMenuItem>();
@@ -66,7 +103,7 @@ export const useLayerSettingsMoreMenu = () => {
   };
 
   return {
-    layerMoreMenuOptions,
+    getLayerMoreMenuOptions,
     activeLayer,
     moreMenuState,
     closeMoreMenu,

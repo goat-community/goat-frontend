@@ -41,12 +41,17 @@
         "new_project": "New Project",
         "my_content": "My Content",
         "teams": "Teams",
+        "delete": "Delete",
         "organizations": "Organizations",
         "new_folder": "New Folder",
         "filters": {
             "filter": "Filter",
             "clear_all": "Clear All",
-            "layer_types": "Layer Types"
+            "dataset_types": "Dataset Types",
+            "feature": "Feature",
+            "external_imagery": "External Imagery",
+            "external_vector_tile": "External Vector Tile",
+            "table": "Table"
         },
         "folder": {
             "create_folder": "Create Folder",

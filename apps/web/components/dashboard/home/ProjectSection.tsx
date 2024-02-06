@@ -4,11 +4,11 @@ import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import ProjectModal from "@/components/modals/Project";
 import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
 import type { Project } from "@/lib/validations/project";
-import { ContentActions } from "@/types/common";
 import { Box, Grid, Skeleton } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "@/i18n/client";
+import type { ContentActions } from "@/types/common";
 
 interface ProjectSectionProps {
   projects: Project[];
@@ -19,20 +19,12 @@ const ProjectSection = (props: ProjectSectionProps) => {
   const router = useRouter();
   const { projects, isLoading } = props;
   const {
-    moreMenuOptions,
+    getMoreMenuOptions,
     activeContent,
     moreMenuState,
     closeMoreMenu,
     openMoreMenu,
   } = useContentMoreMenu();
-
-  const moreMenuProjectOptions = useMemo(
-    () =>
-      moreMenuOptions?.filter(
-        (option) => option.id !== ContentActions.DOWNLOAD,
-      ),
-    [moreMenuOptions],
-  );
 
   const { t } = useTranslation("dashboard");
   const [openProjectModal, setOpenProjectModal] = useState(false);
@@ -81,7 +73,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
                 <TileCard
                   cardType="grid"
                   item={item}
-                  moreMenuOptions={moreMenuProjectOptions}
+                  moreMenuOptions={getMoreMenuOptions("project")}
                   onMoreMenuSelect={openMoreMenu}
                 />
               )}

@@ -9,6 +9,7 @@ import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import { useTranslation } from "@/i18n/client";
+import ProjectModal from "@/components/modals/Project";
 
 const Projects = () => {
   const [queryParams, setQueryParams] = useState<GetProjectsQueryParams>({
@@ -24,8 +25,15 @@ const Projects = () => {
     isError: _isProjectError,
   } = useProjects(queryParams);
 
+  const [openProjectModal, setOpenProjectModal] = useState(false);
+
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
+      <ProjectModal
+        type="create"
+        open={openProjectModal}
+        onClose={() => setOpenProjectModal(false)}
+      />
       <Box
         sx={{
           display: "flex",
@@ -40,7 +48,9 @@ const Projects = () => {
           startIcon={
             <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />
           }
-          href="/projects"
+          onClick={() => {
+            setOpenProjectModal(true);
+          }}
         >
           {t("projects.new_project")}
         </Button>

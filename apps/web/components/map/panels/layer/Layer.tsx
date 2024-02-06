@@ -282,7 +282,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
   );
   const [newLayerName, setNewLayerName] = useState<string>("");
   const {
-    layerMoreMenuOptions,
+    getLayerMoreMenuOptions,
     openMoreMenu,
     closeMoreMenu,
     moreMenuState,
@@ -497,7 +497,11 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                         </>
                       }
                       actions={
-                        <Stack direction="row">
+                        <Stack
+                          direction="row"
+                          justifyContent="flex-end"
+                          sx={{ pr: 2 }}
+                        >
                           {layer.type === "table" ? null : (
                             <Tooltip
                               key={layer.id}
@@ -540,7 +544,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                             </Tooltip>
                           )}
                           <MoreMenu
-                            menuItems={layerMoreMenuOptions}
+                            menuItems={getLayerMoreMenuOptions(layer.type)}
                             menuButton={
                               <Tooltip
                                 title={t("more_options")}

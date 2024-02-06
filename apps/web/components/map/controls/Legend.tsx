@@ -1,7 +1,9 @@
 import EmptySection from "@/components/common/EmptySection";
+import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
 import { useTranslation } from "@/i18n/client";
 import { formatNumber, rgbToHex } from "@/lib/utils/helpers";
 import type {
+  FeatureLayerPointProperties,
   FeatureLayerProperties,
   LayerClassBreaks,
 } from "@/lib/validations/layer";
@@ -17,8 +19,13 @@ export interface LegendProps {
 }
 
 type ColorMapItem = {
-  value: string | number | string[] | null;
+  value: string[] | null;
   color: string;
+};
+
+type MarkerMapItem = {
+  value: string[] | null;
+  marker: string | null;
 };
 
 const getColor = (colors: string[], index: number): string =>
@@ -35,7 +42,7 @@ const createRangeAndColor = (
   const range = `${isFirst ? "<" : ""}${formatNumber(rangeStart, 2)} - 
     ${isLast ? ">" : ""}${formatNumber(rangeEnd, 2)}`;
   colorMap.push({
-    value: range,
+    value: [range],
     color,
   });
 };
@@ -99,81 +106,113 @@ function getLegendColorMap(
       }
     }
     colorMap.push({
-      value: "No data",
+      value: ["No data"],
       color: DEFAULT_COLOR,
     });
   } else {
     colorMap.push({
-      value: "",
+      value: [""],
       color: rgbToHex(properties[type] as RGBColor),
     });
   }
   return colorMap;
 }
 
+function getLegendMarkerMap(properties: FeatureLayerProperties) {
+  const markerMap = [] as MarkerMapItem[];
+  const point = properties as FeatureLayerPointProperties;
+  if (point.marker_field) {
+    point.marker_mapping?.forEach((value) => {
+      if (value[1].url && value[0])
+        markerMap.push({
+          value: value[0],
+          marker: value[1].url,
+        });
+    });
+  } else {
+    markerMap.push({
+      value: [""],
+      marker: point.marker?.url || null,
+    });
+  }
+  return markerMap;
+}
+
 function LegendRow({
   type,
   fillColor,
   strokeColor,
+  markerImageUrl,
   label,
 }: {
-  type: "point" | "line" | "polygon";
+  type: "point" | "line" | "polygon" | "marker";
   fillColor?: string;
   strokeColor?: string;
+  markerImageUrl?: string | null;
   label?: string | number | string[] | null;
 }) {
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "5px",
+      }}
+    >
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          marginBottom: "5px",
         }}
       >
-        <svg height="20" width="20">
-          {type === "point" && (
-            <circle
-              cx="10"
-              cy="10"
-              r="7"
-              fillOpacity={fillColor ? 1 : 0}
-              stroke={strokeColor}
-              strokeWidth={strokeColor ? 2 : 0}
-              fill={fillColor}
-            />
-          )}
+        {type !== "marker" && (
+          <svg height="20" width="20">
+            {type === "point" && (
+              <circle
+                cx="10"
+                cy="10"
+                r="7"
+                fillOpacity={fillColor ? 1 : 0}
+                stroke={strokeColor}
+                strokeWidth={strokeColor ? 2 : 0}
+                fill={fillColor}
+              />
+            )}
 
-          {type === "line" && (
-            <line
-              x1="0"
-              y1="10"
-              x2="20"
-              y2="10"
-              stroke={strokeColor}
-              strokeWidth="2"
-            />
-          )}
+            {type === "line" && (
+              <line
+                x1="0"
+                y1="10"
+                x2="20"
+                y2="10"
+                stroke={strokeColor}
+                strokeWidth="2"
+              />
+            )}
 
-          {type === "polygon" && (
-            <rect
-              width="15"
-              height="15"
-              rx="3"
-              fillOpacity={fillColor ? 1 : 0}
-              fill={fillColor}
-              stroke={strokeColor}
-            />
-          )}
-        </svg>
-        <Typography
-          variant="caption"
-          fontWeight="bold"
-          style={{ marginLeft: "10px" }}
-        >
-          {label}
-        </Typography>
+            {type === "polygon" && (
+              <rect
+                width="15"
+                height="15"
+                rx="3"
+                fillOpacity={fillColor ? 1 : 0}
+                fill={fillColor}
+                stroke={strokeColor}
+              />
+            )}
+          </svg>
+        )}
+        {type === "marker" && markerImageUrl && (
+          <MaskedImageIcon imageUrl={`${markerImageUrl}`} dimension="19px" />
+        )}
       </div>
+      <Typography
+        variant="caption"
+        fontWeight="bold"
+        style={{ marginLeft: "10px" }}
+      >
+        {label}
+      </Typography>
     </div>
   );
 }
@@ -195,82 +234,160 @@ export function LegendRows({
     [properties],
   );
 
+  const markerMap = useMemo(() => {
+    return getLegendMarkerMap(properties);
+  }, [properties]);
+
+  const isSimpleColor = useMemo(() => {
+    {
+      if (type === "line") {
+        return !properties.stroke_color_field && properties.stroke_color;
+      } else if (type === "polygon" || type === "point") {
+        return !properties.color_field && properties.color;
+      }
+    }
+  }, [
+    properties.color,
+    properties.color_field,
+    properties.stroke_color,
+    properties.stroke_color_field,
+    type,
+  ]);
+
+  const isStrokeEnabled = useMemo(() => {
+    return (
+      type === "line" ||
+      (["polygon", "point"].includes(type) &&
+        strokeColorMap.length > 1 &&
+        properties.stroked)
+    );
+  }, [properties.stroked, strokeColorMap, type]);
+
+  const shouldRenderColorMap = useMemo(() => {
+    return (
+      colorMap &&
+      Array.isArray(colorMap) &&
+      colorMap.length > 0 &&
+      ((!properties.stroke_color_field && type === "line") || type !== "line")
+    );
+  }, [colorMap, properties.stroke_color_field, type]);
+
   return (
     <>
-      {/* FILL COLOR */}
-      {properties.color_field && type !== "line" && properties.filled && (
+      {/* FILL OR STROKE COLOR */}
+      {!isSimpleColor && properties.filled && type !== "line" && (
         <Stack sx={{ pb: 2 }}>
-          <Typography variant="caption" sx={{ textTransform: "uppercase" }}>
+          <Typography variant="caption">
             {t("fill_color_based_on")}
           </Typography>
           <Typography variant="caption" fontWeight="bold">
-            {properties.color_field.name}
+            {properties.color_field?.name}
           </Typography>
         </Stack>
       )}
-      {!properties.color_field &&
-        properties.stroke_color_field &&
-        properties.filled &&
-        type !== "line" && (
-          <Stack sx={{ pb: 2 }}>
-            <Typography variant="caption" sx={{ textTransform: "uppercase" }}>
-              {t("fill_color")}
-            </Typography>
-          </Stack>
+      {isSimpleColor && (
+        <Stack sx={{ pb: 2 }}>
+          <Typography variant="caption">
+            {type === "line" ? t("stroke_color") : t("fill_color")}
+          </Typography>
+        </Stack>
+      )}
+
+      {shouldRenderColorMap &&
+        colorMap.map(
+          (item) =>
+            item.value?.length &&
+            item.value.map((value) => (
+              <LegendRow
+                key={`${value?.toString()}_${item.color}`}
+                type={type}
+                fillColor={item.color}
+                strokeColor={
+                  strokeColorMap.length === 1 && properties.stroked
+                    ? strokeColorMap[0].color
+                    : undefined
+                }
+                label={value}
+              />
+            )),
         )}
 
-      {colorMap &&
-        type !== "line" &&
-        properties.filled &&
-        Array.isArray(colorMap) &&
-        colorMap.length > 0 &&
-        colorMap.map((item) => (
-          <LegendRow
-            key={`${item.value?.toString()}_${item.color}`}
-            type={type}
-            fillColor={item.color}
-            strokeColor={
-              strokeColorMap.length === 1 && properties.stroked
-                ? strokeColorMap[0].color
-                : undefined
-            }
-            label={item.value}
-          />
-        ))}
-
       {/* LINE COLOR OR STROKE COLOR WHEN ATTRIBUTE STYLING */}
-      {type === "line" ||
-        (["polygon", "point"].includes(type) &&
-          strokeColorMap.length > 1 &&
-          properties.stroked && (
-            <>
-              {properties.stroke_color_field && (
-                <Stack sx={{ pb: 2 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{ textTransform: "uppercase" }}
-                  >
-                    {t("stroke_color_based_on")}
-                  </Typography>
-                  <Typography variant="caption" fontWeight="bold">
-                    {properties.stroke_color_field.name}
-                  </Typography>
-                </Stack>
-              )}
+      {isStrokeEnabled && (
+        <>
+          {properties.stroke_color_field && (
+            <Stack
+              sx={{
+                pb: 2,
+                ...(type !== "line" && properties.filled && { pt: 2 }),
+              }}
+            >
+              <Typography variant="caption">
+                {t("stroke_color_based_on")}
+              </Typography>
+              <Typography variant="caption" fontWeight="bold">
+                {properties.stroke_color_field.name}
+              </Typography>
+            </Stack>
+          )}
 
-              {strokeColorMap &&
-                Array.isArray(strokeColorMap) &&
-                strokeColorMap.length > 1 &&
-                strokeColorMap.map((item) => (
+          {strokeColorMap &&
+            Array.isArray(strokeColorMap) &&
+            strokeColorMap.length > 1 &&
+            strokeColorMap.map(
+              (item) =>
+                item.value?.length &&
+                item.value.map((value) => (
                   <LegendRow
-                    key={`${item.value?.toString()}_${item.color}`}
+                    key={`${value?.toString()}_${item.color}`}
                     type={type}
                     strokeColor={item.color}
-                    label={item.value}
+                    label={value}
                   />
-                ))}
-            </>
-          ))}
+                )),
+            )}
+        </>
+      )}
+
+      {/* MARKERS */}
+
+      {type === "point" &&
+        properties["custom_marker"] &&
+        markerMap &&
+        Array.isArray(markerMap) &&
+        markerMap.length > 0 && (
+          <>
+            <Stack
+              sx={{
+                ...(properties.filled && { pt: 2, pb: 2 }),
+              }}
+            >
+              <Typography variant="caption">
+                {properties["marker_field"]
+                  ? t("marker_based_on")
+                  : t("marker")}
+              </Typography>
+              {properties["marker_field"] && (
+                <Typography variant="caption" fontWeight="bold">
+                  {properties["marker_field"].name}
+                </Typography>
+              )}
+            </Stack>
+
+            {markerMap.map(
+              (item) =>
+                item.value?.length &&
+                item.value.map((value) => (
+                  <LegendRow
+                    key={`${value?.toString()}_${item.marker}`}
+                    type="marker"
+                    markerImageUrl={item.marker}
+                    label={value}
+                  />
+                )),
+            )}
+          </>
+        )}
     </>
   );
 }

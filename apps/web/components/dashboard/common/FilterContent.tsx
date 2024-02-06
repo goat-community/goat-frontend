@@ -76,7 +76,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
               <Grid item xs={12}>
                 <Stack direction="column">
                   <Typography variant="body2" gutterBottom>
-                  {t("projects.filters.layer_types")}
+                    {t("projects.filters.dataset_types")}
                   </Typography>
                   {layerTypesArray.map((layerType, index) => (
                     <FormControlLabel
@@ -99,7 +99,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
                           }}
                         />
                       }
-                      label={layerType}
+                      label={t(`projects.filters.${layerType}`)}
                     />
                   ))}
                 </Stack>
