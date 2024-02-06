@@ -33,7 +33,6 @@ const Buffer = () => {
     },
   });
 
-  // const { t } = useTranslation("maps");
   const { projectId } = useParams();
 
   const handleReset = () => {

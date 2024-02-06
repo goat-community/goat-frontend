@@ -67,7 +67,7 @@ const InputLayer = (props: PickLayerProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Pick Layers
+        {t("tools.panels.buffer.pick_layer")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>
@@ -88,9 +88,9 @@ const InputLayer = (props: PickLayerProps) => {
                 {t("panels.tools.join.target_layer_text")}
               </Typography>
               <FormControl fullWidth size="small">
-                <InputLabel>Geometry Layer</InputLabel>
+                <InputLabel>{t("tools.panels.origin_destination.geometry_layer")}</InputLabel>
                 <Select
-                  label="Target Layer"
+                  label={t("tools.panels.origin_destination.geometry_layer")}
                   error={!!errors.geometry_layer_project_id}
                   value={
                     watch.geometry_layer_project_id
@@ -118,9 +118,9 @@ const InputLayer = (props: PickLayerProps) => {
             </Box>
             <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
               <FormControl fullWidth size="small">
-                <InputLabel>Matrix Layer</InputLabel>
+                <InputLabel>{t("tools.panels.origin_destination.matrix_layer")}</InputLabel>
                 <Select
-                  label="Join Layer"
+                  label={t("tools.panels.origin_destination.matrix_layer")}
                   error={!!errors.origin_destination_matrix_layer_project_id}
                   value={
                     watch.origin_destination_matrix_layer_project_id
