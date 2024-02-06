@@ -3,10 +3,6 @@ import {
   Typography,
   useTheme,
   Box,
-  // Select,
-  // FormControl,
-  // InputLabel,
-  // MenuItem,
   Stack,
   TextField,
   Divider,
@@ -24,7 +20,6 @@ import type { PostBuffer } from "@/lib/validations/tools";
 
 interface BufferSettingsProps {
   register: UseFormRegister<PostBuffer>;
-  // getValues: UseFormGetValues<PostBuffer>;
   setValue: UseFormSetValue<PostBuffer>;
   watch: PostBuffer;
   errors: FieldErrors<PostBuffer>;
@@ -33,7 +28,6 @@ interface BufferSettingsProps {
 const BufferSettings = (props: BufferSettingsProps) => {
   const {
     register,
-    // getValues,
     setValue,
     watch,
     errors,
@@ -63,7 +57,7 @@ const BufferSettings = (props: BufferSettingsProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Buffer Settings
+        {t("tools.panels.buffer.buffer_settings")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
         <Box sx={{ height: "100%" }}>
@@ -105,7 +99,6 @@ const BufferSettings = (props: BufferSettingsProps) => {
               display: "flex",
               flexDirection: "column",
               gap: theme.spacing(2),
-              // marginBottom: theme.spacing(4),
             }}
           >
             <TextField
@@ -129,7 +122,7 @@ const BufferSettings = (props: BufferSettingsProps) => {
             />
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 3 }}>
-            <Typography variant="body1">Polygon Union</Typography>
+            <Typography variant="body1">{t("tools.panels.buffer.polygon_union")}</Typography>
             <Switch
               checked={watch.polygon_union}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,19 +131,17 @@ const BufferSettings = (props: BufferSettingsProps) => {
                   setValue("polygon_difference", false);
                 }
               }}
-              // {...register()}
               inputProps={{ "aria-label": "controlled" }}
             />
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography variant="body1">Polygon Difference</Typography>
+            <Typography variant="body1">{t("tools.panels.buffer.polygon_difference")}</Typography>
             <Switch
               disabled={!watch.polygon_union}
               checked={watch.polygon_difference}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setValue("polygon_difference", event.target.checked);
               }}
-              // {...register()}
               inputProps={{ "aria-label": "controlled" }}
             />
           </Box>

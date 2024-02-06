@@ -84,7 +84,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
           htmlColor={theme.palette.grey[700]}
           sx={{ fontSize: "18px" }}
         />
-        Origin Destination Settings
+        {t("tools.panels.origin_destination.origin_to_destination")}
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 4 }}>
         <Box sx={{ height: "100%" }}>
@@ -93,11 +93,11 @@ const ODSettings = (props: FieldsToMatchProps) => {
         <Stack sx={{ pl: 4, py: 4, pr: 1, marginTop: theme.spacing(2) }}>
           <Box sx={{display: "flex", flexDirection: "column", gap: theme.spacing(3)}}>
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-              {t("panels.tools.join.field_to_match_text")}
+              {t("panels.tools.join.od_settings")}
             </Typography>
             <Box sx={{ width: "100%", mt: 2 }}>
               <LayerFieldSelector
-                label="Origin Field"
+                label={t("tools.panels.origin_destination.origin_field")}
                 selectedField={
                   secondLayerKeys.keys.filter(
                     (key) => key.name === watch.origin_column,
@@ -119,7 +119,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
             </Box>
             <Box>
               <LayerFieldSelector
-                label="Destination Field"
+                label={t("panels.tools.join.destination_field")}
                 selectedField={
                   secondLayerKeys.keys.filter(
                     (key) => key.name === watch.destination_column,
@@ -141,7 +141,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
             </Box>
             <Box>
               <LayerFieldSelector
-                label="Unique Id Field"
+                label={t("panels.tools.join.unique_id_field")}
                 selectedField={
                   firstLayerKeys.keys.filter(
                     (key) => key.name === watch.unique_id_column,
@@ -163,7 +163,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
             </Box>
             <Box>
               <LayerFieldSelector
-                label="Weight Field"
+                label={t("tools.panels.origin_destination.weight_field")}
                 selectedField={
                   secondLayerKeys.keys.filter(
                     (key) => key.name === watch.weight_column,

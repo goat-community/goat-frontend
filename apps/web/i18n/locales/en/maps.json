@@ -154,11 +154,22 @@
       },
       "buffer": {
         "buffer": "Buffer",
-        "tooltip": "This is a tooltip for the Buffer feature."
+        "tooltip": "This is a tooltip for the Buffer feature.",
+        "pick_layer": "Pick a layer",
+        "buffer_settings": "Buffer Settings",
+        "polygon_union": "Polygon Union",
+        "polygon_difference": "Polygon Difference"
       },
       "origin_to_destination": {
         "origin_to_destination": "Origin to destination",
-        "tooltip": "This is a tooltip for the Origin to destination feature."
+        "tooltip": "This is a tooltip for the Origin to destination feature.",
+        "geometry_layer": "Geometry Layer",
+        "matrix_layer": "Matrix Layer",
+        "od_settings": "Origin Destination Settings",
+        "origin_field": "Origin Field",
+        "destination_field": "Destination Field",
+        "unique_id_field": "Unique Id Field",
+        "weight_field": "Weight Field"
       },
       "summarize_data": {
         "summarize_data": "Summarize data"
