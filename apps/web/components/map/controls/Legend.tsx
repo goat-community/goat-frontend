@@ -110,10 +110,12 @@ function getLegendColorMap(
       color: DEFAULT_COLOR,
     });
   } else {
-    colorMap.push({
-      value: [""],
-      color: rgbToHex(properties[type] as RGBColor),
-    });
+    if (properties[type]) {
+      colorMap.push({
+        value: [""],
+        color: rgbToHex(properties[type] as RGBColor),
+      });
+    }
   }
   return colorMap;
 }
@@ -277,9 +279,7 @@ export function LegendRows({
       {/* FILL OR STROKE COLOR */}
       {!isSimpleColor && properties.filled && type !== "line" && (
         <Stack sx={{ pb: 2 }}>
-          <Typography variant="caption">
-            {t("fill_color_based_on")}
-          </Typography>
+          <Typography variant="caption">{t("fill_color_based_on")}</Typography>
           <Typography variant="caption" fontWeight="bold">
             {properties.color_field?.name}
           </Typography>
