@@ -159,6 +159,7 @@
         "buffer": "Buffer",
         "tooltip": "This is a tooltip for the Buffer feature.",
         "pick_layer": "Pick a layer",
+        "pick_target_layer": "Pick a target layer",
         "buffer_settings": "Buffer Settings",
         "polygon_union": "Polygon Union",
         "polygon_difference": "Polygon Difference"
@@ -172,7 +173,8 @@
         "origin_field": "Origin Field",
         "destination_field": "Destination Field",
         "unique_id_field": "Unique Id Field",
-        "weight_field": "Weight Field"
+        "weight_field": "Weight Field",
+        "layer_desc": "Layer Description"
       },
       "summarize_data": {
         "summarize_data": "Summarize data"
@@ -189,11 +191,34 @@
       "and": "And",
       "or": "Or",
       "delete_expression": "Delete Expression",
+      "delete": "Delete",
       "duplicate": "Duplicate",
       "add_expression": "Add Expression",
       "clear_filter": "Clear Filter",
       "message": "Perform targeted data analysis. Filter layers, apply an expression and narrow down data displayed. Sort data and hide data that does not match your criteria. Learn more",
-      "filter_your_data": "Filter Your Da"
+      "filter_your_data": "Filter Your Data",
+      "logical_operator": "Logical Operator",
+      "create_expression": "Create Expression",
+      "logical_expression": "Logical Expression",
+      "spatial_expression": "Spatial expression",
+      "expressions": {
+        "is": "is",
+        "is_not": "is not",
+        "starts_with": "Starts with",
+        "ends_with": "Ends with",
+        "contains_the_text": "Contains the text",
+        "does_not_contains_the_text": "Does not contain the text",
+        "includes": "Includes",
+        "excludes": "Excludes",
+        "is_at_least": "Is at least",
+        "is_less_than": "Is less than",
+        "is_at_most": "Is at most",
+        "is_greater_than": "Is greater than",
+        "is_between": "Is between",
+        "bounding_box": "Bounding Box",
+        "is_empty_string": "Is empty string",
+        "is_not_empty_string": "Is not empty string"
+      }
     },
     "scenario": {
       "scenario": "Scenario"
