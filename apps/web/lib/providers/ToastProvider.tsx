@@ -13,10 +13,8 @@ export default function ToastProvider({ children }: ToastProviderProps) {
     <>
       {children}
       <ToastContainer
-        
         transition={Zoom}
         position="top-center"
-        autoClose={2000}
         hideProgressBar
         theme={theme.palette.mode}
       />
