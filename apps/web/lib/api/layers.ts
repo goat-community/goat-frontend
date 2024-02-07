@@ -109,8 +109,15 @@ export const deleteLayer = async (id: string) => {
   }
 };
 
-export const createInternalLayer = async (payload: CreateFeatureLayer) => {
-  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/internal`, {
+export const createInternalLayer = async (
+  payload: CreateFeatureLayer,
+  projectId?: string,
+) => {
+  const url = new URL(`${LAYERS_API_BASE_URL}/internal`);
+  if (projectId) {
+    url.searchParams.append("project_id", projectId);
+  }
+  const response = await fetchWithAuth(url.toString(), {
     method: "POST",
     body: JSON.stringify(payload),
     headers: {

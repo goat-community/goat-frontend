@@ -162,9 +162,8 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
           ...getValues(),
           folder_id: selectedFolder?.id,
           dataset_id: datasetId,
-          ...(projectId ? { project_id: projectId } : {}),
         });
-        const response = await createInternalLayer(payload);
+        const response = await createInternalLayer(payload, projectId);
         const jobId = response?.job_id;
         if (jobId) {
           mutate();
