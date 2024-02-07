@@ -14,6 +14,7 @@ export function getMapboxStyleColor(
 ) {
   const colors = data.properties[`${type}_range`]?.colors;
   const fieldName = data.properties[`${type}_field`]?.name;
+  const fieldType = data.properties[`${type}_field`]?.type;
   const colorScale = data.properties[`${type}_scale`];
   const colorMaps = data.properties[`${type}_range`]?.color_map;
 
@@ -30,11 +31,19 @@ export function getMapboxStyleColor(
       if (!colorMapValue || !colorMapHex) return;
       if (Array.isArray(colorMapValue)) {
         colorMapValue.forEach((value: string) => {
-          valuesAndColors.push(value);
+          if (fieldType === "number" && value !== null) {
+            valuesAndColors.push(Number(value));
+          } else {
+            valuesAndColors.push(value);
+          }
           valuesAndColors.push(colorMapHex);
         });
       } else {
-        valuesAndColors.push(colorMapValue);
+        if (fieldType === "number" && colorMapValue !== null) {
+          valuesAndColors.push(Number(colorMapValue));
+        } else {
+          valuesAndColors.push(colorMapValue);
+        }
         valuesAndColors.push(colorMapHex);
       }
     });
@@ -72,6 +81,7 @@ export function getMapboxStyleMarker(data: ProjectLayer) {
   const properties = data.properties as FeatureLayerPointProperties;
   const markerMaps = properties.marker_mapping;
   const fieldName = properties.marker_field?.name;
+  const fieldType = properties.marker_field?.type;
   const marker = `${MARKER_IMAGE_PREFIX}${properties.marker?.name}`;
   if (markerMaps && fieldName) {
     const valuesAndIcons = [] as (string | number)[];
@@ -81,11 +91,19 @@ export function getMapboxStyleMarker(data: ProjectLayer) {
       if (!markerMapValue || !markerMapIcon) return;
       if (Array.isArray(markerMapValue)) {
         markerMapValue.forEach((value: string) => {
-          valuesAndIcons.push(value);
+          if (fieldType === "number" && value !== null) {
+            valuesAndIcons.push(Number(value));
+          } else {
+            valuesAndIcons.push(value);
+          }
           valuesAndIcons.push(`${MARKER_IMAGE_PREFIX}${markerMapIcon.name}`);
         });
       } else {
-        valuesAndIcons.push(markerMapValue);
+        if (fieldType === "number" && markerMapValue !== null) {
+          valuesAndIcons.push(Number(markerMapValue));
+        } else {
+          valuesAndIcons.push(markerMapValue);
+        }
         valuesAndIcons.push(`${MARKER_IMAGE_PREFIX}${markerMapIcon.name}`);
       }
     });
