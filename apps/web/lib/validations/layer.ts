@@ -206,6 +206,7 @@ export const createLayerBaseSchema = layerMetadataSchema.extend({
 
 export const createFeatureLayerSchema = createLayerBaseSchema.extend({
   dataset_id: z.string().uuid(),
+  project_id: z.string().uuid().optional(),
 });
 
 export const createNewScenarioLayerSchema = createLayerBaseSchema.extend({

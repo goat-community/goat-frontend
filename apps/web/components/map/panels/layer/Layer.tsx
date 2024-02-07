@@ -237,7 +237,11 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
         />
       )}
       {addLayerSourceOpen === AddLayerSourceType.DatasourceUpload && (
-        <DatasetUploadModal open={true} onClose={closeAddLayerSourceModal} />
+        <DatasetUploadModal
+          open={true}
+          onClose={closeAddLayerSourceModal}
+          projectId={projectId}
+        />
       )}
     </>
   );

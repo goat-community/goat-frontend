@@ -38,11 +38,13 @@ import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 interface DatasetUploadDialogProps {
   open: boolean;
   onClose?: () => void;
+  projectId?: string;
 }
 
 const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   open,
   onClose,
+  projectId,
 }) => {
   const { t } = useTranslation("dashboard");
   const dispatch = useAppDispatch();
@@ -160,6 +162,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
           ...getValues(),
           folder_id: selectedFolder?.id,
           dataset_id: datasetId,
+          ...(projectId ? { project_id: projectId } : {}),
         });
         const response = await createInternalLayer(payload);
         const jobId = response?.job_id;
