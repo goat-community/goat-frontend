@@ -18,6 +18,7 @@ export function useJobStatus(onSuccess?: () => void, onFailed?: () => void) {
     if (runningJobIds.length > 0) {
       jobs?.items?.forEach((job) => {
         if (runningJobIds.includes(job.id)) {
+          if (job.status_simple === "running") return;
           dispatch(
             setRunningJobIds(runningJobIds.filter((id) => id !== job.id)),
           );
