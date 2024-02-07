@@ -147,7 +147,7 @@ export default function MapPage({ params: { projectId } }) {
 
   useEffect(() => {
     // icons are added to the style, so if the basestyle changes we have to reload icons to the style
-    // it takes forever for certain styles to load so we have to wait a bit. 
+    // it takes forever for certain styles to load so we have to wait a bit.
     // Couldn't find an event that catches the basemap change
     const debouncedHandleMapLoad = debounce(handleMapLoad, 200);
     debouncedHandleMapLoad();
@@ -229,6 +229,9 @@ export default function MapPage({ params: { projectId } }) {
                 id="map"
                 ref={mapRef}
                 style={{ width: "100%", height: "100%" }}
+                projection={{
+                  name: "mercator",
+                }}
                 initialViewState={{
                   zoom: initialView?.zoom ?? 3,
                   latitude: initialView?.latitude ?? 48.13,

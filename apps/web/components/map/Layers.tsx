@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import type { LayerProps } from "react-map-gl";
 import { Source, Layer as MapLayer } from "react-map-gl";
 import type { ProjectLayer } from "@/lib/validations/project";
@@ -13,6 +13,10 @@ interface LayersProps {
 
 const Layers = (props: LayersProps) => {
   const sortedLayers = useSortedLayers(props.projectId);
+  const displayableLayers = useMemo(
+    () => sortedLayers?.filter((layer) => layer.type !== "table"),
+    [sortedLayers],
+  );
 
   const getLayerKey = (layer: ProjectLayer) => {
     let id = layer.id.toString();
@@ -34,8 +38,8 @@ const Layers = (props: LayersProps) => {
 
   return (
     <>
-      {sortedLayers?.length
-        ? sortedLayers.map((layer: ProjectLayer, index: number) =>
+      {displayableLayers?.length
+        ? displayableLayers.map((layer: ProjectLayer, index: number) =>
             (() => {
               if (["feature", "external_vector_tile"].includes(layer.type)) {
                 return (
@@ -65,7 +69,7 @@ const Layers = (props: LayersProps) => {
                       beforeId={
                         index === 0
                           ? undefined
-                          : sortedLayers[index - 1].id.toString()
+                          : displayableLayers[index - 1].id.toString()
                       }
                       source-layer="default"
                     />

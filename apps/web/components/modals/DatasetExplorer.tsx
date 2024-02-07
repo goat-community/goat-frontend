@@ -60,7 +60,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
       setIsBusy(true);
       await addProjectLayers(projectId, [selectedDataset.id]);
       mutateProjectLayers();
-      if (map) {
+      if (map && selectedDataset.extent) {
         zoomToLayer(map, selectedDataset.extent);
       }
     } catch (error) {
