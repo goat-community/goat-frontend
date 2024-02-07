@@ -10,6 +10,7 @@ import type { GetLayersQueryParams } from "@/lib/validations/layer";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import DatasetUploadModal from "@/components/modals/DatasetUpload";
 import { useTranslation } from "@/i18n/client";
+import { useJobStatus } from "@/hooks/jobs/JobStatus";
 
 const Datasets = () => {
   const [queryParams, setQueryParams] = useState<GetLayersQueryParams>({
@@ -22,10 +23,13 @@ const Datasets = () => {
   const { t } = useTranslation("dashboard");
 
   const {
+    mutate,
     layers: datasets,
     isLoading: isDatasetLoading,
     isError: _isDatasetError,
   } = useLayers(queryParams);
+
+  useJobStatus(mutate);
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">

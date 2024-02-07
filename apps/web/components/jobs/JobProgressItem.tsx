@@ -24,6 +24,7 @@ const statusIcons: Record<JobStatusType, ICON_NAME> = {
   finished: ICON_NAME.CIRCLECHECK,
   pending: ICON_NAME.CLOCK,
   failed: ICON_NAME.CIRCLEINFO,
+  timeout: ICON_NAME.CLOCK,
 };
 
 export default function JobProgressItem(props: JobProgressItemProps) {
@@ -36,6 +37,7 @@ export default function JobProgressItem(props: JobProgressItemProps) {
     finished: theme.palette.success.main,
     pending: theme.palette.grey[500],
     failed: theme.palette.error.main,
+    timeout: theme.palette.grey[500],
   };
   return (
     <Box

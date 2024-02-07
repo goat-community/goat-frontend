@@ -18,6 +18,7 @@ import type { GetContentQueryParams } from "@/lib/validations/common";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import type { Layer } from "@/lib/validations/layer";
+import { useJobStatus } from "@/hooks/jobs/JobStatus";
 
 const Home = () => {
   const { t } = useTranslation("dashboard");
@@ -35,12 +36,15 @@ const Home = () => {
     ...queryParams,
   });
   const {
+    mutate,
     layers,
     isLoading: isLayerLoading,
     isError: _isLayerError,
   } = useLayers({
     ...queryParams,
   });
+
+  useJobStatus(mutate);
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">

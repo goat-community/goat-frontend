@@ -32,6 +32,8 @@ import { toast } from "react-toastify";
 import { useJobs } from "@/lib/api/jobs";
 import { useTranslation } from "@/i18n/client";
 import FolderSelect from "@/components/dashboard/common/FolderSelect";
+import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 interface DatasetUploadDialogProps {
   open: boolean;
@@ -43,6 +45,8 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation("dashboard");
+  const dispatch = useAppDispatch();
+  const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
 
   const steps = [
     t("projects.dataset.select_file"),
@@ -118,7 +122,6 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
       } else if (isTable) {
         setDatasetType("table");
       }
-      console.log("file", file);
       setFileValue(file);
     }
   };
@@ -145,7 +148,6 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   }, [acceptedFileTypes, fileValue]);
 
   const handleUpload = async () => {
-    console.log(fileValue);
     try {
       setIsBusy(true);
       if (
@@ -163,6 +165,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         const jobId = response?.job_id;
         if (jobId) {
           mutate();
+          dispatch(setRunningJobIds([...runningJobIds, jobId]));
         }
       }
     } catch (error) {

@@ -188,5 +188,7 @@
     "app_subscription_seats_available": "Seats available: {{available_seats}} of {{total_seats}}",
     "app_subscription_manage": "Manage subscription",
     "app_subscription_cancel": "Cancel subscription",
-    "app_subscription_not_available": "App subscription not available"
+    "app_subscription_not_available": "App subscription not available",
+    "dataset_imported_success": "Dataset imported successfully",
+    "dataset_imported_failed": "Dataset import failed"
 }

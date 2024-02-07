@@ -317,5 +317,19 @@
   "no_values_found": "No values found",
   "no_layers_added": "No layers added",
   "coming_soon": "Coming soon",
-  "marker": "Marker"
+  "marker": "Marker",
+  "file_import": "File Import",
+  "join": "Join",
+  "isochrone_active_mobility": "Isochrone Active Mobility",
+  "isochrone_pt": "Isochrone PT",
+  "isochrone_car": "Isochrone Car",
+  "oev_gueteklasse": "Oev-Gueteklasse",
+  "aggregate_point": "Aggregate Point",
+  "aggregate_polygon": "Aggregate Polygon",
+  "buffer": "Buffer",
+  "trip_count_station": "Trip Count Station",
+  "origin_destination": "Origin Destination",
+  "nearby_station_access": "Nearby Station Access",
+  "job_success": "job finished successfully",
+  "job_failed": "job failed"
 }

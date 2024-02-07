@@ -10,35 +10,35 @@ import {
   Stack,
   Typography,
   styled,
-  Badge
+  Badge,
 } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    backgroundColor: '#44b700',
-    color: '#44b700',
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    '&::after': {
-      position: 'absolute',
+    "&::after": {
+      position: "absolute",
       top: 0,
       left: 0,
-      width: '100%',
-      height: '100%',
-      borderRadius: '50%',
-      animation: 'ripple 1.2s infinite ease-in-out',
-      border: '1px solid currentColor',
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
       content: '""',
     },
   },
-  '@keyframes ripple': {
-    '0%': {
-      transform: 'scale(.8)',
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
       opacity: 1,
     },
-    '100%': {
-      transform: 'scale(2.4)',
+    "100%": {
+      transform: "scale(2.4)",
       opacity: 0,
     },
   },
@@ -50,11 +50,15 @@ export default function JobsPopper() {
     read: false,
   });
 
+  const runningJobs = useMemo(() => {
+    return jobs?.items?.filter((job) => job.status_simple === "running");
+  }, [jobs?.items]);
+
   const [intervalId, setIntervalId] = useState<number | null>(null);
   useEffect(() => {
-    if (!jobs?.items) return;
-    const runningJobs = jobs.items.length;
-    if (runningJobs === 0) {
+    if (!runningJobs) return;
+    const runningJobsCount = runningJobs.length;
+    if (runningJobsCount === 0) {
       // no running jobs, clear interval and return
       if (intervalId) {
         clearInterval(intervalId);
@@ -79,7 +83,7 @@ export default function JobsPopper() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobs?.items, intervalId]);
+  }, [runningJobs, intervalId]);
 
   const [isBusy, setIsBusy] = useState(false);
 
@@ -180,17 +184,27 @@ export default function JobsPopper() {
                 }),
               }}
             >
-              <StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                variant="dot"
-              >
-                <Icon
-                  fontSize="inherit"
-                  iconName={ICON_NAME.BARS_PROGRESS}
-                  htmlColor="inherit"
-                />
-              </StyledBadge>
+              {runningJobs && runningJobs?.length > 0 && (
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                >
+                  <Icon
+                    fontSize="inherit"
+                    iconName={ICON_NAME.BARS_PROGRESS}
+                    htmlColor="inherit"
+                  />
+                </StyledBadge>
+              )}
+              {!runningJobs ||
+                (runningJobs?.length === 0 && (
+                  <Icon
+                    fontSize="inherit"
+                    iconName={ICON_NAME.BARS_PROGRESS}
+                    htmlColor="inherit"
+                  />
+                ))}
             </IconButton>
           ) : (
             <></>

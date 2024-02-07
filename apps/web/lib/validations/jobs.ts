@@ -3,13 +3,27 @@ import { responseSchema } from "@/lib/validations/response";
 import * as z from "zod";
 
 export const msgTypeEnum = z.enum(["info", "warning", "error"]);
-export const jobTypeEnum = z.enum(["file_import"]);
+export const jobTypeEnum = z.enum([
+  "file_import",
+  "join",
+  "isochrone_active_mobility",
+  "isochrone_pt",
+  "isochrone_car",
+  "oev_gueteklasse",
+  "aggregate_point",
+  "aggregate_polygon",
+  "buffer",
+  "trip_count_station",
+  "origin_destination",
+  "nearby_station_access",
+]);
 export const jobStatusTypeEnum = z.enum([
   "pending",
   "running",
   "finished",
   "failed",
-  "killed"
+  "killed",
+  "timeout",
 ]);
 
 export const msgSchema = z.object({

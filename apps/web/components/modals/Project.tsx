@@ -29,11 +29,9 @@ interface ProjectDialogProps {
 }
 
 const ProjectModal: React.FC<ProjectDialogProps> = ({
-  type,
   open,
   onClose,
 }) => {
-  console.log(type);
   const queryParams: GetContentQueryParams = {
     order: "descendent",
     order_by: "updated_at",

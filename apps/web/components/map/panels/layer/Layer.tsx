@@ -62,6 +62,7 @@ import { DragHandle } from "@/components/common/DragHandle";
 import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import type { PanelProps } from "@/types/map/sidebar";
 import EmptySection from "@/components/common/EmptySection";
+import { useJobStatus } from "@/hooks/jobs/JobStatus";
 
 type SortableLayerTileProps = {
   id: number;
@@ -257,9 +258,9 @@ const LayerPanel = ({ projectId }: PanelProps) => {
   const activeRightPanel = useAppSelector(
     (state) => state.map.activeRightPanel,
   );
-
   const { project, mutate: mutateProject } = useProject(projectId);
   const sortedLayers = useSortedLayers(projectId);
+  useJobStatus(mutateProjectLayers);
 
   const [renameLayer, setRenameLayer] = useState<ProjectLayer | undefined>(
     undefined,
