@@ -9,8 +9,8 @@ interface BoundingProps {
 const BoundingBoxInput = (props: BoundingProps) => {
   const { bounds, onChange } = props;
 
-  // const [boundset, setBoundset] = useState<string>(bounds);
   const boundsArray = bounds.split(",").map((bound) => parseFloat(bound));
+  const [boundset, setBoundset] = useState<string>(bounds);
 
   console.log(bounds, boundsArray);
 
@@ -33,7 +33,7 @@ const BoundingBoxInput = (props: BoundingProps) => {
     debounce(() => {
       const tempBounds = [...boundsArray];
       tempBounds[position] = value;
-      // setBoundset(tempBounds.join());
+      setBoundset(tempBounds.join());
       onChange(tempBounds.join());
     }, 500)();
   }
@@ -61,12 +61,25 @@ const BoundingBoxInput = (props: BoundingProps) => {
   // );
 
   useEffect(() => {
-    const newBoundsArray = bounds.split(",").map((bound) => parseFloat(bound));
-    setNorth(newBoundsArray.length === 4 ? newBoundsArray[3].toString() : "");
-    setSouth(newBoundsArray.length === 4 ? newBoundsArray[1].toString() : "");
-    setEast(newBoundsArray.length === 4 ? newBoundsArray[2].toString() : "");
-    setWest(newBoundsArray.length === 4 ? newBoundsArray[0].toString() : "");
-  }, [bounds]);
+    console.log(bounds.split(","), boundset.split(","));
+    if (bounds.split(",") === boundset.split(",")) {
+      const newBoundsArray = bounds
+        .split(",")
+        .map((bound) => parseFloat(bound));
+      setNorth(newBoundsArray.length === 4 ? newBoundsArray[3].toString() : "");
+      setSouth(newBoundsArray.length === 4 ? newBoundsArray[1].toString() : "");
+      setEast(newBoundsArray.length === 4 ? newBoundsArray[2].toString() : "");
+      setWest(newBoundsArray.length === 4 ? newBoundsArray[0].toString() : "");
+    }
+  }, [boundset]);
+
+  // useEffect(() => {
+  //   const newBoundsArray = bounds.split(",").map((bound) => parseFloat(bound));
+  //   setNorth(newBoundsArray.length === 4 ? newBoundsArray[3].toString() : "");
+  //   setSouth(newBoundsArray.length === 4 ? newBoundsArray[1].toString() : "");
+  //   setEast(newBoundsArray.length === 4 ? newBoundsArray[2].toString() : "");
+  //   setWest(newBoundsArray.length === 4 ? newBoundsArray[0].toString() : "");
+  // }, [bounds]);
 
   return (
     <Box
