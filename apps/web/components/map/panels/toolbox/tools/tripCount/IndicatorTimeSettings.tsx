@@ -26,7 +26,11 @@ const TimeInput = styled("input")(({ theme }) => ({
   width: "100%",
   fontFamily: "sans-serif",
   lineHeight: "20px",
-  color: "#000000b7",
+  color: theme.palette.text.secondary,
+  outline: "none",
+  "& ::-webkit-calendar-picker-indicator": {
+    backgroundColor: theme.palette.text.secondary,
+  }
 }));
 
 interface IndicatorTimeSettingsProps {
@@ -69,7 +73,7 @@ const IndicatorTimeSettings = (props: IndicatorTimeSettingsProps) => {
         <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Stack sx={{ pl: 4, py: 4, pr: 1, flexGrow: 1 }}>
+        <Stack sx={{ px: 3, py: 4, flexGrow: 1 }}>
           {/* // the data */}
           <Box
             display="flex"

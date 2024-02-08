@@ -29,7 +29,7 @@ import type {
   UseFormRegister,
   UseFormSetValue,
   FieldErrors,
-  UseFormTrigger
+  UseFormTrigger,
 } from "react-hook-form";
 import type { PostAggregatePolygon } from "@/lib/validations/tools";
 
@@ -87,24 +87,24 @@ const Statistics = (props: StatisticsProps) => {
       .join("")}`,
   );
 
-  const selectAreaLayerKeys = useGetLayerKeys(
-    `user_data.${getLayerStringIdById(
-      layers ? layers : [],
-      "aggregation_layer_project_id" in watch &&
-        watch.aggregation_layer_project_id
-        ? watch.aggregation_layer_project_id
-        : 0,
-    )
-      .split("-")
-      .join("")}`,
-  );
+  // const selectAreaLayerKeys = useGetLayerKeys(
+  //   `user_data.${getLayerStringIdById(
+  //     layers ? layers : [],
+  //     "aggregation_layer_project_id" in watch &&
+  //       watch.aggregation_layer_project_id
+  //       ? watch.aggregation_layer_project_id
+  //       : 0,
+  //   )
+  //     .split("-")
+  //     .join("")}`,
+  // );
 
   const hexagonKeys = {
-    keys: [{ name: "Area in m²", type: "string", value: "$area" }],
+    keys: [{ name: "$area", type: "string", value: "$area" }],
   };
 
   const keysToSelect =
-    watch.area_type === "feature" ? selectAreaLayerKeys.keys : hexagonKeys.keys;
+    watch.area_type === "feature" ? pointLayerKeys.keys : hexagonKeys.keys;
 
   function checkType() {
     return keysToSelect
@@ -145,64 +145,17 @@ const Statistics = (props: StatisticsProps) => {
         <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
+        <Stack sx={{ px: 3, py: 4 }}>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: theme.spacing(2),
+              gap: theme.spacing(3),
             }}
           >
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
               {t("panels.tools.aggregate.statistics_text")}
             </Typography>
-            {/* <Box>
-              <LayerFieldSelector
-                label={t("panels.tools.select_field")}
-                selectedField={
-                  keysToSelect.filter(
-                    (key) => key.name === watch.column_statistics.field,
-                  )[0]
-                }
-                setSelectedField={(field: {
-                  type: "string" | "number";
-                  name: string;
-                }) => {
-                  if (field) {
-                    setValue("column_statistics.field", field.name);
-                  } else {
-                    setValue("column_statistics.field", "");
-                  }
-                }}
-                fields={keysToSelect}
-              />
-            </Box>
-            <Box>
-              <FormControl fullWidth size="small">
-                <InputLabel>
-                  {t("panels.tools.select_method")}
-                </InputLabel>
-                <Select
-                  disabled={!watch.column_statistics.field}
-                  label={t("panels.tools.select_method")}
-                  error={!!errors.column_statistics?.field}
-                  value={
-                    watch.column_statistics.operation
-                      ? watch.column_statistics.operation
-                      : ""
-                  }
-                  {...register("column_statistics.operation")}
-                >
-                  {watch.column_statistics.field ? checkType() : null}
-                </Select>
-                {!!errors.column_statistics &&
-                  errors.column_statistics.operation && (
-                    <Typography sx={{ fontSize: "10px" }} color="error">
-                      {errors.column_statistics.operation.message}
-                    </Typography>
-                  )}
-              </FormControl>
-            </Box> */}
             <Box>
               <FormControl fullWidth size="small">
                 <InputLabel>{t("panels.tools.select_method")}</InputLabel>
@@ -219,8 +172,6 @@ const Statistics = (props: StatisticsProps) => {
                   }
                   {...register("column_statistics.operation")}
                 >
-                  {/* {watch.column_statistics.field ? checkType() : null}
-                   */}
                   {methodsKeys.map((method) => (
                     <MenuItem value={method.name} key={v4()}>
                       {method.name}
@@ -262,7 +213,9 @@ const Statistics = (props: StatisticsProps) => {
             {watch.column_statistics.field && (
               <Box sx={{ maxWidth: "100%" }}>
                 <FormControl fullWidth size="small">
-                  <InputLabel>{t("panels.tools.aggregate.field_group")}</InputLabel>
+                  <InputLabel>
+                    {t("panels.tools.aggregate.field_group")}
+                  </InputLabel>
                   <Select
                     disabled={!watch.source_layer_project_id}
                     multiple
@@ -314,7 +267,9 @@ const Statistics = (props: StatisticsProps) => {
                 variant="body2"
                 sx={{ fontSize: "13px", fontWeight: "bold" }}
               >
-                {t("panels.tools.aggregate_polygon.weighted_by_intersecting_area")}
+                {t(
+                  "panels.tools.aggregate_polygon.weighted_by_intersecting_area",
+                )}
               </Typography>
               <Switch
                 checked={watch.weigthed_by_intersecting_area}

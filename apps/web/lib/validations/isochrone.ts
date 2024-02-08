@@ -2,8 +2,8 @@ import * as z from "zod";
 
 const StartingPoint = z
   .object({
-    latitude: z.string().array(),
-    longitude: z.string().array(),
+    latitude: z.number().array(),
+    longitude: z.number().array(),
   })
   .or(
     z.object({

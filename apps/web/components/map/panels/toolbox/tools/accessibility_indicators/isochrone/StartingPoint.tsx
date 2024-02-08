@@ -29,7 +29,7 @@ import { addMarker, removeMarker } from "@/lib/store/map/slice";
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { Result } from "@/types/map/controllers";
 import type { FeatureCollection } from "geojson";
-import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import type { UseFormRegister, UseFormSetValue, UseFormTrigger } from "react-hook-form";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
 import type { SelectChangeEvent } from "@mui/material";
 
@@ -37,6 +37,7 @@ interface PickLayerProps {
   register: UseFormRegister<PostIsochrone>;
   setValue: UseFormSetValue<PostIsochrone>;
   watch: PostIsochrone;
+  trigger: UseFormTrigger<PostIsochrone>;
   startingType: StartingPointType | undefined;
   setStartingType: (value: StartingPointType) => void;
 }
@@ -47,6 +48,7 @@ const StartingPoint = (props: PickLayerProps) => {
     setValue: setFormValue,
     startingType,
     watch,
+    trigger,
     setStartingType,
   } = props;
 
@@ -89,7 +91,6 @@ const StartingPoint = (props: PickLayerProps) => {
 
   useEffect(() => {
     const handleMapClick = (event) => {
-      console.log(event);
       if (getCoordinates && "latitude" in watch.starting_points) {
         dispatch(
           addMarker({
@@ -105,6 +106,7 @@ const StartingPoint = (props: PickLayerProps) => {
           latitude: watch.starting_points.latitude,
           longitude: watch.starting_points.longitude,
         });
+        trigger("starting_points");
       }
     };
 
@@ -125,11 +127,6 @@ const StartingPoint = (props: PickLayerProps) => {
     const resultCoordinates = testForCoordinates(inputValue);
     if (resultCoordinates[0]) {
       const [_, latitude, longitude] = resultCoordinates;
-
-      setFormValue("starting_points", {
-        latitude: [latitude.toString()],
-        longitude: [longitude.toString()],
-      });
 
       setOptions([
         {
@@ -203,6 +200,9 @@ const StartingPoint = (props: PickLayerProps) => {
           iconName: ICON_NAME.LOCATION,
         }),
       );
+      setFormValue("starting_points.latitude", [value?.feature.center[1]]);
+      setFormValue("starting_points.longitude", [value?.feature.center[0]]);
+      trigger("starting_points");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
@@ -229,7 +229,7 @@ const StartingPoint = (props: PickLayerProps) => {
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
         <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
-        <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
+        <Stack sx={{ px: 3, py: 4, pr: 1 }}>
           <Box>
             <Typography
               variant="body2"
@@ -372,6 +372,7 @@ const StartingPoint = (props: PickLayerProps) => {
                 onChange={(_event: unknown, newValue: Result | null) => {
                   setOptions(newValue ? [newValue, ...options] : options);
                   setValue(newValue);
+
                 }}
                 onInputChange={(_event, newInputValue) => {
                   setInputValue(newInputValue);

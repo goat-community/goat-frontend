@@ -59,7 +59,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
     return filtered;
   }, [fields, searchText]);
   return (
-    <FormControl size="small">
+    <FormControl size="small" fullWidth>
       {props.label && (
         <FormLabelHelper
           label={props.label}

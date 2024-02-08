@@ -73,7 +73,7 @@ const InputLayer = (props: PickLayerProps) => {
         <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
+        <Stack sx={{ px: 3, py: 4 }}>
           <Box>
             <Box
               display="flex"

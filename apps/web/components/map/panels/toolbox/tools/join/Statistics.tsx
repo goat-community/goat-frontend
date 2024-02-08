@@ -122,7 +122,7 @@ const Statistics = (props: StatisticsProps) => {
       </Typography>
       <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
         <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
-        <Stack sx={{ pl: 4, py: 4, pr: 2 }}>
+        <Stack sx={{ px: 3, py: 4 }}>
           <Box>
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
               {t("panels.tools.join.statistics_text")}

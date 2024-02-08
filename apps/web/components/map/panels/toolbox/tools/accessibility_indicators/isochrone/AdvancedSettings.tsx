@@ -67,7 +67,7 @@ const AdvancedSettings = (props: AdvancedSettingsProps) => {
       </Box>
       <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 3 }}>
         <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
-        <Stack sx={{ pl: 4, py: 4, pr: 1, flexGrow: "1" }}>
+        <Stack sx={{ px: 3, py: 4, flexGrow: "1" }}>
           <FormControl
             fullWidth
             size="small"

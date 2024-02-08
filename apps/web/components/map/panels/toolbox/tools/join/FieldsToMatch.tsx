@@ -17,7 +17,8 @@ import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
 import { getLayerStringIdById } from "@/lib/utils/helpers";
-import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
+// import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
+import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
 
 import type {
   FieldErrors,
@@ -89,7 +90,7 @@ const FieldsToMatch = (props: FieldsToMatchProps) => {
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
         <Stack
-          sx={{ pl: 4, py: 4, pr: 1, marginTop: theme.spacing(2)}}
+          sx={{ px: 3, py: 4, flexGrow: 1, marginTop: theme.spacing(2)}}
         >
           <Box>
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
