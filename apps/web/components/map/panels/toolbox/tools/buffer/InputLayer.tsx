@@ -66,7 +66,7 @@ const InputLayer = (props: PickLayerProps) => {
         <Stack sx={{ pl: 4, py: 4, pr: 1, flexGrow: 1 }}>
           <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-              {t("panels.tools.aggregate.pick_layer_text")}
+              {t("panels.tools.buffer.pick_layer_text")}
             </Typography>
             <FormControl fullWidth size="small">
               <InputLabel>

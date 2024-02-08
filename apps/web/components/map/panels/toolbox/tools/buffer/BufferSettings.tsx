@@ -102,7 +102,7 @@ const BufferSettings = (props: BufferSettingsProps) => {
             }}
           >
             <TextField
-              label={t("panels.isochrone.steps")}
+              label={t("panels.tools.buffer.steps")}
               disabled={!(watch.source_layer_project_id && watch.max_distance)}
               {...register("distance_step", {
                 valueAsNumber: true,
