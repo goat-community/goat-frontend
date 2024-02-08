@@ -32,6 +32,7 @@ const Isochrone = () => {
     register,
     reset,
     watch,
+    trigger,
     getValues,
     setValue,
     formState: { isValid, errors },
@@ -85,7 +86,7 @@ const Isochrone = () => {
   const getCurrentValues = useMemo(() => {
     return watchFormValues;
   }, [watchFormValues]);
-
+  console.log(watchFormValues, isValid, errors)
   return (
     <Box
       display="flex"
@@ -115,6 +116,7 @@ const Isochrone = () => {
             register={register}
             setValue={setValue}
             watch={getCurrentValues}
+            trigger={trigger}
             startingType={startingType}
             setStartingType={setStartingType}
           />

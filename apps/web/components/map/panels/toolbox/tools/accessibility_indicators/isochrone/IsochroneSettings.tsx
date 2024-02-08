@@ -272,7 +272,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
         </Typography>
         <Stack direction="row" alignItems="center" sx={{ pl: 2 }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
-          <Box sx={{ pl: 4, py: 4, pr: 1 }}>
+          <Box sx={{ px: 3, py: 4 }}>
             <Box
               sx={{
                 display: "flex",
@@ -436,7 +436,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
         </Box>
         <Stack direction="row" alignItems="center" sx={{ pl: 2, mb: 3 }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
-          <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
+          <Stack sx={{ px: 3, py: 4}}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Typography
                 variant="body2"
@@ -500,7 +500,7 @@ const IsochroneSettings = (props: PickLayerProps) => {
                       }
                     >
                       <Icon
-                        iconName={ICON_NAME.MAP_LOCATION}
+                        iconName={ICON_NAME.RULER_HORIZONTAL}
                         fontSize="small"
                       />{" "}
                       {t("panels.isochrone.distance")}

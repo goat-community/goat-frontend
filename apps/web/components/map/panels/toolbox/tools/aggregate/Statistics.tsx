@@ -28,7 +28,7 @@ import type {
   UseFormRegister,
   UseFormSetValue,
   FieldErrors,
-  UseFormTrigger
+  UseFormTrigger,
 } from "react-hook-form";
 import type { PostAggregate } from "@/lib/validations/tools";
 
@@ -86,20 +86,10 @@ const Statistics = (props: StatisticsProps) => {
       .join("")}`,
   );
 
-  const selectAreaLayerKeys = useGetLayerKeys(
-    `user_data.${getLayerStringIdById(
-      layers ? layers : [],
-      "aggregation_layer_project_id" in watch &&
-        watch.aggregation_layer_project_id
-        ? watch.aggregation_layer_project_id
-        : 0,
-    )
-      .split("-")
-      .join("")}`,
-  );
-  
+  console.log(pointLayerKeys);
+
   function checkType() {
-    return selectAreaLayerKeys.keys
+    return pointLayerKeys.keys
       .map((key) =>
         methodsKeys
           .filter((meth) => meth.name === watch.column_statistics.operation)[0]
@@ -137,12 +127,12 @@ const Statistics = (props: StatisticsProps) => {
         <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Stack sx={{ pl: 4, py: 4, pr: 1 }}>
+        <Stack sx={{ px: 3, py: 4 }}>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: theme.spacing(2),
+              gap: theme.spacing(3),
             }}
           >
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
@@ -207,7 +197,9 @@ const Statistics = (props: StatisticsProps) => {
             {watch.column_statistics.field && (
               <Box sx={{ maxWidth: "100%" }}>
                 <FormControl fullWidth size="small">
-                  <InputLabel>{t("panels.tools.aggregate.field_group")}</InputLabel>
+                  <InputLabel>
+                    {t("panels.tools.aggregate.field_group")}
+                  </InputLabel>
                   <Select
                     disabled={!watch.source_layer_project_id}
                     multiple
