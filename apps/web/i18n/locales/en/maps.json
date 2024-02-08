@@ -168,7 +168,7 @@
         "buffer_settings": "Buffer Settings",
         "polygon_union": "Polygon Union",
         "polygon_difference": "Polygon Difference",
-        "steps": "Steps (Meter)"
+        "steps": "Step count"
       },
       "origin_to_destination": {
         "origin_to_destination": "Origin to destination",
