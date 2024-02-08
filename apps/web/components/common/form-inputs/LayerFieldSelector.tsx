@@ -66,6 +66,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
       // size="small"
     >
       <Select
+      size="small"
         MenuProps={{
           autoFocus: false,
           sx: { width: "120px" },

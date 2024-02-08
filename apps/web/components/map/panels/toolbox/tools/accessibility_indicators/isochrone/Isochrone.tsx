@@ -37,6 +37,7 @@ const Isochrone = ({ onBack, onClose }: IndicatorBaseProps) => {
   const {
     register,
     reset,
+    trigger,
     watch,
     getValues,
     setValue,
@@ -91,7 +92,7 @@ const Isochrone = ({ onBack, onClose }: IndicatorBaseProps) => {
   const getCurrentValues = useMemo(() => {
     return watchFormValues;
   }, [watchFormValues]);
-
+  console.log(watchFormValues, isValid, errors)
   return (
     <Container
       disablePadding={false}
@@ -108,6 +109,7 @@ const Isochrone = ({ onBack, onClose }: IndicatorBaseProps) => {
           />
           {getCurrentValues.routing_type ? (
             <StartingPoint
+              trigger={trigger}
               register={register}
               setValue={setValue}
               watch={getCurrentValues}

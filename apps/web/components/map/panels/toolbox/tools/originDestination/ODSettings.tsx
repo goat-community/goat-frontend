@@ -90,7 +90,7 @@ const ODSettings = (props: FieldsToMatchProps) => {
         <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Stack sx={{ pl: 4, py: 4, pr: 1, marginTop: theme.spacing(2), flexGrow: 1 }}>
+        <Stack sx={{ px: 3, py: 4, marginTop: theme.spacing(2), flexGrow: 1 }}>
           <Box sx={{display: "flex", flexDirection: "column", gap: theme.spacing(3)}}>
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
               {t("panels.tools.origin_to_destination.od_settings")}

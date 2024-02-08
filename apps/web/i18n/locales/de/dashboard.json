@@ -4,7 +4,7 @@
   "language": "Sprache",
   "en": "Englisch",
   "de": "Deutsch",
-  "theme": "Thema",
+  "theme": "Theme",
   "dark": "Dunkel",
   "light": "Hell",
   "measurement_unit": "Maßeinheit",
@@ -46,7 +46,7 @@
     "filters": {
       "filter": "Filter",
       "clear_all": "Alle löschen",
-      "dataset_types": "Ebenentypen"
+      "dataset_types": "Layertypen"
     },
     "folder": {
       "create_folder": "Ordner erstellen",
@@ -87,7 +87,7 @@
     "no_projects_found": "Keine Projekte gefunden",
     "no_datasets_found": "Keine Datensätze gefunden",
     "search_projects": "Projekte durchsuchen",
-    "search_layers": "Ebenen durchsuchen",
+    "search_layers": "Layer durchsuchen",
     "add_dataset": "Datensatz hinzufügen"
   },
   "settings": {
@@ -111,7 +111,7 @@
   "organization": {
     "overview": "Übersicht",
     "search": "Suche",
-    "connection_error": "Es besteht ein Verbindungsfehler. Stellen Sie sicher, dass Sie mit einem gültigen Netzwerk verbunden sind!",
+    "connection_error": "Es besteht ein Verbindungsfehler. Stellen Sie sicher, dass Sie mit einem Netzwerk verbunden sind!",
     "manage_users": {
       "manage_users": "Benutzer verwalten",
       "invite_user": "Benutzer einladen",
@@ -140,7 +140,7 @@
     }
   },
   "subscriptions": {
-    "add_seat": "Platz hinzufügen",
+    "add_seat": "Nutzerlizenz hinzufügen",
     "no_result_found": "Keine Ergebnisse gefunden!",
     "error": "Fehler"
   }

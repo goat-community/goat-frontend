@@ -27,7 +27,7 @@ const Buffer = () => {
     defaultValues: {
       source_layer_project_id: 0,
       max_distance: 500,
-      distance_step: 50,
+      distance_step: 5,
       polygon_union: true,
       polygon_difference: false,
     },

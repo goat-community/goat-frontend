@@ -18,9 +18,7 @@ interface AggregateProps {
 
 const AggregatePolygon = (props: AggregateProps) => {
   const { projectId } = props;
-
-  // const { t } = useTranslation("maps");
-
+  
   const {
     register,
     reset,

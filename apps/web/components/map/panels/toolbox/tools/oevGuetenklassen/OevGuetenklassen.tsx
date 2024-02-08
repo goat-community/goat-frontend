@@ -31,8 +31,8 @@ const OevGuetenklassen = () => {
     defaultValues: {
       time_window: {
         weekday: "weekday",
-        from_time: 2000,
-        to_time: 5000,
+        from_time: 25200,
+        to_time: 32400,
       },
       reference_area_layer_project_id: 0,
       station_config: accessibilityIndicatorsStaticPayload,

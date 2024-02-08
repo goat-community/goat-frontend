@@ -63,7 +63,7 @@ const BufferSettings = (props: BufferSettingsProps) => {
         <Box sx={{ height: "100%" }}>
           <Divider orientation="vertical" sx={{ borderRightWidth: "2px" }} />
         </Box>
-        <Stack sx={{ pl: 4, py: 4, pr: 1, flexGrow: 1 }}>
+        <Stack sx={{ px: 3, py: 4, flexGrow: 1 }}>
           <Box display="flex" flexDirection="column" gap={theme.spacing(2)}>
             <Box
               sx={{
@@ -102,7 +102,7 @@ const BufferSettings = (props: BufferSettingsProps) => {
             }}
           >
             <TextField
-              label={t("panels.isochrone.steps")}
+              label={t("panels.tools.buffer.steps")}
               disabled={!(watch.source_layer_project_id && watch.max_distance)}
               {...register("distance_step", {
                 valueAsNumber: true,
