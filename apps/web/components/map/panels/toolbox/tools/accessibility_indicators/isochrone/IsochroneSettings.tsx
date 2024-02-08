@@ -244,8 +244,6 @@ const IsochroneSettings = (props: PickLayerProps) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          gap: theme.spacing(2),
-          marginBottom: theme.spacing(4),
         }}
       >
         <Typography

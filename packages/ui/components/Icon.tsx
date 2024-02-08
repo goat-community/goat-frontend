@@ -85,6 +85,7 @@ import {
   faMountain,
   faStreetView,
   faDrawPolygon,
+  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -192,6 +193,7 @@ export enum ICON_NAME {
   CLONE = "clone",
   MOUNTAIN = "mountain",
   ACCESSIBILITY = "accessibility",
+  BOOK = "book",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -297,6 +299,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.ACCESSIBILITY]: faStreetView,
   [ICON_NAME.DRAW_POLYGON]: faDrawPolygon,
   [ICON_NAME.CLONE]: faClone,
+  [ICON_NAME.BOOK]: faBook,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

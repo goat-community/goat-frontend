@@ -1,13 +1,13 @@
-import React from 'react'
+import React from "react";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Divider,
 } from "@mui/material";
-import { Icon, ICON_NAME } from '@p4b/ui/components/Icon';
+import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 const AccordionWrapper = ({
   header,
@@ -34,9 +34,9 @@ const AccordionWrapper = ({
         {header}
       </AccordionSummary>
       <Divider sx={{ mt: 0, pt: 0 }} />
-      <AccordionDetails sx={{ pt: 0, mt: 0 }}>{body}</AccordionDetails>
+      <AccordionDetails sx={{ mt: 0, p: 0 }}>{body}</AccordionDetails>
     </Accordion>
   );
 };
 
-export default AccordionWrapper
+export default AccordionWrapper;

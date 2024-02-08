@@ -33,57 +33,61 @@ export default function Container(props: ContainerProps) {
         height: "100%",
       }}
     >
-      <Stack
-        sx={{
-          paddingTop: theme.spacing(2),
-          paddingLeft: theme.spacing(3),
-          paddingRight: theme.spacing(3),
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        direction="row"
-      >
-        {header ? (
-          <Box
+      {(header || title) && (
+        <>
+          <Stack
             sx={{
-              display: "flex",
-              alignItems: "center",
+              paddingTop: theme.spacing(2),
+              paddingLeft: theme.spacing(3),
+              paddingRight: theme.spacing(3),
               justifyContent: "space-between",
-              gap: "20px",
-              width: "100%",
-            }}
-          >
-            {header}
-            <IconButton onClick={() => close(undefined)}>
-              <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
-            </IconButton>
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
-              gap: "20px",
-              width: "100%",
             }}
+            direction="row"
           >
-            <Typography
-              variant="body1"
-              fontWeight="bold"
-              sx={{
-                display: "flex",
-              }}
-            >
-              {title}
-            </Typography>
-            <IconButton onClick={() => close(undefined)}>
-              <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
-            </IconButton>
-          </Box>
-        )}
-      </Stack>
-      <Divider />
+            {header ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "20px",
+                  width: "100%",
+                }}
+              >
+                {header}
+                <IconButton onClick={() => close(undefined)}>
+                  <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
+                </IconButton>
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "20px",
+                  width: "100%",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  fontWeight="bold"
+                  sx={{
+                    display: "flex",
+                  }}
+                >
+                  {title}
+                </Typography>
+                <IconButton onClick={() => close(undefined)}>
+                  <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
+                </IconButton>
+              </Box>
+            )}
+          </Stack>
+          <Divider />
+        </>
+      )}
       {body && (
         <Stack
           direction="column"

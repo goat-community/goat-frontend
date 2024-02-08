@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from "react";
-import { Box } from "@mui/material";
 import { useForm } from "react-hook-form";
 import {
   SendPTIsochroneRequest,
@@ -19,8 +18,15 @@ import AdvancedSettings from "@/components/map/panels/toolbox/tools/accessibilit
 
 import type { StartingPointType } from "@/types/map/isochrone";
 import type { PostIsochrone } from "@/lib/validations/isochrone";
+import Container from "@/components/map/panels/Container";
+import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
 
-const Isochrone = () => {
+interface IndicatorBaseProps {
+  onBack: () => void;
+  onClose: () => void;
+}
+
+const Isochrone = ({ onBack, onClose }: IndicatorBaseProps) => {
   const [startingType, setStartingType] = useState<
     StartingPointType | undefined
   >(undefined);
@@ -87,58 +93,43 @@ const Isochrone = () => {
   }, [watchFormValues]);
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      sx={{ height: "100%" }}
-    >
-      <Box
-        sx={{
-          height: "95%",
-          maxHeight: "95%",
-          overflow: "scroll",
-          display: "flex",
-          flexDirection: "column",
-          gap: "18px",
-        }}
-      >
-        <IsochroneSettings
-          register={register}
-          getValues={getValues}
-          watch={getCurrentValues}
-          setValue={setValue}
-          errors={errors}
-        />
-        {getCurrentValues.routing_type ? (
-          <StartingPoint
+    <Container
+      disablePadding={false}
+      header={<ToolsHeader onBack={onBack} title="Isochrone" />}
+      close={onClose}
+      body={
+        <>
+          <IsochroneSettings
             register={register}
+            getValues={getValues}
+            watch={getCurrentValues}
+            setValue={setValue}
+            errors={errors}
+          />
+          {getCurrentValues.routing_type ? (
+            <StartingPoint
+              register={register}
+              setValue={setValue}
+              watch={getCurrentValues}
+              startingType={startingType}
+              setStartingType={setStartingType}
+            />
+          ) : null}
+          <AdvancedSettings
             setValue={setValue}
             watch={getCurrentValues}
-            startingType={startingType}
-            setStartingType={setStartingType}
+            errors={errors}
           />
-        ) : null}
-        <AdvancedSettings 
-          setValue={setValue}
-          watch={getCurrentValues}
-          errors={errors}
+        </>
+      }
+      action={
+        <ToolboxActionButtons
+          runFunction={handleRun}
+          runDisabled={!isValid}
+          resetFunction={handleReset}
         />
-      </Box>
-      <ToolboxActionButtons
-        runFunction={handleRun}
-        runDisabled={!isValid}
-        resetFunction={handleReset}
-        // resetDisabled={
-        //   !getCurrentValues.join_layer_project_id &&
-        //       !getCurrentValues.join_field &&
-        //       !getCurrentValues.column_statistics.operation &&
-        //       !getCurrentValues.column_statistics.field &&
-        //       !getCurrentValues.target_layer_project_id &&
-        //       !getCurrentValues.target_field
-        // }
-      />
-    </Box>
+      }
+    />
   );
 };
 
