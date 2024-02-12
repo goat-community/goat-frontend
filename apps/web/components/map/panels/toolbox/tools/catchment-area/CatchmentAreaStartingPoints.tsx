@@ -59,12 +59,12 @@ const CatchmentAreaStartingPoints = () => {
       <Table size="small" aria-label="starting point table" stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell align="center">
+            <TableCell align="left">
               <Typography variant="caption" fontWeight="bold">
                 Lon
               </Typography>
             </TableCell>
-            <TableCell align="center">
+            <TableCell align="left">
               <Typography variant="caption" fontWeight="bold">
                 Lat
               </Typography>
