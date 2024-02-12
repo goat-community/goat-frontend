@@ -21,7 +21,7 @@ import {
   useDataset,
   useLayerQueryables,
 } from "@/lib/api/layers";
-import Header from "@/components/map/panels/style/other/Header";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
 import ColorOptions from "@/components/map/panels/style/color/ColorOptions";
 import SizeOptions from "@/components/map/panels/style/size/SizeOptions";
 import type { ProjectLayer } from "@/lib/validations/project";
@@ -295,7 +295,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                     activeLayer.feature_layer_geometry_type,
                   ) && (
                     <>
-                      <Header
+                      <SectionHeader
                         active={activeLayer?.properties.filled}
                         onToggleChange={(event) => {
                           onToggleChange(event, "filled");
@@ -338,7 +338,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   )}
 
                 {/* {STROKE} */}
-                <Header
+                <SectionHeader
                   active={!!activeLayer?.properties.stroked}
                   onToggleChange={(event) => {
                     onToggleChange(event, "stroked");
@@ -386,7 +386,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                     activeLayer.feature_layer_geometry_type,
                   ) && (
                     <>
-                      <Header
+                      <SectionHeader
                         active={!!activeLayer?.properties.stroked}
                         onToggleChange={(event) => {
                           onToggleChange(event, "stroked");
@@ -420,7 +420,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                 {activeLayer.feature_layer_geometry_type &&
                   activeLayer.feature_layer_geometry_type === "point" && (
                     <>
-                      <Header
+                      <SectionHeader
                         active={activeLayer?.properties["custom_marker"]}
                         alwaysActive={false}
                         onToggleChange={(event) => {
@@ -459,7 +459,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                     <>
                       {activeLayer?.properties["custom_marker"] && (
                         <>
-                          <Header
+                          <SectionHeader
                             active={markerExists}
                             alwaysActive={true}
                             label={t("maps:marker_size")}
@@ -492,7 +492,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
                       {!activeLayer?.properties["custom_marker"] && (
                         <>
-                          <Header
+                          <SectionHeader
                             active={true}
                             alwaysActive={true}
                             label={t("maps:radius")}
@@ -523,7 +523,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
                 {/* {LABELS} */}
 
-                <Header
+                <SectionHeader
                   active={false}
                   alwaysActive={true}
                   label={t("maps:labels")}

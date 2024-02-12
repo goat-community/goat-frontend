@@ -18,7 +18,6 @@ import type {
 } from "react-map-gl";
 import Map, { MapProvider } from "react-map-gl";
 import Layers from "@/components/map/Layers";
-import Markers from "@/components/map/Markers";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 import Header from "@/components/header/Header";
 import {
@@ -35,6 +34,7 @@ import { v4 } from "uuid";
 import HighlightLayer from "@/components/map/HighlighLayer";
 import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
+import ToolboxLayers from "@/components/map/ToolboxLayers";
 
 const sidebarWidth = 52;
 const toolbarHeight = 52;
@@ -255,8 +255,8 @@ export default function MapPage({ params: { projectId } }) {
                 onLoad={handleMapLoad}
               >
                 <HighlightLayer highlightFeature={highlightedFeature} />
-                <Markers />
                 <Layers projectId={projectId} />
+                <ToolboxLayers />
 
                 {popupInfo && (
                   <MapPopover

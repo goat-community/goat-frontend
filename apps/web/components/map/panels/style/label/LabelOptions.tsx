@@ -1,7 +1,7 @@
 import { useTranslation } from "@/i18n/client";
 import type { LayerFieldType } from "@/lib/validations/layer";
-import OptionsCollapse from "@/components/map/panels/style/other/OptionsCollapse";
 import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
 
 const LabelOptions = ({
   // layerStyle,
@@ -23,7 +23,7 @@ const LabelOptions = ({
   const { t } = useTranslation(["maps", "common"]);
 
   return (
-    <OptionsCollapse
+    <SectionOptions
       active={!!active}
       baseOptions={
         <LayerFieldSelector

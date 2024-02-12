@@ -32,3 +32,27 @@ export const comingSoonIcon: IconDefinition = {
   iconName: "coming-soon" as IconName,
   prefix: "fas" as IconPrefix,
 };
+
+export const gondolaIcon: IconDefinition = {
+  icon: [
+    24,
+    24,
+    [],
+    "",
+    "M12 2L2 7L12 12L22 7Z M2 7V17L12 22L22 17V7Z M2 17L12 12L22 17Z",
+  ],
+  iconName: "gondola" as IconName,
+  prefix: "fas" as IconPrefix,
+};
+
+export const funicularIcon: IconDefinition = {
+  icon: [
+    24,
+    24,
+    [],
+    "",
+    "M6 12L12 6L18 12L12 18Z M12 6L18 0L24 6L18 12Z M0 18L6 12L12 18L6 24Z",
+  ],
+  iconName: "funicular" as IconName,
+  prefix: "fas" as IconPrefix,
+};

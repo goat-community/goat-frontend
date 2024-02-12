@@ -1,6 +1,6 @@
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
-import OptionsCollapse from "@/components/map/panels/style/other/OptionsCollapse";
-import SliderInput from "@/components/map/panels/style/other/SliderInput";
+import SliderInput from "@/components/map/panels/common/SliderInput";
 import { useTranslation } from "@/i18n/client";
 import type {
   FeatureLayerProperties,
@@ -53,7 +53,7 @@ const SizeOptions = ({
 
   return (
     <>
-      <OptionsCollapse
+      <SectionOptions
         active={!!active}
         collapsed={collapsed}
         baseOptions={

@@ -15,15 +15,19 @@ import AccordionWrapper from "@/components/common/AccordionWrapper";
 
 import Join from "@/components/map/panels/toolbox/tools/join/Join";
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
-import Isochrone from "@/components/map/panels/toolbox/tools/accessibility_indicators/isochrone/Isochrone";
 import AggregatePolygon from "@/components/map/panels/toolbox/tools/aggregatePolygon/AggregatePolygon";
 import Buffer from "@/components/map/panels/toolbox/tools/buffer/Buffer";
 import OevGuetenklassen from "@/components/map/panels/toolbox/tools/oevGuetenklassen/OevGuetenklassen";
 import TripCount from "@/components/map/panels/toolbox/tools/tripCount/TripCount";
 import OriginDestination from "@/components/map/panels/toolbox/tools/originDestination/OriginDestination";
 import Container from "@/components/map/panels/Container";
-import { setActiveRightPanel } from "@/lib/store/map/slice";
+import {
+  setActiveRightPanel,
+  setMaskLayer,
+  setToolboxStartingPoints,
+} from "@/lib/store/map/slice";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
+import CatchmentArea from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentArea";
 
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("maps");
@@ -55,6 +59,8 @@ const Toolbox = () => {
 
   const handleOnBack = () => {
     setValue(undefined);
+    dispatch(setMaskLayer(undefined));
+    dispatch(setToolboxStartingPoints(undefined));
   };
 
   const handleOnClose = () => {
@@ -120,7 +126,7 @@ const Toolbox = () => {
     catchment_area: {
       name: t("panels.tools.catchment_area.catchment_area"),
       value: "catchment_area",
-      element: <Isochrone onBack={handleOnBack} onClose={handleOnClose} />,
+      element: <CatchmentArea onBack={handleOnBack} onClose={handleOnClose} />,
     },
     buffer: {
       name: t("panels.tools.buffer.buffer"),

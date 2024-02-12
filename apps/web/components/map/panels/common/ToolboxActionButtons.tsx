@@ -1,12 +1,14 @@
 import React from "react";
-import { Button, Stack } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
+import { LoadingButton } from "@mui/lab";
 
 interface ToolboxActionButtonsProps {
   resetFunction: () => void;
   resetDisabled?: boolean;
   runFunction: () => void;
   runDisabled?: boolean;
+  isBusy?: boolean;
 }
 
 const ToolboxActionButtons = (props: ToolboxActionButtonsProps) => {
@@ -30,14 +32,18 @@ const ToolboxActionButtons = (props: ToolboxActionButtonsProps) => {
       >
         {t("panels.tools.reset")}
       </Button>
-      <Button
+      <LoadingButton
         size="small"
+        variant="contained"
+        loading={props.isBusy}
         sx={{ flexGrow: "1" }}
         onClick={runFunction}
         disabled={runDisabled}
       >
-        {t("panels.tools.run")}
-      </Button>
+        <Typography variant="body2" fontWeight="bold" color="inherit">
+          {t("panels.tools.run")}
+        </Typography>
+      </LoadingButton>
     </Stack>
   );
 };

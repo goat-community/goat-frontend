@@ -1,3 +1,5 @@
+import type { ICON_NAME } from "@p4b/ui/components/Icon";
+
 export interface Basemap {
   value: string;
   url: string;
@@ -22,5 +24,11 @@ export enum MapSidebarItemID {
   FILTER = "filter",
   STYLE = "style",
   TOOLBOX = "toolbox",
-  SCENARIO = "scenario"
+  SCENARIO = "scenario",
 }
+
+export type SelectorItem = {
+  value: string | number;
+  label: string;
+  icon?: ICON_NAME;
+};

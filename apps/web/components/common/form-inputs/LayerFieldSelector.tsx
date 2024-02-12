@@ -32,21 +32,22 @@ export const FieldTypeColors = {
   number: [248, 194, 28],
 };
 
-export const FieldTypeTag = styled("div")<{ fieldType: string }>(({ fieldType }) => ({
-  backgroundColor: `rgba(${FieldTypeColors[fieldType]}, 0.1)`,
-  borderRadius: 4,
-  border: `1px solid rgb(${FieldTypeColors[fieldType]})`,
-  color: `rgb(${FieldTypeColors[fieldType]})`,
-  display: "inline-block",
-  fontSize: 10,
-  fontWeight: "bold",
-  padding: "0 5px",
-  marginRight: "10px",
-  textAlign: "center",
-  width: "50px",
-  lineHeight: "20px",
-}));
-
+export const FieldTypeTag = styled("div")<{ fieldType: string }>(
+  ({ fieldType }) => ({
+    backgroundColor: `rgba(${FieldTypeColors[fieldType]}, 0.1)`,
+    borderRadius: 4,
+    border: `1px solid rgb(${FieldTypeColors[fieldType]})`,
+    color: `rgb(${FieldTypeColors[fieldType]})`,
+    display: "inline-block",
+    fontSize: 10,
+    fontWeight: "bold",
+    padding: "0 5px",
+    marginRight: "10px",
+    textAlign: "center",
+    width: "50px",
+    lineHeight: "20px",
+  }),
+);
 
 const LayerFieldSelector = (props: SelectorProps) => {
   // const theme = useTheme();
@@ -59,14 +60,14 @@ const LayerFieldSelector = (props: SelectorProps) => {
     });
     return filtered;
   }, [fields, searchText]);
-  
+
   return (
-    <FormControl 
-      fullWidth 
+    <FormControl
+      fullWidth
       // size="small"
     >
       <Select
-      size="small"
+        size="small"
         MenuProps={{
           autoFocus: false,
           sx: { width: "120px" },

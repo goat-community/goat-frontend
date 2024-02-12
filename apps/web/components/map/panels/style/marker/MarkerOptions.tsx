@@ -4,9 +4,9 @@ import type {
   LayerFieldType,
 } from "@/lib/validations/layer";
 import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
-import OptionsCollapse from "@/components/map/panels/style/other/OptionsCollapse";
 import MarkerIconPicker from "@/components/map/panels/style/marker/MarkerIconPicker";
 import MarkerSelector from "@/components/map/panels/style/classification/MarkerSelector";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
 
 const MarkerOptions = ({
   type,
@@ -30,7 +30,7 @@ const MarkerOptions = ({
   const { t } = useTranslation(["maps", "common"]);
 
   return (
-    <OptionsCollapse
+    <SectionOptions
       active={!!active}
       baseOptions={
         <MarkerIconPicker

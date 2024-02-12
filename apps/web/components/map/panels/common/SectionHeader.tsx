@@ -1,7 +1,7 @@
 import { Typography, useTheme, Stack, Switch, IconButton } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
-const Header = ({
+const SectionHeader = ({
   label,
   active,
   onToggleChange,
@@ -9,21 +9,23 @@ const Header = ({
   setCollapsed,
   alwaysActive = false,
   disableAdvanceOptions = false,
+  icon = ICON_NAME.CIRCLE,
 }: {
   label: string;
   active: boolean;
   onToggleChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
+  collapsed?: boolean;
+  setCollapsed?: (collapsed: boolean) => void;
   alwaysActive?: boolean;
   disableAdvanceOptions?: boolean;
+  icon?: ICON_NAME;
 }) => {
   const theme = useTheme();
   return (
     <Stack direction="row" alignItems="center" justifyContent="space-between">
       <Stack direction="row" alignItems="center">
         <Icon
-          iconName={ICON_NAME.CIRCLE}
+          iconName={icon}
           style={{
             fontSize: "17px",
             color: active
@@ -56,7 +58,9 @@ const Header = ({
               }),
             }}
             onClick={() => {
-              setCollapsed(!collapsed);
+              if (setCollapsed) {
+                setCollapsed(!collapsed);
+              }
             }}
           >
             <Icon
@@ -71,4 +75,4 @@ const Header = ({
   );
 };
 
-export default Header;
+export default SectionHeader;
