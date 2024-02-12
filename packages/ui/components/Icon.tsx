@@ -88,11 +88,11 @@ import {
   faDrawPolygon,
   faBook,
   faRoute,
-  faTram,
   faTrain,
   faSubway,
   faFerry,
   faCableCar,
+  faTrainTram,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -112,7 +112,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SvgIcon } from "@mui/material";
 import type { SvgIconProps } from "@mui/material";
-import { addImageIcon, comingSoonIcon, funicularIcon, gondolaIcon } from "../assets/svg/OtherIcons";
+import {
+  addImageIcon,
+  comingSoonIcon,
+  funicularIcon,
+  gondolaIcon,
+} from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
   // Solid icons
@@ -319,7 +324,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.CLONE]: faClone,
   [ICON_NAME.BOOK]: faBook,
   [ICON_NAME.ROUTE]: faRoute,
-  [ICON_NAME.TRAM]: faTram,
+  [ICON_NAME.TRAM]: faTrainTram,
   [ICON_NAME.RAIL]: faTrain,
   [ICON_NAME.SUBWAY]: faSubway,
   [ICON_NAME.FERRY]: faFerry,

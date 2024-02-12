@@ -33,6 +33,8 @@ export const catchmentAreaShapeEnum = z.enum([
   "rectangular_grid",
 ]);
 
+export const PTDay = z.enum(["weekday", "saturday", "sunday"]);
+
 export const PTAccessModes = z.enum(["walk"]);
 export const PTEgressModes = z.enum(["walk"]);
 
@@ -74,7 +76,7 @@ export const catchmentAreaConfigDefaults: {
     access_mode: PTAccessModes.Enum.walk,
     egress_mode: PTEgressModes.Enum.walk,
     max_travel_time: 30,
-    steps: 10,
+    steps: 5
   },
 };
 

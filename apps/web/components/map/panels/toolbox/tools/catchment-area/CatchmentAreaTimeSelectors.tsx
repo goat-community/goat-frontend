@@ -22,6 +22,9 @@ type CatchmentAreaTimeSelectorsProps = {
   setPTStartTime: (value: number) => void;
   ptEndTime: number | undefined;
   setPTEndTime: (value: number) => void;
+  ptDays: SelectorItem[];
+  ptDay: SelectorItem | undefined;
+  setPTDay: (item: SelectorItem) => void;
   isPTValid: boolean;
   t: (key: string) => string;
 };
@@ -39,6 +42,9 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
   setPTStartTime,
   ptEndTime,
   setPTEndTime,
+  ptDays,
+  ptDay,
+  setPTDay,
   isPTValid,
   t,
 }) => {
@@ -49,7 +55,7 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
         setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
           setMaxTravelTime(item as SelectorItem);
         }}
-        items={getTravelCostConfigValues(1, 45, "min")}
+        items={getTravelCostConfigValues(3, 45, "min")}
         label={t("travel_time_limit") + " (Min)"}
         tooltip={t("travel_time_limit_tooltip")}
       />
@@ -74,12 +80,23 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
           setSteps(item as SelectorItem);
         }}
         errorMessage={!areStepsValid ? t("travel_time_step_error") : ""}
-        items={getTravelCostConfigValues(1, 45)}
+        items={getTravelCostConfigValues(3, 9)}
         label={t("travel_time_step") + " (Steps)"}
         tooltip={t("travel_time_step_tooltip")}
       />
       {routingType === CatchmentAreaRoutingTypeEnum.Enum.pt && (
         <Stack spacing={2}>
+          <Selector
+            selectedItems={ptDay}
+            setSelectedItems={(
+              item: SelectorItem[] | SelectorItem | undefined,
+            ) => {
+              setPTDay(item as SelectorItem);
+            }}
+            items={ptDays}
+            label={t("pt_day")}
+            tooltip={t("pt_day_tooltip")}
+          />
           <Stack>
             <FormLabelHelper
               label={t("pt_start_time")}

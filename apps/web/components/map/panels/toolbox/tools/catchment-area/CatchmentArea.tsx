@@ -9,6 +9,7 @@ import type { CatchmentAreaRoutingType } from "@/lib/validations/tools";
 import {
   CatchmentAreaRoutingTypeEnum,
   PTAccessModes,
+  PTDay,
   PTEgressModes,
   PTRoutingModes,
   activeMobilityAndCarCatchmentAreaSchema,
@@ -141,6 +142,23 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     ];
   }, [t]);
 
+  const ptDays: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: PTDay.Enum.weekday,
+        label: t("weekday"),
+      },
+      {
+        value: PTDay.Enum.saturday,
+        label: t("saturday"),
+      },
+      {
+        value: PTDay.Enum.sunday,
+        label: t("sunday"),
+      },
+    ];
+  }, [t]);
+
   const catchmentAreaShapeTypes: SelectorItem[] = useMemo(() => {
     return [
       {
@@ -226,12 +244,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   const [ptStartTime, setPTStartTime] = useState<number | undefined>(undefined);
   const [ptEndTime, setPTEndTime] = useState<number | undefined>(undefined);
+  const [ptDay, setPTDay] = useState<SelectorItem | undefined>(undefined);
   const isPTValid = useMemo(() => {
-    if (!ptStartTime || !ptEndTime || ptStartTime >= ptEndTime) {
+    if (!ptStartTime || !ptEndTime || ptStartTime >= ptEndTime || !ptDay) {
       return false;
     }
     return true;
-  }, [ptStartTime, ptEndTime]);
+  }, [ptStartTime, ptEndTime, ptDay]);
 
   const areStepsValid = useMemo(() => {
     if (steps && maxTravelTime && maxTravelTime.value >= steps.value) {
@@ -285,11 +304,17 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     setCatchmentAreaShapeType(catchmentAreaShapeTypes[0]);
     setPTStartTime(catchmentAreaConfigDefaults.pt.start_time);
     setPTEndTime(catchmentAreaConfigDefaults.pt.end_time);
+    setPTDay(ptDays[0]);
 
     // Reset starting method
     setStartingPointMethod(startingPointMethods[0]);
     setStartingPointLayer(undefined);
-  }, [catchmentAreaShapeTypes, selectedRouting?.value, startingPointMethods]);
+  }, [
+    catchmentAreaShapeTypes,
+    ptDays,
+    selectedRouting?.value,
+    startingPointMethods,
+  ]);
 
   useEffect(() => {
     handleConfigurationReset();
@@ -376,7 +401,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       payload["time_window"] = {
         from_time: ptStartTime,
         to_time: ptEndTime,
-        weekday: "weekday",
+        weekday: ptDay?.value,
       };
       try {
         setIsBusy(true);
@@ -461,6 +486,25 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       }
     }
   };
+
+  const travelTimeProps = {
+    maxTravelTime,
+    setMaxTravelTime,
+    speed,
+    setSpeed,
+    steps,
+    setSteps,
+    ptStartTime,
+    setPTStartTime,
+    ptEndTime,
+    setPTEndTime,
+    ptDays,
+    ptDay,
+    setPTDay,
+    areStepsValid,
+    isPTValid,
+  };
+
   return (
     <Container
       disablePadding={false}
@@ -580,18 +624,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                                 routingType={
                                   selectedRouting?.value as CatchmentAreaRoutingType
                                 }
-                                maxTravelTime={maxTravelTime}
-                                setMaxTravelTime={setMaxTravelTime}
-                                speed={speed}
-                                setSpeed={setSpeed}
-                                steps={steps}
-                                setSteps={setSteps}
-                                ptStartTime={ptStartTime}
-                                setPTStartTime={setPTStartTime}
-                                ptEndTime={ptEndTime}
-                                setPTEndTime={setPTEndTime}
-                                areStepsValid={areStepsValid}
-                                isPTValid={isPTValid}
+                                {...travelTimeProps}
                                 t={t}
                               />
                             </>
@@ -620,18 +653,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                       routingType={
                         selectedRouting?.value as CatchmentAreaRoutingType
                       }
-                      maxTravelTime={maxTravelTime}
-                      setMaxTravelTime={setMaxTravelTime}
-                      speed={speed}
-                      setSpeed={setSpeed}
-                      steps={steps}
-                      setSteps={setSteps}
-                      ptStartTime={ptStartTime}
-                      setPTStartTime={setPTStartTime}
-                      ptEndTime={ptEndTime}
-                      setPTEndTime={setPTEndTime}
-                      areStepsValid={areStepsValid}
-                      isPTValid={isPTValid}
+                      {...travelTimeProps}
                       t={t}
                     />
                   )}
