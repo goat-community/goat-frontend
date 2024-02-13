@@ -7,6 +7,7 @@
   "done": "Done",
   "help": "Help",
   "cancel": "Cancel",
+  "open_documentation": "Open Documentation",
   "controls": {
     "enter_an_address": "Enter an address or coordinates"
   },

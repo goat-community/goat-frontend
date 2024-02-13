@@ -68,14 +68,7 @@ const ProjectNavigation = ({ projectId }) => {
         component: <Charts />,
       },
     ],
-    bottomItems: [
-      {
-        id: MapSidebarItemID.HELP,
-        icon: ICON_NAME.HELP,
-        name: t("help"),
-        link: "https://docs.plan4better.de",
-      },
-    ],
+    bottomItems: [],
     width: sidebarWidth,
     position: "left",
   };
