@@ -73,6 +73,7 @@ const CatchmentAreaStartingPoints = () => {
           </TableRow>
         </TableHead>
       </Table>
+      {/* { Second table as workaround to make the table body scrollable} */}
       <TableContainer style={{marginTop: 0, maxHeight: 250}}>
         <Table size="small" aria-label="starting point table">
           <TableBody>
