@@ -61,7 +61,7 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
       if (!dataset) return;
       setIsBusy(true);
       const payload = {
-        id: dataset.id,
+        id: type === "layer" ? dataset.id : dataset["layer_id"],
         file_type: dataDownloadType,
         file_name: dataset.name,
       };
@@ -84,6 +84,7 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
       toast.error(`${t("error_downloading")} ${dataset.name}`);
     } finally {
       setIsBusy(false);
+      onClose?.();
     }
 
     onDownload?.();
