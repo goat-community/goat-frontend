@@ -4,9 +4,9 @@ import type {
   PostAggregate,
   PostAggregatePolygon,
   PostBuffer,
-  PostOevGuetenKlassen,
-  PostTripCountStation,
   PostOriginDestination,
+  PostOevGueteKlassen,
+  PostTripCount,
 } from "@/lib/validations/tools";
 
 const PROJECTS_API_BASE_URL = new URL(
@@ -15,6 +15,44 @@ const PROJECTS_API_BASE_URL = new URL(
 ).href;
 
 const API_BASE_URL = new URL("api/v2", process.env.NEXT_PUBLIC_API_URL).href;
+
+export const computeOevGueteKlassen = async (
+  body: PostOevGueteKlassen,
+  projectId: string,
+) => {
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/motorized-mobility/oev-gueteklassen?project_id=${projectId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to compute active mobility catchment area");
+  }
+  return await response.json();
+};
+
+export const computeTripCount = async (
+  body: PostTripCount,
+  projectId: string,
+) => {
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/motorized-mobility/trip-count-station?project_id=${projectId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to compute trip count station");
+  }
+  return await response.json();
+};
+
+//**  */
 
 export const sendJoinFeatureRequest = async (
   body: PostJoin,
@@ -27,7 +65,7 @@ export const sendJoinFeatureRequest = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     },
-  )
+  );
 };
 
 export const sendAggregateFeatureRequest = async (
@@ -41,7 +79,7 @@ export const sendAggregateFeatureRequest = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     },
-  )
+  );
 };
 
 export const sendAggregatePolygonRequest = async (
@@ -55,7 +93,7 @@ export const sendAggregatePolygonRequest = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     },
-  )
+  );
 };
 
 export const sendBufferRequest = async (
@@ -69,7 +107,7 @@ export const sendBufferRequest = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     },
-  )
+  );
 };
 
 export const sendODRequest = async (
@@ -83,33 +121,5 @@ export const sendODRequest = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     },
-  )
-};
-
-export const sendOevGuetenKlassenRequest = async (
-  body: PostOevGuetenKlassen,
-  projectId: string,
-) => {
-  return await fetchWithAuth(
-    `${API_BASE_URL}/motorized-mobility/oev-gueteklassen?project_id=${projectId}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  )
-};
-
-export const sendPostTripCountStationRequest = async (
-  body: PostTripCountStation,
-  projectId: string,
-) => {
-  return await fetchWithAuth(
-    `${API_BASE_URL}/motorized-mobility/trip-count-station?project_id=${projectId}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  )
+  );
 };

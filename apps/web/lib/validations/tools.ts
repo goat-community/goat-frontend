@@ -76,7 +76,7 @@ export const catchmentAreaConfigDefaults: {
     access_mode: PTAccessModes.Enum.walk,
     egress_mode: PTEgressModes.Enum.walk,
     max_travel_time: 30,
-    steps: 5
+    steps: 5,
   },
 };
 
@@ -116,9 +116,9 @@ export const distanceTravelCost = z.object({
 });
 
 export const ptTimeWindow = z.object({
-  from_time: z.number().min(0).max(86400),
-  to_time: z.number().min(0).max(86400),
   weekday: z.string(),
+  from_time: z.number().min(0).max(86400),
+  to_time: z.number().min(0).max(86400)
 });
 export const catchmentAreaBaseSchema = z.object({
   isochrone_type: catchmentAreaShapeEnum.default("polygon"),
@@ -152,6 +152,25 @@ export type PostActiveMobilityAndCarCatchmentArea = z.infer<
   typeof activeMobilityAndCarCatchmentAreaSchema
 >;
 export type PostPTCatchmentArea = z.infer<typeof ptCatchmentAreaSchema>;
+
+//**=== OEV-GUETEKLASSEN + TRIP COUNT === */
+const stationConfigSchema = z.object({
+  groups: z.record(z.string()),
+  time_frequency: z.array(z.number()),
+  categories: z.array(z.record(z.number())),
+  classification: z.record(z.record(z.string())),
+});
+
+export const tripCountSchema = z.object({
+  time_window: ptTimeWindow,
+  reference_area_layer_project_id: z.number(),
+  station_config: stationConfigSchema
+});
+
+export const oevGueteklassenSchema = tripCountSchema.extend({});
+
+export type PostTripCount = z.infer<typeof tripCountSchema>;
+export type PostOevGueteKlassen = z.infer<typeof oevGueteklassenSchema>;
 
 //**=== JOIN === */
 export const joinBaseSchema = z.object({
@@ -203,29 +222,6 @@ export const BufferBaseSchema = z
     message: "The steps must be less than or equal to max_distance",
   });
 
-const timeWindowSchema = z.object({
-  weekday: z
-    .string()
-    .refine((value) => ["weekday", "saturday"].includes(value.toLowerCase()), {
-      message: "Invalid weekday. Must be one of: weekday, saturday",
-    }),
-  from_time: z.number(),
-  to_time: z.number(),
-});
-
-const stationConfigSchema = z.object({
-  groups: z.record(z.string()),
-  time_frequency: z.array(z.number()),
-  categories: z.array(z.record(z.number())),
-  classification: z.record(z.record(z.string())),
-});
-
-export const accessibilityIndicatorBaseSchema = z.object({
-  time_window: timeWindowSchema,
-  reference_area_layer_project_id: z.number(),
-  station_config: stationConfigSchema,
-});
-
 export const originDestinationBaseSchema = z.object({
   geometry_layer_project_id: z.number(),
   origin_destination_matrix_layer_project_id: z.number(),
@@ -241,10 +237,4 @@ export const originDestinationBaseSchema = z.object({
 export type PostAggregate = z.infer<typeof AggregateBaseSchema>;
 export type PostAggregatePolygon = z.infer<typeof AggregatePolygonSchema>;
 export type PostBuffer = z.infer<typeof BufferBaseSchema>;
-export type PostOevGuetenKlassen = z.infer<
-  typeof accessibilityIndicatorBaseSchema
->;
-export type PostTripCountStation = z.infer<
-  typeof accessibilityIndicatorBaseSchema
->;
 export type PostOriginDestination = z.infer<typeof originDestinationBaseSchema>;

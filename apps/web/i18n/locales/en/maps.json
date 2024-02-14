@@ -135,8 +135,8 @@
         "aggregate_polygon": "Aggregate polygon",
         "weighted_by_intersecting_area": "Weigthed by intersecting area"
       },
-      "oev_gutenklassen": {
-        "oev_gutenklassen": "ÖV-Güteklassen",
+      "oev_guteklassen": {
+        "oev_guteklassen": "ÖV-Güteklassen",
         "calculation_time": "Calculation Time",
         "week_time": "Weekday",
         "weekday": "Working day",
@@ -330,7 +330,6 @@
   "isochrone_active_mobility": "Isochrone Active Mobility",
   "isochrone_pt": "Isochrone PT",
   "isochrone_car": "Isochrone Car",
-  "oev_gueteklasse": "Oev-Gueteklasse",
   "aggregate_point": "Aggregate Point",
   "aggregate_polygon": "Aggregate Polygon",
   "buffer": "Buffer",
@@ -387,5 +386,21 @@
   "failed_to_compute_catchment_area": "Failed to compute catchment area",
   "no_starting_points_added": "No starting points added",
   "zoom_to_starting_point": "Zoom to starting point",
-  "delete_starting_point": "Delete starting point"
+  "delete_starting_point": "Delete starting point",
+  "oev_gueteklasse": "ÖV-Güteklassen",
+  "oev_gueteklasse_header": "ÖV-Güteklassen",
+  "oev_gueteklasse_description": "The quality of accessibility is a decisive indicator in public transport and spatial planning. It can be used to highlight deficits in accessibility and to identify well-serviced locations as attractive areas for development",
+  "calculation_time": "Calculation Time",
+  "reference_layer": "Reference Layer",
+  "no_polygon_layer_found": "No polygon layer found",
+  "select_reference_layer": "Reference layer",
+  "select_reference_layer_placeholder": "Select layer",
+  "select_reference_layer_tooltip": "Select the layer containing the reference areas",
+  "oev_gueteklassen_computation_started": "ÖV-Güteklassen computation started",
+  "trip_count": "Trip Count",
+  "trip_count_header": "Trip Count",
+  "trip_count_description": "The trip count analysis shows the average number of public transport departures per hour for a selected time interval for each public transport stop on a point layer.",
+  "error_running_oev_gueteklassen": "Error running ÖV-Güteklassen",
+  "trip_count_computation_started": "Trip count computation started",
+  "error_running_trip_count": "Error running trip count"
 }

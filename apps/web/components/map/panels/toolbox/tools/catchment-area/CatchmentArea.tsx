@@ -3,17 +3,13 @@ import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionBu
 import Container from "@/components/map/panels/Container";
 import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
 import { useTranslation } from "@/i18n/client";
-import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
 import type { CatchmentAreaRoutingType } from "@/lib/validations/tools";
 import {
   CatchmentAreaRoutingTypeEnum,
   PTAccessModes,
-  PTDay,
   PTEgressModes,
-  PTRoutingModes,
   activeMobilityAndCarCatchmentAreaSchema,
-  catchmentAreaConfigDefaults,
   catchmentAreaMaskLayerNames,
   catchmentAreaShapeEnum,
   ptCatchmentAreaSchema,
@@ -46,11 +42,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import CatchmentAreaStartingPoints from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentAreaStartingPoints";
 import { setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
-
-interface IndicatorBaseProps {
-  onBack: () => void;
-  onClose: () => void;
-}
+import type { IndicatorBaseProps } from "@/types/map/toolbox";
+import {
+  useLayerByGeomType,
+  usePTTimeSelectorValues,
+} from "@/hooks/map/ToolsHooks";
 
 const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("maps");
@@ -59,7 +55,6 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const startingPoints = useAppSelector(
     (state) => state.map.toolboxStartingPoints,
   );
-  const { layers } = useProjectLayers(projectId as string);
   const { mutate } = useJobs({
     read: false,
   });
@@ -97,67 +92,21 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     ];
   }, [t]);
 
-  const ptModes: SelectorItem[] = useMemo(() => {
-    return [
-      {
-        value: PTRoutingModes.Enum.bus,
-        label: t("panels.isochrone.routing.modes.bus"),
-        icon: ICON_NAME.BUS,
-      },
-      {
-        value: PTRoutingModes.Enum.tram,
-        label: t("panels.isochrone.routing.modes.tram"),
-        icon: ICON_NAME.TRAM,
-      },
-      {
-        value: PTRoutingModes.Enum.rail,
-        label: t("panels.isochrone.routing.modes.rail"),
-        icon: ICON_NAME.RAIL,
-      },
-      {
-        value: PTRoutingModes.Enum.subway,
-        label: t("panels.isochrone.routing.modes.subway"),
-        icon: ICON_NAME.SUBWAY,
-      },
-      {
-        value: PTRoutingModes.Enum.ferry,
-        label: t("panels.isochrone.routing.modes.ferry"),
-        icon: ICON_NAME.FERRY,
-      },
-      {
-        value: PTRoutingModes.Enum.cable_car,
-        label: t("panels.isochrone.routing.modes.cable_car"),
-        icon: ICON_NAME.CABLE_CAR,
-      },
-      {
-        value: PTRoutingModes.Enum.gondola,
-        label: t("panels.isochrone.routing.modes.gondola"),
-        icon: ICON_NAME.GONDOLA,
-      },
-      {
-        value: PTRoutingModes.Enum.funicular,
-        label: t("panels.isochrone.routing.modes.funicular"),
-        icon: ICON_NAME.FUNICULAR,
-      },
-    ];
-  }, [t]);
-
-  const ptDays: SelectorItem[] = useMemo(() => {
-    return [
-      {
-        value: PTDay.Enum.weekday,
-        label: t("weekday"),
-      },
-      {
-        value: PTDay.Enum.saturday,
-        label: t("saturday"),
-      },
-      {
-        value: PTDay.Enum.sunday,
-        label: t("sunday"),
-      },
-    ];
-  }, [t]);
+  // PT Values
+  const {
+    ptModes,
+    ptDays,
+    ptStartTime,
+    setPTStartTime,
+    ptEndTime,
+    setPTEndTime,
+    ptDay,
+    setPTDay,
+    isPTValid,
+    selectedPTModes,
+    setSelectedPTModes,
+    resetPTConfiguration,
+  } = usePTTimeSelectorValues();
 
   const catchmentAreaShapeTypes: SelectorItem[] = useMemo(() => {
     return [
@@ -189,26 +138,12 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     ];
   }, [t]);
 
-  const pointLayers: SelectorItem[] = useMemo(() => {
-    if (!layers) return [];
-    return layers
-      .filter((layer) => layer.feature_layer_geometry_type === "point")
-      .map((layer) => {
-        return {
-          value: layer.id,
-          label: layer.name,
-          icon: ICON_NAME.LAYERS,
-        };
-      });
-  }, [layers]);
+  const { filteredLayers } = useLayerByGeomType("point", projectId as string);
 
   // Routing
   const [selectedRouting, setSelectedRouting] = useState<
     SelectorItem | undefined
   >(undefined);
-  const [selectedPTModes, setSelectedPTModes] = useState<
-    SelectorItem[] | undefined
-  >(ptModes);
 
   const isRoutingValid = useMemo(() => {
     if (
@@ -241,16 +176,6 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const [speed, setSpeed] = useState<SelectorItem | undefined>(undefined);
   const [distance, setDistance] = useState<number | undefined>(undefined);
   const [steps, setSteps] = useState<SelectorItem | undefined>(undefined);
-
-  const [ptStartTime, setPTStartTime] = useState<number | undefined>(undefined);
-  const [ptEndTime, setPTEndTime] = useState<number | undefined>(undefined);
-  const [ptDay, setPTDay] = useState<SelectorItem | undefined>(undefined);
-  const isPTValid = useMemo(() => {
-    if (!ptStartTime || !ptEndTime || ptStartTime >= ptEndTime || !ptDay) {
-      return false;
-    }
-    return true;
-  }, [ptStartTime, ptEndTime, ptDay]);
 
   const areStepsValid = useMemo(() => {
     if (steps && maxTravelTime && maxTravelTime.value >= steps.value) {
@@ -302,16 +227,14 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     );
     setSteps(steps);
     setCatchmentAreaShapeType(catchmentAreaShapeTypes[0]);
-    setPTStartTime(catchmentAreaConfigDefaults.pt.start_time);
-    setPTEndTime(catchmentAreaConfigDefaults.pt.end_time);
-    setPTDay(ptDays[0]);
+    resetPTConfiguration();
 
     // Reset starting method
     setStartingPointMethod(startingPointMethods[0]);
     setStartingPointLayer(undefined);
   }, [
     catchmentAreaShapeTypes,
-    ptDays,
+    resetPTConfiguration,
     selectedRouting?.value,
     startingPointMethods,
   ]);
@@ -321,7 +244,6 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   }, [handleConfigurationReset, selectedRouting]);
 
   // Starting point
-
   const [startingPointMethod, setStartingPointMethod] = useState<SelectorItem>(
     startingPointMethods[0],
   );
@@ -734,7 +656,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                       ) => {
                         setStartingPointLayer(item as SelectorItem);
                       }}
-                      items={pointLayers}
+                      items={filteredLayers}
                       emptyMessage={t("no_point_layer_found")}
                       emptyMessageIcon={ICON_NAME.LAYERS}
                       label={t("select_point_layer")}

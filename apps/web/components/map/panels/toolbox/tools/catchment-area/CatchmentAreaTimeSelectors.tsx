@@ -4,10 +4,9 @@ import { Stack } from "@mui/material";
 import type { CatchmentAreaRoutingType } from "@/lib/validations/tools";
 import { CatchmentAreaRoutingTypeEnum } from "@/lib/validations/tools";
 import Selector from "@/components/map/panels/common/Selector";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
-import TimePicker from "@p4b/ui/components/TimePicker";
 import type { SelectorItem } from "@/types/map/common";
 import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
+import PTTimeSelectors from "@/components/map/panels/toolbox/common/PTTimeSelectors";
 
 type CatchmentAreaTimeSelectorsProps = {
   routingType: CatchmentAreaRoutingType;
@@ -85,47 +84,16 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
         tooltip={t("travel_time_step_tooltip")}
       />
       {routingType === CatchmentAreaRoutingTypeEnum.Enum.pt && (
-        <Stack spacing={2}>
-          <Selector
-            selectedItems={ptDay}
-            setSelectedItems={(
-              item: SelectorItem[] | SelectorItem | undefined,
-            ) => {
-              setPTDay(item as SelectorItem);
-            }}
-            items={ptDays}
-            label={t("pt_day")}
-            tooltip={t("pt_day_tooltip")}
-          />
-          <Stack>
-            <FormLabelHelper
-              label={t("pt_start_time")}
-              color="inherit"
-              tooltip={t("pt_start_time_tooltip")}
-            />
-            <TimePicker
-              time={ptStartTime || 25200}
-              onChange={(time) => {
-                setPTStartTime(time);
-              }}
-              error={!isPTValid}
-            />
-          </Stack>
-          <Stack>
-            <FormLabelHelper
-              label={t("pt_end_time")}
-              color="inherit"
-              tooltip={t("pt_end_time_tooltip")}
-            />
-            <TimePicker
-              time={ptEndTime || 32400}
-              onChange={(time) => {
-                setPTEndTime(time);
-              }}
-              errorMessage={!isPTValid ? t("pt_end_time_error") : ""}
-            />
-          </Stack>
-        </Stack>
+        <PTTimeSelectors
+          ptStartTime={ptStartTime}
+          setPTStartTime={setPTStartTime}
+          ptEndTime={ptEndTime}
+          setPTEndTime={setPTEndTime}
+          ptDays={ptDays}
+          ptDay={ptDay}
+          setPTDay={setPTDay}
+          isPTValid={isPTValid}
+        />
       )}
     </Stack>
   );

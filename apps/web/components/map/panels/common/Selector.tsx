@@ -190,35 +190,33 @@ const Selector = (props: SelectorProps) => {
           </ListSubheader>
         )}
         {emptyMessage && emptyMessageIcon && displayedItems.length === 0 && (
-          <>
-            <Stack
-              direction="column"
-              spacing={2}
-              sx={{
-                my: 2,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {emptyMessageIcon && (
-                <Icon
-                  iconName={emptyMessageIcon}
-                  fontSize="small"
-                  htmlColor={theme.palette.text.secondary}
-                />
-              )}
-              {emptyMessage && (
-                <Typography
-                  variant="body2"
-                  fontWeight="bold"
-                  color={theme.palette.text.secondary}
-                >
-                  {emptyMessage}
-                </Typography>
-              )}
-            </Stack>
-          </>
+          <Stack
+            direction="column"
+            spacing={2}
+            sx={{
+              my: 2,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {emptyMessageIcon && (
+              <Icon
+                iconName={emptyMessageIcon}
+                fontSize="small"
+                htmlColor={theme.palette.text.secondary}
+              />
+            )}
+            {emptyMessage && (
+              <Typography
+                variant="body2"
+                fontWeight="bold"
+                color={theme.palette.text.secondary}
+              >
+                {emptyMessage}
+              </Typography>
+            )}
+          </Stack>
         )}
 
         {displayedItems.map((item) => (

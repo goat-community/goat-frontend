@@ -38,7 +38,7 @@ export default function TimePicker(props: TimePickerProps) {
           );
           props.onChange(secondsFromMidnight);
         }}
-        defaultValue={dayjs().startOf("day").add(props.time, "second")}
+        value={dayjs().startOf("day").add(props.time, "second")}
       />
     </LocalizationProvider>
   );

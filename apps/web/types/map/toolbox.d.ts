@@ -1,3 +1,8 @@
+export interface IndicatorBaseProps {
+  onBack: () => void;
+  onClose: () => void;
+}
+
 export type ColumStatisticsOperation =
   | "count"
   | "sum"

@@ -17,8 +17,6 @@ import Join from "@/components/map/panels/toolbox/tools/join/Join";
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
 import AggregatePolygon from "@/components/map/panels/toolbox/tools/aggregatePolygon/AggregatePolygon";
 import Buffer from "@/components/map/panels/toolbox/tools/buffer/Buffer";
-import OevGuetenklassen from "@/components/map/panels/toolbox/tools/oevGuetenklassen/OevGuetenklassen";
-import TripCount from "@/components/map/panels/toolbox/tools/tripCount/TripCount";
 import OriginDestination from "@/components/map/panels/toolbox/tools/originDestination/OriginDestination";
 import Container from "@/components/map/panels/Container";
 import {
@@ -28,6 +26,8 @@ import {
 } from "@/lib/store/map/slice";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
 import CatchmentArea from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentArea";
+import OevGueteklassen from "@/components/map/panels/toolbox/tools/oev-gueteklassen/OevGueteklassen";
+import TripCount from "@/components/map/panels/toolbox/tools/trip-count/TripCount";
 
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("maps");
@@ -72,7 +72,7 @@ const Toolbox = () => {
     {
       name: "Accessibility Indicators",
       value: "accessibility_indicators",
-      children: ["catchment_area", "oev_gutenklassen", "trip_count"],
+      children: ["catchment_area", "oev_guteklassen", "trip_count"],
       icon: ICON_NAME.BULLSEYE,
     },
     {
@@ -138,15 +138,17 @@ const Toolbox = () => {
       value: "origin_to_destination",
       element: <p>origin</p>,
     },
-    oev_gutenklassen: {
-      name: t("panels.tools.oev_gutenklassen.oev_gutenklassen"),
-      value: "oev_gutenklassen",
-      element: <OevGuetenklassen />,
+    oev_guteklassen: {
+      name: t("oev_guteklassen"),
+      value: "oev_guteklassen",
+      element: (
+        <OevGueteklassen onBack={handleOnBack} onClose={handleOnClose} />
+      ),
     },
     trip_count: {
-      name: t("panels.tools.trip_count.trip_count"),
+      name: t("trip_count"),
       value: "trip_count",
-      element: <TripCount />,
+      element: <TripCount onBack={handleOnBack} onClose={handleOnClose} />,
     },
     origin_destination: {
       name: t("panels.tools.origin_destination.origin_destination"),

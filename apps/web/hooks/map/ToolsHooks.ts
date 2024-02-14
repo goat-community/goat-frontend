@@ -1,4 +1,14 @@
+import { useTranslation } from "@/i18n/client";
 import { useLayerKeys } from "@/lib/api/layers";
+import { useProjectLayers } from "@/lib/api/projects";
+import {
+  PTDay,
+  PTRoutingModes,
+  catchmentAreaConfigDefaults,
+} from "@/lib/validations/tools";
+import type { SelectorItem } from "@/types/map/common";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+import { useCallback, useMemo, useState } from "react";
 export const useGetLayerKeys = (layerId: string) => {
   const { isLoading, error, data } = useLayerKeys(layerId);
   return {
@@ -11,5 +21,131 @@ export const useGetLayerKeys = (layerId: string) => {
               name: data.properties[key].name,
               type: data.properties[key].type,
             })),
+  };
+};
+
+export const usePTTimeSelectorValues = () => {
+  const { t } = useTranslation("maps");
+  const ptModes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: PTRoutingModes.Enum.bus,
+        label: t("panels.isochrone.routing.modes.bus"),
+        icon: ICON_NAME.BUS,
+      },
+      {
+        value: PTRoutingModes.Enum.tram,
+        label: t("panels.isochrone.routing.modes.tram"),
+        icon: ICON_NAME.TRAM,
+      },
+      {
+        value: PTRoutingModes.Enum.rail,
+        label: t("panels.isochrone.routing.modes.rail"),
+        icon: ICON_NAME.RAIL,
+      },
+      {
+        value: PTRoutingModes.Enum.subway,
+        label: t("panels.isochrone.routing.modes.subway"),
+        icon: ICON_NAME.SUBWAY,
+      },
+      {
+        value: PTRoutingModes.Enum.ferry,
+        label: t("panels.isochrone.routing.modes.ferry"),
+        icon: ICON_NAME.FERRY,
+      },
+      {
+        value: PTRoutingModes.Enum.cable_car,
+        label: t("panels.isochrone.routing.modes.cable_car"),
+        icon: ICON_NAME.CABLE_CAR,
+      },
+      {
+        value: PTRoutingModes.Enum.gondola,
+        label: t("panels.isochrone.routing.modes.gondola"),
+        icon: ICON_NAME.GONDOLA,
+      },
+      {
+        value: PTRoutingModes.Enum.funicular,
+        label: t("panels.isochrone.routing.modes.funicular"),
+        icon: ICON_NAME.FUNICULAR,
+      },
+    ];
+  }, [t]);
+
+  const ptDays: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: PTDay.Enum.weekday,
+        label: t("weekday"),
+      },
+      {
+        value: PTDay.Enum.saturday,
+        label: t("saturday"),
+      },
+      {
+        value: PTDay.Enum.sunday,
+        label: t("sunday"),
+      },
+    ];
+  }, [t]);
+
+  const [selectedPTModes, setSelectedPTModes] = useState<
+    SelectorItem[] | undefined
+  >(ptModes);
+  const [ptStartTime, setPTStartTime] = useState<number | undefined>(
+    catchmentAreaConfigDefaults.pt.start_time,
+  );
+  const [ptEndTime, setPTEndTime] = useState<number | undefined>(
+    catchmentAreaConfigDefaults.pt.end_time,
+  );
+  const [ptDay, setPTDay] = useState<SelectorItem | undefined>(ptDays[0]);
+  const isPTValid = useMemo(() => {
+    if (!ptStartTime || !ptEndTime || ptStartTime >= ptEndTime || !ptDay) {
+      return false;
+    }
+    return true;
+  }, [ptStartTime, ptEndTime, ptDay]);
+
+  const resetPTConfiguration = useCallback(() => {
+    setPTStartTime(catchmentAreaConfigDefaults.pt.start_time);
+    setPTEndTime(catchmentAreaConfigDefaults.pt.end_time);
+    setPTDay(ptDays[0]);
+  }, [ptDays]);
+
+  return {
+    ptModes,
+    ptDays,
+    ptStartTime,
+    setPTStartTime,
+    ptEndTime,
+    setPTEndTime,
+    ptDay,
+    setPTDay,
+    isPTValid,
+    selectedPTModes,
+    setSelectedPTModes,
+    resetPTConfiguration,
+  };
+};
+
+export const useLayerByGeomType = (
+  geomType: "point" | "line" | "polygon",
+  projectId: string,
+) => {
+  const { layers } = useProjectLayers(projectId as string);
+  const filteredLayers: SelectorItem[] = useMemo(() => {
+    if (!layers) return [];
+    return layers
+      .filter((layer) => layer.feature_layer_geometry_type === geomType)
+      .map((layer) => {
+        return {
+          value: layer.id,
+          label: layer.name,
+          icon: ICON_NAME.LAYERS,
+        };
+      });
+  }, [geomType, layers]);
+
+  return {
+    filteredLayers,
   };
 };
