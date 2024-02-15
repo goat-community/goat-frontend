@@ -13,7 +13,7 @@ export const CatchmentAreaRoutingWithoutPT = z.enum([
   "walking",
   "bicycle",
   "pedelec",
-  "car",
+  "car_peak",
 ]);
 
 export const PTRoutingModes = z.enum([
@@ -106,13 +106,13 @@ export const startingPointSchema = z.union([
 
 export const timeTravelCost = z.object({
   max_traveltime: z.number().min(1).max(45),
-  traveltime_step: z.number().min(1).max(45),
+  steps: z.number().min(1).max(45),
   speed: z.number().min(1).max(25).optional(),
 });
 
 export const distanceTravelCost = z.object({
   max_distance: z.number().min(50).max(20000),
-  distance_step: z.number().min(50).max(20000),
+  steps: z.number().min(3).max(9),
 });
 
 export const ptTimeWindow = z.object({

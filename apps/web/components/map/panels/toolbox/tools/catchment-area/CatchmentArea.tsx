@@ -34,6 +34,7 @@ import CatchmentAreaDistanceSelectors from "@/components/map/panels/toolbox/tool
 import { getDefaultConfigValue } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 import {
   computeActiveMobilityCatchmentArea,
+  computeCarCatchmentArea,
   computePTCatchmentArea,
 } from "@/lib/api/catchmentArea";
 import { toast } from "react-toastify";
@@ -322,7 +323,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       };
       payload["travel_cost"] = {
         max_traveltime: maxTravelTime?.value,
-        traveltime_step: steps?.value,
+        steps: steps?.value,
       };
       payload["time_window"] = {
         from_time: ptStartTime,
@@ -352,12 +353,12 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
     const travelTimeCost = {
       max_traveltime: maxTravelTime?.value,
-      traveltime_step: steps?.value,
+      steps: steps?.value,
       speed: speed?.value,
     };
     const distanceCost = {
       max_distance: distance,
-      distance_step: steps?.value,
+      steps: steps?.value,
     };
     payload["travel_cost"] =
       catchmentAreaType === "time" ? travelTimeCost : distanceCost;
@@ -379,7 +380,8 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         toast.error(t("failed_to_compute_catchment_area"));
       } finally {
         setIsBusy(false);
@@ -393,7 +395,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         setIsBusy(true);
         const parsedPayload =
           activeMobilityAndCarCatchmentAreaSchema.parse(payload);
-        const response = await computeActiveMobilityCatchmentArea(
+        const response = await computeCarCatchmentArea(
           parsedPayload,
           projectId as string,
         );
@@ -403,7 +405,8 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         toast.error(t("failed_to_compute_catchment_area"));
       } finally {
         setIsBusy(false);
