@@ -80,11 +80,12 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         label: t("panels.isochrone.routing.modes.pedelec"),
         icon: ICON_NAME.PEDELEC,
       },
-      {
-        value: CatchmentAreaRoutingTypeEnum.Enum.car_peak,
-        label: t("panels.isochrone.routing.modes.car"),
-        icon: ICON_NAME.CAR,
-      },
+      // todo: NOT YET IMPLEMENTED
+      // {
+      //   value: CatchmentAreaRoutingTypeEnum.Enum.car_peak,
+      //   label: t("panels.isochrone.routing.modes.car"),
+      //   icon: ICON_NAME.CAR,
+      // },
       {
         value: CatchmentAreaRoutingTypeEnum.Enum.pt,
         label: t("panels.isochrone.routing.modes.pt"),
@@ -333,6 +334,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       try {
         setIsBusy(true);
         const parsedPayload = ptCatchmentAreaSchema.parse(payload);
+        parsedPayload["travel_cost"]["trave"]
         const response = await computePTCatchmentArea(
           parsedPayload,
           projectId as string,
@@ -365,7 +367,6 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     payload["routing_type"] = selectedRouting?.value;
 
     if (selectedRouting?.value !== CatchmentAreaRoutingTypeEnum.Enum.car_peak) {
-      console.log("computeActiveMobilityCatchmentArea");
       try {
         setIsBusy(true);
         const parsedPayload =
