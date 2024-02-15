@@ -1,7 +1,7 @@
 import { useTranslation } from "@/i18n/client";
 import type { LayerFieldType } from "@/lib/validations/layer";
-import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
 import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 
 const LabelOptions = ({
   // layerStyle,

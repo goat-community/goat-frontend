@@ -118,7 +118,7 @@ export const distanceTravelCost = z.object({
 export const ptTimeWindow = z.object({
   weekday: z.string(),
   from_time: z.number().min(0).max(86400),
-  to_time: z.number().min(0).max(86400)
+  to_time: z.number().min(0).max(86400),
 });
 export const catchmentAreaBaseSchema = z.object({
   isochrone_type: catchmentAreaShapeEnum.default("polygon"),
@@ -164,7 +164,7 @@ const stationConfigSchema = z.object({
 export const tripCountSchema = z.object({
   time_window: ptTimeWindow,
   reference_area_layer_project_id: z.number(),
-  station_config: stationConfigSchema
+  station_config: stationConfigSchema,
 });
 
 export const oevGueteklassenSchema = tripCountSchema.extend({});
@@ -173,18 +173,50 @@ export type PostTripCount = z.infer<typeof tripCountSchema>;
 export type PostOevGueteKlassen = z.infer<typeof oevGueteklassenSchema>;
 
 //**=== JOIN === */
-export const joinBaseSchema = z.object({
+export const statisticOperationEnum = z.enum([
+  "count",
+  "sum",
+  "mean",
+  "median",
+  "min",
+  "max",
+]);
+
+export const joinSchema = z.object({
   target_layer_project_id: z.number(),
-  target_field: z.string().nonempty("Target Field should not be empty"),
+  target_field: z.string(),
   join_layer_project_id: z.number(),
-  join_field: z.string().nonempty("Join Field should not be empty"),
+  join_field: z.string(),
   column_statistics: z.object({
-    operation: z.string().nonempty("Operation should not be empty"),
-    field: z.string().nonempty("Statistic Field should not be empty"),
+    operation: statisticOperationEnum,
+    field: z.string(),
   }),
 });
 
-export type PostJoin = z.infer<typeof joinBaseSchema>;
+export type PostJoin = z.infer<typeof joinSchema>;
+
+//**=== BUFFER === */
+export const bufferDefaults = {
+  min_distance: 50,
+  max_distance: 5000,
+  default_distance: 500,
+  buffer_step: 50,
+  default_steps: 1,
+  polygon_union: true,
+  polygon_difference: false,
+};
+
+export const bufferSchema = z.object({
+  source_layer_project_id: z.number(),
+  max_distance: z.number().min(50).multipleOf(50),
+  distance_step: z.number(),
+  polygon_union: z.boolean(),
+  polygon_difference: z.boolean(),
+});
+
+export type PostBuffer = z.infer<typeof bufferSchema>;
+
+//
 
 export const AggregateBaseSchema = z.object({
   source_layer_project_id: z.number(),
@@ -205,23 +237,6 @@ export const AggregatePolygonSchema = AggregateBaseSchema.extend({
   weigthed_by_intersecting_area: z.boolean(),
 });
 
-export const BufferBaseSchema = z
-  .object({
-    source_layer_project_id: z
-      .number()
-      .min(1, { message: "Source Layer should not be empty." }),
-    max_distance: z
-      .number()
-      .min(50, { message: "Distance should be 50 or more" })
-      .multipleOf(50, { message: "Distance should be multiple of 50" }),
-    distance_step: z.number(),
-    polygon_union: z.boolean(),
-    polygon_difference: z.boolean(),
-  })
-  .refine((schema) => schema.distance_step <= schema.max_distance, {
-    message: "The steps must be less than or equal to max_distance",
-  });
-
 export const originDestinationBaseSchema = z.object({
   geometry_layer_project_id: z.number(),
   origin_destination_matrix_layer_project_id: z.number(),
@@ -236,5 +251,4 @@ export const originDestinationBaseSchema = z.object({
 
 export type PostAggregate = z.infer<typeof AggregateBaseSchema>;
 export type PostAggregatePolygon = z.infer<typeof AggregatePolygonSchema>;
-export type PostBuffer = z.infer<typeof BufferBaseSchema>;
 export type PostOriginDestination = z.infer<typeof originDestinationBaseSchema>;

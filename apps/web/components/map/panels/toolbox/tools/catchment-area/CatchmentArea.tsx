@@ -138,7 +138,11 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     ];
   }, [t]);
 
-  const { filteredLayers } = useLayerByGeomType("point", projectId as string);
+  const { filteredLayers } = useLayerByGeomType(
+    ["feature"],
+    ["point"],
+    projectId as string,
+  );
 
   // Routing
   const [selectedRouting, setSelectedRouting] = useState<

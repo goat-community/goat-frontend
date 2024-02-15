@@ -20,10 +20,6 @@ import { useProjectLayers } from "@/lib/api/projects";
 import { getLayerStringIdById } from "@/lib/utils/helpers";
 import { useParams } from "next/navigation";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import LayerFieldSelector, {
-  FieldTypeColors,
-  FieldTypeTag,
-} from "@/components/common/form-inputs/LayerFieldSelector";
 
 import type {
   UseFormRegister,
@@ -32,6 +28,7 @@ import type {
   UseFormTrigger,
 } from "react-hook-form";
 import type { PostAggregatePolygon } from "@/lib/validations/tools";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 
 interface StatisticsProps {
   register: UseFormRegister<PostAggregatePolygon>;

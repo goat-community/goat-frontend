@@ -97,9 +97,9 @@ const Toolbox = () => {
 
   const tabs = {
     join: {
-      name: t("panels.tools.join.join"),
+      name: t("join"),
       value: "join",
-      element: <Join />,
+      element: <Join onBack={handleOnBack} onClose={handleOnClose} />,
     },
     aggregate: {
       name: t("panels.tools.aggregate.aggregate"),
@@ -129,9 +129,9 @@ const Toolbox = () => {
       element: <CatchmentArea onBack={handleOnBack} onClose={handleOnClose} />,
     },
     buffer: {
-      name: t("panels.tools.buffer.buffer"),
+      name: t("buffer"),
       value: "buffer",
-      element: <Buffer />,
+      element: <Buffer onBack={handleOnBack} onClose={handleOnClose}/>,
     },
     origin_to_destination: {
       name: t("panels.tools.origin_to_destination.origin_to_destination"),

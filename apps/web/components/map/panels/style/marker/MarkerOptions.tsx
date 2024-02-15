@@ -3,10 +3,10 @@ import type {
   FeatureLayerProperties,
   LayerFieldType,
 } from "@/lib/validations/layer";
-import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
 import MarkerIconPicker from "@/components/map/panels/style/marker/MarkerIconPicker";
 import MarkerSelector from "@/components/map/panels/style/classification/MarkerSelector";
 import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 
 const MarkerOptions = ({
   type,

@@ -1,12 +1,12 @@
 import { fetchWithAuth } from "@/lib/api/fetcher";
 import type {
-  PostJoin,
   PostAggregate,
   PostAggregatePolygon,
   PostBuffer,
   PostOriginDestination,
   PostOevGueteKlassen,
   PostTripCount,
+  PostJoin,
 } from "@/lib/validations/tools";
 
 const PROJECTS_API_BASE_URL = new URL(
@@ -52,13 +52,8 @@ export const computeTripCount = async (
   return await response.json();
 };
 
-//**  */
-
-export const sendJoinFeatureRequest = async (
-  body: PostJoin,
-  projectId: string,
-) => {
-  return await fetchWithAuth(
+export const computeJoin = async (body: PostJoin, projectId: string) => {
+  const response = await fetchWithAuth(
     `${PROJECTS_API_BASE_URL}/join?project_id=${projectId}`,
     {
       method: "POST",
@@ -66,7 +61,28 @@ export const sendJoinFeatureRequest = async (
       body: JSON.stringify(body),
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to compute join");
+  }
+  return await response.json();
 };
+
+export const computeBuffer = async (body: PostBuffer, projectId: string) => {
+  const response = await fetchWithAuth(
+    `${PROJECTS_API_BASE_URL}/buffer?project_id=${projectId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to compute buffer");
+  }
+  return await response.json();
+}
+
+//**  */
 
 export const sendAggregateFeatureRequest = async (
   body: PostAggregate,
@@ -96,19 +112,6 @@ export const sendAggregatePolygonRequest = async (
   );
 };
 
-export const sendBufferRequest = async (
-  body: PostBuffer,
-  projectId: string,
-) => {
-  return await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/buffer?project_id=${projectId}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    },
-  );
-};
 
 export const sendODRequest = async (
   body: PostOriginDestination,

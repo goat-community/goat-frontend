@@ -26,11 +26,11 @@ import {
   DualNumberOption,
 } from "@/components/map/panels/filter/FilterOption";
 import { useUniqueValues } from "@/lib/api/layers";
-import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
 import { useMap } from "react-map-gl";
 import type { Expression as ExpressionType } from "@/lib/validations/filter";
 import type { SelectChangeEvent } from "@mui/material";
 import BoundingBoxInput from "@/components/map/panels/filter/BoundingBoxInput";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 
 interface ExpressionProps {
   expression: ExpressionType;

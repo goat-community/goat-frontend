@@ -34,7 +34,7 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const { projectId } = useParams();
-  const { filteredLayers } = useLayerByGeomType("polygon", projectId as string);
+  const { filteredLayers } = useLayerByGeomType(["feature"], ["polygon"], projectId as string);
   const [referenceLayer, setReferenceLayer] = useState<
     SelectorItem | undefined
   >(undefined);

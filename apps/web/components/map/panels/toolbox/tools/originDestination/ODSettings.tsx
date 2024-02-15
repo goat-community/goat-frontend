@@ -17,7 +17,6 @@ import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 import { useProjectLayers } from "@/lib/api/projects";
 import { useParams } from "next/navigation";
 import { getLayerStringIdById } from "@/lib/utils/helpers";
-import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
 
 import type {
   FieldErrors,
@@ -26,6 +25,7 @@ import type {
   UseFormTrigger
 } from "react-hook-form";
 import type { PostOriginDestination } from "@/lib/validations/tools";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 
 interface FieldsToMatchProps {
   register: UseFormRegister<PostOriginDestination>;

@@ -128,24 +128,51 @@ export const usePTTimeSelectorValues = () => {
 };
 
 export const useLayerByGeomType = (
-  geomType: "point" | "line" | "polygon",
+  types:
+    | ("feature" | "table" | "external_imagery" | "external_vector_tile")[]
+    | undefined,
+  featureGeomTypes: ("point" | "line" | "polygon" | undefined)[] | undefined,
   projectId: string,
 ) => {
   const { layers } = useProjectLayers(projectId as string);
   const filteredLayers: SelectorItem[] = useMemo(() => {
     if (!layers) return [];
-    return layers
-      .filter((layer) => layer.feature_layer_geometry_type === geomType)
+    const layersByType = layers.filter((layer) => {
+      if (!types) return true;
+      return types.includes(layer.type);
+    });
+
+    return layersByType
+      .filter((layer) => {
+        if (!featureGeomTypes || layer.type !== "feature") return true;
+        return featureGeomTypes.includes(layer.feature_layer_geometry_type);
+      })
       .map((layer) => {
         return {
           value: layer.id,
           label: layer.name,
-          icon: ICON_NAME.LAYERS,
+          icon: layer.type === "table" ? ICON_NAME.TABLE : ICON_NAME.LAYERS,
         };
       });
-  }, [geomType, layers]);
+  }, [featureGeomTypes, layers, types]);
 
   return {
     filteredLayers,
   };
+};
+
+export const useLayerDatasetId = (
+  layerId: number | undefined,
+  projectId: string,
+) => {
+  const { layers } = useProjectLayers(projectId as string);
+  const layerDatasetId = useMemo(() => {
+    if (!layerId || !layers) {
+      return undefined;
+    }
+    const layer = layers.find((layer) => layer.id === layerId);
+    return layer?.layer_id;
+  }, [layerId, layers]);
+
+  return layerDatasetId;
 };
