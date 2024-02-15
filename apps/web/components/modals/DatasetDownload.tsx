@@ -29,7 +29,6 @@ interface DownloadDatasetDialogProps {
   open: boolean;
   onClose?: () => void;
   disabled?: boolean;
-  type: "layer" | "dataset";
   onDownload?: () => void;
   dataset: ProjectLayer | Layer;
 }
@@ -39,7 +38,6 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
   disabled,
   onClose,
   onDownload,
-  type,
   dataset,
 }) => {
   const { t } = useTranslation("maps");
@@ -61,14 +59,14 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
       if (!dataset) return;
       setIsBusy(true);
       const payload = {
-        id: type === "layer" ? dataset.id : dataset["layer_id"],
+        id: dataset["layer_id"] || dataset["id"],
         file_type: dataDownloadType,
         file_name: dataset.name,
       };
       if (dataCrs) {
         payload["crs"] = `EPSG:${dataCrs}`;
       }
-      if (type === "layer" && dataset["query"]) {
+      if (dataset["layer_id"] && dataset["query"]) {
         payload["query"] = dataset["query"];
       }
 

@@ -15,7 +15,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useOrganization } from "@/lib/api/users";
+import { useOrganization, useUserProfile } from "@/lib/api/users";
 import { useTranslation } from "@/i18n/client";
 
 export default function UserInfoMenu() {
@@ -24,6 +24,7 @@ export default function UserInfoMenu() {
   const { t } = useTranslation("dashboard");
   const [open, setOpen] = useState(false);
   const { organization } = useOrganization();
+  const { userProfile } = useUserProfile();
   return (
     <>
       <ArrowPopper
@@ -51,13 +52,23 @@ export default function UserInfoMenu() {
                   alignItems="center"
                   spacing={2}
                 >
-                  <Avatar sx={{ bgcolor: "rgba(71, 219, 153, 0.12)" }}>
-                    <Icon
-                      iconName={ICON_NAME.ORGANIZATION}
-                      htmlColor={theme.palette.primary.main}
-                      fontSize="medium"
-                    />
-                  </Avatar>
+                  {organization?.avatar ? (
+                    <>
+                      <Avatar
+                        alt={organization.name || "Organization"}
+                        src={organization?.avatar}
+                      />
+                    </>
+                  ) : (
+                    <Avatar sx={{ bgcolor: "rgba(71, 219, 153, 0.12)" }}>
+                      <Icon
+                        iconName={ICON_NAME.ORGANIZATION}
+                        htmlColor={theme.palette.primary.main}
+                        fontSize="medium"
+                      />
+                    </Avatar>
+                  )}
+
                   <Typography variant="body1" fontWeight="bold">
                     {organization?.name ?? "Organization"}
                   </Typography>
@@ -119,11 +130,11 @@ export default function UserInfoMenu() {
           }}
           size="small"
         >
-          {session?.user?.image ? (
+          {userProfile?.avatar ? (
             <Avatar
               sx={{ width: 36, height: 36 }}
               alt={session?.user?.name || "User"}
-              src={session.user.image}
+              src={userProfile?.avatar}
             />
           ) : (
             <Avatar
