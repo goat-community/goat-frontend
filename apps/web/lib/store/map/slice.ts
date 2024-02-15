@@ -52,7 +52,7 @@ const initialState = {
   ],
   maskLayer: undefined,
   activeBasemap: "mapbox_streets",
-  activeLeftPanel: undefined,
+  activeLeftPanel: MapSidebarItemID.LAYERS,
   toolboxStartingPoints: undefined,
   activeRightPanel: undefined,
 } as MapState;
