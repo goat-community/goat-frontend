@@ -1,12 +1,12 @@
 import { fetchWithAuth } from "@/lib/api/fetcher";
 import type {
-  PostAggregate,
   PostAggregatePolygon,
   PostBuffer,
   PostOriginDestination,
   PostOevGueteKlassen,
   PostTripCount,
   PostJoin,
+  PostAggregatePoint,
 } from "@/lib/validations/tools";
 
 const PROJECTS_API_BASE_URL = new URL(
@@ -80,15 +80,13 @@ export const computeBuffer = async (body: PostBuffer, projectId: string) => {
     throw new Error("Failed to compute buffer");
   }
   return await response.json();
-}
+};
 
-//**  */
-
-export const sendAggregateFeatureRequest = async (
-  body: PostAggregate,
+export const computeAggregatePoint = async (
+  body: PostAggregatePoint,
   projectId: string,
 ) => {
-  return await fetchWithAuth(
+  const response = await fetchWithAuth(
     `${PROJECTS_API_BASE_URL}/aggregate-points?project_id=${projectId}`,
     {
       method: "POST",
@@ -96,13 +94,17 @@ export const sendAggregateFeatureRequest = async (
       body: JSON.stringify(body),
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to compute aggregate");
+  }
+  return await response.json();
 };
 
-export const sendAggregatePolygonRequest = async (
+export const computeAggregatePolygon = async (
   body: PostAggregatePolygon,
   projectId: string,
 ) => {
-  return await fetchWithAuth(
+  const response = await fetchWithAuth(
     `${PROJECTS_API_BASE_URL}/aggregate-polygons?project_id=${projectId}`,
     {
       method: "POST",
@@ -110,8 +112,13 @@ export const sendAggregatePolygonRequest = async (
       body: JSON.stringify(body),
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to compute aggregate");
+  }
+  return await response.json();
 };
 
+//**  */
 
 export const sendODRequest = async (
   body: PostOriginDestination,

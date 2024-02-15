@@ -114,9 +114,11 @@ import { SvgIcon } from "@mui/material";
 import type { SvgIconProps } from "@mui/material";
 import {
   addImageIcon,
+  aggregateIcon,
   comingSoonIcon,
   funicularIcon,
   gondolaIcon,
+  hexagonIcon,
 } from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
@@ -232,6 +234,8 @@ export enum ICON_NAME {
   // Custom icons
   ADD_IMAGE = "add-image",
   COMING_SOON = "coming-soon",
+  AGGREGATE = "aggregate",
+  HEXAGON = "hexagon",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -346,6 +350,8 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.COMING_SOON]: comingSoonIcon,
   [ICON_NAME.FUNICULAR]: funicularIcon,
   [ICON_NAME.GONDOLA]: gondolaIcon,
+  [ICON_NAME.AGGREGATE]: aggregateIcon,
+  [ICON_NAME.HEXAGON]: hexagonIcon,
 };
 
 interface BrandColors {

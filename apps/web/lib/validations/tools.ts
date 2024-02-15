@@ -216,26 +216,29 @@ export const bufferSchema = z.object({
 
 export type PostBuffer = z.infer<typeof bufferSchema>;
 
-//
+//**=== AGGREGATE === */
+export const areaTypeEnum = z.enum(["h3_grid", "feature"]);
 
-export const AggregateBaseSchema = z.object({
+export const aggregatePointSchema = z.object({
   source_layer_project_id: z.number(),
-  area_type: z.string().nonempty("Area Type should not be empty"),
+  area_type: areaTypeEnum,
   aggregation_layer_project_id: z.number().optional(),
   h3_resolution: z.number().optional(),
   column_statistics: z.object({
-    operation: z.string().nonempty("Statistic Operation should not be empty"),
-    field: z.string().nonempty("Statistic Field should not be empty"),
+    operation: statisticOperationEnum,
+    field: z.string(),
   }),
-  source_group_by_field: z
-    .string()
-    .array()
-    .nonempty("Array should not be empty"),
+  source_group_by_field: z.string().array(),
 });
 
-export const AggregatePolygonSchema = AggregateBaseSchema.extend({
+export const aggregatePolygonSchema = aggregatePointSchema.extend({
   weigthed_by_intersecting_area: z.boolean(),
 });
+
+export type PostAggregatePoint = z.infer<typeof aggregatePointSchema>;
+export type PostAggregatePolygon = z.infer<typeof aggregatePolygonSchema>;
+
+//
 
 export const originDestinationBaseSchema = z.object({
   geometry_layer_project_id: z.number(),
@@ -249,6 +252,4 @@ export const originDestinationBaseSchema = z.object({
   weight_column: z.string().nonempty("Weight Column should not be empty"),
 });
 
-export type PostAggregate = z.infer<typeof AggregateBaseSchema>;
-export type PostAggregatePolygon = z.infer<typeof AggregatePolygonSchema>;
 export type PostOriginDestination = z.infer<typeof originDestinationBaseSchema>;

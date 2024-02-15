@@ -9,13 +9,10 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useParams } from "next/navigation";
 import { useTranslation } from "@/i18n/client";
 import AccordionWrapper from "@/components/common/AccordionWrapper";
 
 import Join from "@/components/map/panels/toolbox/tools/join/Join";
-import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
-import AggregatePolygon from "@/components/map/panels/toolbox/tools/aggregatePolygon/AggregatePolygon";
 import Buffer from "@/components/map/panels/toolbox/tools/buffer/Buffer";
 import OriginDestination from "@/components/map/panels/toolbox/tools/originDestination/OriginDestination";
 import Container from "@/components/map/panels/Container";
@@ -28,6 +25,7 @@ import { useAppDispatch } from "@/hooks/store/ContextHooks";
 import CatchmentArea from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentArea";
 import OevGueteklassen from "@/components/map/panels/toolbox/tools/oev-gueteklassen/OevGueteklassen";
 import TripCount from "@/components/map/panels/toolbox/tools/trip-count/TripCount";
+import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
 
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("maps");
@@ -54,7 +52,6 @@ const Toolbox = () => {
 
   const { t } = useTranslation("maps");
   const theme = useTheme();
-  const params = useParams();
   const dispatch = useAppDispatch();
 
   const handleOnBack = () => {
@@ -102,36 +99,32 @@ const Toolbox = () => {
       element: <Join onBack={handleOnBack} onClose={handleOnClose} />,
     },
     aggregate: {
-      name: t("panels.tools.aggregate.aggregate"),
+      name: t("aggregate_points"),
       value: "aggregate",
       element: (
-        <Aggregate
-          projectId={
-            typeof params.projectId === "string" ? params.projectId : ""
-          }
-        />
+        <Aggregate onBack={handleOnBack} onClose={handleOnClose} type="point" />
       ),
     },
     aggregate_polygon: {
-      name: t("panels.tools.aggregate_polygon.aggregate_polygon"),
+      name: t("aggregate_polygons"),
       value: "aggregate_polygon",
       element: (
-        <AggregatePolygon
-          projectId={
-            typeof params.projectId === "string" ? params.projectId : ""
-          }
+        <Aggregate
+          onBack={handleOnBack}
+          onClose={handleOnClose}
+          type="polygon"
         />
       ),
     },
     catchment_area: {
-      name: t("panels.tools.catchment_area.catchment_area"),
+      name: t("catchment_area"),
       value: "catchment_area",
       element: <CatchmentArea onBack={handleOnBack} onClose={handleOnClose} />,
     },
     buffer: {
       name: t("buffer"),
       value: "buffer",
-      element: <Buffer onBack={handleOnBack} onClose={handleOnClose}/>,
+      element: <Buffer onBack={handleOnBack} onClose={handleOnClose} />,
     },
     origin_to_destination: {
       name: t("panels.tools.origin_to_destination.origin_to_destination"),
