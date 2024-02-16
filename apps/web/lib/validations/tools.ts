@@ -228,11 +228,11 @@ export const aggregatePointSchema = z.object({
     operation: statisticOperationEnum,
     field: z.string(),
   }),
-  source_group_by_field: z.string().array(),
+  source_group_by_field: z.string().array().optional(),
 });
 
 export const aggregatePolygonSchema = aggregatePointSchema.extend({
-  weigthed_by_intersecting_area: z.boolean(),
+  weigthed_by_intersecting_area: z.boolean().default(false),
 });
 
 export type PostAggregatePoint = z.infer<typeof aggregatePointSchema>;

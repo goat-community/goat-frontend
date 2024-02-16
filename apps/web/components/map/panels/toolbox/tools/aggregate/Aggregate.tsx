@@ -1,10 +1,17 @@
+import FormLabelHelper from "@/components/common/FormLabelHelper";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 import Container from "@/components/map/panels/Container";
 import SectionHeader from "@/components/map/panels/common/SectionHeader";
 import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
-import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
+import useLayerFields from "@/hooks/map/CommonHooks";
+import {
+  useLayerByGeomType,
+  useLayerDatasetId,
+  useStatisticValues,
+} from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
 import { useJobs } from "@/lib/api/jobs";
@@ -20,7 +27,14 @@ import {
 } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import { Box, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Stack,
+  Switch,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -40,12 +54,25 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const { projectId } = useParams();
-  const { filteredLayers } = useLayerByGeomType(
+  const { filteredLayers: sourceLayers } = useLayerByGeomType(
     ["feature"],
     [type],
     projectId as string,
   );
+
+  const { filteredLayers: polygonAreaLayers } = useLayerByGeomType(
+    ["feature"],
+    ["polygon"],
+    projectId as string,
+  );
+
   const [sourceLayer, setSourceLayer] = useState<SelectorItem | undefined>();
+  const sourceLayerDatasetId = useLayerDatasetId(
+    sourceLayer?.value as number | undefined,
+    projectId as string,
+  );
+  const allSourceLayerFields = useLayerFields(sourceLayerDatasetId || "");
+
   const [areaType, setAreaType] = useState<SelectorItem | undefined>();
   const [selectedAreaLayer, setSelectedAreaLayer] = useState<
     SelectorItem | undefined
@@ -53,6 +80,11 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
   const [selectedAreaH3Grid, setSelectedAreaH3Grid] = useState<
     SelectorItem | undefined
   >(undefined);
+  const [statisticAdvancedOptions, setStatisticAdvancedOptions] =
+    useState(true);
+
+  const [weightPolygonByIntersectingArea, setWeightPolygonByIntersectingArea] =
+    useState(false);
 
   const areaTypes: SelectorItem[] = useMemo(() => {
     return [
@@ -76,12 +108,39 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     }));
   }, []);
 
+  const {
+    statisticMethods,
+    statisticMethodSelected,
+    setStatisticMethodSelected,
+    statisticField,
+    setStatisticField,
+  } = useStatisticValues();
+
   const isValid = useMemo(() => {
-    return !!sourceLayer && !!areaType;
-  }, [sourceLayer, areaType]);
+    return (
+      !!sourceLayer &&
+      !!areaType &&
+      !!statisticMethodSelected &&
+      !!statisticField
+    );
+  }, [sourceLayer, areaType, statisticMethodSelected, statisticField]);
 
   const handleRun = async () => {
-    const payload = {};
+    const payload = {
+      source_layer_project_id: sourceLayer?.value,
+      area_type: areaType?.value,
+      ...(areaType?.value === areaTypeEnum.Enum.h3_grid &&
+      selectedAreaH3Grid?.value
+        ? { h3_resolution: parseInt(selectedAreaH3Grid?.value as string) }
+        : {
+            aggregation_layer_project_id: selectedAreaLayer?.value,
+            weigthed_by_intersecting_area: weightPolygonByIntersectingArea,
+          }),
+      column_statistics: {
+        operation: statisticMethodSelected?.value,
+        field: statisticField?.name,
+      },
+    };
     const schema =
       type === "point" ? aggregatePointSchema : aggregatePolygonSchema;
     const computeApi =
@@ -109,6 +168,10 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     setAreaType(undefined);
     setSelectedAreaLayer(undefined);
     setSelectedAreaH3Grid(undefined);
+    setStatisticMethodSelected(undefined);
+    setStatisticField(undefined);
+    setStatisticAdvancedOptions(true);
+    setWeightPolygonByIntersectingArea(false);
   };
 
   return (
@@ -163,7 +226,7 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                       ) => {
                         setSourceLayer(item as SelectorItem);
                       }}
-                      items={filteredLayers}
+                      items={sourceLayers}
                       emptyMessage={t("no_layers_found")}
                       emptyMessageIcon={ICON_NAME.LAYERS}
                       label={t("select_source_layer")}
@@ -178,11 +241,7 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
               <SectionHeader
                 active={!!sourceLayer}
                 alwaysActive={true}
-                label={
-                  type === "point"
-                    ? t("aggregate_points")
-                    : t("aggregate_polygons")
-                }
+                label={t("summary_areas")}
                 icon={ICON_NAME.AGGREGATE}
                 disableAdvanceOptions={true}
               />
@@ -219,7 +278,7 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                         items={
                           areaType?.value === areaTypeEnum.Enum.h3_grid
                             ? h3GridValues
-                            : filteredLayers
+                            : polygonAreaLayers
                         }
                         emptyMessage={t("no_layers_found")}
                         emptyMessageIcon={ICON_NAME.LAYERS}
@@ -249,7 +308,69 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                 alwaysActive={true}
                 label={t("statistics")}
                 icon={ICON_NAME.CHART}
-                disableAdvanceOptions={true}
+                disableAdvanceOptions={false}
+                collapsed={statisticAdvancedOptions}
+                setCollapsed={setStatisticAdvancedOptions}
+              />
+              <SectionOptions
+                active={!!sourceLayer && !!areaType}
+                baseOptions={
+                  <>
+                    <Selector
+                      selectedItems={statisticMethodSelected}
+                      setSelectedItems={(
+                        item: SelectorItem[] | SelectorItem | undefined,
+                      ) => {
+                        setStatisticMethodSelected(item as SelectorItem);
+                      }}
+                      items={statisticMethods}
+                      label={t("select_statistic_method")}
+                      placeholder={t("select_statistic_method_placeholder")}
+                      tooltip={t("select_statistic_method_tooltip")}
+                    />
+                    <LayerFieldSelector
+                      fields={allSourceLayerFields}
+                      selectedField={statisticField}
+                      disabled={!statisticMethodSelected}
+                      setSelectedField={(field) => {
+                        setStatisticField(field);
+                      }}
+                      label={t("select_field_to_calculate_statistics")}
+                      tooltip={t(
+                        "select_field_to_calculate_statistics_tooltip",
+                      )}
+                    />
+                  </>
+                }
+                collapsed={statisticAdvancedOptions}
+                advancedOptions={
+                  <>
+                    <Divider />
+                    {type === "polygon" && (
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                      >
+                        <FormLabelHelper
+                          label={t(
+                            "aggregation_weight_polygon_by_intersection_area",
+                          )}
+                          color="inherit"
+                        />
+                        <Switch
+                          size="small"
+                          checked={weightPolygonByIntersectingArea}
+                          onChange={() =>
+                            setWeightPolygonByIntersectingArea(
+                              !weightPolygonByIntersectingArea,
+                            )
+                          }
+                        />
+                      </Stack>
+                    )}
+                  </>
+                }
               />
             </Box>
           </>

@@ -6,7 +6,11 @@ import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
 import useLayerFields from "@/hooks/map/CommonHooks";
-import { useLayerByGeomType, useLayerDatasetId } from "@/hooks/map/ToolsHooks";
+import {
+  useLayerByGeomType,
+  useLayerDatasetId,
+  useStatisticValues,
+} from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
 import { useJobs } from "@/lib/api/jobs";
@@ -65,17 +69,26 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
   }, [targetLayer]);
 
+  const {
+    statisticMethods,
+    statisticMethodSelected,
+    setStatisticMethodSelected,
+    statisticField,
+    setStatisticField,
+  } = useStatisticValues();
+
   useEffect(() => {
     if (joinLayer) {
       setJoinSelectedField(undefined);
       setStatisticField(undefined);
     }
-  }, [joinLayer]);
+  }, [joinLayer, setStatisticField]);
 
   const joinLayerDatasetId = useLayerDatasetId(
     joinLayer?.value as number | undefined,
     projectId as string,
   );
+  
   // Fields have to be the same type
   const targetFields = useLayerFields(
     targetLayerDatasetId || "",
@@ -101,50 +114,6 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
     return filteredLayers.filter((layer) => layer.value !== targetLayer.value);
   }, [targetLayer, filteredLayers]);
-
-  // Statistics values
-  const statisticMethods: SelectorItem[] = useMemo(() => {
-    return [
-      {
-        value: statisticOperationEnum.Enum.count,
-        label: t("count"),
-      },
-      {
-        value: statisticOperationEnum.Enum.sum,
-        label: t("sum"),
-      },
-      {
-        value: statisticOperationEnum.Enum.mean,
-        label: t("mean"),
-      },
-      {
-        value: statisticOperationEnum.Enum.median,
-        label: t("median"),
-      },
-      {
-        value: statisticOperationEnum.Enum.min,
-        label: t("min"),
-      },
-      {
-        value: statisticOperationEnum.Enum.max,
-        label: t("max"),
-      },
-    ];
-  }, [t]);
-
-  const [statisticMethodSelected, setStatisticMethodSelected] = useState<
-    SelectorItem | undefined
-  >(undefined);
-
-  const [statisticField, setStatisticField] = useState<
-    LayerFieldType | undefined
-  >(undefined);
-
-  useEffect(() => {
-    if (statisticMethodSelected) {
-      setStatisticField(undefined);
-    }
-  }, [statisticMethodSelected]);
 
   // Filters the join layer fields based on the selected statistic method
   const filteredStatisticFields = useMemo(() => {

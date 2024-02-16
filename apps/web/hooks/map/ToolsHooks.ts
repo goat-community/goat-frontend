@@ -1,14 +1,16 @@
 import { useTranslation } from "@/i18n/client";
 import { useLayerKeys } from "@/lib/api/layers";
 import { useProjectLayers } from "@/lib/api/projects";
+import type { LayerFieldType } from "@/lib/validations/layer";
 import {
   PTDay,
   PTRoutingModes,
   catchmentAreaConfigDefaults,
+  statisticOperationEnum,
 } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 export const useGetLayerKeys = (layerId: string) => {
   const { isLoading, error, data } = useLayerKeys(layerId);
   return {
@@ -175,4 +177,59 @@ export const useLayerDatasetId = (
   }, [layerId, layers]);
 
   return layerDatasetId;
+};
+
+export const useStatisticValues = () => {
+  // Statistics values
+  const { t } = useTranslation("maps");
+  const statisticMethods: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: statisticOperationEnum.Enum.count,
+        label: t("count"),
+      },
+      {
+        value: statisticOperationEnum.Enum.sum,
+        label: t("sum"),
+      },
+      {
+        value: statisticOperationEnum.Enum.mean,
+        label: t("mean"),
+      },
+      {
+        value: statisticOperationEnum.Enum.median,
+        label: t("median"),
+      },
+      {
+        value: statisticOperationEnum.Enum.min,
+        label: t("min"),
+      },
+      {
+        value: statisticOperationEnum.Enum.max,
+        label: t("max"),
+      },
+    ];
+  }, [t]);
+
+  const [statisticMethodSelected, setStatisticMethodSelected] = useState<
+    SelectorItem | undefined
+  >(undefined);
+
+  const [statisticField, setStatisticField] = useState<
+    LayerFieldType | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (statisticMethodSelected) {
+      setStatisticField(undefined);
+    }
+  }, [statisticMethodSelected]);
+
+  return {
+    statisticMethods,
+    statisticMethodSelected,
+    setStatisticMethodSelected,
+    statisticField,
+    setStatisticField,
+  };
 };
