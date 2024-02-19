@@ -11,9 +11,6 @@ import {
   Box,
   useTheme,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
   ListItemIcon,
   MenuItem,
   MenuList,
@@ -28,10 +25,11 @@ import { parseCQLQueryToObject } from "@/lib/utils/filtering/cql_to_expression";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 import { useFilterQueries } from "@/hooks/map/LayerPanelHooks";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import Selector from "@/components/map/panels/common/Selector";
 
 import type { Expression as ExpressionType } from "@/lib/validations/filter";
-import type { SelectChangeEvent } from "@mui/material";
 import type { ProjectLayer } from "@/lib/validations/project";
+import type { SelectorItem } from "@/types/map/common";
 
 interface FilterProps {
   projectId: string;
@@ -51,14 +49,20 @@ const FilterPanel = (props: FilterProps) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  
   const dispatch = useAppDispatch();
   const { activeLayer, mutate } = useFilterQueries(projectId as string);
   const { t } = useTranslation("maps");
   const theme = useTheme();
+  
+  const logicalOperators = [
+    { value: "and", label: t("panels.filter.and") },
+    { value: "or", label: t("panels.filter.and") },
+  ];
 
   function createExpression(type: "spatial" | "regular") {
     if (expressions) {
@@ -129,19 +133,19 @@ const FilterPanel = (props: FilterProps) => {
       );
       setExpressions(existingExpressions);
     } else {
-      if(layerAttributes.keys.length){
+      if (layerAttributes.keys.length) {
         const query = createTheCQLBasedOnExpression(
           expressions,
           layerAttributes,
           logicalOperator,
         );
         setLogicalOperator("op" in query ? (query.op as "and" | "or") : "and");
-  
+
         const updatedProjectLayer = {
           ...activeLayer,
           query: expressions.length ? query : null,
         };
-  
+
         updateProjectLayer(
           projectId,
           activeLayer ? activeLayer.id : 0,
@@ -179,24 +183,37 @@ const FilterPanel = (props: FilterProps) => {
             onChange={handleLayerChange}
           />
           {expressions && expressions.length > 1 ? (
-            <FormControl fullWidth>
-              <InputLabel>{t("panels.filter.logical_operator")}</InputLabel>
-              <Select
-                value={logicalOperator}
-                label={t("panels.filter.logical_operator")}
-                onChange={(event: SelectChangeEvent) => {
-                  setLogicalOperator(event.target.value as "or" | "and");
-                }}
-              >
-                <MenuItem key={v4()} value="and">
-                  {t("panels.filter.and")}
-                </MenuItem>
-                <MenuItem key={v4()} value="or">
-                  {t("panels.filter.or")}
-                </MenuItem>
-              </Select>
-            </FormControl>
-          ) : null}
+            <Selector
+              items={logicalOperators}
+              selectedItems={
+                logicalOperators.filter(
+                  (operator) => operator.value === logicalOperator,
+                )[0]
+              }
+              setSelectedItems={(item: SelectorItem) => {
+                setLogicalOperator(item.value as "and" | "or");
+              }}
+              label={t("panels.filter.logical_operator")}
+            />
+          ) : // <FormControl fullWidth>
+          //   <InputLabel>{t("panels.filter.logical_operator")}</InputLabel>
+          //   <Select
+
+          //     value={logicalOperator}
+          //     label={t("panels.filter.logical_operator")}
+          //     onChange={(event: SelectChangeEvent) => {
+          //       setLogicalOperator(event.target.value as "or" | "and");
+          //     }}
+          //   >
+          //     <MenuItem key={v4()} value="and">
+          //       {t("panels.filter.and")}
+          //     </MenuItem>
+          //     <MenuItem key={v4()} value="or">
+          //       {t("panels.filter.or")}
+          //     </MenuItem>
+          //   </Select>
+          // </FormControl>
+          null}
           {expressions && expressions.length ? (
             <Box
               sx={{
