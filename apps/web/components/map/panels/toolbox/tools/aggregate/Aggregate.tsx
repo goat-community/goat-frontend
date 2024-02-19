@@ -20,6 +20,7 @@ import {
   computeAggregatePolygon,
 } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import type { LayerFieldType } from "@/lib/validations/layer";
 import {
   aggregatePointSchema,
   aggregatePolygonSchema,
@@ -86,6 +87,10 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
   const [weightPolygonByIntersectingArea, setWeightPolygonByIntersectingArea] =
     useState(false);
 
+  const [fieldGroup, setFieldGroup] = useState<LayerFieldType[] | undefined>(
+    [],
+  );
+
   const areaTypes: SelectorItem[] = useMemo(() => {
     return [
       {
@@ -141,6 +146,10 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
         field: statisticField?.name,
       },
     };
+    if (fieldGroup && fieldGroup?.length > 0) {
+      payload["source_group_by_field"] = fieldGroup.map((field) => field.name);
+    }
+
     const schema =
       type === "point" ? aggregatePointSchema : aggregatePolygonSchema;
     const computeApi =
@@ -172,6 +181,7 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     setStatisticField(undefined);
     setStatisticAdvancedOptions(true);
     setWeightPolygonByIntersectingArea(false);
+    setFieldGroup([]);
   };
 
   return (
@@ -369,6 +379,21 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                         />
                       </Stack>
                     )}
+                    {/* TODO: REFACTOR THIS  */}
+                    <LayerFieldSelector
+                      fields={allSourceLayerFields}
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      selectedField={fieldGroup as any}
+                      disabled={!statisticMethodSelected}
+                      setSelectedField={(field) => {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        setFieldGroup(field as any);
+                      }}
+                      label={t("select_group_fields")}
+                      tooltip={t("select_group_fields_tooltip")}
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      multiple={true as any}
+                    />
                   </>
                 }
               />
