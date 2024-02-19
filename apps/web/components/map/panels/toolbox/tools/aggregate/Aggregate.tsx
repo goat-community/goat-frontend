@@ -1,128 +1,269 @@
-import React, { useMemo } from "react";
-import SelectArea from "@/components/map/panels/toolbox/tools/aggregate/SelectArea";
-import Statistics from "@/components/map/panels/toolbox/tools/aggregate/Statistics";
-import { Box } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { sendAggregateFeatureRequest } from "@/lib/api/tools";
-import InputLayer from "@/components/map/panels/toolbox/tools/aggregate/InputLayer";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AggregateBaseSchema } from "@/lib/validations/tools";
+import Container from "@/components/map/panels/Container";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
+import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+import { useTranslation } from "@/i18n/client";
+import { useJobs } from "@/lib/api/jobs";
+import {
+  computeAggregatePoint,
+  computeAggregatePolygon,
+} from "@/lib/api/tools";
+import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import {
+  aggregatePointSchema,
+  aggregatePolygonSchema,
+  areaTypeEnum,
+} from "@/lib/validations/tools";
+import type { SelectorItem } from "@/types/map/common";
+import type { IndicatorBaseProps } from "@/types/map/toolbox";
+import { Box, Typography, useTheme } from "@mui/material";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
-import type { PostAggregate } from "@/lib/validations/tools";
+type AggregateProps = IndicatorBaseProps & {
+  type: "point" | "polygon";
+};
 
-interface AggregateProps {
-  projectId: string;
-}
-
-const Aggregate = (props: AggregateProps) => {
-  const { projectId } = props;
-
-  const {
-    register,
-    reset,
-    watch,
-    getValues,
-    setValue,
-    trigger,
-    formState: { errors, isValid },
-  } = useForm<PostAggregate>({
-    mode: "onChange",
-    resolver: zodResolver(AggregateBaseSchema),
-    defaultValues: {
-      source_layer_project_id: 0,
-      area_type: "",
-      source_group_by_field: [],
-      column_statistics: {
-        operation: "",
-        field: "",
-      },
-    },
+const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
+  const { t } = useTranslation("maps");
+  const theme = useTheme();
+  const [isBusy, setIsBusy] = useState(false);
+  const { mutate } = useJobs({
+    read: false,
   });
+  const dispatch = useAppDispatch();
+  const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
+  const { projectId } = useParams();
+  const { filteredLayers } = useLayerByGeomType(
+    ["feature"],
+    [type],
+    projectId as string,
+  );
+  const [sourceLayer, setSourceLayer] = useState<SelectorItem | undefined>();
+  const [areaType, setAreaType] = useState<SelectorItem | undefined>();
+  const [selectedAreaLayer, setSelectedAreaLayer] = useState<
+    SelectorItem | undefined
+  >(undefined);
+  const [selectedAreaH3Grid, setSelectedAreaH3Grid] = useState<
+    SelectorItem | undefined
+  >(undefined);
 
-  const watchFormValues = watch();
+  const areaTypes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: areaTypeEnum.Enum.feature,
+        label: t("polygon"),
+        icon: ICON_NAME.LAYERS,
+      },
+      {
+        value: areaTypeEnum.Enum.h3_grid,
+        label: t("h3_grid"),
+        icon: ICON_NAME.HEXAGON,
+      },
+    ];
+  }, [t]);
 
-  const getCurrentValues = useMemo(() => {
-    return watchFormValues;
-  }, [watchFormValues]);
+  const h3GridValues: SelectorItem[] = useMemo(() => {
+    return Array.from({ length: 8 }, (_, i) => ({
+      value: `${i + 3}`,
+      label: `${i + 3}`,
+    }));
+  }, []);
 
-  const handleReset = () => {
-    reset();
+  const isValid = useMemo(() => {
+    return !!sourceLayer && !!areaType;
+  }, [sourceLayer, areaType]);
+
+  const handleRun = async () => {
+    const payload = {};
+    const schema =
+      type === "point" ? aggregatePointSchema : aggregatePolygonSchema;
+    const computeApi =
+      type === "point" ? computeAggregatePoint : computeAggregatePolygon;
+    try {
+      setIsBusy(true);
+      const parsedPayload = schema.parse(payload);
+      const response = await computeApi(parsedPayload, projectId as string);
+      const { job_id } = response;
+      if (job_id) {
+        toast.info(t("aggregation_computation_started"));
+        mutate();
+        dispatch(setRunningJobIds([...runningJobIds, job_id]));
+      }
+    } catch (error) {
+      toast.error(t("error_running_aggregation_computation"));
+    } finally {
+      setIsBusy(false);
+      handleReset();
+    }
   };
 
-  const handleRun = () => {
-    const aggregateBodyRequest = getValues();
-
-    if (aggregateBodyRequest.area_type === "h3_grid") {
-      delete aggregateBodyRequest.aggregation_layer_project_id;
-    } else {
-      delete aggregateBodyRequest.h3_resolution;
-    }
-
-    toast.info("Aggregate Feature tool is running");
-    sendAggregateFeatureRequest(getValues(), projectId)
-      .then((data) =>
-        data.ok
-          ? toast.success("Aggregate Feature tool is successful")
-          : toast.error("Aggregate Feature tool failed"),
-      )
-      .catch(() => {
-        toast.error("Aggregate Feature tool failed");
-      });
-    reset();
+  const handleReset = () => {
+    setSourceLayer(undefined);
+    setAreaType(undefined);
+    setSelectedAreaLayer(undefined);
+    setSelectedAreaH3Grid(undefined);
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      sx={{ height: "100%" }}
-    >
-      <Box
-        sx={{
-          height: "95%",
-          maxHeight: "95%",
-          overflow: "scroll",
-          display: "flex",
-          flexDirection: "column",
-          gap: "18px",
-        }}
-      >
-        <InputLayer
-          register={register}
-          watch={getCurrentValues}
-          errors={errors}
-        />
-        <SelectArea
-          register={register}
-          watch={getCurrentValues}
-          errors={errors}
-        />
-        <Statistics
-          register={register}
-          setValue={setValue}
-          watch={getCurrentValues}
-          errors={errors}
-          trigger={trigger}
-        />
-      </Box>
-      <ToolboxActionButtons
-        runFunction={handleRun}
-        runDisabled={!isValid}
-        resetFunction={handleReset}
-        resetDisabled={
-          !getCurrentValues.aggregation_layer_project_id &&
-          !getCurrentValues.area_type &&
-          !getCurrentValues.column_statistics.operation &&
-          !getCurrentValues.column_statistics.field &&
-          !getCurrentValues.h3_resolution &&
-          !getCurrentValues.source_group_by_field.length &&
-          !getCurrentValues.source_layer_project_id
+    <>
+      <Container
+        disablePadding={false}
+        header={
+          <ToolsHeader
+            onBack={onBack}
+            title={
+              type === "point"
+                ? t("aggregate_points_header")
+                : t("aggregate_polygons_header")
+            }
+          />
+        }
+        close={onClose}
+        body={
+          <>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {/* DESCRIPTION */}
+              <Typography
+                variant="body2"
+                sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
+              >
+                {type === "point"
+                  ? t("aggregate_point_description")
+                  : t("aggregate_polygon_description")}
+              </Typography>
+
+              {/* SELECT LAYERS */}
+              <SectionHeader
+                active={true}
+                alwaysActive={true}
+                label={t("pick_source_layer")}
+                icon={ICON_NAME.LAYERS}
+                disableAdvanceOptions={true}
+              />
+              <SectionOptions
+                active={true}
+                baseOptions={
+                  <>
+                    <Selector
+                      selectedItems={sourceLayer}
+                      setSelectedItems={(
+                        item: SelectorItem[] | SelectorItem | undefined,
+                      ) => {
+                        setSourceLayer(item as SelectorItem);
+                      }}
+                      items={filteredLayers}
+                      emptyMessage={t("no_layers_found")}
+                      emptyMessageIcon={ICON_NAME.LAYERS}
+                      label={t("select_source_layer")}
+                      placeholder={t("select_source_layer_placeholder")}
+                      tooltip={t("select_source_layer_tooltip")}
+                    />
+                  </>
+                }
+              />
+
+              {/* SELECT AREA TYPE */}
+              <SectionHeader
+                active={!!sourceLayer}
+                alwaysActive={true}
+                label={
+                  type === "point"
+                    ? t("aggregate_points")
+                    : t("aggregate_polygons")
+                }
+                icon={ICON_NAME.AGGREGATE}
+                disableAdvanceOptions={true}
+              />
+              <SectionOptions
+                active={!!sourceLayer}
+                baseOptions={
+                  <>
+                    <Selector
+                      selectedItems={areaType}
+                      setSelectedItems={(
+                        item: SelectorItem[] | SelectorItem | undefined,
+                      ) => {
+                        setAreaType(item as SelectorItem);
+                      }}
+                      items={areaTypes}
+                      label={t("select_area_type")}
+                      placeholder={t("select_area_type_placeholder")}
+                      tooltip={t("select_area_type_tooltip")}
+                    />
+                    {areaType && (
+                      <Selector
+                        selectedItems={
+                          areaType?.value === areaTypeEnum.Enum.h3_grid
+                            ? selectedAreaH3Grid
+                            : selectedAreaLayer
+                        }
+                        setSelectedItems={(
+                          item: SelectorItem[] | SelectorItem | undefined,
+                        ) => {
+                          areaType?.value === areaTypeEnum.Enum.h3_grid
+                            ? setSelectedAreaH3Grid(item as SelectorItem)
+                            : setSelectedAreaLayer(item as SelectorItem);
+                        }}
+                        items={
+                          areaType?.value === areaTypeEnum.Enum.h3_grid
+                            ? h3GridValues
+                            : filteredLayers
+                        }
+                        emptyMessage={t("no_layers_found")}
+                        emptyMessageIcon={ICON_NAME.LAYERS}
+                        label={
+                          areaType?.value === areaTypeEnum.Enum.h3_grid
+                            ? t("select_h3_grid_resolution")
+                            : t("select_area_layer")
+                        }
+                        placeholder={
+                          areaType?.value === areaTypeEnum.Enum.h3_grid
+                            ? t("select_h3_grid_resolution_placeholder")
+                            : t("select_area_layer_placeholder")
+                        }
+                        tooltip={
+                          areaType?.value === areaTypeEnum.Enum.h3_grid
+                            ? t("select_h3_grid_resolution_tooltip")
+                            : t("select_area_layer_tooltip")
+                        }
+                      />
+                    )}
+                  </>
+                }
+              />
+
+              <SectionHeader
+                active={!!sourceLayer && !!areaType}
+                alwaysActive={true}
+                label={t("statistics")}
+                icon={ICON_NAME.CHART}
+                disableAdvanceOptions={true}
+              />
+            </Box>
+          </>
+        }
+        action={
+          <ToolboxActionButtons
+            runFunction={handleRun}
+            runDisabled={!isValid}
+            isBusy={isBusy}
+            resetFunction={handleReset}
+          />
         }
       />
-    </Box>
+    </>
   );
 };
 

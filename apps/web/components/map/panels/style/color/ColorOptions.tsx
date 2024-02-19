@@ -6,11 +6,11 @@ import type {
   LayerFieldType,
 } from "@/lib/validations/layer";
 import { useMemo, useState } from "react";
-import LayerFieldSelector from "@/components/map/panels/style/classification/LayerFieldSelector";
 import ColorScaleSelector from "@/components/map/panels/style/classification/ColorScaleSelector";
-import OptionsCollapse from "@/components/map/panels/style/other/OptionsCollapse";
-import SliderInput from "@/components/map/panels/style/other/SliderInput";
+import SliderInput from "@/components/map/panels/common/SliderInput";
 import FormLabelHelper from "@/components/common/FormLabelHelper";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 
 const ColorOptions = ({
   type,
@@ -54,7 +54,7 @@ const ColorOptions = ({
   const [opacity, setOpacity] = useState(layerStyle?.opacity || 1);
 
   return (
-    <OptionsCollapse
+    <SectionOptions
       active={!!active}
       baseOptions={
         <ColorSelector

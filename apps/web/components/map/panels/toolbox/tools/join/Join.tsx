@@ -1,122 +1,371 @@
-import React, { useMemo } from "react";
-import FieldsToMatch from "@/components/map/panels/toolbox/tools/join/FieldsToMatch";
-import Statistics from "@/components/map/panels/toolbox/tools/join/Statistics";
-import { Box } from "@mui/material";
-import { sendJoinFeatureRequest } from "@/lib/api/tools";
-import { useForm } from "react-hook-form";
-import { useParams } from "next/navigation";
-import InputLayer from "@/components/map/panels/toolbox/tools/join/InputLayer";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { joinBaseSchema } from "@/lib/validations/tools";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
+import Container from "@/components/map/panels/Container";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
+import useLayerFields from "@/hooks/map/CommonHooks";
+import { useLayerByGeomType, useLayerDatasetId } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+import { useTranslation } from "@/i18n/client";
+import { useJobs } from "@/lib/api/jobs";
+import { computeJoin } from "@/lib/api/tools";
+import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import type { LayerFieldType } from "@/lib/validations/layer";
+import { joinSchema, statisticOperationEnum } from "@/lib/validations/tools";
+import type { SelectorItem } from "@/types/map/common";
+import type { IndicatorBaseProps } from "@/types/map/toolbox";
+import { Box, Typography, useTheme } from "@mui/material";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
-import type { PostJoin } from "@/lib/validations/tools";
-
-const Join = () => {
+const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { projectId } = useParams();
-
-  const {
-    register,
-    reset,
-    watch,
-    getValues,
-    setValue,
-    trigger,
-    formState: { errors, isValid },
-  } = useForm<PostJoin>({
-    mode: "onChange",
-    resolver: zodResolver(joinBaseSchema),
-    defaultValues: {
-      target_layer_project_id: 0,
-      target_field: "",
-      join_layer_project_id: 0,
-      join_field: "",
-      column_statistics: {
-        operation: "",
-        field: "",
-      },
-    },
+  const theme = useTheme();
+  const { t } = useTranslation("maps");
+  const [isBusy, setIsBusy] = useState(false);
+  const { mutate } = useJobs({
+    read: false,
   });
+  const dispatch = useAppDispatch();
+  const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
+  const { filteredLayers } = useLayerByGeomType(
+    ["feature", "table"],
+    undefined,
+    projectId as string,
+  );
 
-  const watchFormValues = watch();
+  // Target
+  const [targetLayer, setTargetLayer] = useState<SelectorItem | undefined>(
+    undefined,
+  );
+  const [targetSelectedField, setTargetSelectedField] = useState<
+    LayerFieldType | undefined
+  >(undefined);
 
-  const getCurrentValues = useMemo(() => {
-    return watchFormValues;
-  }, [watchFormValues]);
+  const targetLayerDatasetId = useLayerDatasetId(
+    targetLayer?.value as number | undefined,
+    projectId as string,
+  );
 
-  const handleReset = () => {
-    reset();
+  // Join
+  const [joinLayer, setJoinLayer] = useState<SelectorItem | undefined>(
+    undefined,
+  );
+  const [joinSelectedField, setJoinSelectedField] = useState<
+    LayerFieldType | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (targetLayer) {
+      setTargetSelectedField(undefined);
+    }
+  }, [targetLayer]);
+
+  useEffect(() => {
+    if (joinLayer) {
+      setJoinSelectedField(undefined);
+      setStatisticField(undefined);
+    }
+  }, [joinLayer]);
+
+  const joinLayerDatasetId = useLayerDatasetId(
+    joinLayer?.value as number | undefined,
+    projectId as string,
+  );
+  // Fields have to be the same type
+  const targetFields = useLayerFields(
+    targetLayerDatasetId || "",
+    joinSelectedField?.type,
+  );
+  const joinFields = useLayerFields(
+    joinLayerDatasetId || "",
+    targetSelectedField?.type,
+  );
+  const allJoinFields = useLayerFields(joinLayerDatasetId || "");
+
+  // List of target and join layer
+  const targetLayers = useMemo(() => {
+    if (!joinLayer) {
+      return filteredLayers;
+    }
+    return filteredLayers.filter((layer) => layer.value !== joinLayer.value);
+  }, [joinLayer, filteredLayers]);
+
+  const joinLayers = useMemo(() => {
+    if (!targetLayer) {
+      return filteredLayers;
+    }
+    return filteredLayers.filter((layer) => layer.value !== targetLayer.value);
+  }, [targetLayer, filteredLayers]);
+
+  // Statistics values
+  const statisticMethods: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: statisticOperationEnum.Enum.count,
+        label: t("count"),
+      },
+      {
+        value: statisticOperationEnum.Enum.sum,
+        label: t("sum"),
+      },
+      {
+        value: statisticOperationEnum.Enum.mean,
+        label: t("mean"),
+      },
+      {
+        value: statisticOperationEnum.Enum.median,
+        label: t("median"),
+      },
+      {
+        value: statisticOperationEnum.Enum.min,
+        label: t("min"),
+      },
+      {
+        value: statisticOperationEnum.Enum.max,
+        label: t("max"),
+      },
+    ];
+  }, [t]);
+
+  const [statisticMethodSelected, setStatisticMethodSelected] = useState<
+    SelectorItem | undefined
+  >(undefined);
+
+  const [statisticField, setStatisticField] = useState<
+    LayerFieldType | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (statisticMethodSelected) {
+      setStatisticField(undefined);
+    }
+  }, [statisticMethodSelected]);
+
+  // Filters the join layer fields based on the selected statistic method
+  const filteredStatisticFields = useMemo(() => {
+    return allJoinFields.filter((field) => {
+      if (
+        statisticMethodSelected?.value === statisticOperationEnum.Enum.count
+      ) {
+        return field.type === "number" || field.type === "string";
+      }
+      return field.type === "number";
+    });
+  }, [allJoinFields, statisticMethodSelected]);
+
+  // Validation
+  const isValid = useMemo(() => {
+    if (
+      !targetLayer ||
+      !joinLayer ||
+      !targetSelectedField ||
+      !joinSelectedField ||
+      !statisticMethodSelected
+    ) {
+      return false;
+    }
+    return true;
+  }, [
+    targetLayer,
+    joinLayer,
+    targetSelectedField,
+    joinSelectedField,
+    statisticMethodSelected,
+  ]);
+
+  const handleRun = async () => {
+    const payload = {
+      target_layer_project_id: targetLayer?.value,
+      target_field: targetSelectedField?.name,
+      join_layer_project_id: joinLayer?.value,
+      join_field: joinSelectedField?.name,
+      column_statistics: {
+        operation: statisticMethodSelected?.value,
+        field: statisticField?.name,
+      },
+    };
+    try {
+      setIsBusy(true);
+      const parsedPayload = joinSchema.parse(payload);
+      const response = await computeJoin(parsedPayload, projectId as string);
+      const { job_id } = response;
+      if (job_id) {
+        toast.info(t("join_computation_started"));
+        mutate();
+        dispatch(setRunningJobIds([...runningJobIds, job_id]));
+      }
+    } catch (error) {
+      toast.error(t("error_running_join_computation"));
+    } finally {
+      setIsBusy(false);
+      handleReset();
+    }
   };
-
-  const handleRun = () => {
-    toast.info("Join tool is running");
-    sendJoinFeatureRequest(getValues(), projectId as string)
-      .then((response) => {
-        if (response.ok) {
-          toast.success("Join layer has been created");
-        } else {
-          toast.error("Join tool has failed");
-        }
-      })
-      .catch((err) => {
-        toast.error(err);
-      });
-    reset();
+  const handleReset = () => {
+    setTargetLayer(undefined);
+    setJoinLayer(undefined);
+    setTargetSelectedField(undefined);
+    setJoinSelectedField(undefined);
+    setStatisticMethodSelected(undefined);
+    setStatisticField(undefined);
   };
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      sx={{ height: "100%" }}
-    >
-      <Box
-        sx={{
-          height: "95%",
-          maxHeight: "95%",
-          overflow: "scroll",
-          display: "flex",
-          flexDirection: "column",
-          gap: "18px",
-        }}
-      >
-        <InputLayer
-          watch={getCurrentValues}
-          setValue={setValue}
-          register={register}
-          errors={errors}
+    <Container
+      disablePadding={false}
+      header={<ToolsHeader onBack={onBack} title={t("join_header")} />}
+      close={onClose}
+      body={
+        <>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {/* DESCRIPTION */}
+            <Typography
+              variant="body2"
+              sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
+            >
+              {t("join_description")}
+            </Typography>
+            <SectionHeader
+              active={true}
+              alwaysActive={true}
+              label={t("pick_layers_to_join")}
+              icon={ICON_NAME.LAYERS}
+              disableAdvanceOptions={true}
+            />
+            <SectionOptions
+              active={true}
+              baseOptions={
+                <>
+                  <Selector
+                    selectedItems={targetLayer}
+                    setSelectedItems={(
+                      item: SelectorItem[] | SelectorItem | undefined,
+                    ) => {
+                      setTargetLayer(item as SelectorItem);
+                    }}
+                    items={targetLayers}
+                    emptyMessage={t("no_layers_found")}
+                    emptyMessageIcon={ICON_NAME.LAYERS}
+                    label={t("select_target_layer")}
+                    placeholder={t("select_target_layer_placeholder")}
+                    tooltip={t("select_target_layer_tooltip")}
+                  />
+
+                  <Selector
+                    selectedItems={joinLayer}
+                    setSelectedItems={(
+                      item: SelectorItem[] | SelectorItem | undefined,
+                    ) => {
+                      setJoinLayer(item as SelectorItem);
+                    }}
+                    items={joinLayers}
+                    emptyMessage={t("no_layers_found")}
+                    emptyMessageIcon={ICON_NAME.LAYERS}
+                    label={t("select_join_layer")}
+                    placeholder={t("select_join_layer_placeholder")}
+                    tooltip={t("select_join_layer_tooltip")}
+                  />
+                </>
+              }
+            />
+            <SectionHeader
+              active={!!targetLayer && !!joinLayer}
+              alwaysActive={true}
+              label={t("fields_to_match")}
+              icon={ICON_NAME.TABLE}
+              disableAdvanceOptions={true}
+            />
+            <SectionOptions
+              active={!!targetLayer && !!joinLayer}
+              baseOptions={
+                <>
+                  {targetLayer && (
+                    <LayerFieldSelector
+                      fields={targetFields}
+                      selectedField={targetSelectedField}
+                      disabled={!targetLayer}
+                      setSelectedField={(field) => {
+                        setTargetSelectedField(field);
+                      }}
+                      label={t("target_field")}
+                      tooltip={t("target_field_tooltip")}
+                    />
+                  )}
+
+                  {joinLayer && (
+                    <LayerFieldSelector
+                      fields={joinFields}
+                      selectedField={joinSelectedField}
+                      disabled={!joinLayer}
+                      setSelectedField={(field) => {
+                        setJoinSelectedField(field);
+                      }}
+                      label={t("join_field")}
+                      tooltip={t("join_field_tooltip")}
+                    />
+                  )}
+                </>
+              }
+            />
+            <SectionHeader
+              active={!!targetSelectedField && !!joinSelectedField}
+              alwaysActive={true}
+              label={t("statistics")}
+              icon={ICON_NAME.CHART}
+              disableAdvanceOptions={true}
+            />
+            <SectionOptions
+              active={!!targetSelectedField && !!joinSelectedField}
+              baseOptions={
+                <>
+                  <Selector
+                    selectedItems={statisticMethodSelected}
+                    setSelectedItems={(
+                      item: SelectorItem[] | SelectorItem | undefined,
+                    ) => {
+                      setStatisticMethodSelected(item as SelectorItem);
+                    }}
+                    items={statisticMethods}
+                    label={t("select_statistic_method")}
+                    placeholder={t("select_statistic_method_placeholder")}
+                    tooltip={t("select_statistic_method_tooltip")}
+                  />
+
+                  <LayerFieldSelector
+                    fields={filteredStatisticFields}
+                    selectedField={statisticField}
+                    disabled={!statisticMethodSelected}
+                    setSelectedField={(field) => {
+                      setStatisticField(field);
+                    }}
+                    label={t("select_field_to_calculate_statistics")}
+                    tooltip={t("select_field_to_calculate_statistics_tooltip")}
+                  />
+                </>
+              }
+            />
+          </Box>
+        </>
+      }
+      action={
+        <ToolboxActionButtons
+          runFunction={handleRun}
+          runDisabled={!isValid}
+          isBusy={isBusy}
+          resetFunction={handleReset}
         />
-        <FieldsToMatch
-          register={register}
-          watch={getCurrentValues}
-          errors={errors}
-          setValue={setValue}
-        />
-        <Statistics
-          register={register}
-          getValues={getValues}
-          watch={getCurrentValues}
-          errors={errors}
-          setValue={setValue}
-          trigger={trigger}
-        />
-      </Box>
-      <ToolboxActionButtons
-        runFunction={handleRun}
-        runDisabled={!isValid}
-        resetFunction={handleReset}
-        resetDisabled={
-          !getCurrentValues.join_layer_project_id &&
-          !getCurrentValues.join_field &&
-          !getCurrentValues.column_statistics.operation &&
-          !getCurrentValues.column_statistics.field &&
-          !getCurrentValues.target_layer_project_id &&
-          !getCurrentValues.target_field
-        }
-      />
-    </Box>
+      }
+    />
   );
 };
 

@@ -16,36 +16,39 @@ import { useMemo, useState } from "react";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import FormLabelHelper from "@/components/common/FormLabelHelper";
 
-type SelectorProps = {
+export type SelectorProps = {
   selectedField: LayerFieldType | undefined;
   setSelectedField: (field: LayerFieldType | undefined) => void;
   fields: LayerFieldType[];
   label?: string;
   tooltip?: string;
+  disabled?: boolean;
 };
 
-const containsText = (text: string, searchText: string) =>
+export const containsText = (text: string, searchText: string) =>
   text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
 
-const FieldTypeColors = {
+export const FieldTypeColors = {
   string: [140, 210, 205],
   number: [248, 194, 28],
 };
 
-const FieldTypeTag = styled("div")<{ fieldType: string }>(({ fieldType }) => ({
-  backgroundColor: `rgba(${FieldTypeColors[fieldType]}, 0.1)`,
-  borderRadius: 4,
-  border: `1px solid rgb(${FieldTypeColors[fieldType]})`,
-  color: `rgb(${FieldTypeColors[fieldType]})`,
-  display: "inline-block",
-  fontSize: 10,
-  fontWeight: "bold",
-  padding: "0 5px",
-  marginRight: "10px",
-  textAlign: "center",
-  width: "50px",
-  lineHeight: "20px",
-}));
+export const FieldTypeTag = styled("div")<{ fieldType: string }>(
+  ({ fieldType }) => ({
+    backgroundColor: `rgba(${FieldTypeColors[fieldType]}, 0.1)`,
+    borderRadius: 4,
+    border: `1px solid rgb(${FieldTypeColors[fieldType]})`,
+    color: `rgb(${FieldTypeColors[fieldType]})`,
+    display: "inline-block",
+    fontSize: 10,
+    fontWeight: "bold",
+    padding: "0 5px",
+    marginRight: "10px",
+    textAlign: "center",
+    width: "50px",
+    lineHeight: "20px",
+  }),
+);
 
 const LayerFieldSelector = (props: SelectorProps) => {
   const theme = useTheme();
@@ -63,7 +66,13 @@ const LayerFieldSelector = (props: SelectorProps) => {
       {props.label && (
         <FormLabelHelper
           label={props.label}
-          color={focused ? theme.palette.primary.main : "inherit"}
+          color={
+            props.disabled
+              ? theme.palette.secondary.main
+              : focused
+              ? theme.palette.primary.main
+              : "inherit"
+          }
           tooltip={props.tooltip}
         />
       )}
@@ -81,6 +90,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
             },
           },
         }}
+        disabled={props.disabled}
         IconComponent={() => null}
         sx={{ pr: 1 }}
         displayEmpty

@@ -9,9 +9,11 @@ import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import { useTranslation } from "@/i18n/client";
+import { useRouter } from "next/navigation";
 import ProjectModal from "@/components/modals/Project";
 
 const Projects = () => {
+  const router = useRouter();
   const [queryParams, setQueryParams] = useState<GetProjectsQueryParams>({
     order: "descendent",
     order_by: "updated_at",
@@ -79,6 +81,11 @@ const Projects = () => {
             items={projects?.items ?? []}
             isLoading={isProjectLoading}
             type="project"
+            onClick={(item) => {
+              if (item && item.id) {
+                router.push(`/map/${item.id}`);
+              }
+            }}
           />
         </Grid>
       </Grid>

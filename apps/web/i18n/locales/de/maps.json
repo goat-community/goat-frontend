@@ -168,7 +168,7 @@
         "buffer_settings": "Buffereinstellungen",
         "polygon_union": "Vereinigen (Union)",
         "polygon_difference": "Differenz zwischen Schritten",
-        "steps": "Schritte (Meter)"
+        "steps": "Anzahl Schritte"
       },
       "origin_to_destination": {
         "origin_to_destination": "Quelle-Ziel-Beziehungen",

@@ -73,6 +73,7 @@ const FilterPanel = (props: FilterProps) => {
         },
       ]);
     }
+    setAnchorEl(null);
   }
 
   const modifyExpressions = useCallback(
@@ -128,23 +129,25 @@ const FilterPanel = (props: FilterProps) => {
       );
       setExpressions(existingExpressions);
     } else {
-      const query = createTheCQLBasedOnExpression(
-        expressions,
-        layerAttributes,
-        logicalOperator,
-      );
-      setLogicalOperator("op" in query ? (query.op as "and" | "or") : "and");
-
-      const updatedProjectLayer = {
-        ...activeLayer,
-        query: expressions.length ? query : null,
-      };
-
-      updateProjectLayer(
-        projectId,
-        activeLayer ? activeLayer.id : 0,
-        updatedProjectLayer as ProjectLayer,
-      );
+      if(layerAttributes.keys.length){
+        const query = createTheCQLBasedOnExpression(
+          expressions,
+          layerAttributes,
+          logicalOperator,
+        );
+        setLogicalOperator("op" in query ? (query.op as "and" | "or") : "and");
+  
+        const updatedProjectLayer = {
+          ...activeLayer,
+          query: expressions.length ? query : null,
+        };
+  
+        updateProjectLayer(
+          projectId,
+          activeLayer ? activeLayer.id : 0,
+          updatedProjectLayer as ProjectLayer,
+        );
+      }
     }
     setTimeout(() => {
       mutate();
@@ -154,7 +157,7 @@ const FilterPanel = (props: FilterProps) => {
   useEffect(() => {
     updateExpressions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expressions, logicalOperator]);
+  }, [expressions, logicalOperator, layerAttributes]);
 
   function handleLayerChange() {
     const existingExpressions = parseCQLQueryToObject(
@@ -189,7 +192,7 @@ const FilterPanel = (props: FilterProps) => {
                   {t("panels.filter.and")}
                 </MenuItem>
                 <MenuItem key={v4()} value="or">
-                  {t("panels.filter.and")}
+                  {t("panels.filter.or")}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -215,7 +218,7 @@ const FilterPanel = (props: FilterProps) => {
             </Box>
           ) : (
             <Box sx={{ marginTop: `${theme.spacing(4)}` }}>
-              <Card sx={{ backgroundColor: theme.palette.background.default }}>
+              <Card sx={{ backgroundColor: theme.palette.background.paper }}>
                 <CardMedia
                   sx={{
                     height: "56px",
@@ -258,14 +261,11 @@ const FilterPanel = (props: FilterProps) => {
           >
             <Button
               onClick={handleClick}
+              size="small"
               fullWidth
-              startIcon={
-                <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />
-              }
+              startIcon={<Icon iconName={ICON_NAME.PLUS} fontSize="small" />}
             >
-              <Typography variant="body2" fontWeight="bold" color="inherit">
-                {t("panels.filter.create_expression")}
-              </Typography>
+              {t("panels.filter.create_expression")}
             </Button>
             <Menu
               anchorEl={anchorEl}
@@ -290,18 +290,18 @@ const FilterPanel = (props: FilterProps) => {
                       <ListItemIcon>
                         <Icon
                           iconName={ICON_NAME.EDITPEN}
-                          style={{ fontSize: "15px" }}
+                          style={{ fontSize: "20px", paddingLeft: "4px" }}
                         />
                       </ListItemIcon>
                       <Typography variant="body2">
-                      {t("panels.filter.logical_expression")}
+                        {t("panels.filter.logical_expression")}
                       </Typography>
                     </MenuItem>
                     <MenuItem onClick={() => createExpression("spatial")}>
                       <ListItemIcon>
                         <Icon
-                          iconName={ICON_NAME.MOUNTAIN}
-                          style={{ fontSize: "15px" }}
+                          iconName={ICON_NAME.SPATIAL}
+                          style={{ fontSize: "20px" }}
                         />
                       </ListItemIcon>
                       <Typography variant="body2">
@@ -313,6 +313,7 @@ const FilterPanel = (props: FilterProps) => {
               </Box>
             </Menu>
             <Button
+              size="small"
               variant="outlined"
               fullWidth
               color="error"

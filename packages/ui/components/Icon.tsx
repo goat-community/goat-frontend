@@ -86,6 +86,13 @@ import {
   faMountain,
   faStreetView,
   faDrawPolygon,
+  faBook,
+  faRoute,
+  faTrain,
+  faSubway,
+  faFerry,
+  faCableCar,
+  faTrainTram,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -105,7 +112,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { SvgIcon } from "@mui/material";
 import type { SvgIconProps } from "@mui/material";
-import { addImageIcon, comingSoonIcon } from "../assets/svg/OtherIcons";
+import {
+  addImageIcon,
+  aggregateIcon,
+  comingSoonIcon,
+  funicularIcon,
+  gondolaIcon,
+  hexagonIcon,
+  spatialIcon
+} from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
   // Solid icons
@@ -132,8 +147,6 @@ export enum ICON_NAME {
   OUTILINEDINFO = "outlinedInfo",
   EMAIL = "email",
   ROCKET = "rocket",
-  RUN = "run",
-  BUS = "bus",
   PLUS = "plus",
   MINUS = "minus",
   MAXIMIZE = "maximize",
@@ -182,9 +195,7 @@ export enum ICON_NAME {
   CROWN = "crown",
   BULLSEYE = "bullsey",
   COPY = "copy",
-  PEDELEC = "pedelec",
-  BICYCLE = "bicycle",
-  CAR = "car",
+  SPATIAL = "spatial",
   SLIDERS = "sliders",
   ZOOM_IN = "zoom-in",
   ZOOM_OUT = "zoom-out",
@@ -194,6 +205,20 @@ export enum ICON_NAME {
   CLONE = "clone",
   MOUNTAIN = "mountain",
   ACCESSIBILITY = "accessibility",
+  BOOK = "book",
+  RUN = "run",
+  BICYCLE = "bicycle",
+  PEDELEC = "pedelec",
+  BUS = "bus",
+  CAR = "car",
+  ROUTE = "route",
+  TRAM = "tram",
+  RAIL = "rail",
+  SUBWAY = "subway",
+  FERRY = "ferry",
+  CABLE_CAR = "cable-car",
+  FUNICULAR = "funicular",
+  GONDOLA = "gondola",
   // Brand icons
   GOOGLE = "google",
   MICROSOFT = "microsoft",
@@ -210,6 +235,8 @@ export enum ICON_NAME {
   // Custom icons
   ADD_IMAGE = "add-image",
   COMING_SOON = "coming-soon",
+  AGGREGATE = "aggregate",
+  HEXAGON = "hexagon",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -300,6 +327,13 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.ACCESSIBILITY]: faStreetView,
   [ICON_NAME.DRAW_POLYGON]: faDrawPolygon,
   [ICON_NAME.CLONE]: faClone,
+  [ICON_NAME.BOOK]: faBook,
+  [ICON_NAME.ROUTE]: faRoute,
+  [ICON_NAME.TRAM]: faTrainTram,
+  [ICON_NAME.RAIL]: faTrain,
+  [ICON_NAME.SUBWAY]: faSubway,
+  [ICON_NAME.FERRY]: faFerry,
+  [ICON_NAME.CABLE_CAR]: faCableCar,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,
@@ -315,6 +349,11 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   // Custom icons
   [ICON_NAME.ADD_IMAGE]: addImageIcon,
   [ICON_NAME.COMING_SOON]: comingSoonIcon,
+  [ICON_NAME.FUNICULAR]: funicularIcon,
+  [ICON_NAME.GONDOLA]: gondolaIcon,
+  [ICON_NAME.AGGREGATE]: aggregateIcon,
+  [ICON_NAME.HEXAGON]: hexagonIcon,
+  [ICON_NAME.SPATIAL]: spatialIcon,
 };
 
 interface BrandColors {

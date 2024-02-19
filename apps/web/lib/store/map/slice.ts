@@ -1,12 +1,13 @@
-import type { Basemap, MapSidebarItemID } from "@/types/map/common";
+import type { Basemap } from "@/types/map/common";
+import { MapSidebarItemID } from "@/types/map/common";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { IMarker } from "@/types/map/common";
 
 export interface MapState {
   basemaps: Basemap[];
   activeBasemap: string;
-  markers: IMarker[];
+  maskLayer: string | undefined; // Toolbox mask layer
+  toolboxStartingPoints: [number, number][] | undefined;
   activeLeftPanel: MapSidebarItemID | undefined;
   activeRightPanel: MapSidebarItemID | undefined;
 }
@@ -49,9 +50,10 @@ const initialState = {
       thumbnail: "https://i.imgur.com/lfcARxZm.png",
     },
   ],
-  markers: [],
+  maskLayer: undefined,
   activeBasemap: "mapbox_streets",
   activeLeftPanel: undefined,
+  toolboxStartingPoints: undefined,
   activeRightPanel: undefined,
 } as MapState;
 
@@ -72,18 +74,41 @@ const mapSlice = createSlice({
       state,
       action: PayloadAction<MapSidebarItemID | undefined>,
     ) => {
+      if (state.activeRightPanel === MapSidebarItemID.TOOLBOX) {
+        state.maskLayer = undefined;
+        state.toolboxStartingPoints = undefined;
+      }
       state.activeRightPanel = action.payload;
     },
-    addMarker: (state, action: PayloadAction<IMarker>) => {
-      state.markers.push(action.payload);
+    setMaskLayer: (state, action: PayloadAction<string | undefined>) => {
+      state.maskLayer = action.payload;
     },
-    removeMarker : (state) => {
-      state.markers = [];
+    setToolboxStartingPoints: (
+      state,
+      action: PayloadAction<[number, number][] | undefined>,
+    ) => {
+      if (state.toolboxStartingPoints === undefined) {
+        state.toolboxStartingPoints = action.payload;
+      } else {
+        if (action.payload === undefined) {
+          state.toolboxStartingPoints = undefined;
+        } else {
+          state.toolboxStartingPoints = [
+            ...state.toolboxStartingPoints,
+            ...action.payload,
+          ];
+        }
+      }
     },
   },
 });
 
-export const { setActiveBasemap, setActiveLeftPanel, setActiveRightPanel, addMarker, removeMarker } =
-  mapSlice.actions;
+export const {
+  setActiveBasemap,
+  setActiveLeftPanel,
+  setActiveRightPanel,
+  setMaskLayer,
+  setToolboxStartingPoints,
+} = mapSlice.actions;
 
 export const mapReducer = mapSlice.reducer;

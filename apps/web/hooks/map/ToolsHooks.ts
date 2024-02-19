@@ -1,13 +1,19 @@
+import { useTranslation } from "@/i18n/client";
 import { useLayerKeys } from "@/lib/api/layers";
 import { useProjectLayers } from "@/lib/api/projects";
-import { useParams } from "next/navigation";
-
+import {
+  PTDay,
+  PTRoutingModes,
+  catchmentAreaConfigDefaults,
+} from "@/lib/validations/tools";
+import type { SelectorItem } from "@/types/map/common";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+import { useCallback, useMemo, useState } from "react";
 export const useGetLayerKeys = (layerId: string) => {
   const { isLoading, error, data } = useLayerKeys(layerId);
-
   return {
     keys:
-      (isLoading || error || !data)
+      isLoading || error || !data
         ? []
         : Object.keys(data.properties)
             .filter((key) => "name" in data.properties[key])
@@ -18,36 +24,155 @@ export const useGetLayerKeys = (layerId: string) => {
   };
 };
 
-export const useGetUniqueLayerName = (name: string): { uniqueName: string } => {
-  const { projectId } = useParams();
+export const usePTTimeSelectorValues = () => {
+  const { t } = useTranslation("maps");
+  const ptModes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: PTRoutingModes.Enum.bus,
+        label: t("panels.isochrone.routing.modes.bus"),
+        icon: ICON_NAME.BUS,
+      },
+      {
+        value: PTRoutingModes.Enum.tram,
+        label: t("panels.isochrone.routing.modes.tram"),
+        icon: ICON_NAME.TRAM,
+      },
+      {
+        value: PTRoutingModes.Enum.rail,
+        label: t("panels.isochrone.routing.modes.rail"),
+        icon: ICON_NAME.RAIL,
+      },
+      {
+        value: PTRoutingModes.Enum.subway,
+        label: t("panels.isochrone.routing.modes.subway"),
+        icon: ICON_NAME.SUBWAY,
+      },
+      {
+        value: PTRoutingModes.Enum.ferry,
+        label: t("panels.isochrone.routing.modes.ferry"),
+        icon: ICON_NAME.FERRY,
+      },
+      {
+        value: PTRoutingModes.Enum.cable_car,
+        label: t("panels.isochrone.routing.modes.cable_car"),
+        icon: ICON_NAME.CABLE_CAR,
+      },
+      {
+        value: PTRoutingModes.Enum.gondola,
+        label: t("panels.isochrone.routing.modes.gondola"),
+        icon: ICON_NAME.GONDOLA,
+      },
+      {
+        value: PTRoutingModes.Enum.funicular,
+        label: t("panels.isochrone.routing.modes.funicular"),
+        icon: ICON_NAME.FUNICULAR,
+      },
+    ];
+  }, [t]);
 
-  const { layers } = useProjectLayers(
-    typeof projectId === "string" ? projectId : "",
+  const ptDays: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: PTDay.Enum.weekday,
+        label: t("weekday"),
+      },
+      {
+        value: PTDay.Enum.saturday,
+        label: t("saturday"),
+      },
+      {
+        value: PTDay.Enum.sunday,
+        label: t("sunday"),
+      },
+    ];
+  }, [t]);
+
+  const [selectedPTModes, setSelectedPTModes] = useState<
+    SelectorItem[] | undefined
+  >(ptModes);
+  const [ptStartTime, setPTStartTime] = useState<number | undefined>(
+    catchmentAreaConfigDefaults.pt.start_time,
   );
-
-  let uniqueName = name;
-
-  if (!layers?.filter((layer) => layer.name === name).length) {
-    return {
-      uniqueName: uniqueName,
-    };
-  } else {
-    let copy: string | undefined = "1";
-
-    while (copy !== undefined) {
-      if (
-        !layers?.filter((layer) => layer.name === `${name} (${copy})`).length
-      ) {
-        uniqueName = `${name} (${copy})`;
-
-        copy = undefined;
-      } else {
-        copy = (parseInt(copy) + 1).toString();
-      }
+  const [ptEndTime, setPTEndTime] = useState<number | undefined>(
+    catchmentAreaConfigDefaults.pt.end_time,
+  );
+  const [ptDay, setPTDay] = useState<SelectorItem | undefined>(ptDays[0]);
+  const isPTValid = useMemo(() => {
+    if (!ptStartTime || !ptEndTime || ptStartTime >= ptEndTime || !ptDay) {
+      return false;
     }
+    return true;
+  }, [ptStartTime, ptEndTime, ptDay]);
 
-    return {
-      uniqueName: uniqueName,
-    };
-  }
+  const resetPTConfiguration = useCallback(() => {
+    setPTStartTime(catchmentAreaConfigDefaults.pt.start_time);
+    setPTEndTime(catchmentAreaConfigDefaults.pt.end_time);
+    setPTDay(ptDays[0]);
+  }, [ptDays]);
+
+  return {
+    ptModes,
+    ptDays,
+    ptStartTime,
+    setPTStartTime,
+    ptEndTime,
+    setPTEndTime,
+    ptDay,
+    setPTDay,
+    isPTValid,
+    selectedPTModes,
+    setSelectedPTModes,
+    resetPTConfiguration,
+  };
+};
+
+export const useLayerByGeomType = (
+  types:
+    | ("feature" | "table" | "external_imagery" | "external_vector_tile")[]
+    | undefined,
+  featureGeomTypes: ("point" | "line" | "polygon" | undefined)[] | undefined,
+  projectId: string,
+) => {
+  const { layers } = useProjectLayers(projectId as string);
+  const filteredLayers: SelectorItem[] = useMemo(() => {
+    if (!layers) return [];
+    const layersByType = layers.filter((layer) => {
+      if (!types) return true;
+      return types.includes(layer.type);
+    });
+
+    return layersByType
+      .filter((layer) => {
+        if (!featureGeomTypes || layer.type !== "feature") return true;
+        return featureGeomTypes.includes(layer.feature_layer_geometry_type);
+      })
+      .map((layer) => {
+        return {
+          value: layer.id,
+          label: layer.name,
+          icon: layer.type === "table" ? ICON_NAME.TABLE : ICON_NAME.LAYERS,
+        };
+      });
+  }, [featureGeomTypes, layers, types]);
+
+  return {
+    filteredLayers,
+  };
+};
+
+export const useLayerDatasetId = (
+  layerId: number | undefined,
+  projectId: string,
+) => {
+  const { layers } = useProjectLayers(projectId as string);
+  const layerDatasetId = useMemo(() => {
+    if (!layerId || !layers) {
+      return undefined;
+    }
+    const layer = layers.find((layer) => layer.id === layerId);
+    return layer?.layer_id;
+  }, [layerId, layers]);
+
+  return layerDatasetId;
 };

@@ -1,36 +1,21 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Select,
-  debounce,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  useTheme,
-  MenuList,
-  IconButton,
-} from "@mui/material";
-import CustomMenu from "@/components/common/CustomMenu";
+import { Box, Typography, debounce, MenuItem, useTheme } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { useParams } from "next/navigation";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
-import { v4 } from "uuid";
 import { comparerModes } from "@/public/assets/data/comparers_filter";
-import {
-  TextOption,
-  NumberOption,
-  SelectOption,
-  DualNumberOption,
-} from "@/components/map/panels/filter/FilterOption";
 import { useUniqueValues } from "@/lib/api/layers";
-import LayerFieldSelector from "@/components/common/form-inputs/LayerFieldSelector";
 import { useMap } from "react-map-gl";
-import type { Expression as ExpressionType } from "@/lib/validations/filter";
-import type { SelectChangeEvent } from "@mui/material";
 import BoundingBoxInput from "@/components/map/panels/filter/BoundingBoxInput";
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import Selector from "@/components/map/panels/common/Selector";
+import SelectionWithInput from "@/components/map/panels/common/SelectionWithInput";
+
+import type { Expression as ExpressionType } from "@/lib/validations/filter";
+import type { SelectorItem } from "@/types/map/common";
 
 interface ExpressionProps {
   expression: ExpressionType;
@@ -53,13 +38,11 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   const { projectId } = useParams();
 
   const [expressionValue, setExpressionValue] = useState(expression.value);
-  const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
   const [statisticsPage, setStatisticsPage] = React.useState<number>(1);
   const [statisticsData, setStatisticsData] = React.useState<string[]>([]);
 
   const { t } = useTranslation("maps");
   const { activeLayer } = useActiveLayer(projectId as string);
-  const open = Boolean(anchorEl);
   const { map } = useMap();
   const theme = useTheme();
 
@@ -87,12 +70,29 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   const debounceEffect = (
     expression: ExpressionType,
     key: string,
-    value: string,
+    value: string | number,
   ) => {
     setExpressionValue(value);
     debounce(() => {
       modifyExpression(expression, key, value);
     }, 500)();
+  };
+
+  let debounceTimer;
+
+  const onScrolling = (e) => {
+    if (e.target) {
+      const { scrollTop, scrollHeight, clientHeight } = e.target;
+      const isNearBottom = scrollTop + clientHeight >= scrollHeight;
+
+      if (isNearBottom) {
+        clearTimeout(debounceTimer);
+
+        debounceTimer = setTimeout(() => {
+          setStatisticsPage(statisticsPage + 1);
+        }, 500);
+      }
+    }
   };
 
   const getValueCollector = () => {
@@ -114,28 +114,55 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         }
         if (attributeType === "string") {
           return (
-            <TextOption
-              value={expressionValue as string}
-              setChange={(value: string) => {
-                debounceEffect(expression, "value", value);
+            <SelectionWithInput
+              onScrolling={onScrolling}
+              enableSearch
+              label={t("panels.filter.select_value")}
+              placeholder={t("panels.filter.expression_value_placeholder")}
+              selectedItems={
+                expressionValue
+                  ? {
+                      value: expressionValue.toString(),
+                      label: expressionValue.toString(),
+                    }
+                  : undefined
+              }
+              setSelectedItems={(
+                item: SelectorItem[] | SelectorItem | undefined,
+              ) => {
+                debounceEffect(
+                  expression,
+                  "value",
+                  item && !("length" in item) ? (item.value as string) : "",
+                );
               }}
-              options={optionsStatistic}
-              fetchMoreData={() => {
-                setStatisticsPage(statisticsPage + 1);
-              }}
+              items={optionsStatistic}
             />
           );
         } else {
           return (
-            <NumberOption
-              value={expression.value as string}
-              setChange={(value: string) => {
-                modifyExpression(expression, "value", parseFloat(value));
+            <SelectionWithInput
+              enableSearch
+              label={t("panels.filter.select_value")}
+              placeholder={t("panels.filter.expression_value_placeholder")}
+              selectedItems={
+                expressionValue
+                  ? {
+                      value: expressionValue.toString(),
+                      label: expressionValue.toString(),
+                    }
+                  : undefined
+              }
+              setSelectedItems={(item: SelectorItem | undefined) => {
+                debounceEffect(
+                  expression,
+                  "value",
+                  item && !("length" in item)
+                    ? parseFloat(item.value as string)
+                    : "",
+                );
               }}
-              options={optionsStatistic}
-              fetchMoreData={() => {
-                setStatisticsPage(statisticsPage + 1);
-              }}
+              items={optionsStatistic}
             />
           );
         }
@@ -144,33 +171,57 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       case "contains_the_text":
       case "does_not_contains_the_text":
         return (
-          <TextOption
-            value={expression.value as string}
-            setChange={(value: string) =>
-              modifyExpression(expression, "value", value)
+          <SelectionWithInput
+            enableSearch
+            label={t("panels.filter.select_value")}
+            placeholder={t("panels.filter.expression_value_placeholder")}
+            selectedItems={
+              expressionValue
+                ? {
+                    value: expressionValue.toString(),
+                    label: expressionValue.toString(),
+                  }
+                : undefined
             }
-            options={optionsStatistic}
-            fetchMoreData={() => {
-              setStatisticsPage(statisticsPage + 1);
+            setSelectedItems={(
+              item: SelectorItem[] | SelectorItem | undefined,
+            ) => {
+              debounceEffect(
+                expression,
+                "value",
+                item && !("length" in item) ? (item.value as string) : "",
+              );
             }}
+            items={optionsStatistic}
           />
         );
       case "includes":
       case "excludes":
+        console.log(typeof expression.value);
         return (
-          <SelectOption
-            value={
-              (typeof expression.value === "string"
-                ? expression.value.split(",")
-                : expression.value) as string[]
+          <Selector
+            multiple
+            selectedItems={
+              typeof expression.value === "string"
+                ? []
+                : typeof expression.value === "object"
+                ? expression.value.map((value) => ({
+                    value: value.toString(),
+                    label: value.toString(),
+                  }))
+                : []
             }
-            fetchMoreData={() => {
-              setStatisticsPage(statisticsPage + 1);
+            setSelectedItems={(item: SelectorItem[]) => {
+              modifyExpression(
+                expression,
+                "value",
+                item.map((itemValue) => itemValue.value) as string[],
+              );
             }}
-            setChange={(value: string[]) => {
-              modifyExpression(expression, "value", value);
-            }}
-            options={optionsStatistic}
+            items={optionsStatistic}
+            enableSearch
+            label={t("panels.filter.select_value")}
+            placeholder={t("panels.filter.expression_value_placeholder")}
           />
         );
       case "is_at_least":
@@ -178,59 +229,96 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
       case "is_at_most":
       case "is_greater_than":
         return (
-          <NumberOption
-            value={expression.value as string}
-            setChange={(value: string) =>
-              modifyExpression(expression, "value", parseFloat(value))
+          <SelectionWithInput
+            enableSearch
+            label={t("panels.filter.select_value")}
+            placeholder={t("panels.filter.expression_value_placeholder")}
+            selectedItems={
+              expressionValue
+                ? {
+                    value: expressionValue.toString(),
+                    label: expressionValue.toString(),
+                  }
+                : undefined
             }
-            options={optionsStatistic}
-            fetchMoreData={() => {
-              setStatisticsPage(statisticsPage + 1);
+            setSelectedItems={(
+              item: SelectorItem[] | SelectorItem | undefined,
+            ) => {
+              debounceEffect(
+                expression,
+                "value",
+                item && !("length" in item)
+                  ? parseFloat(item.value as string)
+                  : "",
+              );
             }}
+            items={optionsStatistic}
           />
         );
       case "is_between":
         return (
-          <DualNumberOption
-            options={optionsStatistic}
-            fetchMoreData={() => {
-              setStatisticsPage(statisticsPage + 1);
-            }}
-            value1={
-              typeof expression.value === "string"
-                ? expression.value.split("-")[0]
-                : "0"
-            }
-            setChange1={(value: string) =>
-              modifyExpression(
-                expression,
-                "value",
-                `${value.length ? value : "0"}-${
-                  typeof expression.value === "string" &&
-                  expression.value.split("-").length > 1
-                    ? expression.value.split("-")[1]
-                    : "0"
-                }`,
-              )
-            }
-            value2={
-              typeof expression.value === "string"
-                ? expression.value.split("-")[1]
-                : "0"
-            }
-            setChange2={(value: string) =>
-              modifyExpression(
-                expression,
-                "value",
-                `${
-                  typeof expression.value === "string" &&
-                  expression.value.split("-").length > 1
-                    ? expression.value.split("-")[0]
-                    : "0"
-                }-${value.length ? value : "0"}`,
-              )
-            }
-          />
+          <>
+            <SelectionWithInput
+              enableSearch
+              label={t("panels.filter.select_value")}
+              placeholder={t("panels.filter.expression_value_placeholder")}
+              selectedItems={
+                expressionValue
+                  ? {
+                      value: expressionValue.toString().split("-")[0],
+                      label: expressionValue.toString().split("-")[0],
+                    }
+                  : undefined
+              }
+              setSelectedItems={(item: SelectorItem) => {
+                debounceEffect(
+                  expression,
+                  "value",
+                  `${
+                    typeof item.value === "string" && item.value.length
+                      ? item.value
+                      : "0"
+                  }-${
+                    typeof expression.value === "string" &&
+                    expression.value.split("-").length > 1
+                      ? expression.value.split("-")[1]
+                      : "0"
+                  }`,
+                );
+              }}
+              items={optionsStatistic}
+            />
+            <SelectionWithInput
+              enableSearch
+              label={t("panels.filter.select_value")}
+              placeholder={t("panels.filter.expression_value_placeholder")}
+              selectedItems={
+                expressionValue
+                  ? {
+                      value: expressionValue.toString().split("-")[1],
+                      label: expressionValue.toString().split("-")[1],
+                    }
+                  : undefined
+              }
+              setSelectedItems={(item: SelectorItem) => {
+                debounceEffect(
+                  expression,
+                  "value",
+                  `${
+                    typeof expression.value === "string" &&
+                    expression.value.split("-").length > 1
+                      ? expression.value.split("-")[0]
+                      : "0"
+                  }-${
+                    typeof item.value === "string" && item.value.length
+                      ? item.value
+                      : "0"
+                  }`,
+                );
+              }}
+              items={optionsStatistic}
+            />
+          </>
         );
       default:
         return null;
@@ -250,11 +338,6 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
     },
   ];
 
-  layerAttributes.keys.push({
-    name: "Bounding Box",
-    type: "number",
-  });
-
   const attributeType = layerAttributes.keys.filter(
     (attrib) => attrib.name === expression.attribute,
   ).length
@@ -262,10 +345,6 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         (attrib) => attrib.name === expression.attribute,
       )[0].type
     : undefined;
-
-  function toggleMorePopover() {
-    setAnchorEl(!anchorEl);
-  }
 
   const targetFieldChangeHandler = (field: {
     type: "string" | "number";
@@ -314,74 +393,51 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         gap: theme.spacing(3),
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography
-          fontWeight="bold"
-          color={theme.palette.text.secondary}
-          sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}
-        >
-          <Icon
-            iconName={
-              expression.type === "regular"
-                ? ICON_NAME.EDITPEN
-                : ICON_NAME.MOUNTAIN
-            }
-            sx={{ fontSize: "18px" }}
-          />
-          {expression.type === "regular"
+      <SectionHeader
+        active={true}
+        alwaysActive={true}
+        label={
+          expression.type === "regular"
             ? t("panels.filter.logical_expression")
-            : t("panels.filter.spatial_expression")}
-        </Typography>
-        <Box sx={{ position: "relative" }}>
-          <IconButton
-            onClick={toggleMorePopover}
-            sx={{ padding: theme.spacing(1), width: "fit-content" }}
-          >
-            <Icon iconName={ICON_NAME.ELLIPSIS} />
-          </IconButton>
-          {open ? (
-            <CustomMenu close={toggleMorePopover}>
-              <MenuList>
-                <MenuItem onClick={() => deleteOneExpression(expression)}>
-                  <Icon
-                    iconName={ICON_NAME.TRASH}
-                    htmlColor={theme.palette.text.secondary}
-                    sx={{ fontSize: "14px" }}
-                  />
-                  {/* {t("panels.filter.delete_expression")} */}
-                  <Typography
-                    variant="body1"
-                    sx={{ ml: 2, fontWeight: 600 }}
-                    color={theme.palette.text.secondary}
-                  >
-                    {t("panels.filter.delete")}
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={() => duplicateExpression(expression)}>
-                  <Icon
-                    iconName={ICON_NAME.CLONE}
-                    htmlColor={theme.palette.text.secondary}
-                    sx={{ fontSize: "14px" }}
-                  />
-                  <Typography
-                    variant="body1"
-                    sx={{ ml: 2, fontWeight: 600 }}
-                    color={theme.palette.text.secondary}
-                  >
-                    {t("panels.filter.duplicate")}
-                  </Typography>
-                </MenuItem>
-              </MenuList>
-            </CustomMenu>
-          ) : null}
-        </Box>
-      </Box>
+            : t("panels.filter.spatial_expression")
+        }
+        icon={
+          expression.type === "regular" ? ICON_NAME.EDITPEN : ICON_NAME.SPATIAL
+        }
+        disableAdvanceOptions={true}
+        moreItems={
+          <>
+            <MenuItem onClick={() => deleteOneExpression(expression)}>
+              <Icon
+                iconName={ICON_NAME.TRASH}
+                htmlColor={theme.palette.text.secondary}
+                sx={{ fontSize: "14px" }}
+              />
+              <Typography
+                variant="body1"
+                sx={{ ml: 2, fontWeight: 600 }}
+                color={theme.palette.text.secondary}
+              >
+                {t("panels.filter.delete")}
+              </Typography>
+            </MenuItem>
+            <MenuItem onClick={() => duplicateExpression(expression)}>
+              <Icon
+                iconName={ICON_NAME.CLONE}
+                htmlColor={theme.palette.text.secondary}
+                sx={{ fontSize: "14px" }}
+              />
+              <Typography
+                variant="body1"
+                sx={{ ml: 2, fontWeight: 600 }}
+                color={theme.palette.text.secondary}
+              >
+                {t("panels.filter.duplicate")}
+              </Typography>
+            </MenuItem>
+          </>
+        }
+      />
       <LayerFieldSelector
         label="Target Field"
         selectedField={
@@ -396,30 +452,37 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         setSelectedField={targetFieldChangeHandler}
         fields={
           expression.type === "regular"
-            ? layerAttributes.keys
+            ? layerAttributes.keys.filter(
+                (attrib) => attrib.name !== "layer_id",
+              )
             : layerSpatialAttributes
         }
       />
-      <FormControl fullWidth>
-        <InputLabel>{t("panels.filter.select_an_expression")}</InputLabel>
-        <Select
-          value={expression.expression}
-          label={t("panels.filter.select_an_expression")}
-          onChange={(event: SelectChangeEvent) => {
-            modifyExpression(expression, "expression", event.target.value);
-            setExpressionValue("");
-          }}
-          disabled={expression.attribute === "Bounding Box"}
-        >
-          {attributeType
-            ? comparerModes[attributeType].map((attr) => (
-                <MenuItem key={v4()} value={attr.value}>
-                  {t(`panels.filter.expressions.${attr.value}`)}
-                </MenuItem>
-              ))
-            : null}
-        </Select>
-      </FormControl>
+      <Selector
+        selectedItems={
+          expression.expression
+            ? { value: expression.expression, label: expression.expression }
+            : undefined
+        }
+        setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
+          modifyExpression(
+            expression,
+            "expression",
+            item && !("length" in item) ? (item.value as string) : "",
+          );
+          setExpressionValue("");
+        }}
+        items={
+          attributeType
+            ? comparerModes[attributeType].map((mod) => ({
+                value: mod.value,
+                label: mod.value,
+              }))
+            : []
+        }
+        label={t("panels.filter.select_an_expression")}
+        placeholder={t("panels.filter.expression_placeholder")}
+      />
       {getValueCollector()}
     </Box>
   );

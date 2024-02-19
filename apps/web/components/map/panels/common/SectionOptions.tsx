@@ -1,6 +1,6 @@
 import { Collapse, Divider, Stack } from "@mui/material";
 
-const OptionsCollapse = ({
+const SectionOptions = ({
   active,
   baseOptions,
   advancedOptions,
@@ -19,7 +19,7 @@ const OptionsCollapse = ({
           sx={{ borderRightWidth: "2px", my: -4 }}
         />
         <Stack
-          sx={{ pl: 2, py: 4, width: "100%" }}
+          sx={{ pl: 4, pr: 2, py: 4, width: "100%" }}
           spacing={4}
           justifyContent="center"
         >
@@ -27,7 +27,7 @@ const OptionsCollapse = ({
           {/* { Options } */}
           {advancedOptions && (
             <Collapse in={!collapsed}>
-              <Stack sx={{ px: 2 }} spacing={4}>
+              <Stack spacing={4}>
                 {advancedOptions}
               </Stack>
             </Collapse>
@@ -38,4 +38,4 @@ const OptionsCollapse = ({
   );
 };
 
-export default OptionsCollapse;
+export default SectionOptions;

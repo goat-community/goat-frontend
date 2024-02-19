@@ -156,6 +156,7 @@ export const useSortedLayers = (projectId: string) => {
   const { project } = useProject(projectId);
   const sortedLayers = useMemo(() => {
     if (!projectLayers || !project) return [];
+    if (!project.layer_order) return projectLayers;
     return projectLayers.sort(
       (a, b) =>
         project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id),

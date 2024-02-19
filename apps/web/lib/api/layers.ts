@@ -65,7 +65,8 @@ export const useLayerQueryables = (layerId: string) => {
   // remove dashes from layerId UUID
   const _layerId = `user_data.${layerId.replace(/-/g, "")}`;
   const { data, isLoading, error } = useSWR<LayerQueryables>(
-    [`${COLLECTIONS_API_BASE_URL}/${_layerId}/queryables`],
+    () =>
+      layerId ? [`${COLLECTIONS_API_BASE_URL}/${_layerId}/queryables`] : null,
     fetcher,
   );
   return { queryables: data, isLoading, isError: error };
