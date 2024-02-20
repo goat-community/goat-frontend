@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   FormControl,
   IconButton,
   InputAdornment,
@@ -15,14 +16,22 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { useMemo, useState } from "react";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import FormLabelHelper from "@/components/common/FormLabelHelper";
+import { useTranslation } from "@/i18n/client";
 
-export type SelectorProps = {
-  selectedField: LayerFieldType | undefined;
-  setSelectedField: (field: LayerFieldType | undefined) => void;
+export type SelectorProps<T extends boolean = false> = {
+  selectedField: T extends true
+    ? LayerFieldType[] | undefined
+    : LayerFieldType | undefined;
+  setSelectedField: (
+    field: T extends true
+      ? LayerFieldType[] | undefined
+      : LayerFieldType | undefined,
+  ) => void;
   fields: LayerFieldType[];
   label?: string;
   tooltip?: string;
   disabled?: boolean;
+  multiple?: T;
 };
 
 export const containsText = (text: string, searchText: string) =>
@@ -61,6 +70,18 @@ const LayerFieldSelector = (props: SelectorProps) => {
     });
     return filtered;
   }, [fields, searchText]);
+
+  const { t } = useTranslation("maps");
+  const selectedValue = useMemo(() => {
+    if (!props.multiple && !Array.isArray(selectedField)) {
+      return selectedField ? JSON.stringify(selectedField) : "";
+    } else {
+      return selectedField && Array.isArray(selectedField)
+        ? selectedField?.map((field) => JSON.stringify(field))
+        : [];
+    }
+  }, [props.multiple, selectedField]);
+
   return (
     <FormControl size="small" fullWidth>
       {props.label && (
@@ -90,14 +111,27 @@ const LayerFieldSelector = (props: SelectorProps) => {
             },
           },
         }}
+        multiple={props.multiple ? true : false}
         disabled={props.disabled}
         IconComponent={() => null}
         sx={{ pr: 1 }}
         displayEmpty
-        value={selectedField ? JSON.stringify(selectedField) : ""}
+        value={selectedValue}
+        defaultValue={props.multiple ? [] : ""}
         onChange={(e) => {
-          const field = JSON.parse(e.target.value as string) as LayerFieldType;
-          setSelectedField(field as LayerFieldType);
+          if (!props.multiple) {
+            const field = JSON.parse(
+              e.target.value as string,
+            ) as LayerFieldType;
+            setSelectedField(field as LayerFieldType);
+          } else if (props.multiple) {
+            const fields = e.target.value as string[];
+            const selectedFields = fields.map(
+              (field) => JSON.parse(field) as LayerFieldType,
+            );
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            setSelectedField(selectedFields as any);
+          }
         }}
         onClose={() => {
           setFocused(false);
@@ -117,19 +151,48 @@ const LayerFieldSelector = (props: SelectorProps) => {
         endAdornment={
           <IconButton
             size="small"
-            sx={{ visibility: selectedField ? "visible" : "hidden" }}
-            onClick={() => setSelectedField(undefined)}
+            sx={{
+              visibility:
+                !selectedField ||
+                (props.multiple &&
+                  Array.isArray(selectedField) &&
+                  selectedField.length === 0)
+                  ? "hidden"
+                  : "visible",
+            }}
+            onClick={() => {
+              if (props.multiple) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                setSelectedField([] as any);
+              } else {
+                setSelectedField(undefined);
+              }
+            }}
           >
             <ClearIcon />
           </IconButton>
         }
         renderValue={() => {
-          if (!selectedField)
-            return <Typography variant="body2">Select a field</Typography>;
+          if (!selectedField && !props.multiple)
+            return <Typography variant="body2">{t("select_field")}</Typography>;
+          if (
+            props.multiple &&
+            Array.isArray(selectedField) &&
+            selectedField.length === 0
+          )
+            return (
+              <Typography variant="body2">{t("select_fields")}</Typography>
+            );
           return (
-            <Typography variant="body2" fontWeight="bold">
-              {selectedField.name}
-            </Typography>
+            <>
+              {selectedField && (
+                <Typography variant="body2" fontWeight="bold">
+                  {props.multiple && Array.isArray(selectedField)
+                    ? selectedField.map((f) => f.name).join(", ")
+                    : selectedField.name}
+                </Typography>
+              )}
+            </>
           );
         }}
       >
@@ -159,6 +222,18 @@ const LayerFieldSelector = (props: SelectorProps) => {
             key={field.name}
             value={JSON.stringify(field)}
           >
+            {props.multiple && Array.isArray(selectedField) && (
+              <Checkbox
+                sx={{ mr: 2, p: 0 }}
+                size="small"
+                checked={
+                  selectedField
+                    ? selectedField.some((f) => f.name === field.name)
+                    : false
+                }
+              />
+            )}
+
             {FieldTypeColors[field.type] && (
               <FieldTypeTag fieldType={field.type}>{field.type}</FieldTypeTag>
             )}

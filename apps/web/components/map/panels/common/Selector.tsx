@@ -30,6 +30,7 @@ type SelectorProps = {
   emptyMessage?: string;
   emptyMessageIcon?: ICON_NAME;
   onScrolling?: (e) => void;
+  disabled?: boolean;
 };
 
 const containsText = (text: string, searchText: string) =>
@@ -51,6 +52,8 @@ const Selector = (props: SelectorProps) => {
     emptyMessage,
     emptyMessageIcon,
     onScrolling,
+    errorMessage,
+    disabled,
   } = props;
   const [focused, setFocused] = useState(false);
   const displayedItems = useMemo(() => {
@@ -76,7 +79,13 @@ const Selector = (props: SelectorProps) => {
       {label && (
         <FormLabelHelper
           label={label}
-          color={focused ? theme.palette.primary.main : "inherit"}
+          color={
+            disabled
+              ? theme.palette.secondary.main
+              : focused
+              ? theme.palette.primary.main
+              : "inherit"
+          }
           tooltip={tooltip}
         />
       )}
@@ -100,7 +109,8 @@ const Selector = (props: SelectorProps) => {
         IconComponent={() => null}
         sx={{ pr: 1 }}
         displayEmpty
-        error={!!props.errorMessage}
+        disabled={disabled}
+        error={!!errorMessage}
         multiple={multiple}
         defaultValue={multiple ? [] : ""}
         value={selectedValue || (multiple ? [] : "")}
