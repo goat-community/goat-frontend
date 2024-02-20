@@ -134,13 +134,14 @@ function CustomColorPicker({
         <Divider />
       </Box>
       <Grid container spacing={1}>
-        <Grid item xs={5} style={{ paddingRight: theme.spacing(1) }}>
+        <Grid item xs={4} style={{ paddingRight: theme.spacing(1) }}>
           <TextField
             size="small"
             type="text"
             inputProps={{
               role: "input",
               "aria-label": "Layer color Hex input",
+              style: { paddingRight: 2 },
             }}
             InputProps={{
               startAdornment: (
@@ -153,7 +154,8 @@ function CustomColorPicker({
               ),
               style: {
                 paddingLeft: theme.spacing(0.75),
-                paddingRight: theme.spacing(1),
+                paddingRight: theme.spacing(0),
+                fontSize: "0.75rem",
               },
             }}
             onChange={(e) => handleHexInputChange(e)}
@@ -162,7 +164,7 @@ function CustomColorPicker({
             data-testid="HexInput"
           />
         </Grid>
-        <Grid item xs={7}>
+        <Grid item xs={8}>
           <Grid container spacing={1}>
             <Grid item xs={4}>
               <TextField
@@ -171,6 +173,12 @@ function CustomColorPicker({
                 inputProps={{
                   role: "input",
                   "aria-label": "Layer color RGB R input",
+                  style: { paddingLeft: 10, paddingRight: 2 },
+                }}
+                InputProps={{
+                  style: {
+                    fontSize: "0.75rem",
+                  },
                 }}
                 onChange={(e) => handleRgbInputChange(e, "r")}
                 value={inputRgb.r}
@@ -185,6 +193,12 @@ function CustomColorPicker({
                 inputProps={{
                   role: "input",
                   "aria-label": "Layer color RGB G input",
+                  style: { paddingLeft: 10, paddingRight: 2 },
+                }}
+                InputProps={{
+                  style: {
+                    fontSize: "0.75rem",
+                  },
                 }}
                 onChange={(e) => handleRgbInputChange(e, "g")}
                 value={inputRgb.g}
@@ -199,6 +213,12 @@ function CustomColorPicker({
                 inputProps={{
                   role: "input",
                   "aria-label": "Layer color RGB B input",
+                  style: { paddingLeft: 10, paddingRight: 2 },
+                }}
+                InputProps={{
+                  style: {
+                    fontSize: "0.75rem",
+                  },
                 }}
                 onChange={(e) => handleRgbInputChange(e, "b")}
                 value={inputRgb.b}
