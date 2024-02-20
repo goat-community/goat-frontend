@@ -18,6 +18,7 @@ import {
   ListItemIcon,
   MenuList,
   ClickAwayListener,
+  Badge,
 } from "@mui/material";
 import { useTranslation } from "@/i18n/client";
 
@@ -529,6 +530,68 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                                     fontSize: 15,
                                   }}
                                 />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          {layer.query && layer.query["args"]?.length && (
+                            <Tooltip
+                              key={layer.id + "_filter"}
+                              title={
+                                activeLayerId === layer.id &&
+                                activeRightPanel === MapSidebarItemID.FILTER
+                                  ? t("hide_applied_filters")
+                                  : t("show_applied_filters")
+                              }
+                              placement="top"
+                              arrow
+                            >
+                              <IconButton
+                                size="small"
+                                color={
+                                  activeLayerId === layer.id &&
+                                  activeRightPanel === MapSidebarItemID.FILTER
+                                    ? "primary"
+                                    : "default"
+                                }
+                                sx={{ pr: 2 }}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  if (
+                                    activeLayerId === layer.id &&
+                                    activeRightPanel === MapSidebarItemID.FILTER
+                                  ) {
+                                    dispatch(setActiveRightPanel(undefined));
+                                  } else {
+                                    if (layer.id !== activeLayerId) {
+                                      dispatch(setActiveLayer(layer.id));
+                                    }
+                                    dispatch(
+                                      setActiveRightPanel(
+                                        MapSidebarItemID.FILTER,
+                                      ),
+                                    );
+                                  }
+                                }}
+                              >
+                                <Badge
+                                  badgeContent={layer.query["args"]?.length}
+                                  color="primary"
+                                  sx={{
+                                    "& .MuiBadge-badge": {
+                                      fontSize: 9,
+                                      height: 15,
+                                      minWidth: 15,
+                                    },
+                                  }}
+                                >
+                                  <Icon
+                                    htmlColor="inherit"
+                                    iconName={ICON_NAME.FILTER}
+                                    style={{
+                                      fontSize: 15,
+                                    }}
+                                  />
+                                </Badge>
                               </IconButton>
                             </Tooltip>
                           )}

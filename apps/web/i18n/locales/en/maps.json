@@ -474,5 +474,7 @@
   "select_h3_grid_resolution_tooltip": "Select the resolution of the H3 grid",
   "aggregation_computation_started": "Aggregation computation started",
   "error_running_aggregation_computation": "Error running aggregation computation",
-  "aggregation_weight_polygon_by_intersection_area": "Weighted by intersection area"
+  "aggregation_weight_polygon_by_intersection_area": "Weighted by intersection area",
+  "show_applied_filters": "Show applied filters",
+  "hide_applied_filters": "Hide applied filters"
 }

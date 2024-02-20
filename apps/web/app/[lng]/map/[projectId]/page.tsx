@@ -131,7 +131,6 @@ export default function MapPage({ params: { projectId } }) {
   const handleMapLoad = useCallback(() => {
     // get all icon layers and add icons to map using addOrUpdateMarkerImages method
     if (mapRef.current) {
-      console.log("loading map");
       projectLayers?.forEach((layer) => {
         if (
           layer.type === "feature" &&
