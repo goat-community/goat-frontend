@@ -14,15 +14,12 @@ import { DEFAULT_COLOR, DEFAULT_COLOR_RANGE } from "@/lib/constants/color";
 
 export const layerMetadataSchema = contentMetadataSchema.extend({
   data_source: z.string().optional(),
-  data_reference_year: z.number().optional(),
+  data_reference_year: z.coerce.number().optional(),
 });
 
 const HexColor = z.string();
 const ColorMap = z.array(
-  z.tuple([
-    z.union([z.array(z.string()), z.null()]),
-    HexColor,
-  ]),
+  z.tuple([z.union([z.array(z.string()), z.null()]), HexColor]),
 );
 
 export const classBreaks = z.enum([
@@ -126,10 +123,7 @@ export const marker = z.object({
 });
 
 const MarkerMap = z.array(
-  z.tuple([
-    z.union([z.array(z.string()), z.null()]),
-    marker,
-  ]),
+  z.tuple([z.union([z.array(z.string()), z.null()]), marker]),
 );
 
 export const markerSchema = z.object({

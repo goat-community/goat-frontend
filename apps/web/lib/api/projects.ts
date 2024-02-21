@@ -108,9 +108,9 @@ export const updateProjectLayer = async (
       body: JSON.stringify(payload),
     },
   );
-  // if (!response.ok) {
-  //   throw Error(`Failed to update project layer ${layerId}`);
-  // }
+  if (!response.ok) {
+    throw Error(`Failed to update project layer ${layerId}`);
+  }
   return await response.json();
 };
 
