@@ -1,4 +1,5 @@
 import { MARKER_IMAGE_PREFIX } from "@/lib/transformers/marker";
+import type { MapGeoJSONFeature } from "react-map-gl";
 import { rgbToHex } from "@/lib/utils/helpers";
 import type {
   FeatureLayerLineProperties,
@@ -7,6 +8,8 @@ import type {
 import type { ProjectLayer } from "@/lib/validations/project";
 
 import type { RGBColor } from "@/types/map/color";
+
+const HIGHLIGHT_COLOR = "#FFC300";
 
 export function getMapboxStyleColor(
   data: ProjectLayer,
@@ -181,4 +184,53 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
   } else {
     throw new Error(`Invalid type: ${type}`);
   }
+}
+
+export function getHightlightStyleSpec(highlightFeature: MapGeoJSONFeature) {
+  if (!highlightFeature) return null;
+
+  const layerType = highlightFeature.layer?.type;
+  let type;
+  let paint;
+  switch (layerType) {
+    case "symbol":
+    case "circle":
+      type = "circle";
+      const strokeWidth =
+        highlightFeature.layer.paint?.["circle-stroke-width"] ?? 0;
+      let radius;
+      if (highlightFeature.layer.type === "symbol") {
+        radius = 5;
+      } else {
+        radius =
+          (highlightFeature.layer.paint?.["circle-radius"] as number < 8
+            ? 8
+            : highlightFeature.layer.paint?.["circle-radius"]) + strokeWidth;
+      }
+
+      paint = {
+        "circle-color": HIGHLIGHT_COLOR,
+        "circle-opacity": 0.8,
+        "circle-radius": radius,
+      };
+      break;
+    case "fill":
+    case "line":
+      type = "line";
+      paint = {
+        "line-color": HIGHLIGHT_COLOR,
+        "line-width": highlightFeature.layer.paint?.["line-width"] ?? 2,
+      };
+      break;
+    default:
+      return null;
+  }
+
+  return {
+    type,
+    paint,
+    ...(highlightFeature.properties?.id && {
+      filter: ["in", "id", highlightFeature.properties.id],
+    }),
+  };
 }

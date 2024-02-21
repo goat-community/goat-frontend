@@ -31,7 +31,6 @@ import { useAppSelector } from "@/hooks/store/ContextHooks";
 import { selectActiveBasemap } from "@/lib/store/map/selectors";
 import MapPopover from "@/components/map/controls/Popover";
 import { v4 } from "uuid";
-import HighlightLayer from "@/components/map/HighlighLayer";
 import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 import ToolboxLayers from "@/components/map/ToolboxLayers";
@@ -253,8 +252,10 @@ export default function MapPage({ params: { projectId } }) {
                 onMouseMove={handleMapOverImmediate}
                 onLoad={handleMapLoad}
               >
-                <HighlightLayer highlightFeature={highlightedFeature} />
-                <Layers projectId={projectId} />
+                <Layers
+                  projectId={projectId}
+                  highlightFeature={highlightedFeature}
+                />
                 <ToolboxLayers />
 
                 {popupInfo && (

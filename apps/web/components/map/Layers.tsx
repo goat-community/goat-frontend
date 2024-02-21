@@ -1,14 +1,18 @@
 import React, { useMemo } from "react";
-import type { LayerProps } from "react-map-gl";
+import type { LayerProps, MapGeoJSONFeature } from "react-map-gl";
 import { Source, Layer as MapLayer } from "react-map-gl";
 import type { ProjectLayer } from "@/lib/validations/project";
 import { GEOAPI_BASE_URL } from "@/lib/constants";
 import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
-import { transformToMapboxLayerStyleSpec } from "@/lib/transformers/layer";
+import {
+  getHightlightStyleSpec,
+  transformToMapboxLayerStyleSpec,
+} from "@/lib/transformers/layer";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 
 interface LayersProps {
   projectId: string;
+  highlightFeature?: MapGeoJSONFeature | null;
 }
 
 const Layers = (props: LayersProps) => {
@@ -73,6 +77,20 @@ const Layers = (props: LayersProps) => {
                       }
                       source-layer="default"
                     />
+
+                    {/* HighlightLayer */}
+                    {props.highlightFeature &&
+                      props.highlightFeature.properties?.id &&
+                      props.highlightFeature.layer.id ===
+                        layer.id.toString() && (
+                        <MapLayer
+                          id={`highlight-${layer.id}`}
+                          source-layer="default"
+                          {...(getHightlightStyleSpec(
+                            props.highlightFeature,
+                          ) as LayerProps)}
+                        />
+                      )}
                   </Source>
                 );
               } else if (layer.type === "external_imagery") {
