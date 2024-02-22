@@ -2,11 +2,11 @@ import { fetchWithAuth } from "@/lib/api/fetcher";
 import type {
   PostAggregatePolygon,
   PostBuffer,
-  PostOriginDestination,
   PostOevGueteKlassen,
   PostTripCount,
   PostJoin,
   PostAggregatePoint,
+  PostOriginDestinationMatrix,
 } from "@/lib/validations/tools";
 
 const PROJECTS_API_BASE_URL = new URL(
@@ -118,13 +118,11 @@ export const computeAggregatePolygon = async (
   return await response.json();
 };
 
-//**  */
-
-export const sendODRequest = async (
-  body: PostOriginDestination,
+export const computeOriginDestination = async (
+  body: PostOriginDestinationMatrix,
   projectId: string,
 ) => {
-  return await fetchWithAuth(
+  const response = await fetchWithAuth(
     `${PROJECTS_API_BASE_URL}/origin-destination?project_id=${projectId}`,
     {
       method: "POST",
@@ -132,4 +130,8 @@ export const sendODRequest = async (
       body: JSON.stringify(body),
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to compute origin destination");
+  }
+  return await response.json();
 };

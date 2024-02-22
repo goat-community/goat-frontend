@@ -238,18 +238,16 @@ export const aggregatePolygonSchema = aggregatePointSchema.extend({
 export type PostAggregatePoint = z.infer<typeof aggregatePointSchema>;
 export type PostAggregatePolygon = z.infer<typeof aggregatePolygonSchema>;
 
-//
-
-export const originDestinationBaseSchema = z.object({
+//**=== ORIGIN DESTINATION MATRIX ===
+export const originDestinationMatrixSchema = z.object({
   geometry_layer_project_id: z.number(),
   origin_destination_matrix_layer_project_id: z.number(),
-  // .positive("Layer invalid."),
-  unique_id_column: z.string().nonempty("Unique Id Column should not be empty"),
-  origin_column: z.string().nonempty("Origin Column should not be empty"),
-  destination_column: z
-    .string()
-    .nonempty("Destination Column should not be empty"),
-  weight_column: z.string().nonempty("Weight Column should not be empty"),
+  unique_id_column: z.string(),
+  origin_column: z.string(),
+  destination_column: z.string(),
+  weight_column: z.string(),
 });
 
-export type PostOriginDestination = z.infer<typeof originDestinationBaseSchema>;
+export type PostOriginDestinationMatrix = z.infer<
+  typeof originDestinationMatrixSchema
+>;
