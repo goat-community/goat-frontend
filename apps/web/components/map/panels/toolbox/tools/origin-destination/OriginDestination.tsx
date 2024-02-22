@@ -120,7 +120,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
     weightField,
     ["number"],
   );
-  
+
   const isValid = useMemo(() => {
     if (
       !ODLayer ||
@@ -173,6 +173,10 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
   };
 
   const handleReset = () => {
+    setUniqueIdField(undefined);
+    setOriginField(undefined);
+    setDestinationField(undefined);
+    setWeightField(undefined);
     setODLayer(undefined);
     setODMatrix(undefined);
   };
