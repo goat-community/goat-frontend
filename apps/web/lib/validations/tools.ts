@@ -251,3 +251,21 @@ export const originDestinationMatrixSchema = z.object({
 export type PostOriginDestinationMatrix = z.infer<
   typeof originDestinationMatrixSchema
 >;
+
+//**=== NEARBY STATIONS ===
+export const nearbyStationsRoutingTypeEnum = z.enum([
+  "walking",
+  "bicycle",
+  "pedelec",
+]);
+
+export const nearbyStationsSchema = z.object({
+  starting_points: startingPointSchema,
+  access_mode: nearbyStationsRoutingTypeEnum,
+  speed: z.number().min(1).max(25),
+  max_traveltime: z.number().min(1).max(15),
+  mode: z.array(PTRoutingModes),
+  time_window: ptTimeWindow,
+});
+
+export type PostNearbyStations = z.infer<typeof nearbyStationsSchema>;

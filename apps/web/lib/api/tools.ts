@@ -7,6 +7,7 @@ import type {
   PostJoin,
   PostAggregatePoint,
   PostOriginDestinationMatrix,
+  PostNearbyStations,
 } from "@/lib/validations/tools";
 
 const PROJECTS_API_BASE_URL = new URL(
@@ -135,3 +136,21 @@ export const computeOriginDestination = async (
   }
   return await response.json();
 };
+
+export const computeNearbyStations = async (
+  body: PostNearbyStations,
+  projectId: string,
+) => {
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/motorized-mobility/nearby-station-access?project_id=${projectId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to compute nearby stations access");
+  }
+  return await response.json();
+}

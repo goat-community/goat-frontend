@@ -112,6 +112,9 @@
         "join_field": "Join field",
         "statistics_text": "Select the method used to join the data"
       },
+      "nearby_stations": {
+        "nearby_stations": "Nearby Stations"
+      },
       "aggregate": {
         "aggregate_description": "Aggregates the information of a point layer onto a polygon layer considering various statistical operations.",
         "tooltip": "This is a tooltip for the aggregate function.",
@@ -334,7 +337,7 @@
   "aggregate_polygon": "Aggregate Polygon",
   "trip_count_station": "Trip Count Station",
   "origin_destination": "Origin Destination",
-  "nearby_station_access": "Nearby Station Access",
+  "nearby_station_access": "Station Access",
   "job_success": "job finished successfully",
   "job_failed": "job failed",
   "routing_type": "Routing type",
@@ -508,5 +511,11 @@
   "destination_field": "Destination Field",
   "destination_field_tooltip": "The field containing the destination identifier",
   "weight_field": "Weight Field",
-  "weight_field_tooltip": "The field containing the weight of the origin-destination pair"
+  "weight_field_tooltip": "The field containing the weight of the origin-destination pair",
+  "nearby_stations_access_header": "Nearby Station Access",
+  "nearby_stations_access_description": "The Nearby Station Access analysis is used to find stops and their trips that are accessible by walking/cycling.",
+  "access_mode": "Access Mode",
+  "station_configuration": "Station Configuration",
+  "starting_points": "Starting Points",
+  "nearby_station_access_tooltip": "Select the mode of access to the station"
 }

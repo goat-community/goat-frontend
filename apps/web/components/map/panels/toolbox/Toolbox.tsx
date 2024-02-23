@@ -26,6 +26,7 @@ import OevGueteklassen from "@/components/map/panels/toolbox/tools/oev-gueteklas
 import TripCount from "@/components/map/panels/toolbox/tools/trip-count/TripCount";
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
 import OriginDestination from "@/components/map/panels/toolbox/tools/origin-destination/OriginDestination";
+import NearbyStations from "@/components/map/panels/toolbox/tools/nearby-stations/NearbyStations";
 
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("maps");
@@ -69,7 +70,12 @@ const Toolbox = () => {
     {
       name: "Accessibility Indicators",
       value: "accessibility_indicators",
-      children: ["catchment_area", "oev_guteklassen", "trip_count"],
+      children: [
+        "catchment_area",
+        "oev_guteklassen",
+        "trip_count",
+        "nearby_stations",
+      ],
       icon: ICON_NAME.BULLSEYE,
     },
     {
@@ -138,8 +144,13 @@ const Toolbox = () => {
       value: "trip_count",
       element: <TripCount onBack={handleOnBack} onClose={handleOnClose} />,
     },
+    nearby_stations: {
+      name: t("nearby_stations"),
+      value: "nearby_stations",
+      element: <NearbyStations onBack={handleOnBack} onClose={handleOnClose} />,
+    },
     origin_destination: {
-      name: t("panels.tools.origin_destination.origin_destination"),
+      name: t("origin_destination"),
       value: "origin_destination",
       element: (
         <OriginDestination onBack={handleOnBack} onClose={handleOnClose} />

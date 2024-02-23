@@ -1,5 +1,6 @@
+import Selector from "@/components/map/panels/common/Selector";
+import type { SelectorItem } from "@/types/map/common";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
-import { setToolboxStartingPoints } from "@/lib/store/map/slice";
 import { useEffect } from "react";
 import { useMap } from "react-map-gl";
 import Table from "@mui/material/Table";
@@ -18,8 +19,11 @@ import {
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import { v4 } from "uuid";
+import { setToolboxStartingPoints } from "@/lib/store/map/slice";
+import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
+import { useParams } from "next/navigation";
 
-const CatchmentAreaStartingPoints = () => {
+const StartingPoints = () => {
   const { map } = useMap();
   const theme = useTheme();
   const { t } = useTranslation("maps");
@@ -74,7 +78,7 @@ const CatchmentAreaStartingPoints = () => {
         </TableHead>
       </Table>
       {/* { Second table as workaround to make the table body scrollable} */}
-      <TableContainer style={{marginTop: 0, maxHeight: 250}}>
+      <TableContainer style={{ marginTop: 0, maxHeight: 250 }}>
         <Table size="small" aria-label="starting point table">
           <TableBody>
             {!startingPoints?.length && (
@@ -159,4 +163,64 @@ const CatchmentAreaStartingPoints = () => {
   );
 };
 
-export default CatchmentAreaStartingPoints;
+interface StartingPointOptionsProps {
+  startingPointMethod: SelectorItem;
+  setStartingPointMethod: (item: SelectorItem) => void;
+  startingPointMethods: SelectorItem[];
+  startingPointLayer: SelectorItem | undefined;
+  setStartingPointLayer: (item: SelectorItem | undefined) => void;
+}
+
+const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
+  startingPointMethod,
+  setStartingPointMethod,
+  startingPointMethods,
+  startingPointLayer,
+  setStartingPointLayer,
+}) => {
+  const dispatch = useAppDispatch();
+  const { projectId } = useParams();
+  const { t } = useTranslation("maps");
+  const { filteredLayers } = useLayerByGeomType(
+    ["feature"],
+    ["point"],
+    projectId as string,
+  );
+  return (
+    <>
+      <Selector
+        selectedItems={startingPointMethod}
+        setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
+          dispatch(setToolboxStartingPoints(undefined));
+          setStartingPointLayer(undefined);
+          setStartingPointMethod(item as SelectorItem);
+        }}
+        items={startingPointMethods}
+        label={t("select_starting_point_method")}
+        placeholder={t("select_starting_point_method_placeholder")}
+        tooltip={t("select_starting_point_method_tooltip")}
+      />
+
+      {startingPointMethod.value === "browser_layer" && (
+        <Selector
+          selectedItems={startingPointLayer}
+          setSelectedItems={(
+            item: SelectorItem[] | SelectorItem | undefined,
+          ) => {
+            setStartingPointLayer(item as SelectorItem);
+          }}
+          items={filteredLayers}
+          emptyMessage={t("no_point_layer_found")}
+          emptyMessageIcon={ICON_NAME.LAYERS}
+          label={t("select_point_layer")}
+          placeholder={t("select_point_layer_placeholder")}
+          tooltip={t("select_point_layer_tooltip")}
+        />
+      )}
+
+      {startingPointMethod.value === "map" && <StartingPoints />}
+    </>
+  );
+};
+
+export default StartingPointSelectors;

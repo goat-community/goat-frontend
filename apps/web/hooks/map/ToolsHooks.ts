@@ -3,9 +3,11 @@ import { useLayerKeys } from "@/lib/api/layers";
 import { useProjectLayers } from "@/lib/api/projects";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import {
+  CatchmentAreaRoutingTypeEnum,
   PTDay,
   PTRoutingModes,
   catchmentAreaConfigDefaults,
+  catchmentAreaShapeEnum,
   statisticOperationEnum,
 } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
@@ -126,6 +128,98 @@ export const usePTTimeSelectorValues = () => {
     selectedPTModes,
     setSelectedPTModes,
     resetPTConfiguration,
+  };
+};
+
+export const useCatchmentAreaShapeTypes = () => {
+  const { t } = useTranslation("maps");
+  const catchmentAreaShapeTypes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: catchmentAreaShapeEnum.Enum.polygon,
+        label: t("polygon"),
+      },
+      {
+        value: catchmentAreaShapeEnum.Enum.network,
+        label: t("network"),
+      },
+      {
+        value: catchmentAreaShapeEnum.Enum.rectangular_grid,
+        label: t("rectangular_grid"),
+      },
+    ];
+  }, [t]);
+
+  return {
+    catchmentAreaShapeTypes,
+  };
+};
+
+export const useStartingPointMethods = () => {
+  const { t } = useTranslation("maps");
+  const startingPointMethods: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: "map",
+        label: t("select_on_map"),
+      },
+      {
+        value: "browser_layer",
+        label: t("select_from_point_layer"),
+      },
+    ];
+  }, [t]);
+
+  return {
+    startingPointMethods,
+  };
+};
+
+export const useRoutingTypes = () => {
+  const { t } = useTranslation("maps");
+  const [selectedRouting, setSelectedRouting] = useState<
+    SelectorItem | undefined
+  >(undefined);
+  const activeMobilityRoutingTypes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: CatchmentAreaRoutingTypeEnum.Enum.walking,
+        label: t("panels.isochrone.routing.modes.walk"),
+        icon: ICON_NAME.RUN,
+      },
+      {
+        value: CatchmentAreaRoutingTypeEnum.Enum.bicycle,
+        label: t("panels.isochrone.routing.modes.bicycle"),
+        icon: ICON_NAME.BICYCLE,
+      },
+      {
+        value: CatchmentAreaRoutingTypeEnum.Enum.pedelec,
+        label: t("panels.isochrone.routing.modes.pedelec"),
+        icon: ICON_NAME.PEDELEC,
+      },
+    ];
+  }, [t]);
+
+  const motorizedRoutingTypes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: CatchmentAreaRoutingTypeEnum.Enum.pt,
+        label: t("panels.isochrone.routing.modes.pt"),
+        icon: ICON_NAME.BUS,
+      },
+    ];
+  }, [t]);
+
+  const routingTypes = useMemo(() => {
+    return activeMobilityRoutingTypes.concat(motorizedRoutingTypes);
+  }, [activeMobilityRoutingTypes, motorizedRoutingTypes]);
+
+  return {
+    activeMobilityRoutingTypes,
+    motorizedRoutingTypes,
+    routingTypes,
+    selectedRouting,
+    setSelectedRouting,
   };
 };
 

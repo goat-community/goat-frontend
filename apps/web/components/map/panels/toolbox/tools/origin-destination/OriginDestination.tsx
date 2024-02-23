@@ -277,7 +277,6 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
                       selectedField={originField}
                       disabled={!ODMatrix}
                       setSelectedField={(field) => {
-                        console.log("field", field);
                         setOriginField(field);
                       }}
                       label={t("origin_field")}

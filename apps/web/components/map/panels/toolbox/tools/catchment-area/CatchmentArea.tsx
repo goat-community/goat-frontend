@@ -41,13 +41,15 @@ import { toast } from "react-toastify";
 import { useJobs } from "@/lib/api/jobs";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
-import CatchmentAreaStartingPoints from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentAreaStartingPoints";
 import { setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 import {
-  useLayerByGeomType,
+  useCatchmentAreaShapeTypes,
   usePTTimeSelectorValues,
+  useRoutingTypes,
+  useStartingPointMethods,
 } from "@/hooks/map/ToolsHooks";
+import StartingPointSelectors from "@/components/map/panels/toolbox/common/StartingPointsSelectors";
 
 const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("maps");
@@ -63,36 +65,9 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const [isBusy, setIsBusy] = useState(false);
 
-  const routingTypes: SelectorItem[] = useMemo(() => {
-    return [
-      {
-        value: CatchmentAreaRoutingTypeEnum.Enum.walking,
-        label: t("panels.isochrone.routing.modes.walk"),
-        icon: ICON_NAME.RUN,
-      },
-      {
-        value: CatchmentAreaRoutingTypeEnum.Enum.bicycle,
-        label: t("panels.isochrone.routing.modes.bicycle"),
-        icon: ICON_NAME.BICYCLE,
-      },
-      {
-        value: CatchmentAreaRoutingTypeEnum.Enum.pedelec,
-        label: t("panels.isochrone.routing.modes.pedelec"),
-        icon: ICON_NAME.PEDELEC,
-      },
-      // todo: NOT YET IMPLEMENTED
-      // {
-      //   value: CatchmentAreaRoutingTypeEnum.Enum.car_peak,
-      //   label: t("panels.isochrone.routing.modes.car"),
-      //   icon: ICON_NAME.CAR,
-      // },
-      {
-        value: CatchmentAreaRoutingTypeEnum.Enum.pt,
-        label: t("panels.isochrone.routing.modes.pt"),
-        icon: ICON_NAME.BUS,
-      },
-    ];
-  }, [t]);
+  // Routing
+  const { routingTypes, selectedRouting, setSelectedRouting } =
+    useRoutingTypes();
 
   // PT Values
   const {
@@ -110,46 +85,9 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     resetPTConfiguration,
   } = usePTTimeSelectorValues();
 
-  const catchmentAreaShapeTypes: SelectorItem[] = useMemo(() => {
-    return [
-      {
-        value: catchmentAreaShapeEnum.Enum.polygon,
-        label: t("polygon"),
-      },
-      {
-        value: catchmentAreaShapeEnum.Enum.network,
-        label: t("network"),
-      },
-      {
-        value: catchmentAreaShapeEnum.Enum.rectangular_grid,
-        label: t("rectangular_grid"),
-      },
-    ];
-  }, [t]);
 
-  const startingPointMethods: SelectorItem[] = useMemo(() => {
-    return [
-      {
-        value: "map",
-        label: t("select_on_map"),
-      },
-      {
-        value: "browser_layer",
-        label: t("select_from_point_layer"),
-      },
-    ];
-  }, [t]);
-
-  const { filteredLayers } = useLayerByGeomType(
-    ["feature"],
-    ["point"],
-    projectId as string,
-  );
-
-  // Routing
-  const [selectedRouting, setSelectedRouting] = useState<
-    SelectorItem | undefined
-  >(undefined);
+  const { catchmentAreaShapeTypes } = useCatchmentAreaShapeTypes()
+  const { startingPointMethods } = useStartingPointMethods();
 
   const isRoutingValid = useMemo(() => {
     if (
@@ -334,7 +272,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       try {
         setIsBusy(true);
         const parsedPayload = ptCatchmentAreaSchema.parse(payload);
-        parsedPayload["travel_cost"]["trave"]
+        parsedPayload["travel_cost"]["trave"];
         const response = await computePTCatchmentArea(
           parsedPayload,
           projectId as string,
@@ -641,40 +579,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
               active={isRoutingValid}
               baseOptions={
                 <>
-                  <Selector
-                    selectedItems={startingPointMethod}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
-                      dispatch(setToolboxStartingPoints(undefined));
-                      setStartingPointLayer(undefined);
-                      setStartingPointMethod(item as SelectorItem);
-                    }}
-                    items={startingPointMethods}
-                    label={t("select_starting_point_method")}
-                    placeholder={t("select_starting_point_method_placeholder")}
-                    tooltip={t("select_starting_point_method_tooltip")}
+                  <StartingPointSelectors
+                    startingPointMethod={startingPointMethod}
+                    setStartingPointMethod={setStartingPointMethod}
+                    startingPointMethods={startingPointMethods}
+                    startingPointLayer={startingPointLayer}
+                    setStartingPointLayer={setStartingPointLayer}
                   />
-
-                  {startingPointMethod.value === "browser_layer" && (
-                    <Selector
-                      selectedItems={startingPointLayer}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
-                        setStartingPointLayer(item as SelectorItem);
-                      }}
-                      items={filteredLayers}
-                      emptyMessage={t("no_point_layer_found")}
-                      emptyMessageIcon={ICON_NAME.LAYERS}
-                      label={t("select_point_layer")}
-                      placeholder={t("select_point_layer_placeholder")}
-                      tooltip={t("select_point_layer_tooltip")}
-                    />
-                  )}
-
-                  {startingPointMethod.value === "map" &&
-                    selectedRouting?.value && <CatchmentAreaStartingPoints />}
                 </>
               }
             />
