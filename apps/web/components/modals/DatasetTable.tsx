@@ -39,7 +39,6 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
   onClose,
   dataset,
 }) => {
-  const { t } = useTranslation("maps");
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
     dataset["layer_id"] || dataset["id"] || "",
   );
