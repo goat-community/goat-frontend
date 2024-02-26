@@ -3,6 +3,7 @@ import ContentDeleteModal from "@/components/modals/ContentDelete";
 import type { ContentDialogBaseProps } from "@/types/dashboard/content";
 import { ContentActions } from "@/types/common";
 import DatasetDownloadModal from "@/components/modals/DatasetDownload";
+import DatasetTableModal from "@/components/modals/DatasetTable";
 import ContentMoveToFolderModal from "@/components/modals/MoveToFolder";
 
 interface ContentDialogProps extends Omit<ContentDialogBaseProps, "open"> {
@@ -43,6 +44,9 @@ export default function ContentDialogWrapper(props: ContentDialogProps) {
           dataset={props.content}
           onDownload={props.onContentDownload}
         />
+      )}
+      {props.action === ContentActions.TABLE && (
+        <DatasetTableModal {...commonModalProps} dataset={props.content} />
       )}
     </>
   );

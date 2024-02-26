@@ -88,17 +88,19 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
     joinLayer?.value as number | undefined,
     projectId as string,
   );
-  
+
   // Fields have to be the same type
-  const targetFields = useLayerFields(
+  const { layerFields: targetFields } = useLayerFields(
     targetLayerDatasetId || "",
     joinSelectedField?.type,
   );
-  const joinFields = useLayerFields(
+  const { layerFields: joinFields } = useLayerFields(
     joinLayerDatasetId || "",
     targetSelectedField?.type,
   );
-  const allJoinFields = useLayerFields(joinLayerDatasetId || "");
+  const { layerFields: allJoinFields } = useLayerFields(
+    joinLayerDatasetId || "",
+  );
 
   // List of target and join layer
   const targetLayers = useMemo(() => {

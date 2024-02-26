@@ -35,6 +35,11 @@ export const useLayerSettingsMoreMenu = () => {
           icon: ICON_NAME.ZOOM_IN,
         },
         {
+          id: ContentActions.TABLE,
+          label: t("maps:open_data_table"),
+          icon: ICON_NAME.TABLE,
+        },
+        {
           id: MapLayerActions.DUPLICATE,
           label: t("maps:duplicate"),
           icon: ICON_NAME.COPY,
@@ -64,6 +69,11 @@ export const useLayerSettingsMoreMenu = () => {
           id: MapLayerActions.PROPERTIES,
           label: t("common:properties"),
           icon: ICON_NAME.CIRCLEINFO,
+        },
+        {
+          id: ContentActions.TABLE,
+          label: t("maps:open_data_table"),
+          icon: ICON_NAME.TABLE,
         },
         {
           id: MapLayerActions.RENAME,

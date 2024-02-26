@@ -9,6 +9,7 @@ export enum ContentActions {
   DOWNLOAD = "download",
   SHARE = "share",
   DELETE = "delete",
+  TABLE = "table",
 }
 
 export enum MapLayerActions {
@@ -20,7 +21,7 @@ export enum MapLayerActions {
 
 export enum LayerStyleActions {
   RESET = "reset",
-  SAVE_AS_DEFAULT = "saveAsDefault"
+  SAVE_AS_DEFAULT = "saveAsDefault",
 }
 
 export enum OrgMemberActions {

@@ -13,9 +13,7 @@ import {
   Popper,
   Stack,
   TextField,
-  Typography,
   debounce,
-  useTheme,
 } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
@@ -24,8 +22,8 @@ import DropdownFooter from "@/components/map/panels/style/other/DropdownFooter";
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 import type { GetLayerUniqueValuesQueryParams } from "@/lib/validations/layer";
 import { Loading } from "@p4b/ui/components/Loading";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
+import NoValuesFound from "@/components/map/common/NoValuesFound";
 
 export function LayerValueSelectorPopper(props: {
   open: boolean;
@@ -36,7 +34,6 @@ export function LayerValueSelectorPopper(props: {
   anchorEl: HTMLElement | null;
   onDone?: () => void;
 }) {
-  const theme = useTheme();
   const { t } = useTranslation("maps");
   const [searchText, setSearchText] = useState("");
   const [queryParams, setQueryParams] =
@@ -224,31 +221,7 @@ export function LayerValueSelectorPopper(props: {
                   <Loading size={40} />
                 </Box>
               )}
-              {!isLoading && data?.items?.length === 0 && (
-                <Stack
-                  direction="column"
-                  spacing={2}
-                  sx={{
-                    my: 2,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Icon
-                    iconName={ICON_NAME.TABLE}
-                    fontSize="small"
-                    htmlColor={theme.palette.text.secondary}
-                  />
-                  <Typography
-                    variant="body2"
-                    fontWeight="bold"
-                    color={theme.palette.text.secondary}
-                  >
-                    {t("no_values_found")}
-                  </Typography>
-                </Stack>
-              )}
+              {!isLoading && data?.items?.length === 0 && <NoValuesFound />}
             </Box>
             <Divider />
             <Stack sx={{ pb: 3, pt: 1 }}>

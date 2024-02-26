@@ -4,7 +4,9 @@ import type { GetContentQueryParams } from "@/lib/validations/common";
 import type {
   ClassBreaks,
   CreateFeatureLayer,
+  DatasetCollectionItems,
   DatasetDownloadRequest,
+  GetCollectionItemsQueryParams,
   GetLayerUniqueValuesQueryParams,
   Layer,
   LayerClassBreaks,
@@ -59,6 +61,21 @@ export const updateDataset = async (
     await response.json();
   }
   return response;
+};
+
+export const useDatasetCollectionItems = (
+  datasetId: string,
+  queryParams?: GetCollectionItemsQueryParams,
+) => {
+  const collectionId = `user_data.${datasetId.replace(/-/g, "")}`;
+  const { data, isLoading, error, mutate } = useSWR<DatasetCollectionItems>(
+    () =>
+      datasetId
+        ? [`${COLLECTIONS_API_BASE_URL}/${collectionId}/items`, queryParams]
+        : null,
+    fetcher,
+  );
+  return { data, isLoading, isError: error, mutate };
 };
 
 export const useLayerQueryables = (layerId: string) => {

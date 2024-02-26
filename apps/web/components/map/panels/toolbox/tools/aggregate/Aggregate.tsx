@@ -72,7 +72,7 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     sourceLayer?.value as number | undefined,
     projectId as string,
   );
-  const allSourceLayerFields = useLayerFields(sourceLayerDatasetId || "");
+  const {layerFields: allSourceLayerFields} = useLayerFields(sourceLayerDatasetId || "");
 
   const [areaType, setAreaType] = useState<SelectorItem | undefined>();
   const [selectedAreaLayer, setSelectedAreaLayer] = useState<

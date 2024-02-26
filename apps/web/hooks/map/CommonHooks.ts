@@ -5,7 +5,7 @@ const useLayerFields = (
   dataset_id: string,
   filterType?: "string" | "number" | undefined,
 ) => {
-  const { queryables } = useLayerQueryables(dataset_id || "");
+  const { queryables, isLoading, isError } = useLayerQueryables(dataset_id || "");
 
   const layerFields = useMemo(() => {
     if (!queryables || !dataset_id) return [];
@@ -25,7 +25,11 @@ const useLayerFields = (
       });
   }, [dataset_id, filterType, queryables]);
 
-  return layerFields;
+  return {
+    layerFields,
+    isLoading,
+    isError
+  };
 };
 
 export default useLayerFields;

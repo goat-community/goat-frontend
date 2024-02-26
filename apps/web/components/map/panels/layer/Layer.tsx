@@ -378,7 +378,8 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       direction="left"
       body={
         <>
-          {moreMenuState?.id === ContentActions.DOWNLOAD &&
+          {(moreMenuState?.id === ContentActions.DOWNLOAD ||
+            moreMenuState?.id === ContentActions.TABLE) &&
             activeLayerMoreMenu && (
               <>
                 <ContentDialogWrapper

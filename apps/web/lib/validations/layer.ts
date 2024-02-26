@@ -249,6 +249,57 @@ export const datasetDownloadRequestSchema = z.object({
   query: z.string().optional(),
 });
 
+export const datasetCollectionItems = z.object({
+  description: z.string().optional(),
+  features: z.array(
+    z.object({
+      geometry: z
+        .object({
+          coordinates: z.array(z.number()),
+          type: z.string(),
+        })
+        .optional(),
+      id: z.number(),
+      properties: z.object({}),
+      type: z.string(),
+    }),
+  ),
+  id: z.string().optional(),
+  links: z.array(
+    z.object({
+      href: z.string(),
+      rel: z.string(),
+      type: z.string(),
+      title: z.string(),
+    }),
+  ),
+  numberMatched: z.number(),
+  numberReturned: z.number(),
+  title: z.string(),
+  type: z.string(),
+});
+
+export const datasetCollectionItemsQueryParams = z.object({
+  "geom-column": z.string().optional(),
+  "datetime-column": z.string().optional(),
+  limit: z.number().min(0).max(10000).optional().default(10),
+  offset: z.number().min(0).optional(),
+  "bbox-only": z.boolean().optional(),
+  simplify: z.boolean().optional(),
+  ids: z.string().optional(),
+  bbox: z.string().optional(),
+  datetime: z.string().optional(),
+  properties: z.string().optional(),
+  filter: z.string().optional(),
+  sortby: z.string().optional(),
+  f: z.string().optional(),
+});
+
+export type DatasetCollectionItems = z.infer<typeof datasetCollectionItems>;
+export type GetCollectionItemsQueryParams = z.infer<
+  typeof datasetCollectionItemsQueryParams
+>;
+
 export type DatasetDownloadRequest = z.infer<
   typeof datasetDownloadRequestSchema
 >;

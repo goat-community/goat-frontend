@@ -50,7 +50,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
     ODLayer?.value as number | undefined,
     projectId as string,
   );
-  const ODLayerFields = useLayerFields(odLayerDatasetId || "");
+  const { layerFields: ODLayerFields } = useLayerFields(odLayerDatasetId || "");
   const [uniqueIdField, setUniqueIdField] = useState<
     LayerFieldType | undefined
   >(undefined);
@@ -66,7 +66,9 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
     ODMatrix?.value as number | undefined,
     projectId as string,
   );
-  const ODMatrixFields = useLayerFields(odMatrixDatasetId || "");
+  const { layerFields: ODMatrixFields } = useLayerFields(
+    odMatrixDatasetId || "",
+  );
 
   const [originField, setOriginField] = useState<LayerFieldType | undefined>(
     undefined,
