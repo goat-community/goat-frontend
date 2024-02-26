@@ -29,6 +29,7 @@ type SelectorProps = {
   errorMessage?: string;
   emptyMessage?: string;
   emptyMessageIcon?: ICON_NAME;
+  onScrolling?: (e) => void;
   disabled?: boolean;
 };
 
@@ -50,6 +51,7 @@ const Selector = (props: SelectorProps) => {
     allSelectedLabel,
     emptyMessage,
     emptyMessageIcon,
+    onScrolling,
     errorMessage,
     disabled,
   } = props;
@@ -90,6 +92,9 @@ const Selector = (props: SelectorProps) => {
       <Select
         fullWidth
         MenuProps={{
+          PaperProps: {
+            onScroll: onScrolling,
+          },
           autoFocus: false,
           sx: { width: "120px" },
           slotProps: {

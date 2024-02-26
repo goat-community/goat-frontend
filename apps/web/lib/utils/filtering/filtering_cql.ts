@@ -141,7 +141,6 @@ export function createTheCQLBasedOnExpression(
   layerAttributes: { keys: { name: string; type: string }[] },
   logicalOperator?: "and" | "or",
 ) {
-  console.log(expressions);
   const queries = expressions
     .filter((exp) => exp.value && exp.expression && exp.attribute)
     .map((expression) => {
@@ -211,7 +210,6 @@ export function createTheCQLBasedOnExpression(
     });
 
   if (logicalOperator === "and") {
-    console.log(and_operator(queries));
     return JSON.parse(and_operator(queries));
   } else {
     return JSON.parse(or_operator(queries));

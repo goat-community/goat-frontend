@@ -119,6 +119,7 @@ import {
   funicularIcon,
   gondolaIcon,
   hexagonIcon,
+  spatialIcon
 } from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
@@ -194,7 +195,7 @@ export enum ICON_NAME {
   CROWN = "crown",
   BULLSEYE = "bullsey",
   COPY = "copy",
-
+  SPATIAL = "spatial",
   SLIDERS = "sliders",
   ZOOM_IN = "zoom-in",
   ZOOM_OUT = "zoom-out",
@@ -352,6 +353,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.GONDOLA]: gondolaIcon,
   [ICON_NAME.AGGREGATE]: aggregateIcon,
   [ICON_NAME.HEXAGON]: hexagonIcon,
+  [ICON_NAME.SPATIAL]: spatialIcon,
 };
 
 interface BrandColors {

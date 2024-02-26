@@ -8,7 +8,11 @@ export const expression = z.object({
   type: z.string(),
   attribute: z.string(),
   expression: z.string(),
-  value: z.string().or(z.number()),
+  value: z.union([
+    z.string(),
+    z.number(),
+    z.array(z.union([z.string(), z.number()]))
+  ]),
   id: z.string(),
 });
 

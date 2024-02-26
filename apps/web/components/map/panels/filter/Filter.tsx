@@ -11,9 +11,6 @@ import {
   Box,
   useTheme,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
   ListItemIcon,
   MenuItem,
   MenuList,
@@ -28,10 +25,11 @@ import { parseCQLQueryToObject } from "@/lib/utils/filtering/cql_to_expression";
 import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
 import { useFilterQueries } from "@/hooks/map/LayerPanelHooks";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import Selector from "@/components/map/panels/common/Selector";
 
 import type { Expression as ExpressionType } from "@/lib/validations/filter";
-import type { SelectChangeEvent } from "@mui/material";
 import type { ProjectLayer } from "@/lib/validations/project";
+import type { SelectorItem } from "@/types/map/common";
 
 interface FilterProps {
   projectId: string;
@@ -51,14 +49,20 @@ const FilterPanel = (props: FilterProps) => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  
   const dispatch = useAppDispatch();
   const { activeLayer, mutate } = useFilterQueries(projectId as string);
   const { t } = useTranslation("maps");
   const theme = useTheme();
+  
+  const logicalOperators = [
+    { value: "and", label: t("panels.filter.and") },
+    { value: "or", label: t("panels.filter.and") },
+  ];
 
   function createExpression(type: "spatial" | "regular") {
     if (expressions) {
@@ -73,6 +77,7 @@ const FilterPanel = (props: FilterProps) => {
         },
       ]);
     }
+    setAnchorEl(null);
   }
 
   const modifyExpressions = useCallback(
@@ -128,23 +133,25 @@ const FilterPanel = (props: FilterProps) => {
       );
       setExpressions(existingExpressions);
     } else {
-      const query = createTheCQLBasedOnExpression(
-        expressions,
-        layerAttributes,
-        logicalOperator,
-      );
-      setLogicalOperator("op" in query ? (query.op as "and" | "or") : "and");
+      if (layerAttributes.keys.length) {
+        const query = createTheCQLBasedOnExpression(
+          expressions,
+          layerAttributes,
+          logicalOperator,
+        );
+        setLogicalOperator("op" in query ? (query.op as "and" | "or") : "and");
 
-      const updatedProjectLayer = {
-        ...activeLayer,
-        query: expressions.length ? query : null,
-      };
+        const updatedProjectLayer = {
+          ...activeLayer,
+          query: expressions.length ? query : null,
+        };
 
-      updateProjectLayer(
-        projectId,
-        activeLayer ? activeLayer.id : 0,
-        updatedProjectLayer as ProjectLayer,
-      );
+        updateProjectLayer(
+          projectId,
+          activeLayer ? activeLayer.id : 0,
+          updatedProjectLayer as ProjectLayer,
+        );
+      }
     }
     setTimeout(() => {
       mutate();
@@ -154,7 +161,7 @@ const FilterPanel = (props: FilterProps) => {
   useEffect(() => {
     updateExpressions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expressions, logicalOperator]);
+  }, [expressions, logicalOperator, layerAttributes]);
 
   function handleLayerChange() {
     const existingExpressions = parseCQLQueryToObject(
@@ -176,24 +183,37 @@ const FilterPanel = (props: FilterProps) => {
             onChange={handleLayerChange}
           />
           {expressions && expressions.length > 1 ? (
-            <FormControl fullWidth>
-              <InputLabel>{t("panels.filter.logical_operator")}</InputLabel>
-              <Select
-                value={logicalOperator}
-                label={t("panels.filter.logical_operator")}
-                onChange={(event: SelectChangeEvent) => {
-                  setLogicalOperator(event.target.value as "or" | "and");
-                }}
-              >
-                <MenuItem key={v4()} value="and">
-                  {t("panels.filter.and")}
-                </MenuItem>
-                <MenuItem key={v4()} value="or">
-                  {t("panels.filter.and")}
-                </MenuItem>
-              </Select>
-            </FormControl>
-          ) : null}
+            <Selector
+              items={logicalOperators}
+              selectedItems={
+                logicalOperators.filter(
+                  (operator) => operator.value === logicalOperator,
+                )[0]
+              }
+              setSelectedItems={(item: SelectorItem) => {
+                setLogicalOperator(item.value as "and" | "or");
+              }}
+              label={t("panels.filter.logical_operator")}
+            />
+          ) : // <FormControl fullWidth>
+          //   <InputLabel>{t("panels.filter.logical_operator")}</InputLabel>
+          //   <Select
+
+          //     value={logicalOperator}
+          //     label={t("panels.filter.logical_operator")}
+          //     onChange={(event: SelectChangeEvent) => {
+          //       setLogicalOperator(event.target.value as "or" | "and");
+          //     }}
+          //   >
+          //     <MenuItem key={v4()} value="and">
+          //       {t("panels.filter.and")}
+          //     </MenuItem>
+          //     <MenuItem key={v4()} value="or">
+          //       {t("panels.filter.or")}
+          //     </MenuItem>
+          //   </Select>
+          // </FormControl>
+          null}
           {expressions && expressions.length ? (
             <Box
               sx={{
@@ -215,7 +235,7 @@ const FilterPanel = (props: FilterProps) => {
             </Box>
           ) : (
             <Box sx={{ marginTop: `${theme.spacing(4)}` }}>
-              <Card sx={{ backgroundColor: theme.palette.background.default }}>
+              <Card sx={{ backgroundColor: theme.palette.background.paper }}>
                 <CardMedia
                   sx={{
                     height: "56px",
@@ -258,14 +278,11 @@ const FilterPanel = (props: FilterProps) => {
           >
             <Button
               onClick={handleClick}
+              size="small"
               fullWidth
-              startIcon={
-                <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />
-              }
+              startIcon={<Icon iconName={ICON_NAME.PLUS} fontSize="small" />}
             >
-              <Typography variant="body2" fontWeight="bold" color="inherit">
-                {t("panels.filter.create_expression")}
-              </Typography>
+              {t("panels.filter.create_expression")}
             </Button>
             <Menu
               anchorEl={anchorEl}
@@ -290,18 +307,18 @@ const FilterPanel = (props: FilterProps) => {
                       <ListItemIcon>
                         <Icon
                           iconName={ICON_NAME.EDITPEN}
-                          style={{ fontSize: "15px" }}
+                          style={{ fontSize: "20px", paddingLeft: "4px" }}
                         />
                       </ListItemIcon>
                       <Typography variant="body2">
-                      {t("panels.filter.logical_expression")}
+                        {t("panels.filter.logical_expression")}
                       </Typography>
                     </MenuItem>
                     <MenuItem onClick={() => createExpression("spatial")}>
                       <ListItemIcon>
                         <Icon
-                          iconName={ICON_NAME.MOUNTAIN}
-                          style={{ fontSize: "15px" }}
+                          iconName={ICON_NAME.SPATIAL}
+                          style={{ fontSize: "20px" }}
                         />
                       </ListItemIcon>
                       <Typography variant="body2">
@@ -313,6 +330,7 @@ const FilterPanel = (props: FilterProps) => {
               </Box>
             </Menu>
             <Button
+              size="small"
               variant="outlined"
               fullWidth
               color="error"
