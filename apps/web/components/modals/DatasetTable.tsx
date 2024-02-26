@@ -1,6 +1,5 @@
 import { FieldTypeTag } from "@/components/map/common/LayerFieldSelector";
 import useLayerFields from "@/hooks/map/CommonHooks";
-import { useTranslation } from "@/i18n/client";
 import { useDatasetCollectionItems } from "@/lib/api/layers";
 import { IconButton, Skeleton } from "@mui/material";
 
