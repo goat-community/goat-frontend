@@ -189,7 +189,7 @@ const FilterPanel = (props: FilterProps) => {
                   {t("panels.filter.and")}
                 </MenuItem>
                 <MenuItem key={v4()} value="or">
-                  {t("panels.filter.and")}
+                  {t("panels.filter.or")}
                 </MenuItem>
               </Select>
             </FormControl>

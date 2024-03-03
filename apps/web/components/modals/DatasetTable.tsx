@@ -40,12 +40,18 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
 }) => {
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
     dataset["layer_id"] || dataset["id"] || "",
+    undefined,
+    ["layer_id"],
   );
+  const defaultParams = {
+    limit: 50,
+    offset: 0,
+  };
+  if (dataset["query"]) {
+    defaultParams["filter"] = JSON.stringify(dataset["query"]);
+  }
   const [dataQueryParams, setDataQueryParams] =
-    useState<GetCollectionItemsQueryParams>({
-      limit: 50,
-      offset: 0,
-    });
+    useState<GetCollectionItemsQueryParams>(defaultParams);
   const { data } = useDatasetCollectionItems(
     dataset["layer_id"] || dataset["id"] || "",
     dataQueryParams,
