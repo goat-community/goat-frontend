@@ -32,7 +32,7 @@ const initialState = {
       value: "mapbox_light",
       url: "mapbox://styles/mapbox/light-v11",
       title: "Light",
-      subtitle: "For highlitghting data overlays",
+      subtitle: "For highlighting data overlays",
       thumbnail: "https://i.imgur.com/jHFGEEQm.png",
     },
     {
