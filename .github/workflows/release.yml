@@ -23,16 +23,13 @@ jobs:
       contents: read
       packages: write
       pull-requests: write
-    secrets:
-      dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
-      dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
     with:
-      dockerhub-enable: true
-      ghcr-enable: false
+      dockerhub-enable: false
+      ghcr-enable: true
       push: ${{ github.event_name != 'pull_request' }}
       file: ./apps/web/Dockerfile
       image-names: |
-        goatcommunity/goat-frontend
+        ghcr.io/goat-frontend
 
   release-docker-storybook:
     name: release-docker-storybook
@@ -43,16 +40,13 @@ jobs:
       contents: read
       packages: write
       pull-requests: write
-    secrets:
-      dockerhub-username: ${{ secrets.DOCKER_USERNAME }}
-      dockerhub-token: ${{ secrets.DOCKER_PASSWORD }}
     with:
-      dockerhub-enable: true
-      ghcr-enable: false
+      dockerhub-enable: false
+      ghcr-enable: true
       push: ${{ github.event_name != 'pull_request' }}
       file: ./apps/storybook/Dockerfile
       image-names: |
-        goatcommunity/goat-storybook
+        ghcr.io/goat-storybook
 
 
   release-keycloak-theme:
