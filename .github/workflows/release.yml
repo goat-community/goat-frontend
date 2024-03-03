@@ -29,7 +29,7 @@ jobs:
       push: ${{ github.event_name != 'pull_request' }}
       file: ./apps/web/Dockerfile
       image-names: |
-        ghcr.io/goat-frontend
+        ghcr.io/${{ github.repository }}/ui
 
   release-docker-storybook:
     name: release-docker-storybook
@@ -46,8 +46,7 @@ jobs:
       push: ${{ github.event_name != 'pull_request' }}
       file: ./apps/storybook/Dockerfile
       image-names: |
-        ghcr.io/goat-storybook
-
+        ghcr.io/${{ github.repository }}/storybook
 
   release-keycloak-theme:
     name: release-keycloak-theme
