@@ -7,13 +7,15 @@ export const fetcher = async (params) => {
     url = params[0];
     queryParams = params[1];
     payload = params[2];
-    for (const key in queryParams) {
-      if (Array.isArray(queryParams[key])) {
-        queryParams[key].forEach((value) => {
-          urlSearchParams.append(key, value);
-        });
-      } else {
-        urlSearchParams.append(key, queryParams[key]);
+    if (queryParams) {
+      for (const key in queryParams) {
+        if (Array.isArray(queryParams[key])) {
+          queryParams[key].forEach((value) => {
+            urlSearchParams.append(key, value);
+          });
+        } else {
+          urlSearchParams.append(key, queryParams[key]);
+        }
       }
     }
   } else {

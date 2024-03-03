@@ -47,7 +47,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
     layers: datasets,
     isLoading: isDatasetLoading,
     isError: _isDatasetError,
-  } = useLayers(queryParams);
+  } = useLayers(queryParams, datasetSchema);
   const [isBusy, setIsBusy] = useState(false);
   const { mutate: mutateProjectLayers } = useProjectLayers(projectId);
 

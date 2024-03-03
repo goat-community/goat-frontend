@@ -265,7 +265,10 @@ const LayerPanel = ({ projectId }: PanelProps) => {
   );
   const { project, mutate: mutateProject } = useProject(projectId);
   const sortedLayers = useSortedLayers(projectId);
-  useJobStatus(mutateProjectLayers);
+  useJobStatus(() => {
+    mutateProjectLayers();
+    mutateProject();
+  });
 
   const [renameLayer, setRenameLayer] = useState<ProjectLayer | undefined>(
     undefined,
