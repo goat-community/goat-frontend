@@ -1,12 +1,13 @@
 import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
-import type { GetContentQueryParams } from "@/lib/validations/common";
+import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type {
   ClassBreaks,
   CreateFeatureLayer,
   DatasetCollectionItems,
   DatasetDownloadRequest,
   GetCollectionItemsQueryParams,
+  GetDatasetSchema,
   GetLayerUniqueValuesQueryParams,
   Layer,
   LayerClassBreaks,
@@ -26,9 +27,15 @@ export const COLLECTIONS_API_BASE_URL = new URL(
   process.env.NEXT_PUBLIC_GEOAPI_URL,
 ).href;
 
-export const useLayers = (queryParams?: GetContentQueryParams) => {
+export const useLayers = (
+  queryParams?: PaginatedQueryParams,
+  payload: GetDatasetSchema = {},
+) => {
   const { data, isLoading, error, mutate, isValidating } =
-    useSWR<LayerPaginated>([`${LAYERS_API_BASE_URL}`, queryParams], fetcher);
+    useSWR<LayerPaginated>(
+      [`${LAYERS_API_BASE_URL}`, queryParams, payload],
+      fetcher,
+    );
   return {
     layers: data,
     isLoading: isLoading,

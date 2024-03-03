@@ -1,12 +1,12 @@
 import { getSession } from "next-auth/react";
 
 export const fetcher = async (params) => {
-  let queryParams, url;
+  let queryParams, url, payload;
   const urlSearchParams = new URLSearchParams();
-
   if (Array.isArray(params)) {
     url = params[0];
     queryParams = params[1];
+    payload = params[2];
     for (const key in queryParams) {
       if (Array.isArray(queryParams[key])) {
         queryParams[key].forEach((value) => {
@@ -23,12 +23,20 @@ export const fetcher = async (params) => {
     ? `${url}?${new URLSearchParams(queryParams)}`
     : url;
   const options = {};
+  if (payload) {
+    options["method"] = "POST";
+    options["body"] = JSON.stringify(payload);
+    options["headers"] = {
+      "Content-Type": "application/json",
+    };
+  }
   const session = await getSession();
 
   if (session?.access_token) {
-    options["headers"] = {
-      Authorization: `Bearer ${session.access_token}`,
-    };
+    if (!options["headers"]) {
+      options["headers"] = {};
+    }
+    options["headers"]["Authorization"] = `Bearer ${session.access_token}`;
   }
 
   const res = await fetch(urlWithParams, options);

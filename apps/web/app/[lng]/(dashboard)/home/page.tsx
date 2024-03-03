@@ -14,7 +14,7 @@ import BlogSection from "@/components/dashboard/home/BlogSection";
 import ProjectSection from "@/components/dashboard/home/ProjectSection";
 import DataSection from "@/components/dashboard/home/DataSection";
 import { useLayers } from "@/lib/api/layers";
-import type { GetContentQueryParams } from "@/lib/validations/common";
+import type { PaginatedQueryParams } from "@/lib/validations/common";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import type { Layer } from "@/lib/validations/layer";
@@ -23,7 +23,7 @@ import { useJobStatus } from "@/hooks/jobs/JobStatus";
 const Home = () => {
   const { t } = useTranslation("dashboard");
 
-  const queryParams: GetContentQueryParams = {
+  const queryParams: PaginatedQueryParams = {
     order: "descendent",
     order_by: "updated_at",
     size: 3,

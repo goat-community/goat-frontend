@@ -16,22 +16,35 @@ import FilterContentMenu from "@/components/dashboard/common/FilterContent";
 import GridViewIcon from "@mui/icons-material/GridView";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useState } from "react";
-import type { GetLayersQueryParams, LayerType } from "@/lib/validations/layer";
+import type { GetDatasetSchema, LayerType } from "@/lib/validations/layer";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
 import { useTranslation } from "@/i18n/client";
+import type { PaginatedQueryParams } from "@/lib/validations/common";
 
 export interface ContentSearchBarProps {
   contentType: "project" | "layer";
-  setQueryParams: (
-    params: GetLayersQueryParams | GetProjectsQueryParams,
+  setQueryParams?: (
+    params: PaginatedQueryParams | GetProjectsQueryParams,
   ) => void;
-  queryParams: GetLayersQueryParams | GetProjectsQueryParams;
+  queryParams?: PaginatedQueryParams | GetProjectsQueryParams;
+  datasetSchema?: GetDatasetSchema;
+  setDatasetSchema?: (schema: GetDatasetSchema) => void;
   view?: "list" | "grid";
   setView?: (view: "list" | "grid") => void;
+  searchText?: string;
+  onSearchTextChange?: (searchText: string) => void;
 }
 
 export default function ContentSearchBar(props: ContentSearchBarProps) {
-  const { setQueryParams, queryParams, view, setView } = props;
+  const {
+    setQueryParams,
+    queryParams,
+    datasetSchema,
+    setDatasetSchema,
+    view,
+    setView,
+    contentType,
+  } = props;
   const theme = useTheme();
   const { t } = useTranslation("dashboard");
 
@@ -80,7 +93,6 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
         display: "flex",
         justifyContent: "start",
         alignItems: "center",
-        mt: 2,
       }}
     >
       <Paper
@@ -103,60 +115,78 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
               ? t("projects.search_projects")
               : t("projects.search_layers")
           }
+          defaultValue={props.searchText}
           inputProps={{ "aria-label": "search projects" }}
           onChange={(e) =>
             debounce(() => {
-              setQueryParams({
-                ...queryParams,
-                search: e.target.value,
-              });
+              props.onSearchTextChange?.(e.target.value);
+              const setParams =
+                contentType === "project" ? setQueryParams : setDatasetSchema;
+                const params = contentType === "project" ? queryParams : datasetSchema;
+              if (setParams) {
+                setParams({
+                  ...params,
+                  search: e.target.value,
+                });
+              }
             }, 500)()
           }
         />
-        <Divider orientation="vertical" flexItem />
-
-        <SortByMenu
-          selectedItem={selectedSortBy}
-          onSelect={(item: PopperMenuItem) => {
-            setSelectedSortBy(item);
-            setQueryParams({
-              ...queryParams,
-              ...soryByOptions[item?.id],
-            });
-          }}
-          menuItems={sortByItems}
-          menuButton={
-            <Button
-              variant="text"
-              sx={{
-                mx: 2,
-                p: 2,
-                borderRadius: 1,
+        {queryParams && setQueryParams && (
+          <>
+            <Divider orientation="vertical" flexItem />
+            <SortByMenu
+              selectedItem={selectedSortBy}
+              onSelect={(item: PopperMenuItem) => {
+                setSelectedSortBy(item);
+                setQueryParams({
+                  ...queryParams,
+                  ...soryByOptions[item?.id],
+                });
               }}
-            >
-              {selectedSortBy.icon && (
-                <Icon iconName={selectedSortBy.icon} style={{ fontSize: 17 }} />
-              )}
-              <Typography
-                variant="body2"
-                sx={{ ml: 2, color: theme.palette.primary.main }}
-              >
-                {selectedSortBy.label}
-              </Typography>
-            </Button>
-          }
-        />
+              menuItems={sortByItems}
+              menuButton={
+                <Button
+                  variant="text"
+                  sx={{
+                    mx: 2,
+                    p: 2,
+                    borderRadius: 1,
+                  }}
+                >
+                  {selectedSortBy.icon && (
+                    <Icon
+                      iconName={selectedSortBy.icon}
+                      style={{ fontSize: 17 }}
+                    />
+                  )}
+                  <Typography
+                    variant="body2"
+                    sx={{ ml: 2, color: theme.palette.primary.main }}
+                  >
+                    {selectedSortBy.label}
+                  </Typography>
+                </Button>
+              }
+            />
+            <Divider orientation="vertical" flexItem />
+            <FilterContentMenu
+              type={props.contentType}
+              onLayerTypeSelect={(layerTypes: LayerType[]) => {
+                const setParams =
+                  contentType === "project" ? setQueryParams : setDatasetSchema;
+                const params = contentType === "project" ? queryParams : datasetSchema;
+                if (setParams) {
+                  setParams({
+                    ...params,
+                    type: layerTypes,
+                  });
+                }
+              }}
+            />
+          </>
+        )}
 
-        <Divider orientation="vertical" flexItem />
-        <FilterContentMenu
-          type={props.contentType}
-          onLayerTypeSelect={(layerTypes: LayerType[]) => {
-            setQueryParams({
-              ...queryParams,
-              layer_type: layerTypes,
-            });
-          }}
-        />
         {setView && (
           <>
             <Divider orientation="vertical" flexItem />

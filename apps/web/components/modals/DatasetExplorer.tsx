@@ -4,7 +4,7 @@ import TileGrid from "@/components/dashboard/common/TileGrid";
 import { useTranslation } from "@/i18n/client";
 import { useLayers } from "@/lib/api/layers";
 import { addProjectLayers, useProjectLayers } from "@/lib/api/projects";
-import type { GetLayersQueryParams, Layer } from "@/lib/validations/layer";
+import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";
 import { LoadingButton } from "@mui/lab";
 import {
@@ -23,6 +23,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useMap } from "react-map-gl";
 import { zoomToLayer } from "@/lib/utils/map/navigate";
+import type { PaginatedQueryParams } from "@/lib/validations/common";
 
 interface DatasetExplorerProps {
   open: boolean;
@@ -36,10 +37,12 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
   projectId,
 }) => {
   const { t } = useTranslation("common");
-  const [queryParams, setQueryParams] = useState<GetLayersQueryParams>({
+  const [queryParams, setQueryParams] = useState<PaginatedQueryParams>({
     order: "descendent",
     order_by: "updated_at",
   });
+  const [datasetSchema, setDatasetSchema] = useState<GetDatasetSchema>({});
+
   const {
     layers: datasets,
     isLoading: isDatasetLoading,
@@ -80,8 +83,8 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
               <Grid item xs={4}>
                 <Paper elevation={0} sx={{ backgroundImage: "none" }}>
                   <FoldersTreeView
-                    queryParams={queryParams}
-                    setQueryParams={setQueryParams}
+                    queryParams={datasetSchema}
+                    setQueryParams={setDatasetSchema}
                     enableActions={false}
                   />
                 </Paper>
@@ -92,6 +95,8 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
                   view="list"
                   queryParams={queryParams}
                   setQueryParams={setQueryParams}
+                  datasetSchema={datasetSchema}
+                  setDatasetSchema={setDatasetSchema}
                 />
 
                 <TileGrid

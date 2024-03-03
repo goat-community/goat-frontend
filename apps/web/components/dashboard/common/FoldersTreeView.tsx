@@ -15,10 +15,10 @@ import { useMemo, useState } from "react";
 import type { SelectedFolderForEdit } from "@/components/modals/Folder";
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
-import type { GetLayersQueryParams } from "@/lib/validations/layer";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
 import FolderModal from "@/components/modals/Folder";
 import { useTranslation } from "@/i18n/client";
+import type { GetDatasetSchema } from "@/lib/validations/layer";
 
 type EditModal = {
   type: "create" | "update" | "delete";
@@ -45,10 +45,8 @@ function getIconName(type: string, id: string): ICON_NAME {
 }
 
 interface FoldersTreeViewProps {
-  setQueryParams: (
-    params: GetLayersQueryParams | GetProjectsQueryParams,
-  ) => void;
-  queryParams: GetLayersQueryParams | GetProjectsQueryParams;
+  setQueryParams: (params: GetDatasetSchema | GetProjectsQueryParams) => void;
+  queryParams: GetDatasetSchema | GetProjectsQueryParams;
   enableActions?: boolean;
 }
 
@@ -128,7 +126,6 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
   const [selectedFolder, setSelectedFolder] = useState<
     SelectedFolder | undefined
   >(homeFolder);
-
 
   return (
     <>

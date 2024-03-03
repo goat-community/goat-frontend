@@ -6,17 +6,19 @@ import { useState } from "react";
 import { useLayers } from "@/lib/api/layers";
 import TileGrid from "@/components/dashboard/common/TileGrid";
 import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
-import type { GetLayersQueryParams } from "@/lib/validations/layer";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import DatasetUploadModal from "@/components/modals/DatasetUpload";
 import { useTranslation } from "@/i18n/client";
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
+import type { PaginatedQueryParams } from "@/lib/validations/common";
+import type { GetDatasetSchema } from "@/lib/validations/layer";
 
 const Datasets = () => {
-  const [queryParams, setQueryParams] = useState<GetLayersQueryParams>({
+  const [queryParams, setQueryParams] = useState<PaginatedQueryParams>({
     order: "descendent",
     order_by: "updated_at",
   });
+  const [datasetSchema, setDatasetSchema] = useState<GetDatasetSchema>({});
   const [view, setView] = useState<"list" | "grid">("grid");
   const [openDatasetUploadModal, setOpenDatasetUploadModal] = useState(false);
 
@@ -27,7 +29,7 @@ const Datasets = () => {
     layers: datasets,
     isLoading: isDatasetLoading,
     isError: _isDatasetError,
-  } = useLayers(queryParams);
+  } = useLayers(queryParams, datasetSchema);
 
   useJobStatus(mutate);
 
@@ -64,13 +66,15 @@ const Datasets = () => {
             setView={setView}
             queryParams={queryParams}
             setQueryParams={setQueryParams}
+            datasetSchema={datasetSchema}
+            setDatasetSchema={setDatasetSchema}
           />
         </Grid>
         <Grid item xs={3}>
           <Paper elevation={3} sx={{ backgroundImage: "none" }}>
             <FoldersTreeView
-              queryParams={queryParams}
-              setQueryParams={setQueryParams}
+              queryParams={datasetSchema}
+              setQueryParams={setDatasetSchema}
             />
           </Paper>
         </Grid>

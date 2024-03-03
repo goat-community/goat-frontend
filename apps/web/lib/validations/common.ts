@@ -15,13 +15,40 @@ export const getContentQueryParamsSchema = paginatedSchema.extend({
   authorization: z.string().optional(),
 });
 
-
 export const contentMetadataSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().optional(),
   tags: z.array(z.string()).optional(),
   thumbnail_url: z.string().url().optional(),
 });
+
+export const dataLicense = z.enum([
+  "CC_BY",
+  "CC_BY_SA",
+  "CC_BY_ND",
+  "CC_BY_NC",
+  "CC_BY_NC_SA",
+  "CC_BY_NC_ND",
+  "ODC_BY",
+  "ODC_ODbL",
+  "GPL",
+  "LGPL",
+  "APACHE",
+  "MIT",
+  "PROPRIETARY_PLAN4BETTER",
+  "OTHER",
+]);
+
+export const dataCategory = z.enum([
+  "basemap",
+  "imagery",
+  "boundary",
+  "people",
+  "transportation",
+  "environment",
+  "landuse",
+  "places",
+]);
 
 export const layerType = z.enum([
   "feature",
@@ -58,4 +85,5 @@ export type LayerType = z.infer<typeof layerType>;
 export type FeatureLayerGeometryType = z.infer<typeof featureLayerGeometryType>;
 export type TableDataExchangeType = z.infer<typeof tableDataExchangeType>;
 export type FeatureDataExchangeType = z.infer<typeof featureDataExchangeType>;
+export type PaginatedQueryParams = z.infer<typeof paginatedSchema>;
 export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;

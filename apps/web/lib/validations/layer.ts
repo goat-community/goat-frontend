@@ -2,11 +2,12 @@ import * as z from "zod";
 import { responseSchema } from "@/lib/validations/response";
 import {
   contentMetadataSchema,
+  dataCategory,
+  dataLicense,
   data_type,
   featureDataExchangeType,
   featureLayerGeometryType,
   featureLayerType,
-  getContentQueryParamsSchema,
   layerType,
   paginatedSchema,
 } from "@/lib/validations/common";
@@ -179,16 +180,12 @@ export const layerSchema = layerMetadataSchema.extend({
   data_type: data_type.optional(),
   legend_urls: z.array(z.string()).optional(),
   attribute_mapping: z.object({}).optional(),
+  in_catalog: z.boolean().optional(),
   updated_at: z.string(),
   created_at: z.string(),
 });
 
 export const postDatasetSchema = layerSchema.partial();
-
-export const getLayersQueryParamsSchema = getContentQueryParamsSchema.extend({
-  layer_type: layerType.array().optional(),
-  feature_layer_type: featureLayerType.optional(),
-});
 
 export const getLayerUniqueValuesQueryParamsSchema = paginatedSchema.extend({
   query: z.string().optional(),
@@ -295,10 +292,25 @@ export const datasetCollectionItemsQueryParams = z.object({
   f: z.string().optional(),
 });
 
+export const getDatasetSchema = z.object({
+  folder_id: z.string().uuid().optional(),
+  search: z.string().optional(),
+  type: layerType.array().optional(),
+  feature_layer_type: featureLayerType.optional(),
+  license: z.array(dataLicense).optional(),
+  data_category: z.array(dataCategory).optional(),
+  geographical_code: z.array(z.string().length(2)).optional(),
+  language_code: z.array(z.string()).optional(),
+  distributor_name: z.array(z.string()).optional(),
+  in_catalog: z.boolean().optional(),
+  spatial_search: z.string().optional(),
+});
+
 export type DatasetCollectionItems = z.infer<typeof datasetCollectionItems>;
 export type GetCollectionItemsQueryParams = z.infer<
   typeof datasetCollectionItemsQueryParams
 >;
+export type GetDatasetSchema = z.infer<typeof getDatasetSchema>;
 
 export type DatasetDownloadRequest = z.infer<
   typeof datasetDownloadRequestSchema
@@ -336,7 +348,6 @@ export type LayerClassBreaks = z.infer<typeof layerClassBreaks>;
 export type LayerFieldType = z.infer<typeof layerFieldType>;
 export type LayerMetadata = z.infer<typeof layerMetadataSchema>;
 export type FeatureLayerType = z.infer<typeof featureLayerType>;
-export type GetLayersQueryParams = z.infer<typeof getLayersQueryParamsSchema>;
 export type GetLayerUniqueValuesQueryParams = z.infer<
   typeof getLayerUniqueValuesQueryParamsSchema
 >;
