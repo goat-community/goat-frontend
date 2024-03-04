@@ -406,7 +406,7 @@
   "error_running_oev_gueteklassen": "Error running ÖV-Güteklassen",
   "trip_count_computation_started": "Trip count computation started",
   "error_running_trip_count": "Error running trip count",
-  "join": "Join",
+  "join": "Join & Group",
   "join_header": "Join",
   "join_description": "Join tool is used to append and group attribute from one layer to another using a matching attribute on both layers.",
   "pick_layers_to_join": "Select layers to join",
