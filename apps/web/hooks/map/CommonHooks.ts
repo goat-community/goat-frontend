@@ -4,13 +4,19 @@ import { useMemo } from "react";
 const useLayerFields = (
   dataset_id: string,
   filterType?: "string" | "number" | undefined,
+  hiddenFields: string[] = [],
 ) => {
-  const { queryables, isLoading, isError } = useLayerQueryables(dataset_id || "");
+  const { queryables, isLoading, isError } = useLayerQueryables(
+    dataset_id || "",
+  );
 
   const layerFields = useMemo(() => {
     if (!queryables || !dataset_id) return [];
     return Object.entries(queryables.properties)
-      .filter(([_key, value]) => {
+      .filter(([key, value]) => {
+        if (hiddenFields.includes(key)) {
+          return false;
+        }
         if (filterType) {
           return value.type === filterType;
         } else {
@@ -23,12 +29,12 @@ const useLayerFields = (
           type: value.type,
         };
       });
-  }, [dataset_id, filterType, queryables]);
+  }, [dataset_id, filterType, queryables, hiddenFields]);
 
   return {
     layerFields,
     isLoading,
-    isError
+    isError,
   };
 };
 
