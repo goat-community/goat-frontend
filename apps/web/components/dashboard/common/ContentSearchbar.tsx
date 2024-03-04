@@ -104,6 +104,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
           display: "flex",
           alignItems: "center",
           width: "100%",
+          minHeight: "48px",
         }}
       >
         {/* Search bar */}
@@ -122,7 +123,8 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
               props.onSearchTextChange?.(e.target.value);
               const setParams =
                 contentType === "project" ? setQueryParams : setDatasetSchema;
-                const params = contentType === "project" ? queryParams : datasetSchema;
+              const params =
+                contentType === "project" ? queryParams : datasetSchema;
               if (setParams) {
                 setParams({
                   ...params,
@@ -175,12 +177,20 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
               onLayerTypeSelect={(layerTypes: LayerType[]) => {
                 const setParams =
                   contentType === "project" ? setQueryParams : setDatasetSchema;
-                const params = contentType === "project" ? queryParams : datasetSchema;
-                if (setParams) {
-                  setParams({
-                    ...params,
-                    type: layerTypes,
-                  });
+                const params =
+                  contentType === "project" ? queryParams : datasetSchema;
+                if (setParams && params) {
+                  if (layerTypes?.length === 0 && "type" in params) {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const { type, ...rest } = params;
+                    delete params.type;
+                    setParams(rest);
+                  } else {
+                    setParams({
+                      ...params,
+                      type: layerTypes,
+                    });
+                  }
                 }
               }}
             />
