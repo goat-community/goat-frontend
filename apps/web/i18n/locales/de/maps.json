@@ -28,9 +28,9 @@
       "charts": "Diagramme"
     },
     "isochrone": {
-      "isochrone": "Isochrone",
-      "isochrone_type": "Isochronentyp",
-      "isochrone_description": "Isochronen zeigen Flächen auf die in einer festgelegten Reisezeit oder Entfernung von einem oder mehreren Ausgangspunkten erreicht werden.",
+      "isochrone": "Einzugsbereich",
+      "isochrone_type": "Einzugabereich Typ",
+      "isochrone_description": "Einzugsbereiche zeigen Flächen auf die in einer festgelegten Reisezeit oder Entfernung von einem oder mehreren Ausgangspunkten erreicht werden.",
       "configuration": "Einstellungen",
       "advanced_settings": "Erweiterte Einstellungen",
       "polygon": "Polygon",
@@ -39,7 +39,7 @@
       "isochrone_difference": "Polygon Differenz",
       "routing": {
         "routing": "Routing",
-        "chose_routing": "Wählen Sie einen Routingtyp für die Isochrone aus.",
+        "chose_routing": "Wählen Sie einen Routingtyp für den Einzugsbereich aus.",
         "pt_type": "ÖV-Verkehrsmittel",
         "modes": {
           "bus": "Bus",
@@ -70,7 +70,7 @@
       "invalid_step": "Ungültiger Schritt.",
       "starting": {
         "starting": "Starten",
-        "starting_point_desc": "Wählen Sie eine Variante, die Startpunkt auszuwählen",
+        "starting_point_desc": "Wählen Sie eine Variante, die Startpunkte auszuwählen",
         "origin": "Startpunkt",
         "pick_layer": "Layer auswählen",
         "type": "Typ",
