@@ -633,7 +633,9 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               } else if (
                                 menuItem.id === MapLayerActions.ZOOM_TO
                               ) {
-                                zoomToLayer(map, layer.extent);
+                                if (map) {
+                                  zoomToLayer(map, layer.extent);
+                                }
                               } else {
                                 openMoreMenu(menuItem, layer);
                               }

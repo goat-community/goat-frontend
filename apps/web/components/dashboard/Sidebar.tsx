@@ -77,7 +77,7 @@ const DashboardSidebar = (props: Props) => {
       link: "/datasets",
       icon: ICON_NAME.DATABASE,
       label: t("sidebar.datasets"),
-      current: pathname?.includes("/data"),
+      current: pathname?.includes("/datasets"),
     },
     {
       link: "/catalog",

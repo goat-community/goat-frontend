@@ -273,7 +273,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   }) => {
     if (field) {
       modifyExpression(expression, "attribute", field.name);
-      if (field.name === "Bounding Box") {
+      if (field.name === "Bounding Box" && map) {
         expression.attribute = field.name;
         expression.value = `${map.getBounds().getSouthWest().toArray()[0]},${
           map.getBounds().getSouthWest().toArray()[1]

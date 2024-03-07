@@ -74,3 +74,27 @@ export const hexagonIcon: IconDefinition = {
   iconName: "hexagon" as IconName,
   prefix: "fas" as IconPrefix,
 };
+
+export const licenseIcon: IconDefinition = {
+  icon: [
+    24,
+    24,
+    [],
+    "",
+    "M12 13q-1.25 0-2.125-.875T9 10q0-1.25.875-2.125T12 7q1.25 0 2.125.875T15 10q0 1.25-.875 2.125T12 13M6 23v-7.725q-.95-1.05-1.475-2.4T4 10q0-3.35 2.325-5.675T12 2q3.35 0 5.675 2.325T20 10q0 1.525-.525 2.875T18 15.275V23l-6-2zm6-7q2.5 0 4.25-1.75T18 10q0-2.5-1.75-4.25T12 4Q9.5 4 7.75 5.75T6 10q0 2.5 1.75 4.25T12 16",
+  ],
+  iconName: "license" as IconName,
+  prefix: "fas" as IconPrefix,
+};
+
+export const dataCategoryIcon: IconDefinition = {
+  icon: [
+    24,
+    24,
+    [],
+    "",
+    "M10 3H4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1m10 10h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1M17 3c-2.206 0-4 1.794-4 4s1.794 4 4 4s4-1.794 4-4s-1.794-4-4-4M7 13c-2.206 0-4 1.794-4 4s1.794 4 4 4s4-1.794 4-4s-1.794-4-4-4",
+  ],
+  iconName: "data-category" as IconName,
+  prefix: "fas" as IconPrefix,
+};

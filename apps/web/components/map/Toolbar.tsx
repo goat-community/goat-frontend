@@ -1,10 +1,10 @@
 "use client";
 
 import UserInfoMenu from "@/components/UserInfoMenu";
+import { Toolbar } from "@/components/header/Toolbar";
 import { Chip, Stack, useTheme, Typography } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { Toolbar } from "../header/Toolbar";
 
 export type MapToolbarProps = {
   projectTitle: string;

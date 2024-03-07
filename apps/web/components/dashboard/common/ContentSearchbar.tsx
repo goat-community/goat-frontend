@@ -32,7 +32,9 @@ export interface ContentSearchBarProps {
   view?: "list" | "grid";
   setView?: (view: "list" | "grid") => void;
   searchText?: string;
+  disabled?: boolean;
   onSearchTextChange?: (searchText: string) => void;
+  placeholder?: string;
 }
 
 export default function ContentSearchBar(props: ContentSearchBarProps) {
@@ -44,6 +46,8 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
     view,
     setView,
     contentType,
+    disabled,
+    placeholder,
   } = props;
   const theme = useTheme();
   const { t } = useTranslation("dashboard");
@@ -52,6 +56,22 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
     const newView = view === "list" ? "grid" : "list";
     setView?.(newView);
   };
+  const _handleSearchTextChange = (value: string) => {
+    props.onSearchTextChange?.(value);
+    const setParams =
+      contentType === "project" ? setQueryParams : setDatasetSchema;
+    const params = contentType === "project" ? queryParams : datasetSchema;
+    if (setParams) {
+      setParams({
+        ...params,
+        search: value,
+      });
+    }
+  };
+  const handleSearchTextChange = debounce((value: string) => {
+    _handleSearchTextChange(value);
+  }, 500);
+  const [value, setValue] = useState(props.searchText);
 
   const sortByItems: PopperMenuItem[] = [
     {
@@ -108,31 +128,42 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
         }}
       >
         {/* Search bar */}
-        <Icon iconName={ICON_NAME.SEARCH} style={{ fontSize: 17 }} />
+        <Icon
+          iconName={ICON_NAME.SEARCH}
+          style={{
+            fontSize: 17,
+            color: value ? theme.palette.primary.main : "inherit",
+          }}
+        />
         <InputBase
           sx={{ ml: 3, flex: 1 }}
           placeholder={
-            props.contentType === "project"
-              ? t("projects.search_projects")
-              : t("projects.search_layers")
+            placeholder
+              ? placeholder
+              : props.contentType === "project"
+                ? t("projects.search_projects")
+                : t("projects.search_datasets")
           }
-          defaultValue={props.searchText}
+          endAdornment={
+            value && (
+              <IconButton
+                disabled={disabled}
+                onClick={() => {
+                  _handleSearchTextChange("");
+                  setValue("");
+                }}
+              >
+                <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
+              </IconButton>
+            )
+          }
+          disabled={disabled}
           inputProps={{ "aria-label": "search projects" }}
-          onChange={(e) =>
-            debounce(() => {
-              props.onSearchTextChange?.(e.target.value);
-              const setParams =
-                contentType === "project" ? setQueryParams : setDatasetSchema;
-              const params =
-                contentType === "project" ? queryParams : datasetSchema;
-              if (setParams) {
-                setParams({
-                  ...params,
-                  search: e.target.value,
-                });
-              }
-            }, 500)()
-          }
+          value={value || ""}
+          onChange={(e) => {
+            handleSearchTextChange(e.target.value);
+            setValue(e.target.value);
+          }}
         />
         {queryParams && setQueryParams && (
           <>
@@ -149,6 +180,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
               menuItems={sortByItems}
               menuButton={
                 <Button
+                  disabled={disabled}
                   variant="text"
                   sx={{
                     mx: 2,
@@ -164,6 +196,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
                   )}
                   <Typography
                     variant="body2"
+                    color="inhderit"
                     sx={{ ml: 2, color: theme.palette.primary.main }}
                   >
                     {selectedSortBy.label}

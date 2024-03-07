@@ -33,6 +33,7 @@ const StartingPoints = () => {
   );
 
   const handleZoomToStartingPoint = (coordinate: [number, number]) => {
+    if (!map) return;
     map.flyTo({ center: coordinate, zoom: 16 });
   };
 
@@ -51,6 +52,7 @@ const StartingPoints = () => {
       ];
       dispatch(setToolboxStartingPoints([coordinate]));
     };
+    if (!map) return;
     map.on("click", handleMapClick);
     return () => {
       map.off("click", handleMapClick);

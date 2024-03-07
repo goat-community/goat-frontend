@@ -6,6 +6,7 @@ import type {
   CreateFeatureLayer,
   DatasetCollectionItems,
   DatasetDownloadRequest,
+  DatasetMetadataAggregated,
   GetCollectionItemsQueryParams,
   GetDatasetSchema,
   GetLayerUniqueValuesQueryParams,
@@ -43,6 +44,14 @@ export const useLayers = (
     mutate,
     isValidating,
   };
+};
+
+export const useMetadataAggregated = (payload: GetDatasetSchema = {}) => {
+  const { data, isLoading, error, mutate } = useSWR<DatasetMetadataAggregated>(
+    [`${LAYERS_API_BASE_URL}/metadata/aggregate`, null, payload],
+    fetcher,
+  );
+  return { metadata: data, isLoading, isError: error, mutate };
 };
 
 export const useDataset = (datasetId: string) => {

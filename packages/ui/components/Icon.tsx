@@ -116,9 +116,11 @@ import {
   addImageIcon,
   aggregateIcon,
   comingSoonIcon,
+  dataCategoryIcon,
   funicularIcon,
   gondolaIcon,
   hexagonIcon,
+  licenseIcon,
 } from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
@@ -236,6 +238,8 @@ export enum ICON_NAME {
   COMING_SOON = "coming-soon",
   AGGREGATE = "aggregate",
   HEXAGON = "hexagon",
+  LICENSE = "license",
+  DATA_CATEGORY = "data-category",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -352,6 +356,8 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.GONDOLA]: gondolaIcon,
   [ICON_NAME.AGGREGATE]: aggregateIcon,
   [ICON_NAME.HEXAGON]: hexagonIcon,
+  [ICON_NAME.LICENSE]: licenseIcon,
+  [ICON_NAME.DATA_CATEGORY]: dataCategoryIcon,
 };
 
 interface BrandColors {

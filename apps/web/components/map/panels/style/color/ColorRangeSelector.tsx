@@ -108,7 +108,7 @@ const PaletteConfig = (props: PaletteConfigProps) => {
             disabled={disabled}
             size="small"
             IconComponent={() => null}
-            value={value}
+            value={value as string}
             onOpen={() => {
               props.setIsBusy && props.setIsBusy(true);
             }}

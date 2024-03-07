@@ -13,11 +13,6 @@ import {
 } from "@/lib/validations/common";
 import { DEFAULT_COLOR, DEFAULT_COLOR_RANGE } from "@/lib/constants/color";
 
-export const layerMetadataSchema = contentMetadataSchema.extend({
-  data_source: z.string().optional(),
-  data_reference_year: z.coerce.number().optional(),
-});
-
 const HexColor = z.string();
 const ColorMap = z.array(
   z.tuple([z.union([z.array(z.string()), z.null()]), HexColor]),
@@ -164,6 +159,26 @@ export const featureLayerProperties = featureLayerPointPropertiesSchema
   .or(featureLayerLinePropertiesSchema)
   .or(featureLayerPolygonPropertiesSchema);
 
+export const layerMetadataSchema = contentMetadataSchema.extend({
+  lineage: z.string().optional(),
+  positional_accuracy: z.string().optional(),
+  attribute_accuracy: z.string().optional(),
+  completeness: z.string().optional(),
+  upload_reference_system: z.number().optional(),
+  upload_file_type: featureDataExchangeType.optional(),
+  geographical_code: z.array(z.string().length(2)).optional(),
+  language_code: z.array(z.string()).optional(),
+  distributor_name: z.string().optional(),
+  distributor_email: z.string().email().optional(),
+  distribution_url: z.string().url().optional(),
+  license: dataLicense.optional(),
+  attribution: z.string().optional(),
+  data_category: dataCategory.optional(),
+  data_source: z.string().optional(),
+  data_reference_year: z.coerce.number().optional(),
+  in_catalog: z.boolean().optional().default(false),
+});
+
 export const layerSchema = layerMetadataSchema.extend({
   id: z.string(),
   properties: featureLayerProperties,
@@ -177,10 +192,11 @@ export const layerSchema = layerMetadataSchema.extend({
   url: z.string().optional(),
   feature_layer_type: featureLayerType.optional(),
   feature_layer_geometry_type: featureLayerGeometryType.optional(),
+  tool_type: z.string().optional(),
+  job_id: z.string().optional(),
   data_type: data_type.optional(),
   legend_urls: z.array(z.string()).optional(),
   attribute_mapping: z.object({}).optional(),
-  in_catalog: z.boolean().optional(),
   updated_at: z.string(),
   created_at: z.string(),
 });
@@ -306,11 +322,28 @@ export const getDatasetSchema = z.object({
   spatial_search: z.string().optional(),
 });
 
+export const datasetMetadataValue = z.object({
+  value: z.string(),
+  count: z.number(),
+});
+export const datasetMetadataAggregated = z.object({
+  type: z.array(datasetMetadataValue),
+  data_category: z.array(datasetMetadataValue),
+  geographical_code: z.array(datasetMetadataValue),
+  language_code: z.array(datasetMetadataValue),
+  distributor_name: z.array(datasetMetadataValue),
+  license: z.array(datasetMetadataValue),
+});
+
 export type DatasetCollectionItems = z.infer<typeof datasetCollectionItems>;
 export type GetCollectionItemsQueryParams = z.infer<
   typeof datasetCollectionItemsQueryParams
 >;
 export type GetDatasetSchema = z.infer<typeof getDatasetSchema>;
+export type DatasetMetadataValue = z.infer<typeof datasetMetadataValue>;
+export type DatasetMetadataAggregated = z.infer<
+  typeof datasetMetadataAggregated
+>;
 
 export type DatasetDownloadRequest = z.infer<
   typeof datasetDownloadRequestSchema

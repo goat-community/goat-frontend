@@ -518,5 +518,52 @@
   "access_mode": "Access Mode",
   "station_configuration": "Station Configuration",
   "starting_points": "Starting Points",
-  "nearby_station_access_tooltip": "Select the mode of access to the station"
+  "nearby_station_access_tooltip": "Select the mode of access to the station",
+  "catalog": "Catalog",
+  "metadata": {
+    "headings": {
+      "license": "License",
+      "data_category": "Data Category",
+      "geographical_code": "Geographical Code",
+      "language_code": "Language Code",
+      "type": "Type",
+      "distributor_name": "Distributor Name"
+    },
+    "type": {
+      "feature": "Feature",
+      "table": "Table"
+    },
+    "data_category": {
+      "basemap": "Basemap",
+      "imagery": "Imagery",
+      "boundary": "Boundary",
+      "people": "People",
+      "transportation": "Transportation",
+      "environment": "Environment",
+      "landuse": "Landuse",
+      "places": "Places"
+    },
+    "license": {
+      "CC_BY": "Creative Commons Attribution (CC BY)",
+      "CC_BY_SA": "Creative Commons Attribution-ShareAlike (CC BY-SA)",
+      "CC_BY_ND": "Creative Commons Attribution-NoDerivs (CC BY-ND)",
+      "CC_BY_NC": "Creative Commons Attribution-NonCommercial (CC BY-NC)",
+      "CC_BY_NC_SA": "Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)",
+      "CC_BY_NC_ND": "Creative Commons Attribution-NonCommercial-NoDerivs (CC BY-NC-ND)",
+      "ODC_BY": "Open Data Commons Attribution License (ODC BY)",
+      "ODC_ODbL": "Open Data Commons Open Database License (ODC ODbL)",
+      "GPL": "GNU General Public License (GPL)",
+      "LGPL": "GNU Lesser General Public License (LGPL)",
+      "APACHE": "Apache License",
+      "MIT": "MIT License",
+      "PROPRIETARY_PLAN4BETTER": "Proprietary Plan4Better License",
+      "OTHER": "Other License"
+    }
+  },
+  "no_options_for_this_filter": "There are no options for this filter",
+  "try_different_filters": "Try again with different filters",
+  "no_catalog_dataset_found": "No datasets found",
+  "no_catalog_dataset_found_description": "If you're still unable to find what you're searching for, don't hesitate to reach out to our team for assistance.",
+  "datasets": "Datasets",
+  "contact_us": "Contact us"
 }

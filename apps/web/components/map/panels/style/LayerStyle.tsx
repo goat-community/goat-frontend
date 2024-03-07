@@ -440,6 +440,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         onStyleChange={async (
                           newStyle: FeatureLayerProperties,
                         ) => {
+                          if (!map) return;
                           await updateOrdinalValues("marker", newStyle);
                           updateLayerStyle(newStyle);
                           addOrUpdateMarkerImages(
@@ -476,6 +477,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                             onStyleChange={(
                               newStyle: FeatureLayerProperties,
                             ) => {
+                              if (!map) return;
                               updateLayerStyle(newStyle);
                               addOrUpdateMarkerImages(
                                 newStyle as FeatureLayerPointProperties,

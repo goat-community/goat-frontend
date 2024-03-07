@@ -82,6 +82,8 @@ export const featureLayerGeometryType = z.enum(["point", "line", "polygon"]);
 export const data_type = z.enum(["wms", "mvt"]);
 
 export type LayerType = z.infer<typeof layerType>;
+export type DataLicense = z.infer<typeof dataLicense>;
+export type DataCategory = z.infer<typeof dataCategory>;
 export type FeatureLayerGeometryType = z.infer<typeof featureLayerGeometryType>;
 export type TableDataExchangeType = z.infer<typeof tableDataExchangeType>;
 export type FeatureDataExchangeType = z.infer<typeof featureDataExchangeType>;

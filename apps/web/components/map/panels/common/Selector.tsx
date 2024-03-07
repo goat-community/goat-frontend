@@ -107,7 +107,7 @@ const Selector = (props: SelectorProps) => {
         disabled={disabled}
         error={!!errorMessage}
         multiple={multiple}
-        defaultValue={multiple ? [] : ""}
+        defaultValue={multiple ? [] : "" as unknown} //todo: fix this
         value={selectedValue || (multiple ? [] : "")}
         onChange={(e) => {
           if (multiple) {

@@ -91,8 +91,8 @@ const LayerFieldSelector = (props: SelectorProps) => {
             props.disabled
               ? theme.palette.secondary.main
               : focused
-              ? theme.palette.primary.main
-              : "inherit"
+                ? theme.palette.primary.main
+                : "inherit"
           }
           tooltip={props.tooltip}
         />
@@ -116,7 +116,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
         IconComponent={() => null}
         sx={{ pr: 1 }}
         displayEmpty
-        value={selectedValue}
+        value={selectedValue as unknown}
         defaultValue={props.multiple ? [] : ""}
         onChange={(e) => {
           if (!props.multiple) {

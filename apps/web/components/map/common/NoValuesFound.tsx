@@ -3,7 +3,11 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@mui/material/styles";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
-const NoValuesFound = () => {
+type NoValuesFoundProps = {
+  text?: string;
+};
+
+const NoValuesFound = ({ text }: NoValuesFoundProps) => {
   const { t } = useTranslation("maps");
   const theme = useTheme();
 
@@ -28,7 +32,7 @@ const NoValuesFound = () => {
         fontWeight="bold"
         color={theme.palette.text.secondary}
       >
-        {t("no_values_found")}
+        {text || t("no_values_found")}
       </Typography>
     </Stack>
   );

@@ -92,7 +92,7 @@
         "no_projects_found": "No projects found",
         "no_datasets_found": "No datasets found",
         "search_projects": "Search projects",
-        "search_layers": "Search Layers",
+        "search_datasets": "Search datasets",
         "add_dataset": "Add Dataset"
     },
     "settings": {
