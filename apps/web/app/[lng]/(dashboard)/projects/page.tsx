@@ -1,6 +1,15 @@
 "use client";
 
-import { Box, Button, Container, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Pagination,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
 import { useProjects } from "@/lib/api/projects";
@@ -17,6 +26,8 @@ const Projects = () => {
   const [queryParams, setQueryParams] = useState<GetProjectsQueryParams>({
     order: "descendent",
     order_by: "updated_at",
+    size: 10,
+    page: 1,
   });
   const [view, setView] = useState<"list" | "grid">("grid");
   const { t } = useTranslation("dashboard");
@@ -87,6 +98,26 @@ const Projects = () => {
               }
             }}
           />
+          {!isProjectLoading && projects && projects?.items.length > 0 && (
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              sx={{ p: 4 }}
+            >
+              <Pagination
+                count={projects.pages || 1}
+                size="large"
+                page={queryParams.page || 1}
+                onChange={(_e, page) => {
+                  setQueryParams({
+                    ...queryParams,
+                    page,
+                  });
+                }}
+              />
+            </Stack>
+          )}
         </Grid>
       </Grid>
     </Container>

@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  Pagination,
   Paper,
   Stack,
   Typography,
@@ -40,6 +41,8 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
   const [queryParams, setQueryParams] = useState<PaginatedQueryParams>({
     order: "descendent",
     order_by: "updated_at",
+    size: 10,
+    page: 1
   });
   const [datasetSchema, setDatasetSchema] = useState<GetDatasetSchema>({});
 
@@ -98,22 +101,46 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
                   datasetSchema={datasetSchema}
                   setDatasetSchema={setDatasetSchema}
                 />
+                <Stack direction="column">
+                  <TileGrid
+                    view="list"
+                    enableActions={false}
+                    selected={selectedDataset}
+                    onClick={(item: Project | Layer) => {
+                      if (item.id === selectedDataset?.id) {
+                        setSelectedDataset(undefined);
+                      } else {
+                        setSelectedDataset(item as Layer);
+                      }
+                    }}
+                    items={datasets?.items ?? []}
+                    isLoading={isDatasetLoading}
+                    type="layer"
+                  />
 
-                <TileGrid
-                  view="list"
-                  enableActions={false}
-                  selected={selectedDataset}
-                  onClick={(item: Project | Layer) => {
-                    if (item.id === selectedDataset?.id) {
-                      setSelectedDataset(undefined);
-                    } else {
-                      setSelectedDataset(item as Layer);
-                    }
-                  }}
-                  items={datasets?.items ?? []}
-                  isLoading={isDatasetLoading}
-                  type="layer"
-                />
+                  {!isDatasetLoading &&
+                    datasets &&
+                    datasets?.items.length > 0 && (
+                      <Stack
+                        direction="row"
+                        justifyContent="center"
+                        alignItems="center"
+                        sx={{ p: 4 }}
+                      >
+                        <Pagination
+                          count={datasets.pages || 1}
+                          size="large"
+                          page={queryParams.page || 1}
+                          onChange={(_e, page) => {
+                            setQueryParams({
+                              ...queryParams,
+                              page,
+                            });
+                          }}
+                        />
+                      </Stack>
+                    )}
+                </Stack>
               </Grid>
             </Grid>
           </Box>
