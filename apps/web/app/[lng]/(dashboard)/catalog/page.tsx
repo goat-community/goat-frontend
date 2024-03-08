@@ -5,7 +5,6 @@ import { useTranslation } from "@/i18n/client";
 import {
   Box,
   Button,
-  CardMedia,
   Container,
   Divider,
   Grid,
@@ -15,13 +14,12 @@ import {
   Stack,
   Typography,
   debounce,
-  useTheme,
 } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import { useLayers, useMetadataAggregated } from "@/lib/api/layers";
-import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
+import type { GetDatasetSchema } from "@/lib/validations/layer";
 import { datasetMetadataAggregated } from "@/lib/validations/layer";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
 import {
   parseAsString,
   parseAsArrayOf,
@@ -32,135 +30,11 @@ import type { PaginatedQueryParams } from "@/lib/validations/common";
 import FilterPanel from "@/components/dashboard/catalog/FilterPanel";
 import EmptySection from "@/components/common/EmptySection";
 import { useRouter } from "next/navigation";
-
-const METADATA_HEADER_ICONS = {
-  type: ICON_NAME.LAYERS,
-  data_category: ICON_NAME.DATA_CATEGORY,
-  distributor_name: ICON_NAME.ORGANIZATION,
-  geographical_code: ICON_NAME.GLOBE,
-  language_code: ICON_NAME.LANGUAGE,
-  license: ICON_NAME.LICENSE,
-};
-
-const CatalogDatasetCard = ({
-  dataset,
-  onClick,
-}: {
-  dataset: Layer;
-  onClick?: (dataset: Layer) => void;
-}) => {
-  const { t, i18n } = useTranslation(["maps", "countries"]);
-  const theme = useTheme();
-  const getTranslation = useCallback(
-    (key: string, value: string) => {
-      if (!value) return " — ";
-      let translationPath = `maps:metadata.${key}.${value}`;
-      if (key === "geographical_code") {
-        translationPath = `countries:${value.toUpperCase()}`;
-      }
-
-      return i18n.exists(translationPath) ? t(translationPath) : value;
-    },
-    [i18n, t],
-  );
-
-  return (
-    <Paper
-      onClick={() => onClick && onClick(dataset)}
-      sx={{
-        overflow: "hidden",
-        "&:hover": {
-          cursor: "pointer",
-          boxShadow: 10,
-          "& img": {
-            transform: "scale(1.2)",
-          },
-        },
-      }}
-      elevation={3}
-    >
-      <Grid container justifyContent="flex-start" spacing={2}>
-        <Grid item xs={12} sm={6} md={4} lg={3} sx={{ pl: 0 }}>
-          <Box
-            sx={{
-              overflow: "hidden",
-              height: "100%",
-            }}
-          >
-            <CardMedia
-              component="img"
-              sx={{
-                mr: 6,
-                height: "100%",
-                transition: "transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-                transformOrigin: "center center",
-                objectFit: "cover",
-                backgroundSize: "cover",
-              }}
-              image={dataset.thumbnail_url}
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={6} md={8} lg={9}>
-          <Stack direction="column" sx={{ p: 2 }} spacing={2}>
-            <Stack spacing={2}>
-              <Typography variant="h6" fontWeight="bold">
-                {dataset.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {dataset.description || " — "}
-              </Typography>
-            </Stack>
-            <Grid container justifyContent="flex-start" sx={{ pl: 0 }}>
-              {Object.keys(datasetMetadataAggregated.shape).map(
-                (key, index) => {
-                  return (
-                    <Grid
-                      item
-                      {...(index <
-                        Object.keys(datasetMetadataAggregated.shape).length -
-                          1 && {
-                        xs: 12,
-                        sm: 6,
-                        md: 4,
-                        lg: 3,
-                      })}
-                      key={key}
-                      sx={{ pl: 0 }}
-                    >
-                      <Stack
-                        direction="row"
-                        width="100%"
-                        alignItems="center"
-                        justifyContent="start"
-                        sx={{ py: 2, pr: 2 }}
-                        spacing={2}
-                      >
-                        <Icon
-                          iconName={METADATA_HEADER_ICONS[key]}
-                          style={{ fontSize: 14 }}
-                          htmlColor={theme.palette.text.secondary}
-                        />
-                        <Typography variant="body2" fontWeight="bold">
-                          {getTranslation(key, dataset[key])}
-                        </Typography>
-                      </Stack>
-                    </Grid>
-                  );
-                },
-              )}
-            </Grid>
-          </Stack>
-        </Grid>
-      </Grid>
-    </Paper>
-  );
-};
+import CatalogDatasetCard, { METADATA_HEADER_ICONS } from "@/components/dashboard/catalog/CatalogDatasetCard";
 
 const Catalog = () => {
   const { t } = useTranslation("maps");
   const router = useRouter();
-  // Dataset filters url state
   const useQueryStateArray = (key: string) =>
     useQueryState(key, parseAsArrayOf(parseAsString));
   const [typeValue, setTypeValue] = useQueryStateArray("type");
@@ -232,7 +106,6 @@ const Catalog = () => {
     );
   }, [filterOptions]);
 
-  // Query params url state
   const [queryParamPage, setQueryParamPage] = useQueryState(
     "page",
     parseAsInteger.withDefault(1),
@@ -392,7 +265,7 @@ const Catalog = () => {
                     key={dataset.id}
                     dataset={dataset}
                     onClick={(dataset) => {
-                      router.push(`/catalog/dataset/${dataset.id}`);
+                      router.push(`/dataset/${dataset.id}`);
                     }}
                   />
                 ))}

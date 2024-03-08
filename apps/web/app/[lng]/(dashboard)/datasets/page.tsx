@@ -21,8 +21,11 @@ import { useTranslation } from "@/i18n/client";
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type { GetDatasetSchema } from "@/lib/validations/layer";
+import { useRouter } from "next/navigation";
 
 const Datasets = () => {
+  const router = useRouter();
+  const { t } = useTranslation("dashboard");
   const [queryParams, setQueryParams] = useState<PaginatedQueryParams>({
     order: "descendent",
     order_by: "updated_at",
@@ -32,8 +35,6 @@ const Datasets = () => {
   const [datasetSchema, setDatasetSchema] = useState<GetDatasetSchema>({});
   const [view, setView] = useState<"list" | "grid">("grid");
   const [openDatasetUploadModal, setOpenDatasetUploadModal] = useState(false);
-
-  const { t } = useTranslation("dashboard");
 
   const {
     mutate,
@@ -95,6 +96,11 @@ const Datasets = () => {
             items={datasets?.items ?? []}
             isLoading={isDatasetLoading}
             type="layer"
+            onClick={(item) => {
+              if (item && item.id) {
+                router.push(`/dataset/${item.id}`);
+              }
+            }}
           />
           {!isDatasetLoading && datasets && datasets?.items.length > 0 && (
             <Stack

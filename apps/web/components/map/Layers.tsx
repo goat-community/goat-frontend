@@ -3,26 +3,27 @@ import type { LayerProps, MapGeoJSONFeature } from "react-map-gl";
 import { Source, Layer as MapLayer } from "react-map-gl";
 import type { ProjectLayer } from "@/lib/validations/project";
 import { GEOAPI_BASE_URL } from "@/lib/constants";
-import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
 import {
   getHightlightStyleSpec,
   transformToMapboxLayerStyleSpec,
 } from "@/lib/transformers/layer";
-import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
+import type {
+  FeatureLayerPointProperties,
+  Layer,
+} from "@/lib/validations/layer";
 
 interface LayersProps {
-  projectId: string;
+  layers?: ProjectLayer[] | Layer[];
   highlightFeature?: MapGeoJSONFeature | null;
 }
 
 const Layers = (props: LayersProps) => {
-  const sortedLayers = useSortedLayers(props.projectId);
   const displayableLayers = useMemo(
-    () => sortedLayers?.filter((layer) => layer.type !== "table"),
-    [sortedLayers],
+    () => props.layers?.filter((layer) => layer.type !== "table"),
+    [props.layers],
   );
 
-  const getLayerKey = (layer: ProjectLayer) => {
+  const getLayerKey = (layer: ProjectLayer | Layer) => {
     let id = layer.id.toString();
     if (layer.type === "feature") {
       const geometry_type = layer.feature_layer_geometry_type;
@@ -40,29 +41,32 @@ const Layers = (props: LayersProps) => {
     return id;
   };
 
+  const getTileUrl = (layer: ProjectLayer | Layer) => {
+    if (layer.type === "external_vector_tile") {
+      return layer.url ?? "";
+    }
+    let query = "";
+    if (layer["query"]) {
+      query = `?filter=${encodeURIComponent(JSON.stringify(layer["query"]))}`;
+    }
+    const collectionId = layer["layer_id"] || layer["id"];
+    return `${GEOAPI_BASE_URL}/collections/user_data.${collectionId.replace(
+      /-/g,
+      "",
+    )}/tiles/{z}/{x}/{y}${query}`;
+  };
+
   return (
     <>
       {displayableLayers?.length
-        ? displayableLayers.map((layer: ProjectLayer, index: number) =>
+        ? displayableLayers.map((layer: ProjectLayer | Layer, index: number) =>
             (() => {
               if (["feature", "external_vector_tile"].includes(layer.type)) {
                 return (
                   <Source
                     key={layer.updated_at}
                     type="vector"
-                    tiles={[
-                      layer.url ??
-                        `${GEOAPI_BASE_URL}/collections/user_data.${layer.layer_id.replace(
-                          /-/g,
-                          "",
-                        )}/tiles/{z}/{x}/{y}${
-                          layer.query
-                            ? `?filter=${encodeURIComponent(
-                                JSON.stringify(layer.query),
-                              )}`
-                            : ""
-                        }`,
-                    ]}
+                    tiles={[getTileUrl(layer)]}
                   >
                     <MapLayer
                       key={getLayerKey(layer)}

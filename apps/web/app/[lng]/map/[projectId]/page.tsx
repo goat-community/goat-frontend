@@ -34,6 +34,7 @@ import { v4 } from "uuid";
 import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 import ToolboxLayers from "@/components/map/ToolboxLayers";
+import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
 
 const sidebarWidth = 52;
 const toolbarHeight = 52;
@@ -59,6 +60,8 @@ export default function MapPage({ params: { projectId } }) {
     isError: projectLayersError,
     layers: projectLayers,
   } = useProjectLayers(projectId);
+
+  const sortedLayers = useSortedLayers(projectId);
 
   const isLoading = useMemo(
     () => isProjectLoading || isInitialViewLoading || areProjectLayersLoading,
@@ -253,7 +256,7 @@ export default function MapPage({ params: { projectId } }) {
                 onLoad={handleMapLoad}
               >
                 <Layers
-                  projectId={projectId}
+                  layers={sortedLayers}
                   highlightFeature={highlightedFeature}
                 />
                 <ToolboxLayers />

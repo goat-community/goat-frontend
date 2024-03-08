@@ -16,6 +16,7 @@ import {
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
 import { useTranslation } from "@/i18n/client";
+import { useRouter } from "next/navigation";
 
 interface DataSectionProps {
   layers: Layer[];
@@ -24,8 +25,8 @@ interface DataSectionProps {
 
 const DataSection = (props: DataSectionProps) => {
   const { layers, isLoading } = props;
-  const {t} = useTranslation("dashboard");
-
+  const { t } = useTranslation("dashboard");
+  const router = useRouter();
   const {
     getMoreMenuOptions,
     activeContent,
@@ -90,6 +91,11 @@ const DataSection = (props: DataSectionProps) => {
                 sm: index > 3 ? "none" : "block",
                 md: index > 2 ? "none" : "block",
                 lg: index > 3 ? "none" : "block",
+              }}
+              onClick={() => {
+                if (item && item.id) {
+                  router.push(`/dataset/${item.id}`);
+                }
               }}
             >
               {!item ? (

@@ -6,6 +6,7 @@
   "clear_all": "Clear all",
   "done": "Done",
   "help": "Help",
+  "back": "Back",
   "cancel": "Cancel",
   "update": "Update",
   "open_documentation": "Open Documentation",
@@ -565,5 +566,8 @@
   "no_catalog_dataset_found": "No datasets found",
   "no_catalog_dataset_found_description": "If you're still unable to find what you're searching for, don't hesitate to reach out to our team for assistance.",
   "datasets": "Datasets",
-  "contact_us": "Contact us"
+  "contact_us": "Contact us",
+  "summary": "Summary",
+  "map": "Map",
+  "data": "Data"
 }

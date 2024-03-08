@@ -4,6 +4,7 @@ import { rgbToHex } from "@/lib/utils/helpers";
 import type {
   FeatureLayerLineProperties,
   FeatureLayerPointProperties,
+  Layer,
 } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
 
@@ -12,7 +13,7 @@ import type { RGBColor } from "@/types/map/color";
 const HIGHLIGHT_COLOR = "#FFC300";
 
 export function getMapboxStyleColor(
-  data: ProjectLayer,
+  data: ProjectLayer | Layer,
   type: "color" | "stroke_color",
 ) {
   const colors = data.properties[`${type}_range`]?.colors;
@@ -80,7 +81,7 @@ export function getMapboxStyleColor(
   return config;
 }
 
-export function getMapboxStyleMarker(data: ProjectLayer) {
+export function getMapboxStyleMarker(data: ProjectLayer | Layer) {
   const properties = data.properties as FeatureLayerPointProperties;
   const markerMaps = properties.marker_mapping;
   const fieldName = properties.marker_field?.name;
@@ -117,7 +118,7 @@ export function getMapboxStyleMarker(data: ProjectLayer) {
   return marker;
 }
 
-export function transformToMapboxLayerStyleSpec(data: ProjectLayer) {
+export function transformToMapboxLayerStyleSpec(data: ProjectLayer | Layer) {
   const type = data.feature_layer_geometry_type;
   if (type === "point") {
     const pointProperties = data.properties as FeatureLayerPointProperties;
