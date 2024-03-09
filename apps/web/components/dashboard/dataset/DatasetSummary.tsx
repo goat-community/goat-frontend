@@ -19,10 +19,17 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
   return (
     <>
       <Grid container justifyContent="flex-start" spacing={4}>
-        <Grid item xs={12} sm={6} md={8} lg={9}>
-          <Typography>{dataset.description || " — "}</Typography>
+        <Grid item xs={12} sm={12} md={8} lg={9}>
+          {!dataset.description && (
+            <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+              {t("maps:no_description")}
+            </Typography>
+          )}
+          {dataset.description && (
+            <Typography>{dataset.description}</Typography>
+          )}
         </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3} sx={{ pl: 0 }}>
+        <Grid item xs={12} sm={12} md={4} lg={3} sx={{ pl: 0 }}>
           <Stack spacing={4}>
             {Object.keys(datasetMetadataAggregated.shape).map((key) => {
               return (

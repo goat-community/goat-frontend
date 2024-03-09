@@ -11,6 +11,7 @@ import type { Layer } from "@/lib/validations/layer";
 import { datasetMetadataAggregated } from "@/lib/validations/layer";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useGetMetadataValueTranslation } from "@/hooks/map/DatasetHooks";
+import { useTranslation } from "@/i18n/client";
 
 export const METADATA_HEADER_ICONS = {
   type: ICON_NAME.LAYERS,
@@ -29,6 +30,7 @@ const CatalogDatasetCard = ({
   onClick?: (dataset: Layer) => void;
 }) => {
   const theme = useTheme();
+  const { t } = useTranslation(["maps"]);
   const getMetadataValueTranslation = useGetMetadataValueTranslation();
 
   return (
@@ -85,7 +87,7 @@ const CatalogDatasetCard = ({
                 }}
               >
                 <Typography variant="body2" color="text.secondary">
-                  {dataset.description || " — "}
+                  {dataset.description || t("maps:no_description")}
                 </Typography>
               </Box>
             </Stack>

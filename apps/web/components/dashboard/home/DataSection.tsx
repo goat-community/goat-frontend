@@ -94,7 +94,7 @@ const DataSection = (props: DataSectionProps) => {
               }}
               onClick={() => {
                 if (item && item.id) {
-                  router.push(`/dataset/${item.id}`);
+                  router.push(`/datasets/${item.id}`);
                 }
               }}
             >

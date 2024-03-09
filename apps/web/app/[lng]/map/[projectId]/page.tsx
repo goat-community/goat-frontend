@@ -224,6 +224,12 @@ export default function MapPage({ params: { projectId } }) {
                 ".mapboxgl-popup-anchor-right .mapboxgl-popup-tip": {
                   borderLeftColor: theme.palette.background.paper,
                 },
+                ".mapbox-improve-map": {
+                  display: "none",
+                },
+                ".mapboxgl-ctrl-attrib a": {
+                  color: "rgba(0,0,0,.75)",
+                },
               }}
             >
               <Map
@@ -247,7 +253,6 @@ export default function MapPage({ params: { projectId } }) {
                 mapStyle={
                   activeBasemap?.url ?? "mapbox://styles/mapbox/streets-v11"
                 }
-                attributionControl={false}
                 mapboxAccessToken={MAPBOX_TOKEN}
                 interactiveLayerIds={interactiveLayerIds}
                 onMoveEnd={updateViewState}

@@ -66,8 +66,13 @@ const DatasetTable: React.FC<DatasetTableProps> = ({ dataset }) => {
   };
 
   return (
-    <>
-      <Box>
+    <Box>
+      <Box
+        sx={{
+          height: `calc(100vh - 440px)`,
+          overflowX: "hidden",
+        }}
+      >
         {areFieldsLoading && !displayData && (
           <>
             <Skeleton variant="rectangular" height={60} sx={{ m: 4 }} />
@@ -135,7 +140,7 @@ const DatasetTable: React.FC<DatasetTableProps> = ({ dataset }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       )}
-    </>
+    </Box>
   );
 };
 

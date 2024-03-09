@@ -265,7 +265,7 @@ const Catalog = () => {
                     key={dataset.id}
                     dataset={dataset}
                     onClick={(dataset) => {
-                      router.push(`/dataset/${dataset.id}`);
+                      router.push(`/datasets/${dataset.id}`);
                     }}
                   />
                 ))}
