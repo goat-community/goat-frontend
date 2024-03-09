@@ -11,10 +11,12 @@ export function zoomToLayer(map: MapRef, wkt_extent: string) {
 export function fitBounds(
   map: MapRef,
   bounds: [number, number, number, number],
+  padding = 40,
+  maxZoom = 18,
 ) {
   map.fitBounds(bounds, {
-    padding: 40,
-    maxZoom: 18,
+    padding: padding,
+    maxZoom: maxZoom,
     duration: 1000,
   });
 }

@@ -570,5 +570,6 @@
   "summary": "Summary",
   "map": "Map",
   "data": "Data",
-  "no_description": "No description available"
+  "no_description": "No description available",
+  "recenter_map": "Recenter Map"
 }

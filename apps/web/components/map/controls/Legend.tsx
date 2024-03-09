@@ -16,6 +16,8 @@ import { useMemo } from "react";
 const DEFAULT_COLOR = "#000000";
 export interface LegendProps {
   layers: ProjectLayer[];
+  hideLayerName?: boolean;
+  hideZoomLevel?: boolean;
 }
 
 type ColorMapItem = {
@@ -407,20 +409,24 @@ export function Legend(props: LegendProps) {
             sx={{ my: 3 }}
             style={{ cursor: "default" }}
           >
-            <Typography variant="body2" fontWeight="bold">
-              {layer.name}
-            </Typography>
-            <Tooltip
-              title={t("zoom_level_legend_tooltip")}
-              placement="top"
-              arrow
-            >
-              <Typography variant="caption">
-                {`${t("zoom_level")} ${layer.properties.min_zoom} - ${
-                  layer.properties.max_zoom
-                }`}
+            {!props.hideLayerName && (
+              <Typography variant="body2" fontWeight="bold">
+                {layer.name}
               </Typography>
-            </Tooltip>
+            )}
+            {!props.hideZoomLevel && (
+              <Tooltip
+                title={t("zoom_level_legend_tooltip")}
+                placement="top"
+                arrow
+              >
+                <Typography variant="caption">
+                  {`${t("zoom_level")} ${layer.properties.min_zoom} - ${
+                    layer.properties.max_zoom
+                  }`}
+                </Typography>
+              </Tooltip>
+            )}
             <Stack sx={{ py: 1 }}>
               {layer.type === "feature" && (
                 <>
