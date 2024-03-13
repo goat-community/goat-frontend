@@ -47,6 +47,8 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
   isPTValid,
   t,
 }) => {
+  const maxTravelTimeValue =
+    routingType === CatchmentAreaRoutingTypeEnum.Enum.pt ? 60 : 45;
   return (
     <Stack spacing={2}>
       <Selector
@@ -54,7 +56,7 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
         setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
           setMaxTravelTime(item as SelectorItem);
         }}
-        items={getTravelCostConfigValues(3, 45, "min")}
+        items={getTravelCostConfigValues(3, maxTravelTimeValue, "min")}
         label={t("travel_time_limit") + " (Min)"}
         tooltip={t("travel_time_limit_tooltip")}
       />
