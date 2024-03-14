@@ -3,7 +3,7 @@ import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import TileGrid from "@/components/dashboard/common/TileGrid";
 import { useTranslation } from "@/i18n/client";
 import { useLayers } from "@/lib/api/layers";
-import { addProjectLayers, useProjectLayers } from "@/lib/api/projects";
+import { addProjectLayers, useProject, useProjectLayers } from "@/lib/api/projects";
 import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";
 import { LoadingButton } from "@mui/lab";
@@ -53,6 +53,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
   } = useLayers(queryParams, datasetSchema);
   const [isBusy, setIsBusy] = useState(false);
   const { mutate: mutateProjectLayers } = useProjectLayers(projectId);
+  const { mutate: mutateProject } = useProject(projectId);
 
   const [selectedDataset, setSelectedDataset] = useState<Layer>();
   const { map } = useMap();
@@ -66,6 +67,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
       setIsBusy(true);
       await addProjectLayers(projectId, [selectedDataset.id]);
       mutateProjectLayers();
+      mutateProject();
       if (map && selectedDataset.extent) {
         zoomToLayer(map, selectedDataset.extent);
       }
