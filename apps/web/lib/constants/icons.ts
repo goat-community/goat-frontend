@@ -135,6 +135,9 @@ export const MAKI_ICON_TYPES = [
       "monument",
       "museum",
       "place-of-worship",
+      "marker",
+      "marker-stroked",
+      "foundation-marker",
     ],
   },
   {
