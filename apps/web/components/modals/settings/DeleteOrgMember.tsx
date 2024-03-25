@@ -1,5 +1,8 @@
+import { useTranslation } from "@/i18n/client";
 import { deleteMember } from "@/lib/api/organizations";
+import { useOrganization } from "@/lib/api/users";
 import type { OrgMemberDialogBaseProps } from "@/types/dashboard/settings";
+import { LoadingButton } from "@mui/lab";
 import {
   Button,
   Dialog,
@@ -9,8 +12,8 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { toast } from "react-toastify";
-// import { mutate } from "swr";
 
 interface DeleteOrgMemberDialogProps extends OrgMemberDialogBaseProps {
   disabled?: boolean;
@@ -24,13 +27,19 @@ const DeleteOrgMemberModal: React.FC<DeleteOrgMemberDialogProps> = ({
   onDelete,
   member,
 }) => {
+  const { t } = useTranslation("common");
+  const { organization } = useOrganization();
+  const [isBusy, setIsBusy] = useState(false);
   const handleDelete = async () => {
     try {
-      if (!member) return;
-      await deleteMember("org_id", member.id);
-      toast.success(`Member deleted successfully`);
+      setIsBusy(true);
+      if (!member || !organization) return;
+      await deleteMember(organization.id, member.id);
+      toast.success(t("member_deleted_success"));
     } catch {
-      toast.error(`Error deleting member`);
+      toast.error(t("member_delete_error"));
+    } finally {
+      setIsBusy(false);
     }
 
     onDelete?.();
@@ -38,10 +47,10 @@ const DeleteOrgMemberModal: React.FC<DeleteOrgMemberDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Delete Member</DialogTitle>
+      <DialogTitle>{t("delete_member")}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to remove this member from the organization?
+          {t("delete_member_description")}
           <br />
           <b>{member?.email}</b>
         </DialogContentText>
@@ -54,20 +63,21 @@ const DeleteOrgMemberModal: React.FC<DeleteOrgMemberDialogProps> = ({
       >
         <Button onClick={onClose} variant="text" sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold">
-            Cancel
+            {t("cancel")}
           </Typography>
         </Button>
-        <Button
+        <LoadingButton
           onClick={handleDelete}
+          loading={isBusy}
           variant="text"
           color="error"
           disabled={disabled}
           sx={{ borderRadius: 0 }}
         >
           <Typography variant="body2" fontWeight="bold" color="inherit">
-            Delete
+            {t("delete")}
           </Typography>
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

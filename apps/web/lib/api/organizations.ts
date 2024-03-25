@@ -1,28 +1,34 @@
-import { fetchWithAuth } from "@/lib/api/fetcher";
+import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type {
   InvitationCreate,
   Organization,
+  OrganizationMember,
   OrganizationUpdate,
   PostOrganization,
 } from "@/lib/validations/organization";
-import type { User } from "@/lib/validations/user";
+import useSWR from "swr";
 
 export const ORG_API_BASE_URL = new URL(
   "api/v1/organizations",
   process.env.NEXT_PUBLIC_ACCOUNTS_API_URL,
 ).href;
 
-export const getOrganizationMembers = async (
-  organization_id: string,
-): Promise<User> => {
-  const response = await fetchWithAuth(
-    `${ORG_API_BASE_URL}/${organization_id}/members`,
-    {
-      method: "GET",
-    },
+export const useOrganizationMembers = (organizationId: string) => {
+  const { data, isLoading, error, mutate, isValidating } = useSWR<
+    OrganizationMember[]
+  >(
+    () =>
+      organizationId ? [`${ORG_API_BASE_URL}/${organizationId}/members`] : null,
+
+    fetcher,
   );
-  if (!response.ok) throw await response.json();
-  return await response.json();
+  return {
+    members: data,
+    isLoading: isLoading,
+    isError: error,
+    mutate,
+    isValidating,
+  };
 };
 
 export const createOrganization = async (

@@ -7,7 +7,7 @@ import { ICON_NAME } from "@p4b/ui/components/Icon";
 
 const ScenarioPanel = () => {
   const dispatch = useAppDispatch();
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   return (
     <Container
       title="Scenario"

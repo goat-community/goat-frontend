@@ -1,10 +1,11 @@
 import { useTranslation } from "@/i18n/client";
-import type {
-  InvitationCreate} from "@/lib/validations/organization";
-import {
-  invitationCreateSchema,
-} from "@/lib/validations/organization";
+import { inviteMember } from "@/lib/api/organizations";
+import { useAppSubscription } from "@/lib/api/subscription";
+import { useOrganization } from "@/lib/api/users";
+import type { InvitationCreate } from "@/lib/validations/organization";
+import { invitationCreateSchema } from "@/lib/validations/organization";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
@@ -18,6 +19,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -33,7 +35,12 @@ const OrgMemberInviteModal: React.FC<OrgMemberInviteDialogProps> = ({
   onInvite,
 }) => {
   const theme = useTheme();
-  const { t } = useTranslation(["common", "dashboard"]);
+  const { t } = useTranslation(["common"]);
+
+  const { organization } = useOrganization();
+  const [isBusy, setIsBusy] = useState(false);
+
+  const { subscription } = useAppSubscription();
 
   const { register, handleSubmit, formState, getValues } =
     useForm<InvitationCreate>({
@@ -41,27 +48,33 @@ const OrgMemberInviteModal: React.FC<OrgMemberInviteDialogProps> = ({
       resolver: zodResolver(invitationCreateSchema),
       defaultValues: {
         user_email: "",
-        role: "member",
-        subscription_id: "55281d38-f8ca-431b-875a-5d949d68fdf1",
+        role: "member"
       },
     });
 
   const onOrganizationMemberInvite = async () => {
     try {
       onInvite?.();
-    } catch (error) {
-      toast.error(error.message);
+      if (!organization || !subscription?.length) return;
+      setIsBusy(true);
+      const payload = getValues();
+      payload.subscription_id = subscription[0].id;
+      await inviteMember(organization.id, payload);
+      toast.success(t("common:member_invited_success"));
+    } catch {
+      toast.error(t("common:member_invite_error"));
     } finally {
+      setIsBusy(false);
       onClose();
     }
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t("dashboard:invite_member")}</DialogTitle>
-      <DialogContent>
+      <DialogTitle>{t("common:invite_member")}</DialogTitle>
+      <DialogContent sx={{ pb: 2 }}>
         <DialogContentText>
-          {t("dashboard:invite_member_description")}
+          {t("common:invite_member_description")}
         </DialogContentText>
         <Box
           component="form"
@@ -76,21 +89,21 @@ const OrgMemberInviteModal: React.FC<OrgMemberInviteDialogProps> = ({
             <TextField
               fullWidth
               required
-              label={t("dashboard:invite_member_email")}
+              label={t("common:invite_member_email")}
               {...register("user_email")}
               id="user_email"
             />
 
             <TextField
               select
-              label={t("dashboard:role")}
+              label={t("common:role")}
               defaultValue={getValues("role")}
               size="medium"
               {...register("role")}
             >
               {["admin", "member"].map((role) => (
                 <MenuItem key={role} value={role}>
-                  {t(`dashboard:${role}`)}
+                  {t(`maps:${role}`)}
                 </MenuItem>
               ))}
             </TextField>
@@ -99,18 +112,23 @@ const OrgMemberInviteModal: React.FC<OrgMemberInviteDialogProps> = ({
             direction="row"
             justifyContent="flex-end"
             alignItems="center"
-            sx={{ mt: 8, marginBottom: "-15px" }}
+            sx={{ mt: 8, mb: 0 }}
           >
             <Button onClick={onClose} variant="text" sx={{ borderRadius: 0 }}>
               <Typography variant="body2" fontWeight="bold">
-                Cancel
+                {t("common:cancel")}
               </Typography>
             </Button>
-            <Button type="submit" variant="text" disabled={!formState.isValid}>
+            <LoadingButton
+              type="submit"
+              variant="text"
+              disabled={!formState.isValid}
+              loading={isBusy}
+            >
               <Typography variant="body2" fontWeight="bold" color="inherit">
-                Send Invite
+                {t("common:send_invite")}
               </Typography>
-            </Button>
+            </LoadingButton>
           </Stack>
         </Box>
       </DialogContent>

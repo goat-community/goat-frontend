@@ -27,7 +27,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
   const [layerTypes, setLayerTypes] = useState<LayerType[]>([]);
   const [filterContentMenuOpen, setFilterContentMenuOpen] =
     useState<boolean>(false);
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   //todo get tags from api
   const [tags, setTags] = useState<string[]>([]);
@@ -51,7 +51,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
         >
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body1" sx={{ pb: 4 }}>
-              {t("projects.filters.filter")}
+              {t("filter")}
             </Typography>
             {/* Clear all */}
             {tags.length > 0 ||
@@ -67,7 +67,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
                   }}
                   sx={{ cursor: "pointer", color: theme.palette.primary.main }}
                 >
-                  {t("projects.filters.clear_all")}
+                  {t("clear_all")}
                 </Link>
               ))}
           </Stack>
@@ -76,7 +76,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
               <Grid item xs={12}>
                 <Stack direction="column">
                   <Typography variant="body2" fontWeight="bold" gutterBottom>
-                    {t("projects.filters.dataset_types")}
+                    {t("dataset_types")}
                   </Typography>
                   {layerTypesArray.map((layerType, index) => (
                     <FormControlLabel
@@ -101,7 +101,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
                       }
                       label={
                         <Typography variant="body2">
-                          {t(`projects.filters.${layerType}`)}
+                          {t(`${layerType}`)}
                         </Typography>
                       }
                     />

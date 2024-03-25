@@ -12,6 +12,9 @@ export const invitationTypeEnum = z.enum(["organization", "group"]);
 export const invitationSchema = z.object({
   id: z.string().uuid(),
   send_by: z.string().uuid(),
+  send_to: z.string().uuid().optional(),
+  organization_id: z.string().uuid().optional(),
+  team_id: z.string().uuid().optional(),
   type: invitationTypeEnum,
   payload: z.record(z.any()),
   expires: z.string().nullable(),

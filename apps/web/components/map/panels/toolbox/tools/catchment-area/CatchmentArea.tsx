@@ -52,7 +52,7 @@ import {
 import StartingPointSelectors from "@/components/map/panels/toolbox/common/StartingPointsSelectors";
 
 const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const theme = useTheme();
   const { projectId } = useParams();
   const startingPoints = useAppSelector(
@@ -377,7 +377,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     <Container
       disablePadding={false}
       header={
-        <ToolsHeader onBack={onBack} title={t("panels.isochrone.isochrone")} />
+        <ToolsHeader onBack={onBack} title={t("isochrone")} />
       }
       close={onClose}
       body={
@@ -393,14 +393,14 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
               variant="body2"
               sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
             >
-              {t("panels.isochrone.isochrone_description")}
+              {t("isochrone_description")}
             </Typography>
 
             {/* ROUTING */}
             <SectionHeader
               active={true}
               alwaysActive={true}
-              label={t("panels.isochrone.routing.routing")}
+              label={t("routing")}
               icon={ICON_NAME.ROUTE}
               disableAdvanceOptions={true}
             />
@@ -465,7 +465,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
             <SectionHeader
               active={isRoutingValid}
               alwaysActive={true}
-              label={t("panels.isochrone.configuration")}
+              label={t("configuration")}
               icon={ICON_NAME.SETTINGS}
               disableAdvanceOptions={false}
               setCollapsed={setAdvanceConfig}
@@ -570,7 +570,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
             <SectionHeader
               active={isRoutingValid}
               alwaysActive={true}
-              label={t("panels.isochrone.starting.starting")}
+              label={t("starting")}
               icon={ICON_NAME.LOCATION}
               disableAdvanceOptions={true}
             />

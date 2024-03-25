@@ -6,7 +6,7 @@ import { Box } from "@mui/material";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 
 export default function Teams() {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   return (
     <>

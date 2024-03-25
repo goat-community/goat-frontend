@@ -31,7 +31,7 @@ const ColorOptions = ({
   collapsed?: boolean;
   onStyleChange?: (newStyle: FeatureLayerProperties) => void;
 }) => {
-  const { t } = useTranslation(["maps", "common"]);
+  const { t } = useTranslation("common");
 
   const colorSet = useMemo(
     () => ({
@@ -61,7 +61,7 @@ const ColorOptions = ({
           scaleType={layerStyle?.[`${type}_scale`]}
           colorSet={colorSet}
           label={
-            layerStyle?.[`${type}_field`] ? t("maps:palette") : t("maps:color")
+            layerStyle?.[`${type}_field`] ? t("palette") : t("color")
           }
         />
       }
@@ -86,8 +86,8 @@ const ColorOptions = ({
                 onStyleChange(newStyle);
               }
             }}
-            label={t("maps:color_based_on")}
-            tooltip={t("maps:color_based_on_desc")}
+            label={t("color_based_on")}
+            tooltip={t("color_based_on_desc")}
           />
           {layerStyle?.[`${type}_field`] &&
             Array.isArray(layerStyle?.[`${type}_range`]?.colors) && (
@@ -102,7 +102,7 @@ const ColorOptions = ({
                   newStyle[`${type}_scale`] = colorScale;
                   onStyleChange && onStyleChange(newStyle);
                 }}
-                label={t("maps:color_scale")}
+                label={t("color_scale")}
                 activeLayerId={layerId}
                 activeLayerField={
                   layerStyle[`${type}_field`] || { name: "", type: "string" }
@@ -124,7 +124,7 @@ const ColorOptions = ({
             )}
           {type === "color" && (
             <>
-              <FormLabelHelper label={t("maps:opacity")} color="inherit" />
+              <FormLabelHelper label={t("opacity")} color="inherit" />
               <SliderInput
                 value={opacity}
                 isRange={false}

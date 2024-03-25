@@ -40,7 +40,7 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
   onDownload,
   dataset,
 }) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [dataDownloadType, setDataDownloadType] =
     useState<FeatureDataExchangeType>(
       dataset.type === "feature"

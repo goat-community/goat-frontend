@@ -13,7 +13,7 @@ type RecenterProps = {
 export function Recenter({ initialExtent }: RecenterProps) {
   const theme = useTheme();
   const { map } = useMap();
-  const { t } = useTranslation(["maps"]);
+  const { t } = useTranslation(["common"]);
   const recenter = () => {
     if (map) {
       const geojson = wktToGeoJSON(initialExtent);

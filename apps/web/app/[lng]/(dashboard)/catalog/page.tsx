@@ -33,7 +33,7 @@ import { useRouter } from "next/navigation";
 import CatalogDatasetCard, { METADATA_HEADER_ICONS } from "@/components/dashboard/catalog/CatalogDatasetCard";
 
 const Catalog = () => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const router = useRouter();
   const useQueryStateArray = (key: string) =>
     useQueryState(key, parseAsArrayOf(parseAsString));
@@ -229,7 +229,7 @@ const Catalog = () => {
                 <Stack spacing={2} direction="column">
                   <Divider />
                   <Typography variant="body1">
-                    {t("maps:no_catalog_dataset_found_description")}
+                    {t("common:no_catalog_dataset_found_description")}
                   </Typography>
                 </Stack>
                 <Button

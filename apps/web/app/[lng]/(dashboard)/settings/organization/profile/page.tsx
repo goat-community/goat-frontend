@@ -6,7 +6,6 @@ import {
   Divider,
   Skeleton,
   Stack,
-  Switch,
   TextField,
   Typography,
 } from "@mui/material";
@@ -32,7 +31,7 @@ import Cookies from "js-cookie";
 
 const OrganizationProfile = () => {
   const theme = useTheme();
-  const { t } = useTranslation(["dashboard", "common"]);
+  const { t } = useTranslation("common");
   const {
     organization,
     mutate: mutateOrganization,
@@ -50,7 +49,6 @@ const OrganizationProfile = () => {
     register: registerOrganizationUpdate,
     handleSubmit: handleOrganizationUpdateSubmit,
     formState: { errors, isDirty, isValid },
-    getValues,
     control,
     reset,
   } = useForm<OrganizationUpdate>({
@@ -75,12 +73,12 @@ const OrganizationProfile = () => {
     try {
       if (organization) {
         await updateOrganization(organization.id, data);
-        toast.success("Organization updated");
+        toast.success(t("organization_updated_success"));
         reset({}, { keepValues: true });
         mutateOrganization();
       }
     } catch (_error) {
-      toast.error("Error updating organization");
+      toast.error(t("organization_update_error"));
     } finally {
       setIsOrganizationUpdateBusy(false);
     }
@@ -92,13 +90,13 @@ const OrganizationProfile = () => {
     try {
       if (organization) {
         await deleteOrganization(organization?.id);
-        toast.success("Organization deleted");
+        toast.success(t("organization_deleted_success"));
         reset({}, { keepValues: true });
         Cookies.remove("organization");
         signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL });
       }
     } catch (_error) {
-      toast.error("Error deleting organization");
+      toast.error(t("organization_delete_error"));
     } finally {
       setIsDeleteOrganizationBusy(false);
     }
@@ -142,25 +140,11 @@ const OrganizationProfile = () => {
               <TextField
                 required
                 helperText={errors.name ? errors.name?.message : ""}
-                label="Organization Name"
+                label={t("organization_name")}
                 id="name"
                 {...registerOrganizationUpdate("name")}
                 error={errors.name ? true : false}
               />
-
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <Typography variant="body1">
-                  {t("subscribe_to_newsletter")}
-                </Typography>
-                <Switch
-                  {...registerOrganizationUpdate("newsletter_subscribe")}
-                  checked={getValues("newsletter_subscribe")}
-                />
-              </Stack>
 
               <Stack
                 direction="row"
@@ -178,7 +162,7 @@ const OrganizationProfile = () => {
                   disabled={isOrganizationUpdateBusy || !isDirty || !isValid}
                   type="submit"
                 >
-                  {t("common:update")}
+                  {t("update")}
                 </LoadingButton>
               </Stack>
             </>
@@ -193,10 +177,10 @@ const OrganizationProfile = () => {
           {/* Delete Organization Confirmation */}
           <ConfirmModal
             open={confirmDeleteOrganizationDialogOpen}
-            title={t("dashboard:delete_organization")}
+            title={t("delete_organization")}
             body={
               <Trans
-                i18nKey="dashboard:delete_organization_confirmation_body"
+                i18nKey="common:delete_organization_confirmation_body"
                 values={{ organization_name: organization?.name }}
                 components={{ b: <b />, ul: <ul />, li: <li /> }}
               />
@@ -209,8 +193,8 @@ const OrganizationProfile = () => {
               await _deleteOrganization();
               signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL });
             }}
-            closeText={t("common:close")}
-            confirmText={t("common:delete")}
+            closeText={t("close")}
+            confirmText={t("delete")}
             matchText={organization?.name}
           />
 
@@ -220,17 +204,17 @@ const OrganizationProfile = () => {
               fontWeight="bold"
               color={theme.palette.error.main}
             >
-              {t("dashboard:danger_zone")}
+              {t("danger_zone")}
             </Typography>
             <Typography variant="caption">
-              {t("dashboard:danger_zone_organization_description")}
+              {t("danger_zone_organization_description")}
             </Typography>
           </Box>
           <Divider />
           <Stack>
             <Typography variant="body1">
               <Trans
-                i18nKey="dashboard:danger_zone_organization_body"
+                i18nKey="common:danger_zone_organization_body"
                 components={{ b: <b /> }}
               />
             </Typography>
@@ -250,7 +234,7 @@ const OrganizationProfile = () => {
               disabled={isOrganizationUpdateBusy}
             >
               <Typography variant="body1" fontWeight="bold" color="inherit">
-                {t("dashboard:delete_organization")}
+                {t("delete_organization")}
               </Typography>
             </LoadingButton>
           </Stack>

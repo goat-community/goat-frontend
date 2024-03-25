@@ -11,7 +11,7 @@ import {
   useTheme,
   Typography,
 } from "@mui/material";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
 
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
@@ -19,9 +19,8 @@ import { useOrganization, useUserProfile } from "@/lib/api/users";
 import { useTranslation } from "@/i18n/client";
 
 export default function UserInfoMenu() {
-  const { data: session } = useSession();
   const theme = useTheme();
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
   const [open, setOpen] = useState(false);
   const { organization } = useOrganization();
   const { userProfile } = useUserProfile();
@@ -73,15 +72,19 @@ export default function UserInfoMenu() {
                     {organization?.name ?? "Organization"}
                   </Typography>
                 </Stack>
-                <Typography variant="body1" gutterBottom>
-                  {session?.user?.name || "Username"}
-                </Typography>
-                <Typography variant="caption">
-                  {session?.user?.user_roles &&
-                  session.user.user_roles.length > 0
-                    ? session.user.user_roles[0]
-                    : "User"}
-                </Typography>
+
+                {userProfile && (
+                  <>
+                    <Typography variant="body1" gutterBottom>
+                      {userProfile?.first_name} {userProfile?.last_name}
+                    </Typography>
+                    <Typography variant="caption">
+                      {userProfile?.roles?.length > 0
+                        ? userProfile?.roles?.map((role) => t(role)).join(", ")
+                        : t("user")}
+                    </Typography>
+                  </>
+                )}
               </Stack>
               <Divider />
               <ListItemButton
@@ -133,13 +136,13 @@ export default function UserInfoMenu() {
           {userProfile?.avatar ? (
             <Avatar
               sx={{ width: 36, height: 36 }}
-              alt={session?.user?.name || "User"}
+              alt={userProfile.email || "User"}
               src={userProfile?.avatar}
             />
           ) : (
             <Avatar
               sx={{ width: 36, height: 36 }}
-              alt={session?.user?.name || "User"}
+              alt={userProfile?.email || "User"}
             >
               <Icon
                 fontSize="inherit"

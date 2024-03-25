@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 
 const Datasets = () => {
   const router = useRouter();
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
   const [queryParams, setQueryParams] = useState<PaginatedQueryParams>({
     order: "descendent",
     order_by: "updated_at",
@@ -59,7 +59,7 @@ const Datasets = () => {
           mb: 8,
         }}
       >
-        <Typography variant="h6">Datasets</Typography>
+        <Typography variant="h6">{t("datasets")}</Typography>
         <Button
           disableElevation={true}
           startIcon={
@@ -67,7 +67,7 @@ const Datasets = () => {
           }
           onClick={() => setOpenDatasetUploadModal(true)}
         >
-          {t("projects.add_dataset")}
+          {t("add_dataset")}
         </Button>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>

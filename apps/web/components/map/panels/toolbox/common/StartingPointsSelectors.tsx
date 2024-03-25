@@ -26,7 +26,7 @@ import { useParams } from "next/navigation";
 const StartingPoints = () => {
   const { map } = useMap();
   const theme = useTheme();
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
   const startingPoints = useAppSelector(
     (state) => state.map.toolboxStartingPoints,
@@ -182,7 +182,7 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { projectId } = useParams();
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const { filteredLayers } = useLayerByGeomType(
     ["feature"],
     ["point"],

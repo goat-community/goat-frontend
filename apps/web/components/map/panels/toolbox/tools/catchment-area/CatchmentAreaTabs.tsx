@@ -22,7 +22,7 @@ const CatchmentAreaTypeTab: React.FC<CatchmentAreaTypeTabProps> = ({
   handleCachmentAreaTypeChange,
   tabPanels,
 }) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>

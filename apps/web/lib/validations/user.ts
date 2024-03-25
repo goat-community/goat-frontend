@@ -12,6 +12,8 @@ export const userSchemaBase = z.object({
   avatar: z.string(),
   first_name: z.string(),
   last_name: z.string(),
+  newsletter_subscribe: z.boolean().optional().default(false),
+  roles: z.array(z.string()).optional().default([]),
 });
 
 export const userSchema = userSchemaBase.extend({

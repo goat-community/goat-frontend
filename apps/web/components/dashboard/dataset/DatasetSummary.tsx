@@ -13,7 +13,7 @@ interface DatasetSummaryProps {
 
 const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
   const theme = useTheme();
-  const { t, i18n } = useTranslation(["maps", "countries"]);
+  const { t, i18n } = useTranslation(["common", "countries"]);
   const getMetadataValueTranslation = useGetMetadataValueTranslation();
 
   return (
@@ -22,7 +22,7 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
         <Grid item xs={12} sm={12} md={8} lg={9}>
           {!dataset.description && (
             <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-              {t("maps:no_description")}
+              {t("common:no_description")}
             </Typography>
           )}
           {dataset.description && (

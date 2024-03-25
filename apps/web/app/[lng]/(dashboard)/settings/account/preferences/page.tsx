@@ -32,13 +32,13 @@ import NextLink from "next/link";
 import { useTranslation } from "@/i18n/client";
 
 const AccountPreferences = ({ params: { lng } }) => {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const theme = useTheme();
 
   const { changeColorMode } = useContext(ColorModeContext);
   const themeModes = ["dark", "light"] as const;
-  const units = ["metric", "imperial"] as const;
+  // const units = ["metric", "imperial"] as const;
 
   const {
     register: registerSystemSettings,
@@ -57,7 +57,7 @@ const AccountPreferences = ({ params: { lng } }) => {
       Cookies.set(lngCookieName, systemSettings.preferred_language);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to update system settings");
+      toast.error(t("failed_to_update_preferences"));
     } finally {
       setIsBusy(false);
     }
@@ -136,7 +136,7 @@ const AccountPreferences = ({ params: { lng } }) => {
               </MenuItem>
             ))}
           </TextField>
-          <TextField
+          {/* <TextField
             select
             defaultValue="metric"
             label={t("measurement_unit")}
@@ -156,7 +156,7 @@ const AccountPreferences = ({ params: { lng } }) => {
                 {t(unit)}
               </MenuItem>
             ))}
-          </TextField>
+          </TextField> */}
         </Stack>
       </Box>
     </Box>

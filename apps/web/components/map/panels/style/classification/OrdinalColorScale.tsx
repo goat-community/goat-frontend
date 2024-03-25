@@ -40,7 +40,7 @@ type OrdinalColorScaleProps = ColorScaleSelectorProps & {
 const OrdinalColorScale = (props: OrdinalColorScaleProps) => {
   const theme = useTheme();
   const { colorSet, activeLayerField, activeLayerId } = props;
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [valueMaps, setValueMaps] = React.useState<ColorMapItem[]>(
     colorSet.selectedColor.color_map?.map((colorMap: ColorMap) => {
       return {
@@ -360,7 +360,7 @@ const OrdinalColorScale = (props: OrdinalColorScaleProps) => {
             }
           >
             <Typography variant="body2" fontWeight="bold" color="inherit">
-              {t("maps:add_step")}
+              {t("common:add_step")}
             </Typography>
           </Button>
         </Box>

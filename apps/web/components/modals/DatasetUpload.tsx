@@ -46,14 +46,14 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   onClose,
   projectId,
 }) => {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
 
   const steps = [
-    t("projects.dataset.select_file"),
-    t("projects.dataset.destination_and_metadata"),
-    t("projects.dataset.confirmation"),
+    t("select_file"),
+    t("destination_and_metadata"),
+    t("confirmation"),
   ];
   const { mutate } = useJobs({
     read: false,
@@ -180,7 +180,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t("projects.dataset.upload_dataset")}</DialogTitle>
+      <DialogTitle>{t("upload_dataset")}</DialogTitle>
       <DialogContent>
         <Box sx={{ width: "100%" }}>
           <Stepper activeStep={activeStep} alternativeLabel>
@@ -196,7 +196,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         {activeStep === 0 && (
           <>
             <Typography variant="caption">
-              {t("projects.dataset.select_file_to_upload")}
+              {t("select_file_to_upload")}
             </Typography>
 
             <MuiFileInput
@@ -213,11 +213,11 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
               multiple={false}
               onChange={handleChange}
               placeholder={`${t(
-                "projects.dataset.eg",
+                "eg",
               )} file.gpkg, file.geojson, shapefile.zip`}
             />
             <Typography variant="caption">
-              {t("projects.dataset.supported")} <b>GeoPackage</b>,{" "}
+              {t("supported")} <b>GeoPackage</b>,{" "}
               <b>GeoJSON</b>, <b>Shapefile</b>, <b>KML</b>, <b>CSV</b>,{" "}
               <b>XLSX</b>
             </Typography>
@@ -236,7 +236,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
                 fullWidth
                 required
                 defaultValue={fileName}
-                label={t("projects.dataset.name")}
+                label={t("name")}
                 {...register("name")}
                 error={!!errors.name}
                 helperText={errors.name?.message}
@@ -245,7 +245,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
                 fullWidth
                 multiline
                 rows={4}
-                label={t("projects.dataset.description")}
+                label={t("description")}
                 {...register("description")}
                 error={!!errors.description}
                 helperText={errors.description?.message}
@@ -256,19 +256,19 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         {activeStep === 2 && (
           <Stack direction="column" spacing={4}>
             <Typography variant="caption">
-              {t("projects.dataset.review")}
+              {t("review")}
             </Typography>
             <Typography variant="body2">
-              <b>{t("projects.dataset.file")}:</b> {fileValue?.name}
+              <b>{t("file")}:</b> {fileValue?.name}
             </Typography>
             <Typography variant="body2">
-              <b>{t("projects.dataset.destination")}:</b> {selectedFolder?.name}
+              <b>{t("destination")}:</b> {selectedFolder?.name}
             </Typography>
             <Typography variant="body2">
-              <b>{t("projects.dataset.name")}:</b> {getValues("name")}
+              <b>{t("name")}:</b> {getValues("name")}
             </Typography>
             <Typography variant="body2">
-              <b>{t("projects.dataset.description")}:</b>{" "}
+              <b>{t("description")}:</b>{" "}
               {getValues("description")}
             </Typography>
           </Stack>
@@ -322,7 +322,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
               color="primary"
             >
               <Typography variant="body2" fontWeight="bold" color="inherit">
-                {t("projects.dataset.upload")}
+                {t("upload")}
               </Typography>
             </LoadingButton>
           )}

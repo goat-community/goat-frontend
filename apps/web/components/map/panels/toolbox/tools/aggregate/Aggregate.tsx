@@ -46,7 +46,7 @@ type AggregateProps = IndicatorBaseProps & {
 };
 
 const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const theme = useTheme();
   const [isBusy, setIsBusy] = useState(false);
   const { mutate } = useJobs({

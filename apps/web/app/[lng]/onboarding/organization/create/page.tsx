@@ -129,7 +129,7 @@ export default function OrganizationOnBoarding() {
       await createOrganization(data);
     } catch (_error) {
       setResponseResult({
-        message: t("onboarding:organization_creation_error"),
+        message: t("common:organization_creation_error"),
         status: "error",
       });
     } finally {
@@ -147,17 +147,17 @@ export default function OrganizationOnBoarding() {
             <>
               <Stack sx={{ mb: 8 }} spacing={2}>
                 <Typography variant="h5">
-                  {t(`onboarding:${STEPS[activeStep]}_title`)}
+                  {t(`maps:${STEPS[activeStep]}_title`)}
                 </Typography>
                 <Typography variant="body2">
-                  {t(`onboarding:${STEPS[activeStep]}_subtitle`)}
+                  {t(`maps:${STEPS[activeStep]}_subtitle`)}
                 </Typography>
               </Stack>
               <Box sx={{ width: "100%" }}>
                 <Stepper activeStep={activeStep}>
                   {STEPS.map((label) => (
                     <Step key={label}>
-                      <StepLabel>{t(`onboarding:${label}_stepper`)}</StepLabel>
+                      <StepLabel>{t(`maps:${label}_stepper`)}</StepLabel>
                     </Step>
                   ))}
                 </Stepper>
@@ -184,9 +184,9 @@ export default function OrganizationOnBoarding() {
                           helperText={
                             errors.name
                               ? errors.name?.message
-                              : t("onboarding:organization_name_desc")
+                              : t("common:organization_name_desc")
                           }
-                          label={t("onboarding:organization_name_label")}
+                          label={t("common:organization_name_label")}
                           id="name"
                           {...register("name")}
                           error={errors.name ? true : false}
@@ -196,7 +196,7 @@ export default function OrganizationOnBoarding() {
                           options={regionsOptions}
                           control={control}
                           name="region"
-                          label={t("onboarding:organization_region_label")}
+                          label={t("common:organization_region_label")}
                         />
                       </>
                     )}
@@ -206,28 +206,28 @@ export default function OrganizationOnBoarding() {
                           options={orgTypesOptions}
                           control={control}
                           name="type"
-                          label={t("onboarding:organization_type_label")}
+                          label={t("common:organization_type_label")}
                         />
 
                         <RhfSelectField
                           options={orgSizeOptions}
                           control={control}
                           name="size"
-                          label={t("onboarding:organization_size_label")}
+                          label={t("common:organization_size_label")}
                         />
 
                         <RhfSelectField
                           options={orgIndustryOptions}
                           control={control}
                           name="industry"
-                          label={t("onboarding:organization_industry_label")}
+                          label={t("common:organization_industry_label")}
                         />
 
                         <TextField
                           fullWidth
                           required
                           helperText={errors.name ? errors.name?.message : null}
-                          label={t("onboarding:organization_department_label")}
+                          label={t("common:organization_department_label")}
                           {...register("department")}
                           error={errors.name ? true : false}
                         />
@@ -236,7 +236,7 @@ export default function OrganizationOnBoarding() {
                           options={orgUseCaseOptions}
                           control={control}
                           name="use_case"
-                          label={t("onboarding:organization_use_case_label")}
+                          label={t("common:organization_use_case_label")}
                         />
                       </>
                     )}
@@ -249,7 +249,7 @@ export default function OrganizationOnBoarding() {
                           type="number"
                           helperText={errors.name ? errors.name?.message : null}
                           label={t(
-                            "onboarding:organization_contact_phone_label",
+                            "common:organization_contact_phone_label",
                           )}
                           {...register("phone_number")}
                           error={errors.name ? true : false}
@@ -259,7 +259,7 @@ export default function OrganizationOnBoarding() {
                           options={countriesOptions}
                           control={control}
                           name="location"
-                          label={t("onboarding:organization_location_label")}
+                          label={t("common:organization_location_label")}
                         />
                         <Controller
                           name="newsletter_subscribe"
@@ -276,7 +276,7 @@ export default function OrganizationOnBoarding() {
                                   />
                                 }
                                 label={t(
-                                  "onboarding:organization_subscribe_to_newsletter",
+                                  "common:organization_subscribe_to_newsletter",
                                 )}
                               />
                             );
@@ -284,10 +284,10 @@ export default function OrganizationOnBoarding() {
                         />
                         <Stack spacing={3}>
                           <Typography variant="body1">
-                            {t("onboarding:organization_onboarding_trial_note")}
+                            {t("common:organization_onboarding_trial_note")}
                           </Typography>
                           <Typography variant="body2">
-                            {t("onboarding:organization_accept_terms")}
+                            {t("common:organization_accept_terms")}
                           </Typography>
                         </Stack>
                       </>
@@ -306,7 +306,7 @@ export default function OrganizationOnBoarding() {
                     type="submit"
                     disabled={!allowSubmit}
                   >
-                    {t("onboarding:lets_get_started")}
+                    {t("common:lets_get_started")}
                   </LoadingButton>
                 )}
 

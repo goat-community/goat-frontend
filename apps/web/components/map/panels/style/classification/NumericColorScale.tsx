@@ -23,7 +23,7 @@ type NumericColorScaleProps = ColorScaleSelectorProps & {
 const NumericColorScale = (props: NumericColorScaleProps) => {
   const theme = useTheme();
   const { classBreaksValues } = props;
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   const colorMapValues = useMemo(() => {
     if (!classBreaksValues || !Array.isArray(classBreaksValues.breaks)) {
@@ -155,7 +155,7 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
       </Box>
       <Stack sx={{ pt: 4 }}>
         <Typography variant="caption">
-          {t("maps:change_colors_and_steps")}
+          {t("common:change_colors_and_steps")}
         </Typography>
       </Stack>
     </Box>

@@ -2,7 +2,7 @@ import { useTranslation } from "@/i18n/client";
 import { useCallback } from "react";
 
 export const useGetMetadataValueTranslation = () => {
-  const { t, i18n } = useTranslation(["maps", "countries"]);
+  const { t, i18n } = useTranslation(["common", "countries"]);
 
   const getMetadataValueTranslation = useCallback(
     (key: string, value: string) => {

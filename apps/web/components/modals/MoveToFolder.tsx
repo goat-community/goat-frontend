@@ -40,7 +40,7 @@ const ContentMoveToFolderModal: React.FC<ContentMoveToFolderDialogProps> = ({
   onContentMove,
   content,
 }) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const queryParams: GetContentQueryParams = {
     order: "descendent",
     order_by: "updated_at",

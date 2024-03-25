@@ -7,7 +7,7 @@ import { ICON_NAME } from "@p4b/ui/components/Icon";
 
 const ChartsPanel = () => {
   const dispatch = useAppDispatch();
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   return (
     <Container
       close={() => dispatch(setActiveLeftPanel(undefined))}

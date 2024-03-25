@@ -27,7 +27,7 @@ const PTTimeSelectors: React.FC<PTTimeSelectorsProps> = ({
   setPTEndTime,
   isPTValid,
 }) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   return (
     <Stack spacing={2}>

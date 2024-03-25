@@ -34,7 +34,7 @@ export function LayerValueSelectorPopper(props: {
   anchorEl: HTMLElement | null;
   onDone?: () => void;
 }) {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [searchText, setSearchText] = useState("");
   const [queryParams, setQueryParams] =
     useState<GetLayerUniqueValuesQueryParams>({

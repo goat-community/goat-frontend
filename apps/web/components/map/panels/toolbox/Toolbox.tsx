@@ -29,13 +29,13 @@ import OriginDestination from "@/components/map/panels/toolbox/tools/origin-dest
 import NearbyStations from "@/components/map/panels/toolbox/tools/nearby-stations/NearbyStations";
 
 const Tabs = ({ tab, handleChange }) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   return (
     <List dense sx={{ pt: 0 }}>
       {tab.children.map((childTab) => (
         <ListItemButton key={childTab} onClick={() => handleChange(childTab)}>
-          <ListItemText primary={t(`panels.tools.${childTab}.${childTab}`)} />
+          <ListItemText primary={t(`${childTab}`)} />
           <ListItemSecondaryAction>
             <Icon
               iconName={ICON_NAME.CHEVRON_RIGHT}
@@ -51,7 +51,7 @@ const Tabs = ({ tab, handleChange }) => {
 const Toolbox = () => {
   const [value, setValue] = useState<string | undefined>(undefined);
 
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const theme = useTheme();
   const dispatch = useAppDispatch();
 
@@ -166,7 +166,7 @@ const Toolbox = () => {
     <Box sx={{ height: "100%" }}>
       {!value && (
         <Container
-          title={t("panels.tools.tools")}
+          title={t("tools")}
           disablePadding={true}
           close={() => dispatch(setActiveRightPanel(undefined))}
           body={

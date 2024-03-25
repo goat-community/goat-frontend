@@ -228,7 +228,7 @@ export function LegendRows({
   properties: FeatureLayerProperties;
   type: "point" | "line" | "polygon";
 }) {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   const { colorMap, strokeColorMap } = useMemo(
     () => ({
@@ -395,7 +395,7 @@ export function LegendRows({
 }
 
 export function Legend(props: LegendProps) {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const geometryTypes = ["point", "line", "polygon"];
 
   return (

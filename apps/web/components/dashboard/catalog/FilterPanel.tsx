@@ -46,7 +46,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   icon,
   onToggle,
 }) => {
-  const { t, i18n } = useTranslation("maps");
+  const { t, i18n } = useTranslation("common");
   const theme = useTheme();
   const [searchText, setSearchText] = useState("");
   const handleClearText = () => {

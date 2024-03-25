@@ -25,7 +25,7 @@ interface DataSectionProps {
 
 const DataSection = (props: DataSectionProps) => {
   const { layers, isLoading } = props;
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
   const router = useRouter();
   const {
     getMoreMenuOptions,
@@ -61,7 +61,7 @@ const DataSection = (props: DataSectionProps) => {
           mb: 2,
         }}
       >
-        <Typography variant="h6">{t("home.recent_datasets")}</Typography>
+        <Typography variant="h6">{t("recent_datasets")}</Typography>
         <Button
           variant="text"
           size="small"
@@ -73,7 +73,7 @@ const DataSection = (props: DataSectionProps) => {
             borderRadius: 0,
           }}
         >
-          {t("home.see_all")}
+          {t("see_all")}
         </Button>
       </Box>
       <Divider sx={{ mb: 4 }} />
@@ -117,7 +117,7 @@ const DataSection = (props: DataSectionProps) => {
           ) : (
             <EmptyCard
               onClick={() => setOpenDatasetUploadModal(true)}
-              tooltip={t("home.create_new_dataset")}
+              tooltip={t("create_new_dataset")}
               backgroundImage="https://assets.plan4better.de/img/grid_thumbnail.png"
             />
           )}

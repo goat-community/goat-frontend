@@ -62,7 +62,7 @@ const AccordionWrapper = ({
 };
 
 const LayerInfo = ({ layer }: { layer: ProjectLayer }) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   return (
     <AccordionWrapper
       header={

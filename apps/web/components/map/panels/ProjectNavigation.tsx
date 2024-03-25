@@ -36,7 +36,7 @@ const toolbarHeight = 52;
 
 const ProjectNavigation = ({ projectId }) => {
   const theme = useTheme();
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
   const basemaps = useAppSelector((state) => state.map.basemaps);
   const activeBasemap = useAppSelector((state) => state.map.activeBasemap);
@@ -52,19 +52,19 @@ const ProjectNavigation = ({ projectId }) => {
       {
         id: MapSidebarItemID.LAYERS,
         icon: ICON_NAME.LAYERS,
-        name: t("panels.layers.layers"),
+        name: t("layers"),
         component: <LayerPanel projectId={projectId} />,
       },
       {
         id: MapSidebarItemID.LEGEND,
         icon: ICON_NAME.LEGEND,
-        name: t("panels.legend.legend"),
+        name: t("legend"),
         component: <Legend projectId={projectId} />,
       },
       {
         id: MapSidebarItemID.CHARTS,
         icon: ICON_NAME.CHART,
-        name: t("panels.charts.charts"),
+        name: t("charts"),
         component: <Charts />,
       },
     ],
@@ -85,7 +85,7 @@ const ProjectNavigation = ({ projectId }) => {
       {
         id: MapSidebarItemID.FILTER,
         icon: ICON_NAME.FILTER,
-        name: t("panels.filter.filter"),
+        name: t("filter"),
         component: <Filter projectId={projectId} />,
         disabled:
           !activeLayer || activeLayer?.type !== layerType.Values.feature,
@@ -93,7 +93,7 @@ const ProjectNavigation = ({ projectId }) => {
       {
         id: MapSidebarItemID.STYLE,
         icon: ICON_NAME.STYLE,
-        name: t("panels.layer_design.layer_design"),
+        name: t("layer_design"),
         component: <LayerStyle projectId={projectId} />,
         disabled:
           !activeLayer || activeLayer?.type !== layerType.Values.feature,
@@ -101,13 +101,13 @@ const ProjectNavigation = ({ projectId }) => {
       {
         id: MapSidebarItemID.TOOLBOX,
         icon: ICON_NAME.TOOLBOX,
-        name: t("panels.tools.tools"),
+        name: t("tools"),
         component: <Toolbox />,
       },
       {
         id: MapSidebarItemID.SCENARIO,
         icon: ICON_NAME.SCENARIO,
-        name: t("panels.scenario.scenario"),
+        name: t("scenario"),
         component: <Scenario />,
       },
     ],

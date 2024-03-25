@@ -32,7 +32,7 @@ const Metadata: React.FC<MetadataDialogProps> = ({
   content,
   type,
 }) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [isBusy, setIsBusy] = useState(false);
   const {
     handleSubmit,

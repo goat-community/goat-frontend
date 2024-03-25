@@ -32,7 +32,7 @@ import { v4 } from "uuid";
 const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
   const theme = useTheme();
   const { markerMaps, activeLayerField, activeLayerId } = props;
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [valueMaps, setValueMaps] = React.useState<MarkerMapItem[]>(
     markerMaps.map((markerMap) => {
       return {
@@ -315,7 +315,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
             }
           >
             <Typography variant="body2" fontWeight="bold" color="inherit">
-              {t("maps:add_step")}
+              {t("common:add_step")}
             </Typography>
           </Button>
         </Box>

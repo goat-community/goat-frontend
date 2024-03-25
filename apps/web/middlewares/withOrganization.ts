@@ -8,6 +8,7 @@ import {
 import { fallbackLng, cookieName as lngCookieName } from "@/i18n/settings";
 import { getToken } from "next-auth/jwt";
 import { refreshAccessToken } from "@/app/api/auth/[...nextauth]/options";
+import type { InvitationPaginated } from "@/lib/validations/invitation";
 
 export const USERS_API_BASE_URL = new URL(
   "api/v1/users",
@@ -52,11 +53,36 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
           return response;
         }
       }
+      const pendingInvitations = await fetch(
+        `${USERS_API_BASE_URL}/invitations?type=organization&status=pending`,
+        {
+          headers: {
+            Authorization: `Bearer ${refreshedToken.access_token}`,
+          },
+        },
+      );
+
+      if (pendingInvitations.ok) {
+        const invitations: InvitationPaginated =
+          await pendingInvitations.json();
+        if (invitations?.items?.length > 0) {
+          const invitationId = invitations.items[0].id;
+          const invitationUrl = new URL(
+            `${lngPath}/onboarding/organization/invite/${invitationId}`,
+            origin,
+          );
+          return NextResponse.redirect(invitationUrl);
+        }
+      }
+      
     } catch (error) {
       console.error("Error while fetching organization", error);
     }
 
-    const organizationUrl = new URL(`${basePath}${organizationPageCreate}`, origin);
+    const organizationUrl = new URL(
+      `${basePath}${organizationPageCreate}`,
+      origin,
+    );
 
     return NextResponse.redirect(organizationUrl);
   };

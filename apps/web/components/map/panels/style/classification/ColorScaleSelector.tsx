@@ -11,7 +11,7 @@ import { useState } from "react";
 const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [isClickAwayEnabled, setIsClickAwayEnabled] = useState(true);
 
   return (

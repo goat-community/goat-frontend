@@ -9,7 +9,7 @@ import { useTranslation } from "@/i18n/client";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 const FolderSelect = ({ folders, selectedFolder, setSelectedFolder }) => {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   return (
     <Autocomplete
@@ -63,7 +63,7 @@ const FolderSelect = ({ folders, selectedFolder, setSelectedFolder }) => {
               </InputAdornment>
             ),
           }}
-          label={t("projects.dataset.select_folder_destination")}
+          label={t("select_folder_destination")}
         />
       )}
     />

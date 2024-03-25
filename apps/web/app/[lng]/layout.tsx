@@ -3,7 +3,7 @@ import ThemeRegistry from "@/components/@mui/ThemeRegistry";
 import AuthProvider from "@/lib/providers/AuthProvider";
 import ToastProvider from "@/lib/providers/ToastProvider";
 import StoreProvider from "@/lib/providers/StoreProvider";
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers";
 import { THEME_COOKIE_NAME } from "@/lib/constants";
 import "@/styles/globals.css";
 import { dir } from "i18next";
@@ -35,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode;
   params: { lng: string };
 }) {
-  const cookieStore = cookies()
-  const theme = cookieStore.get(THEME_COOKIE_NAME)?.value as PaletteMode
+  const cookieStore = cookies();
+  const theme = cookieStore.get(THEME_COOKIE_NAME)?.value as PaletteMode;
   return (
     <html lang={lng} dir={dir(lng)}>
       <body className={mulish.className}>

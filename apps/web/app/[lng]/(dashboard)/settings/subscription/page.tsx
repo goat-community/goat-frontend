@@ -16,7 +16,7 @@ import { useAppSubscription } from "@/lib/api/subscription";
 
 const Subscription = () => {
   const theme = useTheme();
-  const { t } = useTranslation(["dashboard", "common"]);
+  const { t } = useTranslation("common");
 
   const { subscription, isLoading } = useAppSubscription();
   return (
@@ -52,9 +52,7 @@ const Subscription = () => {
                       alt={item.subscription_type}
                     />
                     <Typography fontWeight="bold" variant="h6">
-                      {t(
-                        `dashboard:app_subscription_${item.subscription_type}`,
-                      )}
+                      {t(`app_subscription_${item.subscription_type}`)}
                     </Typography>
                   </Stack>
                   <Stack
@@ -64,13 +62,13 @@ const Subscription = () => {
                   >
                     <Stack spacing={2} sx={{ mt: 4 }}>
                       <Typography variant="body2">
-                        {t("dashboard:app_subscription_seats_available", {
+                        {t("app_subscription_seats_available", {
                           available_seats: item.assigned_seat,
                           total_seats: item.seat,
                         })}
                       </Typography>
                       <Typography variant="body2">
-                        {t("dashboard:app_subscription_next_payment", {
+                        {t("app_subscription_next_payment", {
                           date: item.end_date,
                         })}
                       </Typography>
@@ -85,7 +83,7 @@ const Subscription = () => {
                           aria-label="manage-subscription"
                           name="manage-subscription"
                         >
-                          {t("dashboard:app_subscription_manage")}
+                          {t("app_subscription_manage")}
                         </LoadingButton>
                         <LoadingButton
                           variant="outlined"
@@ -96,7 +94,7 @@ const Subscription = () => {
                           name="cancel-subscription"
                           color="error"
                         >
-                          {t("dashboard:app_subscription_cancel")}
+                          {t("app_subscription_cancel")}
                         </LoadingButton>
                       </Stack>
                     )}

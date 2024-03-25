@@ -25,7 +25,7 @@ import { toast } from "react-toastify";
 const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { projectId } = useParams();
   const theme = useTheme();
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [isBusy, setIsBusy] = useState(false);
   const { mutate } = useJobs({
     read: false,

@@ -13,7 +13,7 @@ interface ToolboxActionButtonsProps {
 
 const ToolboxActionButtons = (props: ToolboxActionButtonsProps) => {
   const { resetFunction, resetDisabled, runFunction, runDisabled } = props;
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   return (
     <Stack
@@ -30,7 +30,7 @@ const ToolboxActionButtons = (props: ToolboxActionButtonsProps) => {
         onClick={resetFunction}
         disabled={resetDisabled}
       >
-        {t("panels.tools.reset")}
+        {t("reset")}
       </Button>
       <LoadingButton
         size="small"
@@ -41,7 +41,7 @@ const ToolboxActionButtons = (props: ToolboxActionButtonsProps) => {
         disabled={runDisabled}
       >
         <Typography variant="body2" fontWeight="bold" color="inherit">
-          {t("panels.tools.run")}
+          {t("run")}
         </Typography>
       </LoadingButton>
     </Stack>

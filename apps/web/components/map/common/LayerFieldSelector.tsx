@@ -71,7 +71,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
     return filtered;
   }, [fields, searchText]);
 
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const selectedValue = useMemo(() => {
     if (!props.multiple && !Array.isArray(selectedField)) {
       return selectedField ? JSON.stringify(selectedField) : "";

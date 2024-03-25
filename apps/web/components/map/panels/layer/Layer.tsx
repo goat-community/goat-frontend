@@ -134,7 +134,7 @@ enum AddLayerSourceType {
 }
 
 const AddLayerSection = ({ projectId }: { projectId: string }) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -161,7 +161,7 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
         <Stack direction="row" spacing={2} alignItems="center">
           <Icon iconName={ICON_NAME.DATABASE} style={{ fontSize: "15px" }} />
           <Typography variant="body2" fontWeight="bold" color="inherit">
-            {t("maps:source")}
+            {t("common:source")}
           </Typography>
         </Stack>
         <Button
@@ -173,7 +173,7 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
           }
         >
           <Typography variant="body2" fontWeight="bold" color="inherit">
-            {t("maps:add_layer")}
+            {t("common:add_layer")}
           </Typography>
         </Button>
         <Menu
@@ -249,7 +249,7 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
 };
 
 const LayerPanel = ({ projectId }: PanelProps) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const { map } = useMap();
   const theme = useTheme();
   const dispatch = useAppDispatch();

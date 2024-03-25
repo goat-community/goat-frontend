@@ -12,7 +12,6 @@ const organizationBaseSchema = z.object({
   use_case: z.string().min(1).max(250),
   phone_number: z.string().min(1).max(50),
   location: z.string().min(1).max(50),
-  newsletter_subscribe: z.boolean(),
   avatar: z.string(),
 });
 
@@ -42,7 +41,7 @@ const organizationMemberSchema = z.object({
 export const invitationCreateSchema = z.object({
   user_email: z.string().email(),
   role: z.enum(["admin", "member"]),
-  subscription_id: z.string().uuid(),
+  subscription_id: z.string().uuid().optional(),
   expires: z.string().optional(),
 });
 
@@ -51,6 +50,7 @@ export const organizationUpdateSchema = organizationBaseSchema.partial();
 
 export const postOrganizationSchema = organizationBaseSchema.extend({
   region: regionEnum,
+  newsletter_subscribe: z.boolean(),
 });
 
 export type Organization = z.infer<typeof organizationSchema>;

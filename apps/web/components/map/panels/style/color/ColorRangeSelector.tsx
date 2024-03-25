@@ -89,7 +89,7 @@ type PaletteConfigProps = {
 
 const PaletteConfig = (props: PaletteConfigProps) => {
   const { label, value, config, onChange, disabled } = props;
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   return (
     <Stack
       direction="row"

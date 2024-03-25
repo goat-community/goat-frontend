@@ -26,7 +26,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
     openMoreMenu,
   } = useContentMoreMenu();
 
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
   const [openProjectModal, setOpenProjectModal] = useState(false);
   return (
     <Box>
@@ -88,7 +88,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
               onClick={() => {
                 setOpenProjectModal(true);
               }}
-              tooltip={t("home.create_new_project")}
+              tooltip={t("create_new_project")}
               backgroundImage="https://assets.plan4better.de/img/goat_new_project_artwork.png"
             />
           )}

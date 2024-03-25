@@ -30,7 +30,7 @@ const CatalogDatasetCard = ({
   onClick?: (dataset: Layer) => void;
 }) => {
   const theme = useTheme();
-  const { t } = useTranslation(["maps"]);
+  const { t } = useTranslation(["common"]);
   const getMetadataValueTranslation = useGetMetadataValueTranslation();
 
   return (
@@ -87,7 +87,7 @@ const CatalogDatasetCard = ({
                 }}
               >
                 <Typography variant="body2" color="text.secondary">
-                  {dataset.description || t("maps:no_description")}
+                  {dataset.description || t("common:no_description")}
                 </Typography>
               </Box>
             </Stack>

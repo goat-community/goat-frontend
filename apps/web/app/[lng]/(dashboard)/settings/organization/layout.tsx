@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/i18n/client";
 import type { NavItem } from "@/types/common/navigation";
 import { Box, Tab, Tabs } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
@@ -12,18 +13,19 @@ interface OrganizationLayoutProps {
 
 const OrganizationLayout = (props: OrganizationLayoutProps) => {
   const pathname = usePathname();
+  const { t } = useTranslation("common");
 
   const navigation: NavItem[] = [
     {
       link: "/profile",
       icon: ICON_NAME.ORGANIZATION,
-      label: "Profile",
+      label: t("profile"),
       current: pathname?.includes("/profile"),
     },
     {
       link: "/members",
       icon: ICON_NAME.USERS,
-      label: "Members",
+      label: t("members"),
       current: pathname?.includes("/members"),
     },
   ];

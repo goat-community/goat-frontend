@@ -29,47 +29,47 @@ export const useGetLayerKeys = (layerId: string) => {
 };
 
 export const usePTTimeSelectorValues = () => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const ptModes: SelectorItem[] = useMemo(() => {
     return [
       {
         value: PTRoutingModes.Enum.bus,
-        label: t("panels.isochrone.routing.modes.bus"),
+        label: t("routing_modes.bus"),
         icon: ICON_NAME.BUS,
       },
       {
         value: PTRoutingModes.Enum.tram,
-        label: t("panels.isochrone.routing.modes.tram"),
+        label: t("routing_modes.tram"),
         icon: ICON_NAME.TRAM,
       },
       {
         value: PTRoutingModes.Enum.rail,
-        label: t("panels.isochrone.routing.modes.rail"),
+        label: t("routing_modes.rail"),
         icon: ICON_NAME.RAIL,
       },
       {
         value: PTRoutingModes.Enum.subway,
-        label: t("panels.isochrone.routing.modes.subway"),
+        label: t("routing_modes.subway"),
         icon: ICON_NAME.SUBWAY,
       },
       {
         value: PTRoutingModes.Enum.ferry,
-        label: t("panels.isochrone.routing.modes.ferry"),
+        label: t("routing_modes.ferry"),
         icon: ICON_NAME.FERRY,
       },
       {
         value: PTRoutingModes.Enum.cable_car,
-        label: t("panels.isochrone.routing.modes.cable_car"),
+        label: t("routing_modes.cable_car"),
         icon: ICON_NAME.CABLE_CAR,
       },
       {
         value: PTRoutingModes.Enum.gondola,
-        label: t("panels.isochrone.routing.modes.gondola"),
+        label: t("routing_modes.gondola"),
         icon: ICON_NAME.GONDOLA,
       },
       {
         value: PTRoutingModes.Enum.funicular,
-        label: t("panels.isochrone.routing.modes.funicular"),
+        label: t("routing_modes.funicular"),
         icon: ICON_NAME.FUNICULAR,
       },
     ];
@@ -132,7 +132,7 @@ export const usePTTimeSelectorValues = () => {
 };
 
 export const useCatchmentAreaShapeTypes = () => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const catchmentAreaShapeTypes: SelectorItem[] = useMemo(() => {
     return [
       {
@@ -156,7 +156,7 @@ export const useCatchmentAreaShapeTypes = () => {
 };
 
 export const useStartingPointMethods = () => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const startingPointMethods: SelectorItem[] = useMemo(() => {
     return [
       {
@@ -176,7 +176,7 @@ export const useStartingPointMethods = () => {
 };
 
 export const useRoutingTypes = () => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [selectedRouting, setSelectedRouting] = useState<
     SelectorItem | undefined
   >(undefined);
@@ -184,17 +184,17 @@ export const useRoutingTypes = () => {
     return [
       {
         value: CatchmentAreaRoutingTypeEnum.Enum.walking,
-        label: t("panels.isochrone.routing.modes.walk"),
+        label: t("routing_modes.walk"),
         icon: ICON_NAME.RUN,
       },
       {
         value: CatchmentAreaRoutingTypeEnum.Enum.bicycle,
-        label: t("panels.isochrone.routing.modes.bicycle"),
+        label: t("routing_modes.bicycle"),
         icon: ICON_NAME.BICYCLE,
       },
       {
         value: CatchmentAreaRoutingTypeEnum.Enum.pedelec,
-        label: t("panels.isochrone.routing.modes.pedelec"),
+        label: t("routing_modes.pedelec"),
         icon: ICON_NAME.PEDELEC,
       },
     ];
@@ -204,7 +204,7 @@ export const useRoutingTypes = () => {
     return [
       {
         value: CatchmentAreaRoutingTypeEnum.Enum.pt,
-        label: t("panels.isochrone.routing.modes.pt"),
+        label: t("routing_modes.pt"),
         icon: ICON_NAME.BUS,
       },
     ];
@@ -275,7 +275,7 @@ export const useLayerDatasetId = (
 
 export const useStatisticValues = () => {
   // Statistics values
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const statisticMethods: SelectorItem[] = useMemo(() => {
     return [
       {

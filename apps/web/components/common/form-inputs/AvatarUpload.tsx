@@ -17,7 +17,7 @@ export const RhfAvatar = <TField extends FieldValues>(
 ) => {
   const { control, name, avatar, title } = props;
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
-  const { t } = useTranslation(["common"]);
+  const { t } = useTranslation("common");
 
   return (
     <Controller
@@ -46,7 +46,7 @@ export const RhfAvatar = <TField extends FieldValues>(
                   return;
                 }
                 if (file.size > 1048576) {
-                  toast.error("File size must be less than 1MB");
+                  toast.error(t("avatar_size_error"));
                   hiddenInputRef.current!.value = "";
                   return;
                 }
@@ -67,7 +67,7 @@ export const RhfAvatar = <TField extends FieldValues>(
                     hiddenInputRef?.current?.click();
                   }}
                 >
-                  {t("common:upload")}
+                  {t("upload")}
                 </Button>
                 {value && avatar !== value && (
                   <Button
@@ -77,7 +77,7 @@ export const RhfAvatar = <TField extends FieldValues>(
                       onChange(avatar);
                     }}
                   >
-                    {t("common:cancel")}
+                    {t("cancel")}
                   </Button>
                 )}
               </Stack>

@@ -42,23 +42,23 @@ const FolderModal: React.FC<FolderDialogProps> = ({
   onEdit,
 }) => {
   const [folderName, setFolderName] = useState<string>("");
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   const handleFolderEdit = async () => {
     try {
       if (type === "create") {
         await createFolder(folderName);
-        toast.success(t("projects.folder.created_successfully"));
+        toast.success(t("created_successfully"));
       }
       if (selectedFolder?.id) {
         if (type === "delete") {
           await deleteFolder(selectedFolder?.id);
-          toast.success(t("projects.folder.deleted_successfully"));
+          toast.success(t("deleted_successfully"));
         }
 
         if (type === "update") {
           await updateFolder(selectedFolder.id, folderName);
-          toast.success(t("projects.folder.updated_successfully"));
+          toast.success(t("updated_successfully"));
         }
       }
 
@@ -82,9 +82,9 @@ const FolderModal: React.FC<FolderDialogProps> = ({
       <DialogTitle>
         {
           {
-            create: t("projects.folder.create_folder"),
-            update: t("projects.folder.update_folder"),
-            delete: t("projects.folder.delete_folder"),
+            create: t("create_folder"),
+            update: t("update_folder"),
+            delete: t("delete_folder"),
           }[type]
         }
       </DialogTitle>
@@ -97,7 +97,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
             id="folder-name"
             defaultValue={selectedFolder?.name || folderName}
             inputProps={{ maxLength: 30 }}
-            label={t("projects.folder.folder_name")}
+            label={t("folder_name")}
             variant="outlined"
             error={
               folderName.length > 29 ||
@@ -105,9 +105,9 @@ const FolderModal: React.FC<FolderDialogProps> = ({
             }
             helperText={
               folderName.length > 29
-                ? t("projects.folder.folder_rule")
+                ? t("folder_rule")
                 : existingFolderNames?.includes(folderName)
-                ? t("projects.folder.folder_exists")
+                ? t("folder_exists")
                 : ""
             }
             onChange={(e) => setFolderName(e.target.value)}
@@ -116,7 +116,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
 
         {type === "delete" && (
           <DialogContentText>
-            {t("projects.folder.are_you_sure")} <b>{selectedFolder?.name}</b>?
+            {t("are_you_sure")} <b>{selectedFolder?.name}</b>?
           </DialogContentText>
         )}
       </DialogContent>

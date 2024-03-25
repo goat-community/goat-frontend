@@ -57,7 +57,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
   const [statisticsPage, setStatisticsPage] = React.useState<number>(1);
   const [statisticsData, setStatisticsData] = React.useState<string[]>([]);
 
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const { activeLayer } = useActiveLayer(projectId as string);
   const open = Boolean(anchorEl);
   const { map } = useMap();
@@ -335,8 +335,8 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
             sx={{ fontSize: "18px" }}
           />
           {expression.type === "regular"
-            ? t("panels.filter.logical_expression")
-            : t("panels.filter.spatial_expression")}
+            ? t("logical_expression")
+            : t("spatial_expression")}
         </Typography>
         <Box sx={{ position: "relative" }}>
           <IconButton
@@ -354,13 +354,12 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                     htmlColor={theme.palette.text.secondary}
                     sx={{ fontSize: "14px" }}
                   />
-                  {/* {t("panels.filter.delete_expression")} */}
                   <Typography
                     variant="body1"
                     sx={{ ml: 2, fontWeight: 600 }}
                     color={theme.palette.text.secondary}
                   >
-                    {t("panels.filter.delete")}
+                    {t("delete")}
                   </Typography>
                 </MenuItem>
                 <MenuItem onClick={() => duplicateExpression(expression)}>
@@ -374,7 +373,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
                     sx={{ ml: 2, fontWeight: 600 }}
                     color={theme.palette.text.secondary}
                   >
-                    {t("panels.filter.duplicate")}
+                    {t("duplicate")}
                   </Typography>
                 </MenuItem>
               </MenuList>
@@ -401,10 +400,10 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
         }
       />
       <FormControl fullWidth>
-        <InputLabel>{t("panels.filter.select_an_expression")}</InputLabel>
+        <InputLabel>{t("select_an_expression")}</InputLabel>
         <Select
           value={expression.expression}
-          label={t("panels.filter.select_an_expression")}
+          label={t("select_an_expression")}
           onChange={(event: SelectChangeEvent) => {
             modifyExpression(expression, "expression", event.target.value);
             setExpressionValue("");
@@ -414,7 +413,7 @@ const Expression = React.memo(function Expression(props: ExpressionProps) {
           {attributeType
             ? comparerModes[attributeType].map((attr) => (
                 <MenuItem key={v4()} value={attr.value}>
-                  {t(`panels.filter.expressions.${attr.value}`)}
+                  {t(`filter_expressions.${attr.value}`)}
                 </MenuItem>
               ))
             : null}

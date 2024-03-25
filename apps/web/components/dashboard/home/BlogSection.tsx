@@ -54,7 +54,7 @@ const blogPosts: BlogPost[] = [
 const BlogSection = () => {
   const isLoading = false;
   const theme = useTheme();
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   return (
     <Box>
@@ -66,7 +66,7 @@ const BlogSection = () => {
           mb: 2,
         }}
       >
-        <Typography variant="h6">{t("home.explore")}</Typography>
+        <Typography variant="h6">{t("explore")}</Typography>
         <Button
           variant="text"
           size="small"
@@ -80,7 +80,7 @@ const BlogSection = () => {
             borderRadius: 0,
           }}
         >
-          {t("home.visit_blog")}
+          {t("visit_blog")}
         </Button>
       </Box>
       <Divider sx={{ mb: 4 }} />

@@ -24,7 +24,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const theme = useTheme();
   const [isBusy, setIsBusy] = useState(false);
   const { mutate } = useJobs({

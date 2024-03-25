@@ -25,7 +25,7 @@ const SizeOptions = ({
   selectedField?: LayerFieldType;
   layerFields: LayerFieldType[];
 }) => {
-  const { t } = useTranslation(["maps", "common"]);
+  const { t } = useTranslation("common");
 
   const [value, setValue] = useState(
     layerStyle?.[`${type}_field`]
@@ -80,8 +80,8 @@ const SizeOptions = ({
                   onStyleChange(newStyle);
                 }
               }}
-              label={t(`maps:${type}_based_on`)}
-              tooltip={t(`maps:${type}_based_on_desc`)}
+              label={t(`${type}_based_on`)}
+              tooltip={t(`${type}_based_on_desc`)}
             />
           </>
         }

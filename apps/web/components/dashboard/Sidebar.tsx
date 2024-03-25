@@ -43,7 +43,7 @@ const DashboardSidebar = (props: Props) => {
   const theme = useTheme();
   const pathname = usePathname();
 
-  const {t} = useTranslation("dashboard");
+  const {t} = useTranslation("common");
 
   const MobileDrawerProps = {
     open: navVisible,
@@ -64,31 +64,31 @@ const DashboardSidebar = (props: Props) => {
     {
       link: "/home",
       icon: ICON_NAME.HOUSE,
-      label: t("sidebar.home"),
+      label: t("home"),
       current: pathname?.includes("/home"),
     },
     {
       link: "/projects",
       icon: ICON_NAME.MAP,
-      label: t("sidebar.projects"),
+      label: t("projects"),
       current: pathname?.includes("/projects"),
     },
     {
       link: "/datasets",
       icon: ICON_NAME.DATABASE,
-      label: t("sidebar.datasets"),
+      label: t("datasets"),
       current: pathname?.includes("/datasets"),
     },
     {
       link: "/catalog",
       icon: ICON_NAME.GLOBE,
-      label: t("sidebar.catalog"),
+      label: t("catalog"),
       current: pathname?.includes("/catalog"),
     },
     {
       link: "/settings",
       icon: ICON_NAME.SETTINGS,
-      label: t("sidebar.settings"),
+      label: t("settings"),
       current: pathname?.includes("/settings"),
     },
   ];

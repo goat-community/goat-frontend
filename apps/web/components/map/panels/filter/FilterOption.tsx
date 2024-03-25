@@ -62,7 +62,7 @@ interface SelectOptionProps {
 export const SelectOption = (props: SelectOptionProps) => {
   const { value, setChange, options, fetchMoreData } = props;
 
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   let debounceTimer;
 
@@ -84,7 +84,7 @@ export const SelectOption = (props: SelectOptionProps) => {
   return (
     <div>
       <FormControl fullWidth>
-        <InputLabel>{t("panels.filter.select_value")}</InputLabel>
+        <InputLabel>{t("select_value")}</InputLabel>
         <Select
           MenuProps={{
             PaperProps: {
@@ -93,7 +93,7 @@ export const SelectOption = (props: SelectOptionProps) => {
           }}
           multiple
           value={value as unknown as string}
-          label={t("panels.filter.select_value")}
+          label={t("select_value")}
           onChange={(event: SelectChangeEvent) =>
             setChange(event.target.value as unknown as string[])
           }

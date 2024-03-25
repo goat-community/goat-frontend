@@ -8,11 +8,10 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AuthContainer from "@p4b/ui/components/AuthContainer";
 import AuthLayout from "@p4b/ui/components/AuthLayout";
-import { useSession } from "next-auth/react";
-// import { useTranslation } from "@/i18n/client";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -28,19 +27,21 @@ import { LoadingButton } from "@mui/lab";
 
 export default function OrganizationInviteJoin({ params: { inviteId } }) {
   const theme = useTheme();
+  const { t } = useTranslation("common");
   const [queryParams, _setQueryParams] = useState<GetInvitationsQueryParams>({
     type: "organization",
     invitation_id: inviteId,
   });
-  const { invitations, isLoading } = useInvitations(queryParams);
+  const { invitations, isLoading: isInvitationLoading } =
+    useInvitations(queryParams);
   const { status, data: session, update } = useSession();
   const router = useRouter();
   const [isBusy, setIsBusy] = useState(false);
-  const { t } = useTranslation(["onboarding", "common"]);
   const [responseResult, setResponseResult] = useState<ResponseResult>({
     message: "",
     status: undefined,
   });
+  const isLoading = useMemo(() => isInvitationLoading, [isInvitationLoading]);
 
   const invitation = useMemo(() => {
     if (
@@ -51,13 +52,20 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
       return invitations?.items?.[0];
   }, [invitations, session]);
 
+  useEffect(() => {
+    if (!invitations && !isLoading) return;
+    if (invitations?.items?.length === 0) {
+      signOut({ callbackUrl: "/" });
+    }
+  }, [invitations, isLoading, router]);
+
   async function handleAcceptInvite() {
     setIsBusy(true);
     try {
       await acceptInvitation(inviteId);
     } catch (_error) {
       setResponseResult({
-        message: t("onboarding:invite_accept_error"),
+        message: t("invite_accept_error"),
         status: "error",
       });
     } finally {
@@ -73,7 +81,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
       await declineInvitation(inviteId);
     } catch (_error) {
       setResponseResult({
-        message: t("onboarding:invite_decline_error"),
+        message: t("invite_decline_error"),
         status: "error",
       });
     } finally {
@@ -93,7 +101,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                 {invitation?.payload?.name && (
                   <Stack spacing={4} alignItems="center">
                     <Typography variant="h5">
-                      You have been invited to join the organization{": "}
+                      {`${t("invite_organization_message")}: `}
                       <b>{invitation?.payload?.name}</b>
                     </Typography>
                     <Avatar
@@ -104,7 +112,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                   </Stack>
                 )}
                 {!invitation && (
-                  <Typography variant="h5">We are sorry...</Typography>
+                  <Typography variant="h5">{t("we_are_sorry")}</Typography>
                 )}
               </>
             }
@@ -119,14 +127,12 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
               <>
                 {!invitation && (
                   <Typography variant="body1">
-                    We could not find the invitation you are looking for. Please
-                    try with a valid invitation link or another account.
+                    {t("invite_not_found_message")}
                   </Typography>
                 )}
                 {invitation && invitation.status == "pending" && (
                   <Typography variant="body1">
-                    Please confirm your invitation to join the organization by
-                    clicking the button below.
+                    {t("invite_join_organization_description")}
                   </Typography>
                 )}
               </>
@@ -140,7 +146,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                 >
                   {!invitation && (
                     <Link id="backToApplication" href="/">
-                      « Back to Application
+                      « {t("back_to_application")}
                     </Link>
                   )}
                   {invitation && (
@@ -155,7 +161,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                           mb: theme.spacing(2),
                         }}
                       >
-                        Join
+                        {t("accept")}
                       </LoadingButton>
                       <LoadingButton
                         fullWidth
@@ -166,7 +172,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                           color: theme.palette.error.main,
                         }}
                       >
-                        Decline
+                        {t("decline")}
                       </LoadingButton>
                     </>
                   )}

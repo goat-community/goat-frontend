@@ -12,7 +12,7 @@ export function useJobStatus(onSuccess?: () => void, onFailed?: () => void) {
   });
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const dispatch = useAppDispatch();
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     if (runningJobIds.length > 0) {

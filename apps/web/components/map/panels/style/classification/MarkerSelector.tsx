@@ -10,7 +10,7 @@ import { useState } from "react";
 const MarkerSelector = (props: OrdinalMarkerSelectorProps) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const [isClickAwayEnabled, setIsClickAwayEnabled] = useState(true);
 
   return (

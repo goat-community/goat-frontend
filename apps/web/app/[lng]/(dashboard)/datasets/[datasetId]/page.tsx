@@ -50,7 +50,7 @@ function CustomTabPanel(props: TabPanelProps) {
 
 export default function DatasetDetailPage({ params: { datasetId } }) {
   const router = useRouter();
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const { dataset, isLoading } = useDataset(datasetId);
   const [value, setValue] = useState(0);
 

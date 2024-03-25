@@ -21,7 +21,7 @@ interface TileGridProps {
 
 const TileGrid = (props: TileGridProps) => {
   const { items, isLoading } = props;
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
   const listProps = {
     xs: 12,
   };
@@ -67,8 +67,8 @@ const TileGrid = (props: TileGridProps) => {
               <EmptySection
                 label={
                   props.type === "project"
-                    ? t("projects.no_projects_found")
-                    : t("projects.no_datasets_found")
+                    ? t("no_projects_found")
+                    : t("no_datasets_found")
                 }
                 icon={
                   props.type === "project" ? ICON_NAME.MAP : ICON_NAME.DATABASE

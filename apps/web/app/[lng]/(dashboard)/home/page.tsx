@@ -21,7 +21,7 @@ import type { Layer } from "@/lib/validations/layer";
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
 
 const Home = () => {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   const queryParams: PaginatedQueryParams = {
     order: "descendent",
@@ -57,7 +57,7 @@ const Home = () => {
               alignItems: "center",
             }}
           >
-            <Typography variant="h6">{t("home.recent_project")}</Typography>
+            <Typography variant="h6">{t("recent_project")}</Typography>
             <Button
               variant="text"
               size="small"
@@ -72,7 +72,7 @@ const Home = () => {
                 borderRadius: 0,
               }}
             >
-              {t("home.see_all")}
+              {t("see_all")}
             </Button>
           </Box>
           <Divider sx={{ mb: 4 }} />

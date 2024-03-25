@@ -8,7 +8,7 @@ type NoValuesFoundProps = {
 };
 
 const NoValuesFound = ({ text }: NoValuesFoundProps) => {
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const theme = useTheme();
 
   return (

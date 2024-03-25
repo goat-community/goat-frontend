@@ -50,7 +50,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
     placeholder,
   } = props;
   const theme = useTheme();
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   const handleViewToggle = () => {
     const newView = view === "list" ? "grid" : "list";
@@ -76,22 +76,22 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
   const sortByItems: PopperMenuItem[] = [
     {
       id: "sort-by-alpha-asc",
-      label: `A-Z ${t("projects.sort.asc")}`,
+      label: `A-Z ${t("asc")}`,
       icon: ICON_NAME.SORT_ALPHA_ASC,
     },
     {
       id: "sort-by-alpha-desc",
-      label: `A-Z ${t("projects.sort.desc")}`,
+      label: `A-Z ${t("desc")}`,
       icon: ICON_NAME.SORT_ALPHA_DESC,
     },
     {
       id: "sort-by-last-updated",
-      label: t("projects.sort.last_updated"),
+      label: t("last_updated"),
       icon: ICON_NAME.CLOCK,
     },
     {
       id: "sort-by-last-created",
-      label: t("projects.sort.last_created"),
+      label: t("last_created"),
       icon: ICON_NAME.CLOCK,
     },
   ];
@@ -141,8 +141,8 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
             placeholder
               ? placeholder
               : props.contentType === "project"
-                ? t("projects.search_projects")
-                : t("projects.search_datasets")
+                ? t("search_projects")
+                : t("search_datasets")
           }
           endAdornment={
             value && (

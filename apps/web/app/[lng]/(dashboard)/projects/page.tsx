@@ -30,7 +30,7 @@ const Projects = () => {
     page: 1,
   });
   const [view, setView] = useState<"list" | "grid">("grid");
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   const {
     projects,
@@ -55,7 +55,7 @@ const Projects = () => {
           mb: 8,
         }}
       >
-        <Typography variant="h6">{t("projects.projects")}</Typography>
+        <Typography variant="h6">{t("projects")}</Typography>
         <Button
           disableElevation={true}
           startIcon={
@@ -65,7 +65,7 @@ const Projects = () => {
             setOpenProjectModal(true);
           }}
         >
-          {t("projects.new_project")}
+          {t("new_project")}
         </Button>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>

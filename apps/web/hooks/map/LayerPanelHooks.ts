@@ -17,7 +17,7 @@ import { useMemo, useState } from "react";
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 
 export const useLayerSettingsMoreMenu = () => {
-  const { t } = useTranslation(["maps", "common"]);
+  const { t } = useTranslation("common");
 
   function getLayerMoreMenuOptions(
     layerType: ProjectLayer["type"],
@@ -26,37 +26,37 @@ export const useLayerSettingsMoreMenu = () => {
       const featureOptions: PopperMenuItem[] = [
         {
           id: MapLayerActions.PROPERTIES,
-          label: t("common:properties"),
+          label: t("properties"),
           icon: ICON_NAME.CIRCLEINFO,
         },
         {
           id: MapLayerActions.ZOOM_TO,
-          label: t("maps:zoom_to"),
+          label: t("zoom_to"),
           icon: ICON_NAME.ZOOM_IN,
         },
         {
           id: ContentActions.TABLE,
-          label: t("maps:open_data_table"),
+          label: t("open_data_table"),
           icon: ICON_NAME.TABLE,
         },
         {
           id: MapLayerActions.DUPLICATE,
-          label: t("maps:duplicate"),
+          label: t("duplicate"),
           icon: ICON_NAME.COPY,
         },
         {
           id: MapLayerActions.RENAME,
-          label: t("common:rename"),
+          label: t("rename"),
           icon: ICON_NAME.EDIT,
         },
         {
           id: ContentActions.DOWNLOAD,
-          label: t("maps:download"),
+          label: t("download"),
           icon: ICON_NAME.DOWNLOAD,
         },
         {
           id: ContentActions.DELETE,
-          label: t("common:remove"),
+          label: t("remove"),
           icon: ICON_NAME.TRASH,
           color: "error.main",
         },
@@ -67,27 +67,27 @@ export const useLayerSettingsMoreMenu = () => {
       const tableOptions = [
         {
           id: MapLayerActions.PROPERTIES,
-          label: t("common:properties"),
+          label: t("properties"),
           icon: ICON_NAME.CIRCLEINFO,
         },
         {
           id: ContentActions.TABLE,
-          label: t("maps:open_data_table"),
+          label: t("open_data_table"),
           icon: ICON_NAME.TABLE,
         },
         {
           id: MapLayerActions.RENAME,
-          label: t("common:rename"),
+          label: t("rename"),
           icon: ICON_NAME.EDIT,
         },
         {
           id: ContentActions.DOWNLOAD,
-          label: t("maps:download"),
+          label: t("download"),
           icon: ICON_NAME.DOWNLOAD,
         },
         {
           id: ContentActions.DELETE,
-          label: t("common:remove"),
+          label: t("remove"),
           icon: ICON_NAME.TRASH,
           color: "error.main",
         },

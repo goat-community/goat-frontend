@@ -10,7 +10,7 @@ type DropdownFooterProps = {
 };
 
 const DropdownFooter = (props: DropdownFooterProps) => {
-  const { t } = useTranslation(["common", "map"]);
+  const { t } = useTranslation("common");
   return (
     <>
       <Box sx={{ px: 1 }}>

@@ -68,7 +68,7 @@ const orgUseCase = [
 ];
 
 export const useOrganizationSetup = () => {
-  const { t } = useTranslation(["onboarding", "countries", "common"]);
+  const { t } = useTranslation(["common", "countries"]);
 
   const countriesOptions = useMemo(() => {
     const filtered = ["EU"];
@@ -97,7 +97,7 @@ export const useOrganizationSetup = () => {
     return orgTypes.map((type) => {
       return {
         value: type,
-        label: type ? t(`onboarding:organization_type_options.${type}`) : "",
+        label: type ? t(`maps:organization_type_options.${type}`) : "",
       };
     });
   }, [t]);
@@ -106,7 +106,7 @@ export const useOrganizationSetup = () => {
     return orgIndustry.map((industry) => {
       return {
         value: industry,
-        label: industry ? t(`onboarding:organization_industry_options.${industry}`) : "",
+        label: industry ? t(`maps:organization_industry_options.${industry}`) : "",
       };
     });
   }, [t]);
@@ -124,7 +124,7 @@ export const useOrganizationSetup = () => {
     return orgUseCase.map((useCase) => {
       return {
         value: useCase,
-        label: useCase ? t(`onboarding:organization_use_case_options.${useCase}`) : "",
+        label: useCase ? t(`maps:organization_use_case_options.${useCase}`) : "",
       };
     });
   }, [t]);

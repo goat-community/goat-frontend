@@ -30,7 +30,7 @@ import { signOut } from "next-auth/react";
 
 const Profile = () => {
   const theme = useTheme();
-  const { t } = useTranslation(["dashboard", "common"]);
+  const { t } = useTranslation("common");
   const { userProfile, isLoading } = useUserProfile();
   const [isProfileUpdateBusy, setIsProfileUpdateBusy] =
     useState<boolean>(false);
@@ -51,7 +51,11 @@ const Profile = () => {
     resolver: zodResolver(userSchemaUpdate),
     defaultValues: useMemo(() => {
       if (userProfile) {
-        return userSchemaUpdate.parse(userProfile);
+        const parsed = userSchemaUpdate.safeParse(userProfile);
+        if (!parsed.success) {
+          return {};
+        }
+        return parsed.data;
       }
       return {};
     }, [userProfile]),
@@ -59,7 +63,11 @@ const Profile = () => {
 
   useEffect(() => {
     if (userProfile) {
-      reset(userSchemaUpdate.parse(userProfile));
+      const parsed = userSchemaUpdate.safeParse(userProfile);
+      if (!parsed.success) {
+        return;
+      }
+      reset(parsed.data);
     }
   }, [userProfile, reset]);
 
@@ -67,10 +75,10 @@ const Profile = () => {
     setIsProfileUpdateBusy(true);
     try {
       await updateUserProfile(data);
-      toast.success("Profile updated");
+      toast.success(t("profile_updated_success"));
       reset({}, { keepValues: true });
     } catch (_error) {
-      toast.error("Error updating profile");
+      toast.error(t("profile_update_error"));
     } finally {
       setIsProfileUpdateBusy(false);
     }
@@ -80,10 +88,10 @@ const Profile = () => {
     setIsDeleteAccountBusy(true);
     try {
       await deleteAccount();
-      toast.success("Account deleted");
+      toast.success(t("account_deleted_success"));
       reset({}, { keepValues: true });
     } catch (_error) {
-      toast.error("Error deleting account");
+      toast.error(t("account_delete_error"));
     } finally {
       setIsDeleteAccountBusy(false);
     }
@@ -117,8 +125,8 @@ const Profile = () => {
           {/* Email Change Confirmation */}
           <ConfirmModal
             open={confirmLogoutDialogOpen}
-            title="Email Change Confirmation"
-            body="This action will log you out of the system. Are you sure you want to continue? You will have to login again with your new email."
+            title={t("email_change_confirmation")}
+            body={t("email_change_confirmation_body")}
             onClose={() => {
               setConfirmLogoutDialogOpen(false);
             }}
@@ -147,7 +155,7 @@ const Profile = () => {
               <TextField
                 required
                 helperText={errors.first_name ? errors.first_name?.message : ""}
-                label="First Name"
+                label={t("first_name")}
                 id="name"
                 {...registerUserProfile("first_name")}
                 error={errors.first_name ? true : false}
@@ -156,7 +164,7 @@ const Profile = () => {
               <TextField
                 required
                 helperText={errors.last_name ? errors.last_name?.message : ""}
-                label="Last Name"
+                label={t("last_name")}
                 id="name"
                 {...registerUserProfile("last_name")}
                 error={errors.last_name ? true : false}
@@ -167,9 +175,9 @@ const Profile = () => {
                 helperText={
                   errors.email
                     ? errors.email?.message
-                    : "You have to logout in order to reflect changes for email."
+                    : t("email_change_warning")
                 }
-                label="Email"
+                label={t("email")}
                 id="name"
                 {...registerUserProfile("email")}
                 error={errors.email ? true : false}
@@ -190,7 +198,7 @@ const Profile = () => {
                   disabled={isProfileUpdateBusy || !isDirty || !isValid}
                   type="submit"
                 >
-                  Update
+                  {t("update")}
                 </LoadingButton>
               </Stack>
             </>
@@ -205,10 +213,10 @@ const Profile = () => {
           {/* Delete Account Confirmation */}
           <ConfirmModal
             open={confirmDeleteAccountDialogOpen}
-            title={t("dashboard:delete_account")}
+            title={t("delete_account")}
             body={
               <Trans
-                i18nKey="dashboard:delete_account_confirmation_body"
+                i18nKey="common:delete_account_confirmation_body"
                 values={{ email: userProfile?.email }}
                 components={{ b: <b />, ul: <ul />, li: <li /> }}
               />
@@ -221,8 +229,8 @@ const Profile = () => {
               await _deleteAccount();
               signOut({ callbackUrl: process.env.NEXT_PUBLIC_APP_URL });
             }}
-            closeText={t("common:close")}
-            confirmText={t("common:delete")}
+            closeText={t("close")}
+            confirmText={t("delete")}
             matchText={userProfile?.email}
           />
 
@@ -232,17 +240,17 @@ const Profile = () => {
               fontWeight="bold"
               color={theme.palette.error.main}
             >
-              {t("dashboard:danger_zone")}
+              {t("danger_zone")}
             </Typography>
             <Typography variant="caption">
-              {t("dashboard:danger_zone_account_description")}
+              {t("danger_zone_account_description")}
             </Typography>
           </Box>
           <Divider />
           <Stack>
             <Typography variant="body1">
               <Trans
-                i18nKey="dashboard:danger_zone_account_body"
+                i18nKey="common:danger_zone_account_body"
                 components={{ b: <b /> }}
               />
             </Typography>
@@ -262,7 +270,7 @@ const Profile = () => {
               disabled={isProfileUpdateBusy}
             >
               <Typography variant="body1" fontWeight="bold" color="inherit">
-                {t("dashboard:delete_account")}
+                {t("delete_account")}
               </Typography>
             </LoadingButton>
           </Stack>

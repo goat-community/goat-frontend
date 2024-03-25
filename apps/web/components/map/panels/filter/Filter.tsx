@@ -57,7 +57,7 @@ const FilterPanel = (props: FilterProps) => {
 
   const dispatch = useAppDispatch();
   const { activeLayer, mutate } = useFilterQueries(projectId as string);
-  const { t } = useTranslation("maps");
+  const { t } = useTranslation("common");
   const theme = useTheme();
 
   function createExpression(type: "spatial" | "regular") {
@@ -167,7 +167,7 @@ const FilterPanel = (props: FilterProps) => {
 
   return (
     <Container
-      title={t("panels.filter.filter")}
+      title={t("filter")}
       close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <>
@@ -177,19 +177,19 @@ const FilterPanel = (props: FilterProps) => {
           />
           {expressions && expressions.length > 1 ? (
             <FormControl fullWidth>
-              <InputLabel>{t("panels.filter.logical_operator")}</InputLabel>
+              <InputLabel>{t("logical_operator")}</InputLabel>
               <Select
                 value={logicalOperator}
-                label={t("panels.filter.logical_operator")}
+                label={t("logical_operator")}
                 onChange={(event: SelectChangeEvent) => {
                   setLogicalOperator(event.target.value as "or" | "and");
                 }}
               >
                 <MenuItem key={v4()} value="and">
-                  {t("panels.filter.and")}
+                  {t("and")}
                 </MenuItem>
                 <MenuItem key={v4()} value="or">
-                  {t("panels.filter.or")}
+                  {t("or")}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -228,7 +228,7 @@ const FilterPanel = (props: FilterProps) => {
                   }}
                 >
                   <Typography variant="body1">
-                    {t("panels.filter.filter_your_data")}
+                    {t("filter_your_data")}
                   </Typography>
                   <Typography
                     sx={{
@@ -242,7 +242,7 @@ const FilterPanel = (props: FilterProps) => {
                     }}
                     variant="subtitle2"
                   >
-                    {t("panels.filter.message")}
+                    {t("filter_layer_message")}
                   </Typography>
                 </Box>
               </Card>
@@ -264,7 +264,7 @@ const FilterPanel = (props: FilterProps) => {
               }
             >
               <Typography variant="body2" fontWeight="bold" color="inherit">
-                {t("panels.filter.create_expression")}
+                {t("create_expression")}
               </Typography>
             </Button>
             <Menu
@@ -294,7 +294,7 @@ const FilterPanel = (props: FilterProps) => {
                         />
                       </ListItemIcon>
                       <Typography variant="body2">
-                      {t("panels.filter.logical_expression")}
+                      {t("logical_expression")}
                       </Typography>
                     </MenuItem>
                     <MenuItem onClick={() => createExpression("spatial")}>
@@ -305,7 +305,7 @@ const FilterPanel = (props: FilterProps) => {
                         />
                       </ListItemIcon>
                       <Typography variant="body2">
-                        {t("panels.filter.spatial_expression")}
+                        {t("spatial_expression")}
                       </Typography>
                     </MenuItem>
                   </MenuList>
@@ -319,7 +319,7 @@ const FilterPanel = (props: FilterProps) => {
               disabled={!expressions || !expressions.length}
               onClick={() => setExpressions([])}
             >
-              {t("panels.filter.clear_filter")}
+              {t("clear_filter")}
             </Button>
           </Box>
         </>

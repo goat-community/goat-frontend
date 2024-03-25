@@ -6,21 +6,21 @@ import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useState } from "react";
 
 export const useOrgMemberSettingsMoreMenu = () => {
-  const { t } = useTranslation(["dashboard", "common"]);
+  const { t } = useTranslation("common");
   const activeMemberMoreMenuOptions: PopperMenuItem[] = [
     {
       id: OrgMemberActions.EDIT,
-      label: t("common:edit"),
+      label: t("edit"),
       icon: ICON_NAME.EDIT,
     },
     {
       id: OrgMemberActions.TRANSFER_OWNERSHIP,
-      label: t("dashboard:transfer_ownership"),
+      label: t("transfer_ownership"),
       icon: ICON_NAME.CROWN,
     },
     {
       id: OrgMemberActions.DELETE,
-      label: t("common:remove"),
+      label: t("remove"),
       icon: ICON_NAME.TRASH,
       color: "error.main",
     },
@@ -29,7 +29,7 @@ export const useOrgMemberSettingsMoreMenu = () => {
   const pendingInvitationMoreMenuOptions: PopperMenuItem[] = [
     {
       id: OrgMemberActions.CANCEL_INVITATION,
-      label: t("dashboard:cancel_invitation"),
+      label: t("cancel_invitation"),
       icon: ICON_NAME.TRASH,
       color: "error.main",
     },

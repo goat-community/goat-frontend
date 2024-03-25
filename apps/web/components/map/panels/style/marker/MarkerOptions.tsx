@@ -27,7 +27,7 @@ const MarkerOptions = ({
   collapsed?: boolean;
   onStyleChange?: (newStyle: FeatureLayerProperties) => void;
 }) => {
-  const { t } = useTranslation(["maps", "common"]);
+  const { t } = useTranslation("common");
 
   return (
     <SectionOptions
@@ -35,10 +35,10 @@ const MarkerOptions = ({
       baseOptions={
         <MarkerIconPicker
           selectedMarker={{
-            name: layerStyle?.[`${type}`]?.["name"] || t("maps:select_marker"),
+            name: layerStyle?.[`${type}`]?.["name"] || t("select_marker"),
             url: layerStyle?.[`${type}`]?.["url"] || "",
           }}
-          label={t("maps:single_marker")}
+          label={t("single_marker")}
           onSelectMarker={(marker) => {
             const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
             newStyle[`${type}`] = {
@@ -63,8 +63,8 @@ const MarkerOptions = ({
                 onStyleChange(newStyle);
               }
             }}
-            label={t("maps:marker_based_on")}
-            tooltip={t("maps:marker_based_on_desc")}
+            label={t("marker_based_on")}
+            tooltip={t("marker_based_on_desc")}
           />
 
           {layerStyle?.[`custom_${type}`] && layerStyle?.[`${type}_field`] && (
@@ -77,7 +77,7 @@ const MarkerOptions = ({
                   onStyleChange(newStyle);
                 }
               }}
-              label={t("maps:ordinal_marker")}
+              label={t("ordinal_marker")}
               activeLayerId={layerId}
               activeLayerField={
                 layerStyle[`${type}_field`] || { name: "", type: "string" }

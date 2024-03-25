@@ -20,7 +20,7 @@ const LabelOptions = ({
   collapsed?: boolean;
   // onStyleChange?: (newStyle: FeatureLayerProperties) => void;
 }) => {
-  const { t } = useTranslation(["maps", "common"]);
+  const { t } = useTranslation("common");
 
   return (
     <SectionOptions
@@ -32,8 +32,8 @@ const LabelOptions = ({
           setSelectedField={(field) => {
             console.log(field);
           }}
-          label={t("maps:color_based_on")}
-          tooltip={t("maps:color_based_on_desc")}
+          label={t("color_based_on")}
+          tooltip={t("color_based_on_desc")}
         />
       }
       advancedOptions={<></>}

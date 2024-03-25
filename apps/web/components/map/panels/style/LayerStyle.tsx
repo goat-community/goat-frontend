@@ -35,7 +35,7 @@ import { useMap } from "react-map-gl";
 import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
 
 const LayerStylePanel = ({ projectId }: { projectId: string }) => {
-  const { t } = useTranslation(["maps", "common"]);
+  const { t } = useTranslation("common");
   const { map } = useMap();
   const dispatch = useDispatch();
   const { activeLayer } = useActiveLayer(projectId);
@@ -196,9 +196,9 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       try {
         await updateDataset(dataset.id, dataset);
         await mutateDataset(dataset, false);
-        toast.success(t("maps:style_saved_as_dataset_default_success"));
+        toast.success(t("style_saved_as_dataset_default_success"));
       } catch (err) {
-        toast.error(t("maps:style_saved_as_dataset_default_error"));
+        toast.error(t("style_saved_as_dataset_default_error"));
       }
     }
   }, [dataset, activeLayer?.properties, mutateDataset, t]);
@@ -207,12 +207,12 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     const layerStyleMoreMenuOptions: PopperMenuItem[] = [
       {
         id: LayerStyleActions.SAVE_AS_DEFAULT,
-        label: t("common:save_as_default"),
+        label: t("save_as_default"),
         icon: ICON_NAME.SAVE,
       },
       {
         id: LayerStyleActions.RESET,
-        label: t("common:reset"),
+        label: t("reset"),
         icon: ICON_NAME.REFRESH,
       },
     ];
@@ -260,7 +260,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
               <MoreMenu
                 menuItems={layerStyleMoreMenuOptions}
                 menuButton={
-                  <Tooltip title={t("maps:more_options")} arrow placement="top">
+                  <Tooltip title={t("more_options")} arrow placement="top">
                     <IconButton>
                       <Icon
                         iconName={ICON_NAME.MORE_VERT}
@@ -302,8 +302,8 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         }}
                         label={
                           activeLayer?.feature_layer_geometry_type === "line"
-                            ? t("maps:color")
-                            : t("maps:fill_color")
+                            ? t("color")
+                            : t("fill_color")
                         }
                         collapsed={collapseFillOptions}
                         setCollapsed={setCollapseFillOptions}
@@ -348,8 +348,8 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   }
                   label={
                     activeLayer?.feature_layer_geometry_type === "line"
-                      ? t("maps:color")
-                      : t("maps:stroke_color")
+                      ? t("color")
+                      : t("stroke_color")
                   }
                   collapsed={collapseStrokeColorOptions}
                   setCollapsed={setCollapseStrokeColorOptions}
@@ -394,7 +394,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         alwaysActive={
                           activeLayer?.feature_layer_geometry_type === "line"
                         }
-                        label={t("maps:stroke_width")}
+                        label={t("stroke_width")}
                         collapsed={collapseStrokeWidthOptions}
                         setCollapsed={setCollapseStrokeWidthOptions}
                         disableAdvanceOptions={true}
@@ -426,7 +426,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         onToggleChange={(event) => {
                           onToggleChange(event, "custom_marker");
                         }}
-                        label={t("maps:custom_marker")}
+                        label={t("custom_marker")}
                         collapsed={collapsedMarkerIconOptions}
                         setCollapsed={setCollapsedMarkerIconOptions}
                       />
@@ -463,7 +463,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                           <SectionHeader
                             active={markerExists}
                             alwaysActive={true}
-                            label={t("maps:marker_size")}
+                            label={t("marker_size")}
                             collapsed={collapseRadiusOptions}
                             setCollapsed={setCollapseRadiusOptions}
                             disableAdvanceOptions={true}
@@ -497,7 +497,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                           <SectionHeader
                             active={true}
                             alwaysActive={true}
-                            label={t("maps:radius")}
+                            label={t("radius")}
                             collapsed={collapseStrokeWidthOptions}
                             setCollapsed={setCollapseStrokeWidthOptions}
                             disableAdvanceOptions={true}
@@ -528,7 +528,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                 <SectionHeader
                   active={false}
                   alwaysActive={true}
-                  label={t("maps:labels")}
+                  label={t("labels")}
                   collapsed={collapseLabelOptions}
                   setCollapsed={setCollapseLabelOptions}
                 />

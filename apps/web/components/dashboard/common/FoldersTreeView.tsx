@@ -53,7 +53,7 @@ interface FoldersTreeViewProps {
 export default function FoldersTreeView(props: FoldersTreeViewProps) {
   const { setQueryParams, queryParams, enableActions = true } = props;
   const [open, setOpen] = useState<boolean[]>([true, false, false]);
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation("common");
 
   const handleListItemClick = (
     _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -105,20 +105,20 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
 
   const folderTypes = ["folder", "team", "organization"];
   const folderTypeTitles = [
-    t("projects.my_content"),
-    t("projects.teams"),
-    t("projects.organizations"),
+    t("my_content"),
+    t("teams"),
+    t("organizations"),
   ];
 
   const moreMenuItems: PopperMenuItem[] = [
     {
       id: "rename",
-      label: t("projects.rename"),
+      label: t("rename"),
       icon: ICON_NAME.EDIT,
     },
     {
       id: "delete",
-      label: t("projects.delete"),
+      label: t("delete"),
       icon: ICON_NAME.TRASH,
       color: theme.palette.error.main,
     },
@@ -217,7 +217,7 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
                   }
                 />
                 {typeIndex === 0 && enableActions && (
-                  <Tooltip title={t("projects.new_folder")} placement="top">
+                  <Tooltip title={t("new_folder")} placement="top">
                     <IconButton
                       size="small"
                       onClick={(event) => {

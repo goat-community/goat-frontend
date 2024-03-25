@@ -28,7 +28,7 @@ export type HeaderProps = {
 
 export default function Header(props: HeaderProps) {
   const theme = useTheme();
-  const { t } = useTranslation(["maps"]);
+  const { t } = useTranslation(["common"]);
   const {
     tags,
     title,
@@ -51,7 +51,7 @@ export default function Header(props: HeaderProps) {
           <Divider orientation="vertical" flexItem />
           {lastSaved && (
             <Typography variant="caption">
-              {`${t("maps:last_saved")}: ${format(
+              {`${t("common:last_saved")}: ${format(
                 parseISO(lastSaved),
                 "hh:mma dd/MM/yyyy",
               )
@@ -80,7 +80,7 @@ export default function Header(props: HeaderProps) {
             justifyContent="center"
             alignItems="center"
           >
-            <Tooltip title={t("maps:open_documentation")}>
+            <Tooltip title={t("common:open_documentation")}>
               <IconButton
                 size="small"
                 onClick={() => {
