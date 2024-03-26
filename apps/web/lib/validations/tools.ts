@@ -121,7 +121,7 @@ export const ptTimeWindow = z.object({
   to_time: z.number().min(0).max(86400),
 });
 export const catchmentAreaBaseSchema = z.object({
-  isochrone_type: catchmentAreaShapeEnum.default("polygon"),
+  catchment_area_type: catchmentAreaShapeEnum.default("polygon"),
   starting_points: startingPointSchema,
   polygon_difference: z.boolean(),
 });

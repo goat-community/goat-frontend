@@ -237,7 +237,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   const handleRun = async () => {
     const payload = {
-      isochrone_type: catchmentAreaShapeType.value,
+      catchment_area_type: catchmentAreaShapeType.value,
       polygon_difference: isPolygonDifference,
     };
     if (startingPointMethod.value === "map") {

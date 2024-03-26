@@ -5,17 +5,17 @@ import type {
 } from "@/lib/validations/tools";
 
 const ACTIVE_MOBILITY_CATCHMENT_AREA_API_BASE_URL = new URL(
-  "api/v2/active-mobility/isochrone",
+  "api/v2/active-mobility/catchment-area",
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
 const CAR_CATCHMENT_AREA_API_BASE_URL = new URL(
-  "api/v2/motorized-mobility/car/isochrone",
+  "api/v2/motorized-mobility/car/catchment-area",
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
 const PT_CATCHMENT_AREA_API_BASE_URL = new URL(
-  "api/v2/motorized-mobility/pt/isochrone",
+  "api/v2/motorized-mobility/pt/catchment-area",
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
 
