@@ -9,6 +9,8 @@ import { styled } from "@mui/material/styles";
 import CustomColorPicker from "@/components/map/panels/style/color/CustomColorPicker";
 import PresetColorPicker from "@/components/map/panels/style/color/PresetColorPicker";
 import type { SingleColorSelectorProps } from "@/types/map/color";
+import { useTranslation } from "@/i18n/client";
+import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 
 enum SingleColorType {
   Picker = "picker",
@@ -16,8 +18,8 @@ enum SingleColorType {
 }
 
 const CustomStyledSingleColorSelector = styled("div")(({ theme }) => ({
-    paddingLeft: `${theme.spacing(3)}`,
-    paddingRight: `${theme.spacing(3)}`,
+  paddingLeft: `${theme.spacing(3)}`,
+  paddingRight: `${theme.spacing(3)}`,
   ".side-panel-section-group": {
     marginBottom: `${theme.spacing(3)}`,
   },
@@ -28,6 +30,7 @@ const CustomStyledSingleColorSelector = styled("div")(({ theme }) => ({
 }));
 
 const SingleColorSelector = (props: SingleColorSelectorProps) => {
+  const { t } = useTranslation("common");
   const containerRef = useRef(null);
   const [colorSelectionType, setColorSelectionType] = useState(
     SingleColorType.Picker,
@@ -62,17 +65,19 @@ const SingleColorSelector = (props: SingleColorSelectorProps) => {
         <ToggleButton
           value={SingleColorType.Picker}
           aria-labelledby="Color picker button"
+          sx={{ overflow: "hidden" }}
         >
           <Typography variant="caption" color="inherit">
-            Color Picker
+            {t("color_picker")}
           </Typography>
         </ToggleButton>
         <ToggleButton
+          sx={{ overflow: "hidden" }}
           value={SingleColorType.Preset}
           aria-labelledby="Preset colors button"
         >
           <Typography variant="caption" color="inherit">
-            Preset Colors{" "}
+            {t("preset_colors")}
           </Typography>
         </ToggleButton>
       </ToggleButtonGroup>

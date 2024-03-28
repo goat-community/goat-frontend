@@ -74,11 +74,11 @@ const LayerInfo = ({ layer }: { layer: ProjectLayer }) => {
         <>
           <Stack spacing={2}>
             <Typography variant="body2" fontWeight="bold">
-              Dataset Source
+              {t('dataset_source')}
             </Typography>
             <Typography variant="body2">{layer.name}</Typography>
             <Typography variant="body2" fontWeight="bold">
-              Type
+              {t("type")}
             </Typography>
             <Typography variant="body2">{t(layer.type)}</Typography>
           </Stack>
@@ -160,7 +160,7 @@ const Visibility = ({
       body={
         <Stack spacing={4}>
           <Box>
-            <Typography variant="body2">Opacity</Typography>
+            <Typography variant="body2">{t("opacity")}</Typography>
             <Box sx={{ px: 2, mt: 2 }}>
               <Slider
                 aria-label="Layer Opacity"
@@ -178,7 +178,7 @@ const Visibility = ({
             </Box>
           </Box>
           <Box>
-            <Typography variant="body2">Visibility Range</Typography>
+            <Typography variant="body2">{t('visibility_range')}</Typography>
             <Box sx={{ px: 2, mt: 2 }}>
               <Slider
                 getAriaLabel={() => "Visibility Range"}

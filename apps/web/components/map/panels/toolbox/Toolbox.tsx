@@ -68,7 +68,7 @@ const Toolbox = () => {
 
   const main_accordions = [
     {
-      name: "Accessibility Indicators",
+      name: t("accessibility_indicators"),
       value: "accessibility_indicators",
       children: [
         "catchment_area",
@@ -79,19 +79,19 @@ const Toolbox = () => {
       icon: ICON_NAME.BULLSEYE,
     },
     {
-      name: "Data Management",
+      name: t('data_management'),
       value: "data_management",
       children: ["join"],
       icon: ICON_NAME.TABLE,
     },
     {
-      name: "Geoanalysis",
+      name: t('geoanalysis'),
       value: "geoanalysis",
       children: ["aggregate", "aggregate_polygon", "origin_destination"],
       icon: ICON_NAME.CHART,
     },
     {
-      name: "Geoprocessing",
+      name: t('geoprocessing'),
       value: "geoprocessing",
       children: ["buffer"],
       icon: ICON_NAME.SETTINGS,

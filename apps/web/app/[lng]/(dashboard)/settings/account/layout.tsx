@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/i18n/client";
 import type { NavItem } from "@/types/common/navigation";
 import { Box, Tab, Tabs } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
@@ -12,18 +13,19 @@ interface AccountLayoutProps {
 
 const AccountLayout = (props: AccountLayoutProps) => {
   const pathname = usePathname();
+  const { t } = useTranslation("common")
 
   const navigation: NavItem[] = [
     {
       link: "/profile",
       icon: ICON_NAME.USER,
-      label: "Profile",
+      label: t("profile"),
       current: pathname?.includes("/profile"),
     },
     {
       link: "/preferences",
       icon: ICON_NAME.SETTINGS,
-      label: "Preferences",
+      label: t("preferences"),
       current: pathname?.includes("/preferences"),
     },
   ];
