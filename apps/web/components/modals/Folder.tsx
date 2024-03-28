@@ -19,6 +19,7 @@ import { useTranslation } from "@/i18n/client";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { mutate } from "swr";
+import { Trans } from "react-i18next";
 
 export interface SelectedFolderForEdit {
   id: string;
@@ -107,8 +108,8 @@ const FolderModal: React.FC<FolderDialogProps> = ({
               folderName.length > 29
                 ? t("folder_rule")
                 : existingFolderNames?.includes(folderName)
-                ? t("folder_exists")
-                : ""
+                  ? t("folder_exists")
+                  : ""
             }
             onChange={(e) => setFolderName(e.target.value)}
           />
@@ -116,7 +117,11 @@ const FolderModal: React.FC<FolderDialogProps> = ({
 
         {type === "delete" && (
           <DialogContentText>
-            {t("are_you_sure")} <b>{selectedFolder?.name}</b>?
+            <Trans
+              i18nKey="common:are_you_sure_to_delete_folder"
+              values={{ folder: selectedFolder?.name }}
+              components={{ b: <b /> }}
+            />
           </DialogContentText>
         )}
       </DialogContent>

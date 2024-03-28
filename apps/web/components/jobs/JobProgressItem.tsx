@@ -1,3 +1,5 @@
+import { OverflowTypograpy } from "@/components/common/OverflowTypography";
+import { useTranslation } from "@/i18n/client";
 import type { JobStatusType, JobType } from "@/lib/validations/jobs";
 import {
   Box,
@@ -15,7 +17,7 @@ interface JobProgressItemProps {
   type: JobType;
   status: JobStatusType;
   name: string;
-  date: string
+  date: string;
 }
 
 const statusIcons: Record<JobStatusType, ICON_NAME> = {
@@ -28,6 +30,7 @@ const statusIcons: Record<JobStatusType, ICON_NAME> = {
 };
 
 export default function JobProgressItem(props: JobProgressItemProps) {
+  const { t } = useTranslation("common");
   const theme = useTheme();
   const { type, status, name, date } = props;
 
@@ -52,15 +55,35 @@ export default function JobProgressItem(props: JobProgressItemProps) {
       aria-label={name}
       role="job_item"
     >
-      <Box flexGrow={1} flexShrink={1} flexBasis="100%" sx={{ mr: 2 }} width="0">
+      <Box
+        flexGrow={1}
+        flexShrink={1}
+        flexBasis="100%"
+        sx={{ mr: 2 }}
+        width="0"
+      >
         <Stack spacing={2}>
           <Box textOverflow="ellipsis" overflow="hidden">
-            <Typography variant="body2" fontWeight="bold" noWrap>
-              {type} - {format(parseISO(date), "hh:mma dd/MM/yyyy").replace("PM", " PM").replace("AM", " AM")}
-            </Typography>
+            <OverflowTypograpy
+              variant="body2"
+              fontWeight="bold"
+              tooltipProps={{
+                placement: "top",
+                arrow: true,
+              }}
+            >
+              <>
+                {t(type)} -{" "}
+                {format(parseISO(date), "hh:mma dd/MM/yyyy")
+                  .replace("PM", " PM")
+                  .replace("AM", " AM")}
+              </>
+            </OverflowTypograpy>
           </Box>
           <LinearProgress
-            {...(status === "failed" || status === "finished" || status === "killed"
+            {...(status === "failed" ||
+            status === "finished" ||
+            status === "killed"
               ? { variant: "determinate", value: 100 }
               : {})}
             sx={{
@@ -76,11 +99,11 @@ export default function JobProgressItem(props: JobProgressItemProps) {
           <Typography variant="caption" fontWeight="bold">
             {
               {
-                running: "Running",
-                finished: "Finished successfully",
-                pending: "Pending",
-                failed: "Failed",
-                killed: "Killed",
+                running: t("running"),
+                finished: t("finished_successfully"),
+                pending: t("pending"),
+                failed: t("failed"),
+                killed: t("terminated"),
               }[status]
             }
           </Typography>

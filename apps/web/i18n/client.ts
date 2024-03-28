@@ -11,6 +11,9 @@ import { getOptions, languages } from "./settings";
 
 const runsOnServerSide = typeof window === "undefined";
 import { useParams } from "next/navigation";
+import { de, enUS } from "date-fns/locale";
+
+
 
 //
 i18next
@@ -30,10 +33,10 @@ i18next
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useTranslation(ns?: string | string[], options?: UseTranslationOptions<any>) {
-  
+
   const params = useParams();
   const lng = typeof params.lng === "string" ? params.lng : "en";
-  
+
   const ret = useTranslationOrg(ns, options);
   const { i18n } = ret;
   if (runsOnServerSide && lng && i18n.resolvedLanguage !== lng) {
@@ -55,4 +58,9 @@ export function useTranslation(ns?: string | string[], options?: UseTranslationO
     }, [lng, i18n]);
   }
   return ret;
+}
+
+export function useDateFnsLocale() {
+  const { i18n } = useTranslation();
+  return i18n?.language === "de" ? de : enUS;
 }

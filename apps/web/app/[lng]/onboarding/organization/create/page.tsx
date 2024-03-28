@@ -147,17 +147,17 @@ export default function OrganizationOnBoarding() {
             <>
               <Stack sx={{ mb: 8 }} spacing={2}>
                 <Typography variant="h5">
-                  {t(`maps:${STEPS[activeStep]}_title`)}
+                  {t(`common:${STEPS[activeStep]}_title`)}
                 </Typography>
                 <Typography variant="body2">
-                  {t(`maps:${STEPS[activeStep]}_subtitle`)}
+                  {t(`common:${STEPS[activeStep]}_subtitle`)}
                 </Typography>
               </Stack>
               <Box sx={{ width: "100%" }}>
                 <Stepper activeStep={activeStep}>
                   {STEPS.map((label) => (
                     <Step key={label}>
-                      <StepLabel>{t(`maps:${label}_stepper`)}</StepLabel>
+                      <StepLabel>{t(`common:${label}_stepper`)}</StepLabel>
                     </Step>
                   ))}
                 </Stepper>

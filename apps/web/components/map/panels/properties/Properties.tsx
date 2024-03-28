@@ -67,7 +67,7 @@ const LayerInfo = ({ layer }: { layer: ProjectLayer }) => {
     <AccordionWrapper
       header={
         <>
-          <AccordionHeader title="Layer Info" />
+          <AccordionHeader title={t('layer_info')} />
         </>
       }
       body={
@@ -95,6 +95,7 @@ const Visibility = ({
   layer: ProjectLayer;
   projectId: string;
 }) => {
+  const { t } = useTranslation("common");
   const { layers: projectLayers, mutate: mutateProjectLayers } =
     useProjectLayers(projectId);
   const layerType = layer.type;
@@ -155,7 +156,7 @@ const Visibility = ({
 
   return (
     <AccordionWrapper
-      header={<AccordionHeader title="Visibility" />}
+      header={<AccordionHeader title={t('visibility')} />}
       body={
         <Stack spacing={4}>
           <Box>
@@ -202,9 +203,10 @@ const Visibility = ({
 };
 
 const Symbology = ({ layer }: { layer: ProjectLayer }) => {
+  const { t } = useTranslation("common");
   return (
     <AccordionWrapper
-      header={<AccordionHeader title="Symbology" />}
+      header={<AccordionHeader title={t('symbology')} />}
       body={<>{layer && <Legend layers={[layer]} />}</>}
     />
   );
@@ -212,10 +214,11 @@ const Symbology = ({ layer }: { layer: ProjectLayer }) => {
 
 const PropertiesPanel = ({ projectId }: { projectId: string }) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation("common");
   const { activeLayer } = useActiveLayer(projectId);
   return (
     <Container
-      title="Properties"
+      title={t("properties")}
       direction="right"
       disablePadding={true}
       close={() => dispatch(setActiveRightPanel(undefined))}

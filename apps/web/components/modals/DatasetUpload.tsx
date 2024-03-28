@@ -171,7 +171,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         }
       }
     } catch (error) {
-      toast.error("Error uploading dataset");
+      toast.error(t('error_uploading_dataset'));
       console.error("error", error);
     } finally {
       handleOnClose();

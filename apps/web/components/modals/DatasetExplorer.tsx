@@ -72,7 +72,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
         zoomToLayer(map, selectedDataset.extent);
       }
     } catch (error) {
-      toast.error("Error adding layer");
+      toast.error(t('error_adding_layer'));
     } finally {
       setIsBusy(false);
       handleOnClose();
@@ -81,7 +81,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
   return (
     <>
       <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth="md">
-        <DialogTitle>Dataset Explorer</DialogTitle>
+        <DialogTitle>{t("dataset_explorer")}</DialogTitle>
         <DialogContent>
           <Box sx={{ width: "100%" }}>
             <Grid container justifyContent="space-between" spacing={4}>
@@ -168,7 +168,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
               onClick={handleOnAdd}
               disabled={!selectedDataset || isDatasetLoading}
             >
-              Add Layer
+              {t("add_layer")}
             </LoadingButton>
           </Stack>
         </DialogActions>

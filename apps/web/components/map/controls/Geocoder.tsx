@@ -22,9 +22,7 @@ import search from "@/lib/services/geocoder";
 import type { FeatureCollection } from "geojson";
 import { match } from "@/lib/utils/match";
 
-import type {
-  Result,
-} from "@/types/map/controllers";
+import type { Result } from "@/types/map/controllers";
 
 type Props = {
   endpoint?: string;
@@ -38,6 +36,8 @@ type Props = {
   autocomplete?: boolean;
   language?: string;
   pointZoom?: number;
+  placeholder?: string;
+  tooltip?: string;
 };
 
 const COORDINATE_REGEX_STRING =
@@ -69,6 +69,8 @@ export default function Geocoder({
   limit,
   autocomplete,
   language,
+  placeholder,
+  tooltip
 }: Props) {
   const [value, setValue] = useState<Result | null>(null);
   const [options, setOptions] = useState<readonly Result[]>([]);
@@ -176,7 +178,7 @@ export default function Geocoder({
       {map && (
         <>
           {collapsed && (
-            <Tooltip title="Search" arrow placement="right">
+            <Tooltip title={tooltip || "Search"} arrow placement="right">
               <Fab
                 onClick={() => {
                   setCollapsed(false);
@@ -191,7 +193,11 @@ export default function Geocoder({
                   },
                 }}
               >
-                <Icon iconName={ICON_NAME.SEARCH} htmlColor="inherit" fontSize="small" />
+                <Icon
+                  iconName={ICON_NAME.SEARCH}
+                  htmlColor="inherit"
+                  fontSize="small"
+                />
               </Fab>
             </Tooltip>
           )}
@@ -285,7 +291,9 @@ export default function Geocoder({
                         flex: 1,
                         padding: 0,
                       }}
-                      placeholder="Enter an address or coordinates"
+                      placeholder={
+                        placeholder || "Enter an address or coordinates"
+                      }
                       onBlur={() => {
                         setFocused(false);
                       }}

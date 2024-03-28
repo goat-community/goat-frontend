@@ -7,7 +7,7 @@ export const useGetMetadataValueTranslation = () => {
   const getMetadataValueTranslation = useCallback(
     (key: string, value: string) => {
       if (!value) return " — ";
-      let translationPath = `maps:metadata.${key}.${value}`;
+      let translationPath = `common:metadata.${key}.${value}`;
       if (key === "geographical_code") {
         translationPath = `countries:${value.toUpperCase()}`;
       }

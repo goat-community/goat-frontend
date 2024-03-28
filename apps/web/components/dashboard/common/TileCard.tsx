@@ -2,6 +2,7 @@
 
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
+import { useDateFnsLocale, useTranslation } from "@/i18n/client";
 import type { Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";
 import {
@@ -83,6 +84,8 @@ const TileCard = (props: TileCard) => {
   const { cardType, item, enableActions = true } = props;
   const theme = useTheme();
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const { t } = useTranslation("common");
+  const dateLocale = useDateFnsLocale();
   const moreMenu = (
     <MoreMenu
       disablePortal={false}
@@ -117,9 +120,10 @@ const TileCard = (props: TileCard) => {
       {item?.updated_at && (
         <Stack direction="row" alignItems="center" spacing={1} sx={{ pb: 0 }}>
           <Typography variant="caption" noWrap>
-            Last updated:{" "}
+            {t("last_updated")}:{" "}
             {formatDistance(new Date(item.updated_at), new Date(), {
               addSuffix: true,
+              locale: dateLocale,
             })}
           </Typography>
         </Stack>
@@ -132,9 +136,10 @@ const TileCard = (props: TileCard) => {
       {item?.created_at && (
         <Stack direction="row" alignItems="center" spacing={1} sx={{ pb: 0 }}>
           <Typography variant="caption" noWrap>
-            Created:{" "}
+            {t("created")}:{" "}
             {formatDistance(new Date(item.created_at), new Date(), {
               addSuffix: true,
+              locale: dateLocale,
             })}
           </Typography>
         </Stack>
@@ -200,7 +205,6 @@ const TileCard = (props: TileCard) => {
             fontWeight: "bold",
           }),
           flexDirection: cardType === "grid" ? "column" : "row",
-    
         }}
       >
         {item?.thumbnail_url && cardType === "grid" && (

@@ -241,7 +241,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
   return (
     <Container
-      title="Layer Style"
+      title={t("layer_design")}
       disablePadding={false}
       close={() => dispatch(setActiveRightPanel(undefined))}
       body={

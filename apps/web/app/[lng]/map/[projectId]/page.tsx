@@ -35,6 +35,7 @@ import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 import ToolboxLayers from "@/components/map/ToolboxLayers";
 import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
+import { useTranslation } from "@/i18n/client";
 
 const sidebarWidth = 52;
 const toolbarHeight = 52;
@@ -42,6 +43,7 @@ const UPDATE_VIEW_STATE_DEBOUNCE_TIME = 3000;
 
 export default function MapPage({ params: { projectId } }) {
   const theme = useTheme();
+  const { t } = useTranslation("common");
   const activeBasemap = useAppSelector(selectActiveBasemap);
   const mapRef = useRef<MapRef | null>(null);
   const {
@@ -178,7 +180,7 @@ export default function MapPage({ params: { projectId } }) {
       {!isLoading && !hasError && (
         <MapProvider>
           <Header
-            title={`Project ${project?.name ?? ""}`}
+            title={`${t("project")} ${project?.name ?? ""}`}
             showHambugerMenu={false}
             tags={project?.tags}
             lastSaved={project?.updated_at}

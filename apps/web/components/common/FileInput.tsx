@@ -244,7 +244,6 @@ const MuiFileInput = <T extends boolean | undefined>(
             ) : null}
             <IconButton
               aria-label="Clear"
-              title="Clear"
               size="small"
               disabled={disabled}
               className="MuiFileInput-IconButton"

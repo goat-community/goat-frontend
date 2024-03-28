@@ -36,7 +36,7 @@ const toolbarHeight = 52;
 
 const ProjectNavigation = ({ projectId }) => {
   const theme = useTheme();
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
   const dispatch = useAppDispatch();
   const basemaps = useAppSelector((state) => state.map.basemaps);
   const activeBasemap = useAppSelector((state) => state.map.activeBasemap);
@@ -72,6 +72,18 @@ const ProjectNavigation = ({ projectId }) => {
     width: sidebarWidth,
     position: "left",
   };
+
+  const translatedBaseMaps = useMemo(() => {
+    return basemaps.map((basemap) => ({
+      ...basemap,
+      title: i18n.exists(`common:basemap_types.${basemap.value}.title`)
+        ? t(`basemap_types.${basemap.value}.title`)
+        : t(basemap.title),
+      subtitle: i18n.exists(`common:basemap_types.${basemap.value}.subtitle`)
+        ? t(`basemap_types.${basemap.value}.subtitle`)
+        : t(basemap.subtitle),
+    }));
+  }, [basemaps, i18n, t]);
 
   const rightSidebar: MapSidebarProps = {
     topItems: [
@@ -219,7 +231,11 @@ const ProjectNavigation = ({ projectId }) => {
           }}
         >
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
-            <Geocoder accessToken={MAPBOX_TOKEN} />
+            <Geocoder
+              accessToken={MAPBOX_TOKEN}
+              placeholder={t("enter_an_address")}
+              tooltip={t("search")}
+            />
           </Stack>
         </Stack>
       </Stack>
@@ -247,12 +263,15 @@ const ProjectNavigation = ({ projectId }) => {
           }}
         >
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
-            <Zoom />
-            <Fullscren />
+            <Zoom tooltipZoomIn={t("zoom_in")} tooltipZoomOut={t("zoom_out")} />
+            <Fullscren
+              tooltipOpen={t("fullscreen")}
+              tooltipExit={t("exit_fullscreen")}
+            />
           </Stack>
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
             <BasemapSelector
-              styles={basemaps}
+              styles={translatedBaseMaps}
               active={activeBasemap}
               basemapChange={(basemap) => {
                 dispatch(setActiveBasemap(basemap));

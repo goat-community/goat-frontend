@@ -69,7 +69,7 @@ const CONFIG_SETTINGS = {
     options: [true, false],
   },
   custom: {
-    label: "customPalette",
+    label: "custom_palette",
     type: "switch",
     options: [true, false],
   },

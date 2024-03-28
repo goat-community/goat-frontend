@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // ** React Imports
-import type { ReactNode} from "react";
+import type { ReactNode } from "react";
 import { useMemo } from "react";
 
 // ** MUI Imports
@@ -28,6 +28,8 @@ import themeOptions from "./ThemeOptions";
 // ** Global Styles
 import GlobalStyling from "./globalStyles";
 
+import { deDE, enUS } from "@mui/material/locale";
+
 interface Props {
   settings: Settings;
   children: ReactNode;
@@ -43,10 +45,14 @@ const ThemeProvider = (props: Props) => {
     // ** Pass ThemeOptions to CreateTheme Function to create partial theme without component overrides
     let theme = createTheme(coreThemeConfig);
     // ** Continue theme creation and pass merged component overrides to CreateTheme function
-    theme = createTheme(theme, {
-      components: { ...overrides(theme) },
-      typography: { ...typography(theme) },
-    });
+    theme = createTheme(
+      theme,
+      {
+        components: { ...overrides(theme) },
+        typography: { ...typography(theme) },
+      },
+      settings.locale === "de" ? deDE : enUS,
+    );
 
     // ** Set responsive font sizes to true
     if (themeConfig.responsiveFontSizes) {

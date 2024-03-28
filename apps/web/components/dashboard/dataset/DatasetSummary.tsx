@@ -40,8 +40,8 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
                   justifyContent="start"
                 >
                   <Typography variant="caption">
-                    {i18n.exists(`maps:metadata.headings.${key}`)
-                      ? t(`maps:metadata.headings.${key}`)
+                    {i18n.exists(`common:metadata.headings.${key}`)
+                      ? t(`common:metadata.headings.${key}`)
                       : key}
                   </Typography>
                   <Stack

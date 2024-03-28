@@ -16,7 +16,7 @@ declare module '@mui/material/styles' {
       }
     }
   }
-  
+
   export type ContentWidth = 'full' | 'boxed'
 
   export type ThemeColor = 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success'
@@ -24,4 +24,5 @@ declare module '@mui/material/styles' {
   export type Settings = {
     mode: PaletteMode
     themeColor?: ThemeColor
+    locale?: string
   }

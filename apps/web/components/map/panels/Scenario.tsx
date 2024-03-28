@@ -10,7 +10,7 @@ const ScenarioPanel = () => {
   const { t } = useTranslation("common");
   return (
     <Container
-      title="Scenario"
+      title={t("scenario")}
       close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <EmptySection label={t("coming_soon")} icon={ICON_NAME.COMING_SOON} />

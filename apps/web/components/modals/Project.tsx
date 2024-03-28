@@ -21,6 +21,7 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { createProject } from "@/lib/api/projects";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/i18n/client";
 
 interface ProjectDialogProps {
   type: "upload" | "create";
@@ -32,6 +33,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({
   open,
   onClose,
 }) => {
+  const { t } = useTranslation("common");
   const queryParams: GetContentQueryParams = {
     order: "descendent",
     order_by: "updated_at",
@@ -86,7 +88,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({
         router.push(`/map/${id}`);
       }
     } catch (_error) {
-      toast.error("Error creating project");
+      toast.error(t('error_creating_project'));
     } finally {
       setIsBusy(false);
     }

@@ -208,7 +208,7 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
                       style={{ fontSize: "15px" }}
                     />
                   </ListItemIcon>
-                  <Typography variant="body2">Dataset Explorer</Typography>
+                  <Typography variant="body2">{t('dataset_explorer')}</Typography>
                 </MenuItem>
                 <MenuItem
                   onClick={() =>
@@ -223,7 +223,7 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
                       style={{ fontSize: "15px" }}
                     />
                   </ListItemIcon>
-                  <Typography variant="body2">Dataset Upload</Typography>
+                  <Typography variant="body2">{t('dataset_upload')}</Typography>
                 </MenuItem>
               </MenuList>
             </ClickAwayListener>
@@ -323,7 +323,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       mutateProject(updatedProject, false);
       await updateProject(projectId, updatedProject);
     } catch (error) {
-      toast.error("Error updating project layer order");
+      toast.error(t('error_updating_project_layer_order'));
     }
   }
 
@@ -335,7 +335,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
         dispatch(setActiveLayer(null));
       }
     } catch (error) {
-      toast.error("Error removing layer from project");
+      toast.error(t('error_removing_layer_from_project'));
     }
   }
 
@@ -344,7 +344,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       await addProjectLayers(projectId, [layer.layer_id]);
       mutateProjectLayers();
     } catch (error) {
-      toast.error("Error duplicating layer");
+      toast.error(t('error_duplicating_layer'));
     }
   }
 
@@ -361,7 +361,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
         udpatedProjectLayers[index],
       );
     } catch (error) {
-      toast.error("Error renaming layer");
+      toast.error(t('error_renaming_layer'));
     } finally {
       setNewLayerName("");
     }
@@ -376,7 +376,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
 
   return (
     <Container
-      title="Layers"
+      title={t("layers")}
       close={() => dispatch(setActiveLeftPanel(undefined))}
       direction="left"
       body={
@@ -446,7 +446,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                       body={
                         <>
                           <Typography variant="caption" noWrap>
-                            {t(`maps:${layer.type}`)}
+                            {t(`common:${layer.type}`)}
                           </Typography>
 
                           {renameLayer?.id === layer.id ? (

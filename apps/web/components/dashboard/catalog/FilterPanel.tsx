@@ -81,8 +81,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             />
           )}
           <Typography variant="body1">
-            {i18n.exists(`maps:metadata.headings.${filterType}`)
-              ? t(`metadata.headings.${filterType}`)
+            {i18n.exists(`common:metadata.headings.${filterType}`)
+              ? t(`common:metadata.headings.${filterType}`)
               : filterType}
           </Typography>
         </Stack>
@@ -197,7 +197,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                 }
                               >
                                 {i18n.exists(
-                                  `maps:metadata.${filterType}.${item.value}`,
+                                  `common:metadata.${filterType}.${item.value}`,
                                 )
                                   ? t(`metadata.${filterType}.${item.value}`)
                                   : item.value}

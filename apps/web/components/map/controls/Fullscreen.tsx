@@ -4,7 +4,12 @@ import { useMap } from "react-map-gl";
 import { useState } from "react";
 import screenfull from "screenfull";
 
-export function Fullscren() {
+type FullscreenProps = {
+  tooltipOpen?: string;
+  tooltipExit?: string;
+};
+
+export function Fullscren(props: FullscreenProps) {
   const [fullscreen, setFullscreen] = useState(screenfull.isFullscreen);
 
   const theme = useTheme();
@@ -33,7 +38,11 @@ export function Fullscren() {
             }}
           >
             <Tooltip
-              title={fullscreen ? "Exit Fullscreen" : "Fullscreen"}
+              title={
+                fullscreen
+                  ? props.tooltipExit || "Exit Fullscreen"
+                  : props.tooltipOpen || "Fullscreen"
+              }
               arrow
               placement="left"
             >

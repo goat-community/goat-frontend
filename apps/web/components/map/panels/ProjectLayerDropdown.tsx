@@ -1,5 +1,6 @@
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
+import { useTranslation } from "@/i18n/client";
 import { useProjectLayers } from "@/lib/api/projects";
 import { setActiveLayer } from "@/lib/store/layer/slice";
 import type { LayerType } from "@/lib/validations/common";
@@ -21,8 +22,9 @@ interface ProjectLayerDropdownProps {
 const ProjectLayerDropdown = ({
   projectId,
   layerTypes,
-  onChange
+  onChange,
 }: ProjectLayerDropdownProps) => {
+  const { t } = useTranslation("common");
   const { layers: projectLayers } = useProjectLayers(projectId);
   const filteredLayers = useMemo(() => {
     if (!layerTypes) return projectLayers;
@@ -35,18 +37,20 @@ const ProjectLayerDropdown = ({
     <>
       {filteredLayers && filteredLayers.length > 0 && activeLayer && (
         <FormControl fullWidth sx={{ mb: 4 }}>
-          <InputLabel id="select-active-layer-title">Active Layer</InputLabel>
+          <InputLabel id="select-active-layer-title">
+            {t("active_layer")}
+          </InputLabel>
           <Select
             sx={{ width: "100%" }}
             labelId="select-active-layer"
             id="select-active-layer"
             value={activeLayer.id}
-            label="Active Layer"
+            label={t("active_layer")}
             onChange={(event) => {
               const id = event.target.value as number;
               dispatch(setActiveLayer(id));
-              if(onChange){
-                onChange(id)
+              if (onChange) {
+                onChange(id);
               }
             }}
             MenuProps={{

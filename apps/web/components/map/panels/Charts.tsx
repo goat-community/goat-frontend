@@ -11,7 +11,7 @@ const ChartsPanel = () => {
   return (
     <Container
       close={() => dispatch(setActiveLeftPanel(undefined))}
-      title="Charts"
+      title={t("charts")}
       direction="left"
       body={<EmptySection label={t("coming_soon")} icon={ICON_NAME.COMING_SOON} />}
     />

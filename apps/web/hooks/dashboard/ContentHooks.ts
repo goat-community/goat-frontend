@@ -4,39 +4,36 @@ import type { Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useState } from "react";
+import { useTranslation } from "@/i18n/client";
 
 export const useContentMoreMenu = () => {
+  const { t } = useTranslation("common");
   const getMoreMenuOptions = function (contentType: "project" | "layer") {
     if (contentType === "layer") {
       const layerMoreMenuOptions: PopperMenuItem[] = [
         {
-          id: ContentActions.INFO,
-          label: "Info",
-          icon: ICON_NAME.CIRCLEINFO,
-        },
-        {
           id: ContentActions.EDIT_METADATA,
-          label: "Edit metadata",
+          label: t('edit_metadata'),
           icon: ICON_NAME.EDIT,
         },
         {
           id: ContentActions.MOVE_TO_FOLDER,
-          label: "Move to folder",
+          label: t('move_to_folder'),
           icon: ICON_NAME.FOLDER,
         },
         {
           id: ContentActions.DOWNLOAD,
-          label: "Download",
+          label: t('download'),
           icon: ICON_NAME.DOWNLOAD,
         },
         {
           id: ContentActions.SHARE,
-          label: "Share",
+          label: t('share'),
           icon: ICON_NAME.SHARE,
         },
         {
           id: ContentActions.DELETE,
-          label: "Delete",
+          label: t('delete'),
           icon: ICON_NAME.TRASH,
           color: "error.main",
         },
@@ -46,28 +43,23 @@ export const useContentMoreMenu = () => {
     if (contentType === "project") {
       const projectMoreMenuOptions: PopperMenuItem[] = [
         {
-          id: ContentActions.INFO,
-          label: "Info",
-          icon: ICON_NAME.CIRCLEINFO,
-        },
-        {
           id: ContentActions.EDIT_METADATA,
-          label: "Edit metadata",
+          label: t('edit_metadata'),
           icon: ICON_NAME.EDIT,
         },
         {
           id: ContentActions.MOVE_TO_FOLDER,
-          label: "Move to folder",
+          label: t('move_to_folder'),
           icon: ICON_NAME.FOLDER,
         },
         {
           id: ContentActions.SHARE,
-          label: "Share",
+          label: t('share'),
           icon: ICON_NAME.SHARE,
         },
         {
           id: ContentActions.DELETE,
-          label: "Delete",
+          label: t('delete'),
           icon: ICON_NAME.TRASH,
           color: "error.main",
         },

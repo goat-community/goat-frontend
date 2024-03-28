@@ -103,7 +103,7 @@ const OrgMemberInviteModal: React.FC<OrgMemberInviteDialogProps> = ({
             >
               {["admin", "member"].map((role) => (
                 <MenuItem key={role} value={role}>
-                  {t(`maps:${role}`)}
+                  {t(`common:${role}`)}
                 </MenuItem>
               ))}
             </TextField>

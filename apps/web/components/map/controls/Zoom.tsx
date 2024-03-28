@@ -2,7 +2,12 @@ import { Fab, Stack, Tooltip, useTheme } from "@mui/material";
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMap } from "react-map-gl";
 
-export function Zoom() {
+type ZoomProps = {
+  tooltipZoomIn?: string;
+  tooltipZoomOut?: string;
+};
+
+export function Zoom(props: ZoomProps) {
   const { map } = useMap();
   const theme = useTheme();
 
@@ -18,7 +23,7 @@ export function Zoom() {
               marginBottom: theme.spacing(1),
             }}
           >
-            <Tooltip title="Zoom In" arrow placement="left">
+            <Tooltip title={props.tooltipZoomIn || "Zoom In"} arrow placement="left">
               <Fab
                 onClick={() => map?.zoomIn()}
                 size="small"
@@ -39,7 +44,7 @@ export function Zoom() {
                 />
               </Fab>
             </Tooltip>
-            <Tooltip title="Zoom Out" arrow placement="left">
+            <Tooltip title={props.tooltipZoomOut || "Zoom Out"} arrow placement="left">
               <Fab
                 onClick={() => map?.zoomOut()}
                 size="small"

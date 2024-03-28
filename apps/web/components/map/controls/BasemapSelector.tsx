@@ -15,6 +15,7 @@ import { useMemo, useState } from "react";
 
 import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMap } from "react-map-gl";
+import { useTranslation } from "@/i18n/client";
 
 interface Item {
   value: string;
@@ -32,6 +33,7 @@ interface BasemapSelectorProps {
 }
 
 export function BasemapSelector(props: BasemapSelectorProps) {
+  const { t } = useTranslation("common");
   const [open, setOpen] = useState(false);
   const { styles, active, basemapChange } = props;
   const activeIndex = useMemo(() => {
@@ -70,7 +72,7 @@ export function BasemapSelector(props: BasemapSelectorProps) {
                   fontWeight="bold"
                   sx={{ margin: theme.spacing(3) }}
                 >
-                  Map Style
+                  {t('map_style')}
                 </Typography>
                 <ListTile
                   items={styles}
@@ -87,7 +89,7 @@ export function BasemapSelector(props: BasemapSelectorProps) {
             arrow={true}
             onClose={() => setOpen(false)}
           >
-            <Tooltip title="Basemaps" arrow placement="left">
+            <Tooltip title={t('basemaps')} arrow placement="left">
               <Fab
                 onClick={() => setOpen(!open)}
                 size="large"

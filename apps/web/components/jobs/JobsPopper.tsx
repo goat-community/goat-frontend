@@ -1,5 +1,6 @@
 import { ArrowPopper as JobStatusMenu } from "@/components/ArrowPoper";
 import JobProgressItem from "@/components/jobs/JobProgressItem";
+import { useTranslation } from "@/i18n/client";
 import { setJobsReadStatus, useJobs } from "@/lib/api/jobs";
 import {
   Box,
@@ -45,6 +46,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export default function JobsPopper() {
+  const { t } = useTranslation("common");
   const [open, setOpen] = useState(false);
   const { jobs, mutate } = useJobs({
     read: false,
@@ -119,7 +121,7 @@ export default function JobsPopper() {
                   fontWeight="bold"
                   sx={{ px: 4, py: 1 }}
                 >
-                  Job status
+                  {t("job_status")}
                 </Typography>
                 <Divider sx={{ mb: 0, pb: 0 }} />
               </Box>
@@ -162,7 +164,7 @@ export default function JobsPopper() {
                   }}
                 >
                   <Typography variant="body2" fontWeight="bold" color="inherit">
-                    Clear all
+                    {t('clear_all')}
                   </Typography>
                 </Button>
               </Stack>

@@ -3,6 +3,7 @@ import React from "react";
 import NextAppDirEmotionCacheProvider from "./EmotionCache";
 import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
 import type { PaletteMode } from "@mui/material";
+import { useTranslation } from "@/i18n/client";
 export const ColorModeContext = React.createContext({
   changeColorMode: (_mode: PaletteMode) => {},
 });
@@ -13,7 +14,8 @@ export default function ThemeRegistry({
   children: React.ReactNode;
   theme?: PaletteMode;
 }) {
-  const [mode, setMode] = React.useState<PaletteMode>(theme || "light")
+  const [mode, setMode] = React.useState<PaletteMode>(theme || "light");
+  const { i18n } = useTranslation("common");
   const colorMode = React.useMemo(
     () => ({
       changeColorMode: (mode: PaletteMode) => {
@@ -29,6 +31,7 @@ export default function ThemeRegistry({
           <ThemeProvider
             settings={{
               mode,
+              locale: i18n?.language || "en",
             }}
           >
             {children}
