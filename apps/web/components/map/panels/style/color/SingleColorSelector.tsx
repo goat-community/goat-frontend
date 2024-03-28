@@ -10,7 +10,6 @@ import CustomColorPicker from "@/components/map/panels/style/color/CustomColorPi
 import PresetColorPicker from "@/components/map/panels/style/color/PresetColorPicker";
 import type { SingleColorSelectorProps } from "@/types/map/color";
 import { useTranslation } from "@/i18n/client";
-import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 
 enum SingleColorType {
   Picker = "picker",
