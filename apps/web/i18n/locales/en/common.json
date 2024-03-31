@@ -494,6 +494,8 @@
   "organization_region_label": "Deployment region",
   "organization_size_label": "Organization size",
   "organization_subscribe_to_newsletter": "Stay in touch with our latest updates",
+  "organization_suspended": "Organization Suspended",
+  "organization_suspended_message": "We are sorry, but your organization has been suspended. Please contact support for more information.",
   "organization_type_label": "Organization type",
   "organization_type_options": {
     "education": "Education",

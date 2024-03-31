@@ -47,6 +47,13 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
       );
       if (checkOrganization.ok) {
         const organization = await checkOrganization.json();
+        if (organization?.suspended) {
+          const suspendedUrl = new URL(
+            `${lngPath}/onboarding/organization/suspended`,
+            origin,
+          );
+          return NextResponse.redirect(suspendedUrl);
+        }
         if (organization?.id) {
           const response = (await next(request, _next)) as NextResponse;
           response.cookies.set("organization", organization.id);
@@ -74,7 +81,7 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
           return NextResponse.redirect(invitationUrl);
         }
       }
-      
+
     } catch (error) {
       console.error("Error while fetching organization", error);
     }
