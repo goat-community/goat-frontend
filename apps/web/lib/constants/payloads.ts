@@ -47,7 +47,7 @@ export const accessibilityIndicatorsStaticPayload = {
     "906": "B",
     "1400": "B",
   },
-  time_frequency: [0, 4, 10, 19, 39, 60, 119],
+  time_frequency: [0, 4, 9, 19, 39, 59, 119],
   categories: [
     {
       A: 1,
