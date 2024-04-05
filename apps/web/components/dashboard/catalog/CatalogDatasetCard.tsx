@@ -25,9 +25,11 @@ export const METADATA_HEADER_ICONS = {
 const CatalogDatasetCard = ({
   dataset,
   onClick,
+  selected,
 }: {
   dataset: Layer;
   onClick?: (dataset: Layer) => void;
+  selected?: boolean;
 }) => {
   const theme = useTheme();
   const { t } = useTranslation(["common"]);
@@ -45,6 +47,9 @@ const CatalogDatasetCard = ({
             transform: "scale(1.2)",
           },
         },
+        ...(selected && {
+          backgroundColor: "rgba(43, 179, 129, 0.2)"
+        }),
       }}
       elevation={3}
     >

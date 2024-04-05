@@ -141,6 +141,7 @@
   "data_reference_year": "Data Reference Year",
   "data_source": "Data Source",
   "dataset_explorer": "Dataset Explorer",
+  "catalog_explorer": "Catalog Explorer",
   "dataset_imported_failed": "Dataset import failed",
   "dataset_imported_success": "Dataset imported successfully",
   "dataset_source": "Dataset Source",

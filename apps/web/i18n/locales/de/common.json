@@ -89,6 +89,7 @@
   "cancel": "Abbrechen",
   "cancel_invitation": "Einladung abbrechen",
   "catalog": "Katalog",
+  "catalog_explorer": "Katalog-Explorer",
   "catalogue": "Katalog",
   "catchment_area": "Einzugsgebiet",
   "catchment_area_computation_started": "Berechnung des Einzugsgebiets gestartet",
@@ -494,8 +495,8 @@
   "organization_region_label": "Einsatzregion",
   "organization_size_label": "Organisationsgröße",
   "organization_subscribe_to_newsletter": "Bleiben Sie auf dem Laufenden über unsere neuesten Updates",
-  "organization_suspended": "",
-  "organization_suspended_message": "",
+  "organization_suspended": "Organisation suspendiert",
+  "organization_suspended_message": "Es tut uns leid, aber Ihre Organisation wurde suspendiert. \nFür weitere Informationen wenden Sie sich bitte an den Support.",
   "organization_type_label": "Organisationstyp",
   "organization_type_options": {
     "education": "Bildung",

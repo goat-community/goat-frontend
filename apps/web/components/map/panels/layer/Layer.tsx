@@ -64,6 +64,7 @@ import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import type { PanelProps } from "@/types/map/sidebar";
 import EmptySection from "@/components/common/EmptySection";
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
+import CatalogExplorerModal from "@/components/modals/CatalogExplorer";
 
 type SortableLayerTileProps = {
   id: number;
@@ -131,6 +132,7 @@ enum AddLayerSourceType {
   DatasourceExplorer,
   DatasourceUpload,
   DataSourceExternal,
+  CatalogExplorer,
 }
 
 const AddLayerSection = ({ projectId }: { projectId: string }) => {
@@ -154,6 +156,24 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
   const closeAddLayerSourceModal = () => {
     setAddSourceOpen(null);
   };
+
+  const menuItems = [
+    {
+      sourceType: AddLayerSourceType.DatasourceExplorer,
+      iconName: ICON_NAME.DATABASE,
+      label: t("dataset_explorer"),
+    },
+    {
+      sourceType: AddLayerSourceType.DatasourceUpload,
+      iconName: ICON_NAME.UPLOAD,
+      label: t("dataset_upload"),
+    },
+    {
+      sourceType: AddLayerSourceType.CatalogExplorer,
+      iconName: ICON_NAME.GLOBE,
+      label: t("catalog_explorer"),
+    },
+  ];
 
   return (
     <>
@@ -195,36 +215,20 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
           <Box>
             <ClickAwayListener onClickAway={handleClose}>
               <MenuList>
-                <MenuItem
-                  onClick={() =>
-                    openAddLayerSourceDialog(
-                      AddLayerSourceType.DatasourceExplorer,
-                    )
-                  }
-                >
-                  <ListItemIcon>
-                    <Icon
-                      iconName={ICON_NAME.DATABASE}
-                      style={{ fontSize: "15px" }}
-                    />
-                  </ListItemIcon>
-                  <Typography variant="body2">{t('dataset_explorer')}</Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() =>
-                    openAddLayerSourceDialog(
-                      AddLayerSourceType.DatasourceUpload,
-                    )
-                  }
-                >
-                  <ListItemIcon>
-                    <Icon
-                      iconName={ICON_NAME.UPLOAD}
-                      style={{ fontSize: "15px" }}
-                    />
-                  </ListItemIcon>
-                  <Typography variant="body2">{t('dataset_upload')}</Typography>
-                </MenuItem>
+                {menuItems.map((item, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={() => openAddLayerSourceDialog(item.sourceType)}
+                  >
+                    <ListItemIcon>
+                      <Icon
+                        iconName={item.iconName}
+                        style={{ fontSize: "15px" }}
+                      />
+                    </ListItemIcon>
+                    <Typography variant="body2">{item.label}</Typography>
+                  </MenuItem>
+                ))}
               </MenuList>
             </ClickAwayListener>
           </Box>
@@ -239,6 +243,13 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
       )}
       {addLayerSourceOpen === AddLayerSourceType.DatasourceUpload && (
         <DatasetUploadModal
+          open={true}
+          onClose={closeAddLayerSourceModal}
+          projectId={projectId}
+        />
+      )}
+      {addLayerSourceOpen === AddLayerSourceType.CatalogExplorer && (
+        <CatalogExplorerModal
           open={true}
           onClose={closeAddLayerSourceModal}
           projectId={projectId}
@@ -323,7 +334,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       mutateProject(updatedProject, false);
       await updateProject(projectId, updatedProject);
     } catch (error) {
-      toast.error(t('error_updating_project_layer_order'));
+      toast.error(t("error_updating_project_layer_order"));
     }
   }
 
@@ -335,7 +346,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
         dispatch(setActiveLayer(null));
       }
     } catch (error) {
-      toast.error(t('error_removing_layer_from_project'));
+      toast.error(t("error_removing_layer_from_project"));
     }
   }
 
@@ -344,7 +355,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       await addProjectLayers(projectId, [layer.layer_id]);
       mutateProjectLayers();
     } catch (error) {
-      toast.error(t('error_duplicating_layer'));
+      toast.error(t("error_duplicating_layer"));
     }
   }
 
@@ -361,7 +372,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
         udpatedProjectLayers[index],
       );
     } catch (error) {
-      toast.error(t('error_renaming_layer'));
+      toast.error(t("error_renaming_layer"));
     } finally {
       setNewLayerName("");
     }

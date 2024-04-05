@@ -201,7 +201,7 @@ const TileCard = (props: TileCard) => {
             },
           },
           ...(props.selected?.id === item?.id && {
-            backgroundColor: "rgba(43, 179, 129, 0.08)",
+            backgroundColor: "rgba(43, 179, 129, 0.2)",
             fontWeight: "bold",
           }),
           flexDirection: cardType === "grid" ? "column" : "row",
