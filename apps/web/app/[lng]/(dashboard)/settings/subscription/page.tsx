@@ -63,7 +63,6 @@ const Subscription = () => {
                     <Stack spacing={2} sx={{ mt: 4 }}>
                       <Typography variant="body2">
                         {t("app_subscription_seats_available", {
-                          available_seats: item.assigned_seat,
                           total_seats: item.seat,
                         })}
                       </Typography>
