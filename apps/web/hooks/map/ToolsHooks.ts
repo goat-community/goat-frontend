@@ -4,6 +4,7 @@ import { useProjectLayers } from "@/lib/api/projects";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import {
   CatchmentAreaRoutingTypeEnum,
+  HeatmapRoutingTypeEnum,
   PTDay,
   PTRoutingModes,
   catchmentAreaConfigDefaults,
@@ -210,6 +211,31 @@ export const useRoutingTypes = () => {
     ];
   }, [t]);
 
+  const activeMobilityHeatmapRoutingTypes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: HeatmapRoutingTypeEnum.Enum.walking,
+        label: t("routing_modes.walk"),
+        icon: ICON_NAME.RUN,
+      },
+      {
+        value: HeatmapRoutingTypeEnum.Enum.bicycle,
+        label: t("routing_modes.bicycle"),
+        icon: ICON_NAME.BICYCLE,
+      },
+    ];
+  }, [t]);
+
+  const motorizedHeatmapRoutingTypes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: HeatmapRoutingTypeEnum.Enum.public_transport,
+        label: t("routing_modes.pt"),
+        icon: ICON_NAME.BUS,
+      },
+    ];
+  }, [t]);
+
   const routingTypes = useMemo(() => {
     return activeMobilityRoutingTypes.concat(motorizedRoutingTypes);
   }, [activeMobilityRoutingTypes, motorizedRoutingTypes]);
@@ -220,6 +246,8 @@ export const useRoutingTypes = () => {
     routingTypes,
     selectedRouting,
     setSelectedRouting,
+    activeMobilityHeatmapRoutingTypes,
+    motorizedHeatmapRoutingTypes,
   };
 };
 

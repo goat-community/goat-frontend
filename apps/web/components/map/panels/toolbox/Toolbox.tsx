@@ -27,6 +27,9 @@ import TripCount from "@/components/map/panels/toolbox/tools/trip-count/TripCoun
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
 import OriginDestination from "@/components/map/panels/toolbox/tools/origin-destination/OriginDestination";
 import NearbyStations from "@/components/map/panels/toolbox/tools/nearby-stations/NearbyStations";
+import HeatmapConnectivity from "@/components/map/panels/toolbox/tools/heatmap-connectivity/HeatmapConnectivity";
+import HeatmapClosestAverage from "@/components/map/panels/toolbox/tools/heatmap-closest-average/HeatmapClosestAverage";
+import HeatmapGravity from "@/components/map/panels/toolbox/tools/heatmap-gravity/HeatmapGravity";
 
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("common");
@@ -72,6 +75,9 @@ const Toolbox = () => {
       value: "accessibility_indicators",
       children: [
         "catchment_area",
+        "heatmap_connectivity",
+        "heatmap_closest_average",
+        "heatmap_gravity",
         "oev_guteklassen",
         "trip_count",
         "nearby_stations",
@@ -79,19 +85,19 @@ const Toolbox = () => {
       icon: ICON_NAME.BULLSEYE,
     },
     {
-      name: t('data_management'),
+      name: t("data_management"),
       value: "data_management",
       children: ["join"],
       icon: ICON_NAME.TABLE,
     },
     {
-      name: t('geoanalysis'),
+      name: t("geoanalysis"),
       value: "geoanalysis",
       children: ["aggregate", "aggregate_polygon", "origin_destination"],
       icon: ICON_NAME.CHART,
     },
     {
-      name: t('geoprocessing'),
+      name: t("geoprocessing"),
       value: "geoprocessing",
       children: ["buffer"],
       icon: ICON_NAME.SETTINGS,
@@ -104,6 +110,26 @@ const Toolbox = () => {
       value: "join",
       element: <Join onBack={handleOnBack} onClose={handleOnClose} />,
     },
+    heatmap_connectivity: {
+      name: t("heatmap_connectivity"),
+      value: "heatmap_connectivity",
+      element: (
+        <HeatmapConnectivity onBack={handleOnBack} onClose={handleOnClose} />
+      ),
+    },
+    heatmap_closest_average: {
+      name: t("heatmap_closest_average"),
+      value: "heatmap_closest_average",
+      element: (
+        <HeatmapClosestAverage onBack={handleOnBack} onClose={handleOnClose} />
+      ),
+    },
+    heatmap_gravity: {
+      name: t("heatmap_gravity"),
+      value: "heatmap_gravity",
+      element: <HeatmapGravity onBack={handleOnBack} onClose={handleOnClose} />,
+    },
+
     aggregate: {
       name: t("aggregate_points"),
       value: "aggregate",

@@ -8,9 +8,12 @@ import type {
   PostAggregatePoint,
   PostOriginDestinationMatrix,
   PostNearbyStations,
+  PostHeatmapGravity,
+  PostHeatmapClosestAverage,
+  PostHeatmapConnectivity,
 } from "@/lib/validations/tools";
 
-const PROJECTS_API_BASE_URL = new URL(
+const TOOLS_API_BASE_URL = new URL(
   "api/v2/tool",
   process.env.NEXT_PUBLIC_API_URL,
 ).href;
@@ -55,7 +58,7 @@ export const computeTripCount = async (
 
 export const computeJoin = async (body: PostJoin, projectId: string) => {
   const response = await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/join?project_id=${projectId}`,
+    `${TOOLS_API_BASE_URL}/join?project_id=${projectId}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,7 +73,7 @@ export const computeJoin = async (body: PostJoin, projectId: string) => {
 
 export const computeBuffer = async (body: PostBuffer, projectId: string) => {
   const response = await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/buffer?project_id=${projectId}`,
+    `${TOOLS_API_BASE_URL}/buffer?project_id=${projectId}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -88,7 +91,7 @@ export const computeAggregatePoint = async (
   projectId: string,
 ) => {
   const response = await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/aggregate-points?project_id=${projectId}`,
+    `${TOOLS_API_BASE_URL}/aggregate-points?project_id=${projectId}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -106,7 +109,7 @@ export const computeAggregatePolygon = async (
   projectId: string,
 ) => {
   const response = await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/aggregate-polygons?project_id=${projectId}`,
+    `${TOOLS_API_BASE_URL}/aggregate-polygons?project_id=${projectId}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -124,7 +127,7 @@ export const computeOriginDestination = async (
   projectId: string,
 ) => {
   const response = await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/origin-destination?project_id=${projectId}`,
+    `${TOOLS_API_BASE_URL}/origin-destination?project_id=${projectId}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -151,6 +154,64 @@ export const computeNearbyStations = async (
   );
   if (!response.ok) {
     throw new Error("Failed to compute nearby stations access");
+  }
+  return await response.json();
+}
+
+
+export const computeHeatmapGravity = async (
+  body: PostHeatmapGravity,
+  projectId: string,
+) => {
+  const routing = ["public_transport", "car"].includes(body.routing_type) ? "motorized-mobility" : "active-mobility";
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/${routing}/heatmap-gravity?project_id=${projectId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to compute heatmap gravity");
+  }
+  return await response.json();
+}
+
+export const computeHeatmapClosestAverage = async (
+  body: PostHeatmapClosestAverage,
+  projectId: string,
+) => {
+  const routing = ["public_transport", "car"].includes(body.routing_type) ? "motorized-mobility" : "active-mobility";
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/${routing}/heatmap-closest-average?project_id=${projectId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to compute heatmap closest average");
+  }
+  return await response.json();
+}
+
+export const computeHeatmapConnectivity = async (
+  body: PostHeatmapConnectivity,
+  projectId: string,
+) => {
+  const routing = ["public_transport", "car"].includes(body.routing_type) ? "motorized-mobility" : "active-mobility";
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/${routing}/heatmap-connectivity?project_id=${projectId}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to compute heatmap connectivity");
   }
   return await response.json();
 }

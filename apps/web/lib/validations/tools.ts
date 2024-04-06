@@ -9,6 +9,12 @@ export const CatchmentAreaRoutingTypeEnum = z.enum([
   "pt",
 ]);
 
+export const HeatmapRoutingTypeEnum = z.enum([
+  "walking",
+  "bicycle",
+  "public_transport",
+]);
+
 export const CatchmentAreaRoutingWithoutPT = z.enum([
   "walking",
   "bicycle",
@@ -252,7 +258,7 @@ export type PostOriginDestinationMatrix = z.infer<
   typeof originDestinationMatrixSchema
 >;
 
-//**=== NEARBY STATIONS ===
+//**=== NEARBY STATIONS === */
 export const nearbyStationsRoutingTypeEnum = z.enum([
   "walking",
   "bicycle",
@@ -269,3 +275,40 @@ export const nearbyStationsSchema = z.object({
 });
 
 export type PostNearbyStations = z.infer<typeof nearbyStationsSchema>;
+
+
+//**=== HEATMAP GRAVITY === */
+export const heatmapImpedanceFunctionEnum = z.enum(["gaussian", "linear", "exponential", "power"]);
+export const heatmapGravitySchema = z.object({
+  impedance_function: heatmapImpedanceFunctionEnum,
+  opportunities: z.array(z.object({
+    opportunity_layer_project_id: z.number(),
+    max_traveltime: z.number().min(1).max(60),
+    sensitivity: z.number(),
+    destination_potential_column: z.string().optional(),
+  })),
+  routing_type: HeatmapRoutingTypeEnum,
+});
+
+export type PostHeatmapGravity = z.infer<typeof heatmapGravitySchema>;
+
+//**=== HEATMAP CLOSEST AVERAGE === */
+export const heatmapClosestAverageSchema = z.object({
+  opportunities: z.array(z.object({
+    opportunity_layer_project_id: z.number(),
+    max_traveltime: z.number().min(1).max(60),
+    number_of_destinations: z.number().min(1).max(100),
+  })),
+  routing_type: HeatmapRoutingTypeEnum,
+});
+
+export type PostHeatmapClosestAverage = z.infer<typeof heatmapClosestAverageSchema>;
+
+//**=== HEATMAP CONNECTIVITY === */
+export const heatmapConnectivitySchema = z.object({
+  reference_area_layer_project_id: z.number(),
+  max_traveltime: z.number().min(1).max(60),
+  routing_type: HeatmapRoutingTypeEnum,
+});
+
+export type PostHeatmapConnectivity = z.infer<typeof heatmapConnectivitySchema>;

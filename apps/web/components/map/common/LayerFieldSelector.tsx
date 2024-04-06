@@ -32,6 +32,8 @@ export type SelectorProps<T extends boolean = false> = {
   tooltip?: string;
   disabled?: boolean;
   multiple?: T;
+  onFocus?: () => void;
+  onClose?: () => void;
 };
 
 export const containsText = (text: string, searchText: string) =>
@@ -136,8 +138,16 @@ const LayerFieldSelector = (props: SelectorProps) => {
         onClose={() => {
           setFocused(false);
           setSearchText("");
+          if (props.onClose) {
+            props.onClose();
+          }
         }}
-        onFocus={() => setFocused(true)}
+        onFocus={() => {
+          setFocused(true);
+          if (props.onFocus) {
+            props.onFocus();
+          }
+        }}
         onBlur={() => setFocused(false)}
         startAdornment={
           <>
