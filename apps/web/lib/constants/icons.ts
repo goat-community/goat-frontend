@@ -48,6 +48,7 @@ export const MAKI_ICON_TYPES = [
       "road-circle-exclamation-solid",
       "road-solid",
       "school-solid",
+      "child-solid",
       "solar-panel-solid",
       "tent-solid",
       "tower-cell-solid",
