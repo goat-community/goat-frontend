@@ -75,6 +75,7 @@ export const MAKI_ICON_TYPES = [
       "church-solid",
       "mosque-solid",
       "theatre",
+      "book-solid",
       "masks-theater-solid",
       "monument-solid",
       "marker",
@@ -106,6 +107,9 @@ export const MAKI_ICON_TYPES = [
       "warehouse",
       "bread-slice-solid",
       "store-solid",
+      "cart-shopping-solid",
+      "basket-shopping-solid", 
+      "tags-solid",
     ],
   },
   {
