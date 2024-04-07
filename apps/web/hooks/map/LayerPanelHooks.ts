@@ -21,6 +21,7 @@ export const useLayerSettingsMoreMenu = () => {
 
   function getLayerMoreMenuOptions(
     layerType: ProjectLayer["type"],
+    viewChart?: boolean,
   ): PopperMenuItem[] {
     if (layerType === "feature") {
       const featureOptions: PopperMenuItem[] = [
@@ -39,6 +40,11 @@ export const useLayerSettingsMoreMenu = () => {
           label: t("open_data_table"),
           icon: ICON_NAME.TABLE,
         },
+        ...(viewChart ? [{
+          id: MapLayerActions.CHART,
+          label: t('view_chart'),
+          icon: ICON_NAME.CHART,
+        }] : []),
         {
           id: MapLayerActions.DUPLICATE,
           label: t("duplicate"),
@@ -75,6 +81,11 @@ export const useLayerSettingsMoreMenu = () => {
           label: t("open_data_table"),
           icon: ICON_NAME.TABLE,
         },
+        ...(viewChart ? [{
+          id: MapLayerActions.CHART,
+          label: t('view_chart'),
+          icon: ICON_NAME.CHART,
+        }] : []),
         {
           id: MapLayerActions.RENAME,
           label: t("rename"),

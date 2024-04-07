@@ -65,6 +65,7 @@ import type { PanelProps } from "@/types/map/sidebar";
 import EmptySection from "@/components/common/EmptySection";
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
 import CatalogExplorerModal from "@/components/modals/CatalogExplorer";
+import MapLayerChartModal from "@/components/modals/MapLayerChart";
 
 type SortableLayerTileProps = {
   id: number;
@@ -405,6 +406,15 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                 />
               </>
             )}
+          {moreMenuState?.id === MapLayerActions.CHART &&
+            activeLayerMoreMenu && (
+              <MapLayerChartModal
+                open={true}
+                onClose={closeMoreMenu}
+                layer={activeLayerMoreMenu}
+                projectId={projectId}
+              />
+            )}
           <Box>
             {sortedLayers && sortedLayers?.length > 0 && (
               <DndContext
@@ -611,7 +621,10 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                             </Tooltip>
                           )}
                           <MoreMenu
-                            menuItems={getLayerMoreMenuOptions(layer.type)}
+                            menuItems={getLayerMoreMenuOptions(
+                              layer.type,
+                              !!layer.charts,
+                            )}
                             menuButton={
                               <Tooltip
                                 title={t("more_options")}

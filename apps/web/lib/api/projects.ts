@@ -73,6 +73,24 @@ export const useProjectInitialViewState = (projectId: string) => {
   };
 };
 
+
+export const useProjectLayerChartData = (
+  projectId: string,
+  layerId: number,
+) => {
+  const { data, isLoading, error, mutate, isValidating } = useSWR(
+    [`${PROJECTS_API_BASE_URL}/${projectId}/layer/${layerId}/chart-data`],
+    fetcher,
+  );
+  return {
+    chartData: data,
+    isLoading: isLoading,
+    isError: error,
+    mutate,
+    isValidating,
+  };
+}
+
 export const updateProjectInitialViewState = async (
   projectId: string,
   payload: ProjectViewState,

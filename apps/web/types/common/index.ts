@@ -13,6 +13,7 @@ export enum ContentActions {
 }
 
 export enum MapLayerActions {
+  CHART = "chart",
   DUPLICATE = "duplicate",
   RENAME = "rename",
   ZOOM_TO = "zoomTo",

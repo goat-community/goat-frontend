@@ -19,6 +19,7 @@ export const projectLayerSchema = layerSchema.extend({
   folder_id: z.string(),
   query: z.object({}).optional().default({}),
   layer_id: z.string().uuid(),
+  charts: z.object({}).optional(),
   legend_urls: z.array(z.string()).optional(),
 });
 

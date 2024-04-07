@@ -98,3 +98,40 @@ export const dataCategoryIcon: IconDefinition = {
   iconName: "data-category" as IconName,
   prefix: "fas" as IconPrefix,
 };
+
+export const lineChartIcon: IconDefinition = {
+  icon: [
+    24,
+    24,
+    [],
+    "",
+    "m16 11.78l4.24-7.33l1.73 1l-5.23 9.05l-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z",
+  ],
+  iconName: "line-chart" as IconName,
+  prefix: "fas" as IconPrefix,
+};
+
+
+export const verticalBarChartIcon: IconDefinition = {
+  icon: [
+    24,
+    24,
+    [],
+    "",
+    "M21.25 8.375V28h6.5V8.375zM12.25 28h6.5V4.125h-6.5zm-9 0h6.5V12.625h-6.5z",
+  ],
+  iconName: "vertical-bar-chart" as IconName,
+  prefix: "fas" as IconPrefix,
+};
+
+export const horizontalBarChartIcon: IconDefinition = {
+  icon: [
+    24,
+    24,
+    [],
+    "",
+    "M12 3v4H3V3zm4 14v4H3v-4zm6-7v4H3v-4z",
+  ],
+  iconName: "horizontal-bar-chart" as IconName,
+  prefix: "fas" as IconPrefix,
+};

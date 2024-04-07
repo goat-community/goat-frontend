@@ -93,6 +93,9 @@ import {
   faFerry,
   faCableCar,
   faTrainTram,
+  faChartColumn,
+  faChartBar,
+  faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -240,6 +243,9 @@ export enum ICON_NAME {
   HEXAGON = "hexagon",
   LICENSE = "license",
   DATA_CATEGORY = "data-category",
+  LINE_CHART = "line-chart-icon",
+  VERTICAL_BAR_CHART = "vertical-bar-chart",
+  HORIZONTAL_BAR_CHART = "horizontal-bar-chart",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -358,6 +364,9 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.HEXAGON]: hexagonIcon,
   [ICON_NAME.LICENSE]: licenseIcon,
   [ICON_NAME.DATA_CATEGORY]: dataCategoryIcon,
+  [ICON_NAME.LINE_CHART]: faChartLine,
+  [ICON_NAME.VERTICAL_BAR_CHART]: faChartColumn,
+  [ICON_NAME.HORIZONTAL_BAR_CHART]: faChartBar,
 };
 
 interface BrandColors {
