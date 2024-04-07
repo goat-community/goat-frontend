@@ -443,6 +443,8 @@
   "no_starting_points_added": "No starting points added",
   "no_table_layers": "No table layers found",
   "no_values_found": "No values found",
+  "number_of_destinations": "Number of destinations",
+  "number_of_destinations_tooltip": "Number of destinations tooltip",
   "od_configuration": "Configuration",
   "od_geometries_layer": "Geometries Layer",
   "od_geometries_layer_tooltip": "Select the layer containing the origin-destination geometries",

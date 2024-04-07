@@ -99,8 +99,8 @@ const HeatmapContainer = ({
     const { schema, payload, apiCall } = handleRun();
     const _payload = {
       routing_type: selectedRouting?.value,
-    ...payload,
-    }
+      ...payload,
+    };
     try {
       const parsedPayload = schema.parse(_payload);
       const response = await apiCall(parsedPayload, projectId as string);
@@ -187,17 +187,21 @@ const HeatmapContainer = ({
             />
 
             {/* CONFIGURATION */}
-            <SectionHeader
-              active={_isValid}
-              alwaysActive={true}
-              label={t("configuration")}
-              icon={ICON_NAME.SETTINGS}
-              disableAdvanceOptions={true}
-            />
-            <SectionOptions
-              active={_isValid}
-              baseOptions={<>{configChildren}</>}
-            />
+            {configChildren && (
+              <>
+                <SectionHeader
+                  active={_isValid}
+                  alwaysActive={true}
+                  label={t("configuration")}
+                  icon={ICON_NAME.SETTINGS}
+                  disableAdvanceOptions={true}
+                />
+                <SectionOptions
+                  active={_isValid}
+                  baseOptions={<>{configChildren}</>}
+                />
+              </>
+            )}
 
             {/* OPPORTUNITIES */}
             {opportunitiesChildren && (
