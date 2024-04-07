@@ -170,18 +170,17 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({
               label={t("error_loading_chart_data")}
             />
           )}{" "}
-          {isLoading ||
-            (areFieldsLoading && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Loading size={40} />
-              </Box>
-            ))}
+          {(isLoading || areFieldsLoading) && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Loading size={40} />
+            </Box>
+          )}
           {!chartData && !isLoading && !isError && (
             <EmptySection
               icon={ICON_NAME.DATABASE}
@@ -200,10 +199,26 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({
                 modebar: {
                   bgcolor: "transparent",
                   color: theme.palette.text.primary,
+                  activecolor: theme.palette.primary.main,
                 },
                 ...chartLabelConfig,
               }}
-              config={lng === "de" ? { locale: "de" } : {}}
+              config={
+                lng === "de"
+                  ? {
+                      locale: "de",
+                      toImageButtonOptions: {
+                        filename: `${layer.name}_chart`,
+                        format: "png",
+                      },
+                    }
+                  : {
+                      toImageButtonOptions: {
+                        filename: `${layer.name}_chart`,
+                        format: "png",
+                      },
+                    }
+              }
             />
           )}
         </Box>
