@@ -75,6 +75,7 @@ export const MAKI_ICON_TYPES = [
       "church-solid",
       "mosque-solid",
       "theatre",
+      "book-solid",
       "masks-theater-solid",
       "monument-solid",
       "marker",
