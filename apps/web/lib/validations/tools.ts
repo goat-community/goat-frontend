@@ -5,7 +5,7 @@ export const CatchmentAreaRoutingTypeEnum = z.enum([
   "walking",
   "bicycle",
   "pedelec",
-  "car_peak",
+  "car",
   "pt",
 ]);
 
@@ -19,7 +19,7 @@ export const CatchmentAreaRoutingWithoutPT = z.enum([
   "walking",
   "bicycle",
   "pedelec",
-  "car_peak",
+  "car",
 ]);
 
 export const PTRoutingModes = z.enum([
@@ -70,7 +70,7 @@ export const catchmentAreaConfigDefaults: {
     max_distance: 500,
     steps: 5,
   },
-  car_peak: {
+  car: {
     speed: 25,
     max_travel_time: 15,
     max_distance: 500,
@@ -278,7 +278,7 @@ export type PostNearbyStations = z.infer<typeof nearbyStationsSchema>;
 
 
 //**=== HEATMAP GRAVITY === */
-export const heatmapImpedanceFunctionEnum = z.enum(["gaussian", "linear", "exponential", "power"]);
+export const heatmapImpedanceFunctionEnum = z.enum(["gaussian"]); // todo: add "linear", "exponential", "power"
 export const heatmapGravitySchema = z.object({
   impedance_function: heatmapImpedanceFunctionEnum,
   opportunities: z.array(z.object({

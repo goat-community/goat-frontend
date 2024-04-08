@@ -304,7 +304,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       catchmentAreaType === "time" ? travelTimeCost : distanceCost;
     payload["routing_type"] = selectedRouting?.value;
 
-    if (selectedRouting?.value !== CatchmentAreaRoutingTypeEnum.Enum.car_peak) {
+    if (selectedRouting?.value !== CatchmentAreaRoutingTypeEnum.Enum.car) {
       try {
         setIsBusy(true);
         const parsedPayload =
@@ -329,7 +329,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       }
     }
 
-    if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.car_peak) {
+    if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.car) {
       try {
         setIsBusy(true);
         const parsedPayload =

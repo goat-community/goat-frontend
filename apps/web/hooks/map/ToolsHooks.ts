@@ -140,14 +140,14 @@ export const useCatchmentAreaShapeTypes = () => {
         value: catchmentAreaShapeEnum.Enum.polygon,
         label: t("polygon"),
       },
-      {
-        value: catchmentAreaShapeEnum.Enum.network,
-        label: t("network"),
-      },
-      {
-        value: catchmentAreaShapeEnum.Enum.rectangular_grid,
-        label: t("rectangular_grid"),
-      },
+      // {
+      //   value: catchmentAreaShapeEnum.Enum.network,
+      //   label: t("network"),
+      // },
+      // {
+      //   value: catchmentAreaShapeEnum.Enum.rectangular_grid,
+      //   label: t("rectangular_grid"),
+      // },
     ];
   }, [t]);
 
@@ -203,6 +203,11 @@ export const useRoutingTypes = () => {
 
   const motorizedRoutingTypes: SelectorItem[] = useMemo(() => {
     return [
+      {
+        value: CatchmentAreaRoutingTypeEnum.Enum.car,
+        label: t("routing_modes.car"),
+        icon: ICON_NAME.CAR,
+      },
       {
         value: CatchmentAreaRoutingTypeEnum.Enum.pt,
         label: t("routing_modes.pt"),
