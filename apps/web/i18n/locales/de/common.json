@@ -379,12 +379,26 @@
       "places": "Places",
       "transportation": "Transportation"
     },
+    "heading_titles": {
+      "basic": "Basic",
+      "data_quality": "Datenqualität",
+      "distribution": "Verteilung"
+    },
     "headings": {
+      "attribute_accuracy": "Attributgenauigkeit",
+      "attribution": "Namensnennung",
+      "completeness": "Vollständigkeit",
       "data_category": "Daten Kategorien",
+      "data_reference_year": "Datenreferenzjahr",
+      "data_source": "Datenquelle",
+      "distribution_url": "Verteilungs-URL",
+      "distributor_email": "E-Mail des Vertriebspartners",
       "distributor_name": "Distributor Name",
       "geographical_code": "Geographischer Code",
       "language_code": "Sprachcode",
       "license": "Lizenz",
+      "lineage": "Abstammung",
+      "positional_accuracy": "Positionsgenauigkeit",
       "type": "Type"
     },
     "license": {
