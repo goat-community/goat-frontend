@@ -159,6 +159,8 @@ export const featureLayerProperties = featureLayerPointPropertiesSchema
   .or(featureLayerLinePropertiesSchema)
   .or(featureLayerPolygonPropertiesSchema);
 
+
+  // lineage, positional_accuracy, attribute_accuracy, completeness
 export const layerMetadataSchema = contentMetadataSchema.extend({
   lineage: z.string().optional(),
   positional_accuracy: z.string().optional(),
@@ -166,8 +168,9 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
   completeness: z.string().optional(),
   upload_reference_system: z.number().optional(),
   upload_file_type: featureDataExchangeType.optional(),
-  geographical_code: z.array(z.string().length(2)).optional(),
+  geographical_code: z.string().length(2).optional(),
   language_code: z.array(z.string()).optional(),
+  data_reference_year: z.coerce.number().optional(),
   distributor_name: z.string().optional(),
   distributor_email: z.string().email().optional(),
   distribution_url: z.string().url().optional(),
@@ -175,7 +178,6 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
   attribution: z.string().optional(),
   data_category: dataCategory.optional(),
   data_source: z.string().optional(),
-  data_reference_year: z.coerce.number().optional(),
   in_catalog: z.boolean().optional().default(false),
 });
 
