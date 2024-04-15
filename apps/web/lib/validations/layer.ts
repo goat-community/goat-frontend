@@ -169,7 +169,7 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
   upload_reference_system: z.number().optional(),
   upload_file_type: featureDataExchangeType.optional(),
   geographical_code: z.string().length(2).optional(),
-  language_code: z.array(z.string()).optional(),
+  language_code: z.string().optional(),
   data_reference_year: z.coerce.number().optional(),
   distributor_name: z.string().optional(),
   distributor_email: z.string().email().optional(),
