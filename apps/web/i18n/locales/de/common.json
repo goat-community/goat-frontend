@@ -391,6 +391,7 @@
       "data_category": "Daten Kategorien",
       "data_reference_year": "Datenreferenzjahr",
       "data_source": "Datenquelle",
+      "description": "Beschreibung",
       "distribution_url": "Verteilungs-URL",
       "distributor_email": "E-Mail des Vertriebspartners",
       "distributor_name": "Distributor Name",
@@ -416,6 +417,19 @@
       "ODC_ODbL": "Open Data Commons Open Database License (ODC ODbL)",
       "OTHER": "Other License",
       "PROPRIETARY_PLAN4BETTER": "Proprietary Plan4Better License"
+    },
+    "no_metadata_available": {
+      "attribute_accuracy": "Keine Attributgenauigkeit verfügbar",
+      "attribution": "Keine Namensnennung verfügbar",
+      "completeness": "Keine Vollständigkeit vorhanden",
+      "data_reference_year": "Kein Datenbezugsjahr verfügbar",
+      "data_source": "Keine Datenquelle verfügbar",
+      "description": "Keine Beschreibung verfügbar",
+      "distribution_url": "Keine Vertriebs-URL verfügbar",
+      "distributor_email": "Keine Händler-E-Mail verfügbar",
+      "distributor_name": "Kein Händlername verfügbar",
+      "lineage": "Keine Abstammung verfügbar",
+      "positional_accuracy": "Keine Positionsgenauigkeit verfügbar"
     },
     "type": {
       "feature": "Feature",

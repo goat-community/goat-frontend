@@ -3,7 +3,14 @@ import { useGetMetadataValueTranslation } from "@/hooks/map/DatasetHooks";
 import { useTranslation } from "@/i18n/client";
 import { datasetMetadataAggregated, type Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
-import { Grid, Stack, Typography, useTheme } from "@mui/material";
+import {
+  Divider,
+  Grid,
+  Link,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { Icon } from "@p4b/ui/components/Icon";
 import React from "react";
 
@@ -15,19 +22,123 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
   const theme = useTheme();
   const { t, i18n } = useTranslation(["common", "countries"]);
   const getMetadataValueTranslation = useGetMetadataValueTranslation();
+  const metadataSummaryFields = [
+    {
+      field: "description",
+      heading: t("metadata.headings.description"),
+      noMetadataAvailable: t("metadata.no_metadata_available.description"),
+      type: "text",
+    },
+    {
+      field: "data_source",
+      heading: t("metadata.headings.data_source"),
+      noMetadataAvailable: t("metadata.no_metadata_available.data_source"),
+      type: "text",
+    },
+    {
+      field: "data_reference_year",
+      heading: t("metadata.headings.data_reference_year"),
+      noMetadataAvailable: t(
+        "metadata.no_metadata_available.data_reference_year",
+      ),
+      type: "text",
+    },
+    {
+      field: "lineage",
+      heading: t("metadata.headings.lineage"),
+      noMetadataAvailable: t("metadata.no_metadata_available.lineage"),
+      type: "text",
+    },
+    {
+      field: "positional_accuracy",
+      heading: t("metadata.headings.positional_accuracy"),
+      noMetadataAvailable: t(
+        "metadata.no_metadata_available.positional_accuracy",
+      ),
+      type: "text",
+    },
+    {
+      field: "attribute_accuracy",
+      heading: t("metadata.headings.attribute_accuracy"),
+      noMetadataAvailable: t(
+        "metadata.no_metadata_available.attribute_accuracy",
+      ),
+      type: "text",
+    },
+    {
+      field: "completeness",
+      heading: t("metadata.headings.completeness"),
+      noMetadataAvailable: t("metadata.no_metadata_available.completeness"),
+      type: "text",
+    },
+    {
+      field: "distributor_name",
+      heading: t("metadata.headings.distributor_name"),
+      noMetadataAvailable: t("metadata.no_metadata_available.distributor_name"),
+      type: "text",
+    },
+    {
+      field: "distributor_email",
+      heading: t("metadata.headings.distributor_email"),
+      noMetadataAvailable: t(
+        "metadata.no_metadata_available.distributor_email",
+      ),
+      type: "email",
+    },
+    {
+      field: "distribution_url",
+      heading: t("metadata.headings.distribution_url"),
+      noMetadataAvailable: t("metadata.no_metadata_available.distribution_url"),
+      type: "url",
+    },
+    {
+      field: "attribution",
+      heading: t("metadata.headings.attribution"),
+      noMetadataAvailable: t("metadata.no_metadata_available.attribution"),
+      type: "text",
+    },
+  ];
 
   return (
     <>
       <Grid container justifyContent="flex-start" spacing={4}>
-        <Grid item xs={12} sm={12} md={8} lg={9}>
-          {!dataset.description && (
-            <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-              {t("common:no_description")}
-            </Typography>
-          )}
-          {dataset.description && (
-            <Typography>{dataset.description}</Typography>
-          )}
+        <Grid item xs={12} sm={12} md={8} lg={9} spacing={2}>
+          <Stack spacing={6}>
+            {metadataSummaryFields.map(
+              ({ field, heading, noMetadataAvailable, type }) => (
+                <Stack key={field}>
+                  <Typography variant="caption">{heading}</Typography>
+                  <Divider />
+                  {!dataset[field] && (
+                    <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+                      {noMetadataAvailable}
+                    </Typography>
+                  )}
+                  {type === "email" && dataset[field] && (
+                    <Link
+                      href={`mailto:${dataset[field]}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {dataset[field]}
+                    </Link>
+                  )}
+                  {type === "url" && dataset[field] && (
+                    <Link
+                      href={dataset[field]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {dataset[field]}
+                    </Link>
+                  )}
+                  {type === "text" && dataset[field] && (
+                    <Typography>{dataset[field]}</Typography>
+                  )}
+                </Stack>
+              ),
+            )}
+          </Stack>
         </Grid>
         <Grid item xs={12} sm={12} md={4} lg={3} sx={{ pl: 0 }}>
           <Stack spacing={4}>

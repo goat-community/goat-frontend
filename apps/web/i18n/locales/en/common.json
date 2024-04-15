@@ -369,6 +369,19 @@
   "member_invited_success": "Member invited",
   "members": "Members",
   "metadata": {
+    "no_metadata_available": {
+      "description": "No description available",
+      "lineage": "No lineage available",
+      "positional_accuracy": "No positional accuracy available",
+      "attribute_accuracy": "No attribute accuracy available",
+      "completeness": "No completeness available",
+      "data_source": "No data source available",
+      "data_reference_year": "No data reference year available",
+      "distributor_name": "No distributor name available",
+      "distributor_email": "No distributor email available",
+      "distribution_url": "No distribution URL available",
+      "attribution": "No attribution available"
+    },
     "data_category": {
       "basemap": "Basemap",
       "boundary": "Boundary",
@@ -388,6 +401,7 @@
       "data_source": "Data Source",
       "data_reference_year": "Data Reference Year",
       "lineage": "Lineage",
+      "description": "Description",
       "positional_accuracy": "Positional Accuracy",
       "attribute_accuracy": "Attribute Accuracy",
       "completeness": "Completeness",
