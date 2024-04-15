@@ -102,7 +102,7 @@ const Metadata: React.FC<MetadataDialogProps> = ({
             <TextField
               fullWidth
               multiline
-              rows={4}
+              rows={6}
               label={t("description")}
               {...register("description")}
               error={!!errors.description}
@@ -154,6 +154,8 @@ const Metadata: React.FC<MetadataDialogProps> = ({
                 <Divider />
                 <TextField
                   fullWidth
+                  multiline
+                  rows={6}
                   label={t("common:metadata.headings.lineage")}
                   {...register("lineage")}
                   error={!!errors.lineage}
@@ -234,6 +236,7 @@ const Metadata: React.FC<MetadataDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
+          mt: 4
         }}
       >
         <Button onClick={onClose} variant="text">
