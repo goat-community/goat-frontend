@@ -111,6 +111,13 @@ export const MAKI_ICON_TYPES = [
       "cart-shopping-solid",
       "basket-shopping-solid", 
       "tags-solid",
+      "bread-loaf-solid",
+      "butcher_meat",
+      "farm_shop_basket",
+      "library-icon",
+      "grocery-or-supermarket",
+      "pharmacy",
+      "wine-glass-solid"
     ],
   },
   {
@@ -198,7 +205,9 @@ export const MAKI_ICON_TYPES = [
     icons: [
       "aerialway",
       "bicycle-share",
+      "bike_parking_big",
       "bicycle",
+      "electric-bike-icon",
       "bus",
       "car-rental",
       "car-repair",
