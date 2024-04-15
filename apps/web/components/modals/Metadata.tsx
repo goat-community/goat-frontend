@@ -197,14 +197,18 @@ const Metadata: React.FC<MetadataDialogProps> = ({
                 <TextField
                   fullWidth
                   label={t("common:metadata.headings.distributor_email")}
-                  {...register("distributor_email")}
+                  {...register("distributor_email", {
+                    setValueAs: (v) => (!v ? undefined : v),
+                  })}
                   error={!!errors.distributor_email}
                   helperText={errors.distributor_email?.message}
                 />
                 <TextField
                   fullWidth
                   label={t("common:metadata.headings.distribution_url")}
-                  {...register("distribution_url")}
+                  {...register("distribution_url", {
+                    setValueAs: (v) => (!v ? undefined : v),
+                  })}
                   error={!!errors.distribution_url}
                   helperText={errors.distribution_url?.message}
                 />
