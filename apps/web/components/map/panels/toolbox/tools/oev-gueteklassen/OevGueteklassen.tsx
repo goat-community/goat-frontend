@@ -15,6 +15,7 @@ import { useJobs } from "@/lib/api/jobs";
 import { computeOevGueteKlassen } from "@/lib/api/tools";
 import { accessibilityIndicatorsStaticPayload } from "@/lib/constants/payloads";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import { jobTypeEnum } from "@/lib/validations/jobs";
 import { oevGueteklassenSchema } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
@@ -34,7 +35,11 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const { projectId } = useParams();
-  const { filteredLayers } = useLayerByGeomType(["feature"], ["polygon"], projectId as string);
+  const { filteredLayers } = useLayerByGeomType(
+    ["feature"],
+    ["polygon"],
+    projectId as string,
+  );
   const [referenceLayer, setReferenceLayer] = useState<
     SelectorItem | undefined
   >(undefined);
@@ -78,12 +83,14 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
       );
       const { job_id } = response;
       if (job_id) {
-        toast.info(t("oev_gueteklassen_computation_started"));
+        toast.info(
+          `"${t(jobTypeEnum.Enum.oev_gueteklasse)}" - ${t("job_started")}`,
+        );
         mutate();
         dispatch(setRunningJobIds([...runningJobIds, job_id]));
       }
     } catch (error) {
-      toast.error(t("error_running_oev_gueteklassen"));
+      toast.error(`"${t(jobTypeEnum.Enum.oev_gueteklasse)}" - ${t("job_failed")}`);
     } finally {
       setIsBusy(false);
       handleReset();

@@ -22,6 +22,7 @@ import { useJobs } from "@/lib/api/jobs";
 import { computeNearbyStations } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
+import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { CatchmentAreaRoutingWithoutPTType } from "@/lib/validations/tools";
 import {
   catchmentAreaMaskLayerNames,
@@ -170,13 +171,16 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
       );
       const { job_id } = response;
       if (job_id) {
-        toast.info(t("nearby_stations_access_computation_started"));
+        toast.info(
+          `"${t(jobTypeEnum.Enum.nearby_station_access)}" - ${t("job_started")}`,
+        );
         mutate();
         dispatch(setRunningJobIds([...runningJobIds, job_id]));
       }
-    } catch (error) {
-      console.error(error);
-      toast.error(t("error_running_nearby_stations_access"));
+    } catch {
+      toast.error(
+        `"${t(jobTypeEnum.Enum.nearby_station_access)}" - ${t("job_failed")}`,
+      );
     } finally {
       setIsBusy(false);
       handleReset();

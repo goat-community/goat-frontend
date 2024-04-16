@@ -279,12 +279,12 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("started")}`);
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch {
-        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("failed")}`)
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_failed")}`)
       } finally {
         setIsBusy(false);
         handleReset();
@@ -315,13 +315,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("started")}`);
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch (e) {
         console.log(e);
-        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("failed")}`);
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_failed")}`);
       } finally {
         setIsBusy(false);
         handleReset();
@@ -340,13 +340,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("started")}`);
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch (e) {
         console.log(e);
-        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("failed")}`);
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_failed")}`);
       } finally {
         setIsBusy(false);
         handleReset();

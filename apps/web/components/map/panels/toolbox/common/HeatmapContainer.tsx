@@ -113,12 +113,12 @@ const HeatmapContainer = ({
       const response = await apiCall(parsedPayload, projectId as string);
       const { job_id } = response;
       if (job_id) {
-        toast.info(`"${t(heatmap_type)}" - ${t("started")}`);
+        toast.info(`"${t(heatmap_type)}" - ${t("job_started")}`);
         mutate();
         dispatch(setRunningJobIds([...runningJobIds, job_id]));
       }
     } catch (error) {
-      toast.error(`"${t(heatmap_type)}" - ${t("failed")}`);
+      toast.error(`"${t(heatmap_type)}" - ${t("job_failed")}`);
     } finally {
       setIsBusy(false);
       _handleReset();

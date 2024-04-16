@@ -15,6 +15,7 @@ import { useJobs } from "@/lib/api/jobs";
 import { computeTripCount } from "@/lib/api/tools";
 import { accessibilityIndicatorsStaticPayload } from "@/lib/constants/payloads";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import { jobTypeEnum } from "@/lib/validations/jobs";
 import { tripCountSchema } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
@@ -82,12 +83,16 @@ const TripCount = ({ onBack, onClose }: IndicatorBaseProps) => {
       );
       const { job_id } = response;
       if (job_id) {
-        toast.info(t("trip_count_computation_started"));
+        toast.info(
+          `"${t(jobTypeEnum.Enum.trip_count_station)}" - ${t("job_started")}`,
+        );
         mutate();
         dispatch(setRunningJobIds([...runningJobIds, job_id]));
       }
     } catch (error) {
-      toast.error(t("error_running_trip_count"));
+      toast.error(
+        `"${t(jobTypeEnum.Enum.trip_count_station)}" - ${t("job_failed")}`,
+      );
     } finally {
       setIsBusy(false);
       handleReset();
