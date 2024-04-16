@@ -50,6 +50,7 @@ import {
   useStartingPointMethods,
 } from "@/hooks/map/ToolsHooks";
 import StartingPointSelectors from "@/components/map/panels/toolbox/common/StartingPointsSelectors";
+import { jobTypeEnum } from "@/lib/validations/jobs";
 
 const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
@@ -272,19 +273,18 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       try {
         setIsBusy(true);
         const parsedPayload = ptCatchmentAreaSchema.parse(payload);
-        parsedPayload["travel_cost"]["trave"];
         const response = await computePTCatchmentArea(
           parsedPayload,
           projectId as string,
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(t("catchment_area_computation_started"));
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch {
-        toast.error(t("failed_to_compute_catchment_area"));
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("failed")}`)
       } finally {
         setIsBusy(false);
         handleReset();
@@ -315,13 +315,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(t("catchment_area_computation_started"));
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch (e) {
         console.log(e);
-        toast.error(t("failed_to_compute_catchment_area"));
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("failed")}`);
       } finally {
         setIsBusy(false);
         handleReset();
@@ -340,13 +340,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(t("catchment_area_computation_started"));
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch (e) {
         console.log(e);
-        toast.error(t("failed_to_compute_catchment_area"));
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("failed")}`);
       } finally {
         setIsBusy(false);
         handleReset();
@@ -377,7 +377,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     <Container
       disablePadding={false}
       header={
-        <ToolsHeader onBack={onBack} title={t("isochrone")} />
+        <ToolsHeader onBack={onBack} title={t("catchment_area")} />
       }
       close={onClose}
       body={
@@ -393,7 +393,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
               variant="body2"
               sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
             >
-              {t("isochrone_description")}
+              {t("catchment_area_description")}
             </Typography>
 
             {/* ROUTING */}

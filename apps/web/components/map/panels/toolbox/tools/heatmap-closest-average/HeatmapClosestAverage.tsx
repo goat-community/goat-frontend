@@ -51,6 +51,7 @@ const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
       schema: heatmapClosestAverageSchema,
       payload,
       apiCall: computeHeatmapClosestAverage,
+      type: "heatmap_closest_average",
     };
   };
 

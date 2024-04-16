@@ -33,6 +33,7 @@ type HeatmapContainerProps = IndicatorBaseProps & {
     payload: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     apiCall: (payload: any, projectId: string) => Promise<any>;
+    type: string;
   };
   handleReset?: () => void;
   isValid: boolean;
@@ -96,25 +97,31 @@ const HeatmapContainer = ({
     if (!handleRun) {
       return;
     }
-    const { schema, payload, apiCall } = handleRun();
+    const { schema, payload, apiCall, type } = handleRun();
     const _payload = {
       routing_type: selectedRouting?.value,
       ...payload,
     };
+    let heatmap_type = `${type}_active_mobility`
+    if (selectedRouting?.value === HeatmapRoutingTypeEnum.Enum.public_transport) {
+      heatmap_type = `${type}_pt`;
+    }
+
+
     try {
       const parsedPayload = schema.parse(_payload);
       const response = await apiCall(parsedPayload, projectId as string);
       const { job_id } = response;
       if (job_id) {
-        toast.info(t("heatmap_computation_started"));
+        toast.info(`"${t(heatmap_type)}" - ${t("started")}`);
         mutate();
         dispatch(setRunningJobIds([...runningJobIds, job_id]));
       }
     } catch (error) {
-      toast.error(t("error_running_heatmap_computation"));
+      toast.error(`"${t(heatmap_type)}" - ${t("failed")}`);
     } finally {
       setIsBusy(false);
-      handleReset && handleReset();
+      _handleReset();
     }
   };
 

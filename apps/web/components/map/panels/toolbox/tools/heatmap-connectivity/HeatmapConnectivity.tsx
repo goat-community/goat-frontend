@@ -42,6 +42,7 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
       schema: heatmapConnectivitySchema,
       payload,
       apiCall: computeHeatmapConnectivity,
+      type: "heatmap_connectivity",
     };
   };
   const handleReset = () => {

@@ -25,10 +25,10 @@ export function useJobStatus(onSuccess?: () => void, onFailed?: () => void) {
           const type = t(job.type) || "";
           if (job.status_simple === "finished") {
             onSuccess && onSuccess();
-            toast.success(`"${type}" ${t("job_success")}`);
+            toast.success(`"${type}" - ${t("job_success")}`);
           } else {
             onFailed && onFailed();
-            toast.error(`"${type}" ${t("job_failed")}`);
+            toast.error(`"${type}" - ${t("job_failed")}`);
           }
         }
       });

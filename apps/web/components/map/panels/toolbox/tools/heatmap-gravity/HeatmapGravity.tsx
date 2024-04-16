@@ -80,6 +80,7 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
       schema: heatmapGravitySchema,
       payload,
       apiCall: computeHeatmapGravity,
+      type: "heatmap_gravity",
     };
   };
 
