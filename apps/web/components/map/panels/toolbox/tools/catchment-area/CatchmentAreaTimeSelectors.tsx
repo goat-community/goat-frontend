@@ -61,19 +61,21 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
         tooltip={t("travel_time_limit_tooltip")}
       />
 
-      {routingType && routingType !== CatchmentAreaRoutingTypeEnum.Enum.pt && (
-        <Selector
-          selectedItems={speed}
-          setSelectedItems={(
-            item: SelectorItem[] | SelectorItem | undefined,
-          ) => {
-            setSpeed(item as SelectorItem);
-          }}
-          items={getTravelCostConfigValues(1, 25, "Km/h")}
-          label={t("travel_time_speed") + " (Km/h)"}
-          tooltip={t("travel_time_speed_tooltip")}
-        />
-      )}
+      {routingType &&
+        routingType !== CatchmentAreaRoutingTypeEnum.Enum.pt &&
+        routingType !== CatchmentAreaRoutingTypeEnum.Enum.car && (
+          <Selector
+            selectedItems={speed}
+            setSelectedItems={(
+              item: SelectorItem[] | SelectorItem | undefined,
+            ) => {
+              setSpeed(item as SelectorItem);
+            }}
+            items={getTravelCostConfigValues(1, 25, "Km/h")}
+            label={t("travel_time_speed") + " (Km/h)"}
+            tooltip={t("travel_time_speed_tooltip")}
+          />
+        )}
 
       <Selector
         selectedItems={steps}
