@@ -395,8 +395,8 @@
     "headings": {
       "data_category": "Data Category",
       "distributor_name": "Distributor Name",
-      "geographical_code": "Geographical Code",
-      "language_code": "Language Code",
+      "geographical_code": "Region",
+      "language_code": "Language",
       "license": "License",
       "data_source": "Data Source",
       "data_reference_year": "Data Reference Year",
