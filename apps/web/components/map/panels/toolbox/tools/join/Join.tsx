@@ -16,6 +16,7 @@ import { useTranslation } from "@/i18n/client";
 import { useJobs } from "@/lib/api/jobs";
 import { computeJoin } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import { joinSchema, statisticOperationEnum } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
@@ -92,11 +93,11 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
   // Fields have to be the same type
   const { layerFields: targetFields } = useLayerFields(
     targetLayerDatasetId || "",
-    joinSelectedField?.type,
+    // joinSelectedField?.type,
   );
   const { layerFields: joinFields } = useLayerFields(
     joinLayerDatasetId || "",
-    targetSelectedField?.type,
+    // targetSelectedField?.type,
   );
   const { layerFields: allJoinFields } = useLayerFields(
     joinLayerDatasetId || "",
@@ -166,12 +167,12 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
       const response = await computeJoin(parsedPayload, projectId as string);
       const { job_id } = response;
       if (job_id) {
-        toast.info(t("join_computation_started"));
+        toast.info(`"${t(jobTypeEnum.Enum.join)}" - ${t("job_started")}`);
         mutate();
         dispatch(setRunningJobIds([...runningJobIds, job_id]));
       }
     } catch (error) {
-      toast.error(t("error_running_join_computation"));
+      toast.error(`"${t(jobTypeEnum.Enum.join)}" - ${t("job_failed")}`);
     } finally {
       setIsBusy(false);
       handleReset();
