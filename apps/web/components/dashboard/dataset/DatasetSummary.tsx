@@ -30,12 +30,6 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
       type: "text",
     },
     {
-      field: "data_source",
-      heading: t("metadata.headings.data_source"),
-      noMetadataAvailable: t("metadata.no_metadata_available.data_source"),
-      type: "text",
-    },
-    {
       field: "data_reference_year",
       heading: t("metadata.headings.data_reference_year"),
       noMetadataAvailable: t(

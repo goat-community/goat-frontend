@@ -177,7 +177,6 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
   license: dataLicense.optional(),
   attribution: z.string().optional(),
   data_category: dataCategory.optional(),
-  data_source: z.string().optional(),
   in_catalog: z.boolean().optional().default(false),
 });
 

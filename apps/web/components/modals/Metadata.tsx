@@ -130,13 +130,6 @@ const Metadata: React.FC<MetadataDialogProps> = ({
                 /> */}
                 <TextField
                   fullWidth
-                  label={t("common:metadata.headings.data_source")}
-                  {...register("data_source")}
-                  error={!!errors.data_source}
-                  helperText={errors.data_source?.message}
-                />
-                <TextField
-                  fullWidth
                   label={t("common:metadata.headings.data_reference_year")}
                   type="number"
                   {...register("data_reference_year", {

@@ -233,13 +233,14 @@ export const useRoutingTypes = () => {
 
   const motorizedHeatmapRoutingTypes: SelectorItem[] = useMemo(() => {
     return [
-      {
-        value: HeatmapRoutingTypeEnum.Enum.public_transport,
-        label: t("routing_modes.pt"),
-        icon: ICON_NAME.BUS,
-      },
+      //TODO: Uncomment this when PT heatmap is implemented
+      // {
+      //   value: HeatmapRoutingTypeEnum.Enum.public_transport,
+      //   label: t("routing_modes.pt"),
+      //   icon: ICON_NAME.BUS,
+      // },
     ];
-  }, [t]);
+  }, []);
 
   const routingTypes = useMemo(() => {
     return activeMobilityRoutingTypes.concat(motorizedRoutingTypes);
