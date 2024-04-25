@@ -1,5 +1,4 @@
 import { useTranslation } from "@/i18n/client";
-import { useLayerKeys } from "@/lib/api/layers";
 import { useProjectLayers } from "@/lib/api/projects";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import {
