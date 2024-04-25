@@ -43,24 +43,6 @@ const Expression: React.FC<ExpressionProps> = (props) => {
 
   const { t } = useTranslation("common");
   const { projectId } = useParams();
-  const expressionMoreMenuOptions = useMemo(() => {
-    const layerStyleMoreMenuOptions: PopperMenuItem[] = [
-      {
-        id: FilterExpressionActions.DELETE,
-        label: t("delete"),
-        icon: ICON_NAME.TRASH,
-        color: theme.palette.error.main,
-      },
-      {
-        id: FilterExpressionActions.DUPLICATE,
-        label: t("duplicate"),
-        icon: ICON_NAME.COPY,
-        color: theme.palette.text.secondary,
-      },
-    ];
-
-    return layerStyleMoreMenuOptions;
-  }, [t, theme.palette.error.main, theme.palette.text.secondary]);
 
   const spatialIntersectionOptions: SelectorItem[] = useMemo(
     () => [
@@ -117,6 +99,31 @@ const Expression: React.FC<ExpressionProps> = (props) => {
       !!expression.value.toString()
     );
   }, [expression]);
+
+  const expressionMoreMenuOptions = useMemo(() => {
+    const layerStyleMoreMenuOptions: PopperMenuItem[] = [
+      {
+        id: FilterExpressionActions.DELETE,
+        label: t("delete"),
+        icon: ICON_NAME.TRASH,
+        color: theme.palette.error.main,
+      },
+      {
+        id: FilterExpressionActions.DUPLICATE,
+        label: t("duplicate"),
+        disabled: !isExpressionValid,
+        icon: ICON_NAME.COPY,
+        color: theme.palette.text.secondary,
+      },
+    ];
+
+    return layerStyleMoreMenuOptions;
+  }, [
+    isExpressionValid,
+    t,
+    theme.palette.error.main,
+    theme.palette.text.secondary,
+  ]);
 
   useEffect(() => {
     if (hasExpressionChanged && isExpressionValid) {
@@ -175,7 +182,6 @@ const Expression: React.FC<ExpressionProps> = (props) => {
                 fields={layerFields}
                 selectedField={selectedAttribute}
                 setSelectedField={(field) => {
-                  console.log(field)
                   const existingFieldType = selectedAttribute?.type;
                   const newFieldType = field?.type;
                   let newExpression = {
@@ -231,7 +237,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
                     selectedExpressionOperation.value as string,
                   ) && (
                     <SelectorLayerValue
-                      selectedValues={[expression.value as string]}
+                      selectedValues={expression.value as string}
                       onSelectedValuesChange={(values: string | null) => {
                         const fieldType = selectedAttribute?.type;
                         if (fieldType === "number" && values) {

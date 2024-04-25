@@ -20,7 +20,7 @@ export const projectLayerSchema = layerSchema.extend({
   query: z.object({
     metadata: z.object({}).optional(),
     cql: z.object({}).optional(),
-  }).optional(),
+  }).nullable().optional(),
   layer_id: z.string().uuid(),
   charts: z.object({}).optional(),
   legend_urls: z.array(z.string()).optional(),

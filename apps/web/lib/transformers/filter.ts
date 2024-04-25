@@ -231,7 +231,7 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
     };
 
     const value =
-      expressionToBeProcessed.args.length > 1
+      expressionToBeProcessed.args.length > 0
         ? expressionToBeProcessed.args[1]
         : "";
 

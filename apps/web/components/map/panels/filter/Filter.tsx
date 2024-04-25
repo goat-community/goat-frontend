@@ -39,6 +39,7 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { activeLayer } = useFilterQueries(projectId);
+  const [previousLayerId, setPreviousLayerId] = useState<string | null>(null);
   const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
   const { layers: projectLayers, mutate: mutateProjectLayers } =
     useProjectLayers(projectId);
@@ -108,6 +109,10 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
 
   // Load existing expressions
   useEffect(() => {
+    if (activeLayer?.layer_id !== previousLayerId && activeLayer?.layer_id) {
+      setPreviousLayerId(activeLayer?.layer_id);
+      setExpressions([]);
+    }
     if (expressions.length) return;
     const existingExpressions = parseCQLQueryToObject(
       activeLayer?.query?.cql as { op: string; args: unknown[] },
@@ -121,9 +126,9 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
       }
     }
     setExpressions(existingExpressions);
-  }, [activeLayer, expressions.length, logicalOperators]);
+  }, [activeLayer, expressions.length, logicalOperators, previousLayerId]);
 
-  const areAllExpressionsValid = useMemo(() => {
+  const validateExpressions = (expressions) => {
     return expressions.every((expression) => {
       return (
         expression.attribute &&
@@ -131,6 +136,10 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
         !!expression.value.toString()
       );
     });
+  };
+
+  const areAllExpressionsValid = useMemo(() => {
+    return validateExpressions(expressions);
   }, [expressions]);
 
   const updateLayer = async (query) => {
@@ -138,9 +147,13 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
     const layers = JSON.parse(JSON.stringify(projectLayers));
     const index = layers.findIndex((l) => l.id === activeLayer.id);
     const layerToUpdate = layers[index];
-    layerToUpdate.query = {
-      cql: query,
-    };
+    if (query === null) {
+      layerToUpdate.query = null;
+    } else {
+      layerToUpdate.query = {
+        cql: query,
+      };
+    }
     await mutateProjectLayers(layers, false);
     await updateProjectLayer(projectId, activeLayer.id, layerToUpdate);
   };
@@ -150,7 +163,8 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
       await updateLayer(null);
       return;
     }
-    if (!activeLayer || !logicalOperator || !areAllExpressionsValid) return;
+    if (!activeLayer || !logicalOperator || !validateExpressions(expressions))
+      return;
     const query = createTheCQLBasedOnExpression(
       expressions,
       layerFields,
@@ -160,6 +174,7 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
   };
 
   const clearFilter = async () => {
+    setExpressions([]);
     await updateLayer(null);
   };
 

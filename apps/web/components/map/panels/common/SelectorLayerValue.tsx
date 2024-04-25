@@ -35,7 +35,6 @@ const SelectorLayerValue = (props: SelectorProps) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
   const { t } = useTranslation("common");
-
   const { data, isLoading, searchText, setSearchText, debouncedSetSearchText } =
     useDatasetValueSelectorMethods({
       selectedValues: props.multiple
