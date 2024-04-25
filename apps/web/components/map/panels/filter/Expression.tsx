@@ -1,427 +1,343 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-  Box,
-  Typography,
-  Select,
-  debounce,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  useTheme,
-  MenuList,
+  Divider,
   IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme,
 } from "@mui/material";
-import CustomMenu from "@/components/common/CustomMenu";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useTranslation } from "@/i18n/client";
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
-import { useParams } from "next/navigation";
-import { useGetLayerKeys } from "@/hooks/map/ToolsHooks";
-import { v4 } from "uuid";
-import { comparerModes } from "@/public/assets/data/comparers_filter";
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import {
-  TextOption,
-  NumberOption,
-  SelectOption,
-  DualNumberOption,
-} from "@/components/map/panels/filter/FilterOption";
-import { useUniqueValues } from "@/lib/api/layers";
-import { useMap } from "react-map-gl";
-import type { Expression as ExpressionType } from "@/lib/validations/filter";
-import type { SelectChangeEvent } from "@mui/material";
-import BoundingBoxInput from "@/components/map/panels/filter/BoundingBoxInput";
+  FilterType,
+  type Expression as ExpressionType,
+  SpatialIntersectionGeomType,
+} from "@/lib/validations/filter";
+import { useTranslation } from "@/i18n/client";
+import { FilterExpressionActions } from "@/types/common";
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import MoreMenu from "@/components/common/PopperMenu";
+import useLayerFields from "@/hooks/map/CommonHooks";
+import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
+import { useParams } from "next/navigation";
+import Selector from "@/components/map/panels/common/Selector";
+import useLogicalExpressionOperations from "@/hooks/map/FilteringHooks";
+import type { SelectorItem } from "@/types/map/common";
+import TextFieldInput from "@/components/map/panels/common/TextFieldInput";
+import SelectorLayerValue from "@/components/map/panels/common/SelectorLayerValue";
 
-interface ExpressionProps {
+type ExpressionProps = {
   expression: ExpressionType;
-  modifyExpression: (
-    expression: ExpressionType,
-    key: string,
-    value: string | string[] | number,
-  ) => void;
-  deleteOneExpression: (expression: ExpressionType) => void;
-  duplicateExpression: (expression: ExpressionType) => void;
-}
+  onDelete: (expression: ExpressionType) => void;
+  onUpdate: (expression: ExpressionType) => void;
+  onDuplicate: (expression: ExpressionType) => void;
+};
 
-const Expression = React.memo(function Expression(props: ExpressionProps) {
-  const {
-    expression,
-    modifyExpression,
-    deleteOneExpression,
-    duplicateExpression,
-  } = props;
-  const { projectId } = useParams();
-
-  const [expressionValue, setExpressionValue] = useState(expression.value);
-  const [anchorEl, setAnchorEl] = React.useState<boolean>(false);
-  const [statisticsPage, setStatisticsPage] = React.useState<number>(1);
-  const [statisticsData, setStatisticsData] = React.useState<string[]>([]);
-
-  const { t } = useTranslation("common");
-  const { activeLayer } = useActiveLayer(projectId as string);
-  const open = Boolean(anchorEl);
-  const { map } = useMap();
+const Expression: React.FC<ExpressionProps> = (props) => {
   const theme = useTheme();
 
-  const { data } = useUniqueValues(
-    activeLayer ? activeLayer.layer_id : "",
-    expression.attribute,
-    statisticsPage,
+  const [expression, setExpression] = useState<ExpressionType>(
+    props.expression,
   );
+
+  const { t } = useTranslation("common");
+  const { projectId } = useParams();
+  const expressionMoreMenuOptions = useMemo(() => {
+    const layerStyleMoreMenuOptions: PopperMenuItem[] = [
+      {
+        id: FilterExpressionActions.DELETE,
+        label: t("delete"),
+        icon: ICON_NAME.TRASH,
+        color: theme.palette.error.main,
+      },
+      {
+        id: FilterExpressionActions.DUPLICATE,
+        label: t("duplicate"),
+        icon: ICON_NAME.COPY,
+        color: theme.palette.text.secondary,
+      },
+    ];
+
+    return layerStyleMoreMenuOptions;
+  }, [t, theme.palette.error.main, theme.palette.text.secondary]);
+
+  const spatialIntersectionOptions: SelectorItem[] = useMemo(
+    () => [
+      {
+        value: SpatialIntersectionGeomType.BBOX,
+        label: t("map_extent"),
+        icon: ICON_NAME.BOUNDING_BOX,
+      },
+      {
+        value: SpatialIntersectionGeomType.BOUNDARY,
+        label: t("boundary"),
+        icon: ICON_NAME.DRAW_POLYGON,
+      },
+    ],
+    [t],
+  );
+
+  const selectedIntersection = useMemo(() => {
+    return spatialIntersectionOptions.find(
+      (intersection) =>
+        intersection.value ===
+        (expression.metadata?.intersection?.geom_type as string),
+    );
+  }, [
+    expression.metadata?.intersection?.geom_type,
+    spatialIntersectionOptions,
+  ]);
+
+  const { activeLayer } = useActiveLayer(projectId as string);
+  const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
+  const selectedAttribute = useMemo(() => {
+    return layerFields.find((field) => field.name === expression.attribute);
+  }, [layerFields, expression.attribute]);
+
+  const { logicalExpressionTypes } = useLogicalExpressionOperations(
+    selectedAttribute?.type,
+  );
+
+  const selectedExpressionOperation = useMemo(() => {
+    const operation = logicalExpressionTypes.find(
+      (operation) => operation.value === expression.expression,
+    );
+    return operation;
+  }, [expression.expression, logicalExpressionTypes]);
+
+  const hasExpressionChanged = useMemo(() => {
+    return JSON.stringify(expression) !== JSON.stringify(props.expression);
+  }, [expression, props.expression]);
+
+  const isExpressionValid = useMemo(() => {
+    return (
+      expression.attribute &&
+      expression.expression &&
+      !!expression.value.toString()
+    );
+  }, [expression]);
 
   useEffect(() => {
-    if (data) {
-      setStatisticsData([
-        ...statisticsData,
-        ...data.items.map((val) => val.value),
-      ]);
+    if (hasExpressionChanged && isExpressionValid) {
+      props.onUpdate(expression);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
-  const optionsStatistic = statisticsData.map((option) => ({
-    value: option,
-    label: option,
-  }));
-
-  const debounceEffect = (
-    expression: ExpressionType,
-    key: string,
-    value: string,
-  ) => {
-    setExpressionValue(value);
-    debounce(() => {
-      modifyExpression(expression, key, value);
-    }, 500)();
-  };
-
-  const getValueCollector = () => {
-    switch (expression.expression) {
-      case "is":
-      case "is_not":
-        if (
-          expression.expression === "is" &&
-          expression.attribute === "Bounding Box"
-        ) {
-          return (
-            <BoundingBoxInput
-              bounds={expression.value as string}
-              onChange={(value: string) =>
-                debounceEffect(expression, "value", value)
-              }
-            />
-          );
-        }
-        if (attributeType === "string") {
-          return (
-            <TextOption
-              value={expressionValue as string}
-              setChange={(value: string) => {
-                debounceEffect(expression, "value", value);
-              }}
-              options={optionsStatistic}
-              fetchMoreData={() => {
-                setStatisticsPage(statisticsPage + 1);
-              }}
-            />
-          );
-        } else {
-          return (
-            <NumberOption
-              value={expression.value as string}
-              setChange={(value: string) => {
-                modifyExpression(expression, "value", parseFloat(value));
-              }}
-              options={optionsStatistic}
-              fetchMoreData={() => {
-                setStatisticsPage(statisticsPage + 1);
-              }}
-            />
-          );
-        }
-      case "starts_with":
-      case "ends_with":
-      case "contains_the_text":
-      case "does_not_contains_the_text":
-        return (
-          <TextOption
-            value={expression.value as string}
-            setChange={(value: string) =>
-              modifyExpression(expression, "value", value)
-            }
-            options={optionsStatistic}
-            fetchMoreData={() => {
-              setStatisticsPage(statisticsPage + 1);
-            }}
-          />
-        );
-      case "includes":
-      case "excludes":
-        return (
-          <SelectOption
-            value={
-              (typeof expression.value === "string"
-                ? expression.value.split(",")
-                : expression.value) as string[]
-            }
-            fetchMoreData={() => {
-              setStatisticsPage(statisticsPage + 1);
-            }}
-            setChange={(value: string[]) => {
-              modifyExpression(expression, "value", value);
-            }}
-            options={optionsStatistic}
-          />
-        );
-      case "is_at_least":
-      case "is_less_than":
-      case "is_at_most":
-      case "is_greater_than":
-        return (
-          <NumberOption
-            value={expression.value as string}
-            setChange={(value: string) =>
-              modifyExpression(expression, "value", parseFloat(value))
-            }
-            options={optionsStatistic}
-            fetchMoreData={() => {
-              setStatisticsPage(statisticsPage + 1);
-            }}
-          />
-        );
-      case "is_between":
-        return (
-          <DualNumberOption
-            options={optionsStatistic}
-            fetchMoreData={() => {
-              setStatisticsPage(statisticsPage + 1);
-            }}
-            value1={
-              typeof expression.value === "string"
-                ? expression.value.split("-")[0]
-                : "0"
-            }
-            setChange1={(value: string) =>
-              modifyExpression(
-                expression,
-                "value",
-                `${value.length ? value : "0"}-${
-                  typeof expression.value === "string" &&
-                  expression.value.split("-").length > 1
-                    ? expression.value.split("-")[1]
-                    : "0"
-                }`,
-              )
-            }
-            value2={
-              typeof expression.value === "string"
-                ? expression.value.split("-")[1]
-                : "0"
-            }
-            setChange2={(value: string) =>
-              modifyExpression(
-                expression,
-                "value",
-                `${
-                  typeof expression.value === "string" &&
-                  expression.value.split("-").length > 1
-                    ? expression.value.split("-")[0]
-                    : "0"
-                }-${value.length ? value : "0"}`,
-              )
-            }
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const layerAttributes = useGetLayerKeys(
-    `user_data.${(activeLayer ? activeLayer.layer_id : "")
-      .split("-")
-      .join("")}`,
-  );
-
-  const layerSpatialAttributes = [
-    {
-      name: "Bounding Box",
-      type: "number",
-    },
-  ];
-
-  layerAttributes.keys.push({
-    name: "Bounding Box",
-    type: "number",
-  });
-
-  const attributeType = layerAttributes.keys.filter(
-    (attrib) => attrib.name === expression.attribute,
-  ).length
-    ? layerAttributes.keys.filter(
-        (attrib) => attrib.name === expression.attribute,
-      )[0].type
-    : undefined;
-
-  function toggleMorePopover() {
-    setAnchorEl(!anchorEl);
-  }
-
-  const targetFieldChangeHandler = (field: {
-    type: "string" | "number";
-    name: string;
-  }) => {
-    if (field) {
-      modifyExpression(expression, "attribute", field.name);
-      if (field.name === "Bounding Box" && map) {
-        expression.attribute = field.name;
-        expression.value = `${map.getBounds().getSouthWest().toArray()[0]},${
-          map.getBounds().getSouthWest().toArray()[1]
-        },${map.getBounds().getNorthEast().toArray()[0]},${
-          map.getBounds().getNorthEast().toArray()[1]
-        }`;
-        setExpressionValue(
-          `${map.getBounds().getSouthWest().toArray()[0]},${
-            map.getBounds().getSouthWest().toArray()[1]
-          },${map.getBounds().getNorthEast().toArray()[0]},${
-            map.getBounds().getNorthEast().toArray()[1]
-          }`,
-        );
-        modifyExpression(expression, "expression", "is");
-        expression.expression = "is";
-        debounceEffect(
-          expression,
-          "value",
-          `${map.getBounds().getSouthWest().toArray()[0]},${
-            map.getBounds().getSouthWest().toArray()[1]
-          },${map.getBounds().getNorthEast().toArray()[0]},${
-            map.getBounds().getNorthEast().toArray()[1]
-          }`,
-        );
-      }
-    } else {
-      modifyExpression(expression, "attribute", "");
-    }
-    setStatisticsData([]);
-    setExpressionValue("");
-  };
+  }, [expression, hasExpressionChanged, isExpressionValid, props]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: theme.spacing(3),
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography
-          fontWeight="bold"
-          color={theme.palette.text.secondary}
-          sx={{ display: "flex", alignItems: "center", gap: theme.spacing(2) }}
-        >
-          <Icon
-            iconName={
-              expression.type === "regular"
-                ? ICON_NAME.EDITPEN
-                : ICON_NAME.MOUNTAIN
+    <>
+      <Stack direction="column">
+        <Stack direction="row" justifyContent="space-between">
+          <Stack direction="row" alignItems="center">
+            <Icon
+              iconName={
+                expression.type === FilterType.Logical
+                  ? ICON_NAME.TABLE
+                  : ICON_NAME.MAP
+              }
+              style={{
+                fontSize: "17px",
+                color: theme.palette.text.secondary,
+              }}
+            />
+            <Typography variant="body2" fontWeight="bold" sx={{ pl: 2 }}>
+              {t(`${expression.type}_expression`)}
+            </Typography>
+          </Stack>
+          <MoreMenu
+            menuItems={expressionMoreMenuOptions}
+            menuButton={
+              <Tooltip title={t("more_options")} arrow placement="top">
+                <IconButton>
+                  <Icon
+                    iconName={ICON_NAME.MORE_HORIZ}
+                    style={{ fontSize: 15 }}
+                  />
+                </IconButton>
+              </Tooltip>
             }
-            sx={{ fontSize: "18px" }}
+            onSelect={async (menuItem: PopperMenuItem) => {
+              if (menuItem.id === FilterExpressionActions.DELETE) {
+                props.onDelete(expression);
+              }
+              if (menuItem.id === FilterExpressionActions.DUPLICATE) {
+                props.onDuplicate(expression);
+              }
+            }}
           />
-          {expression.type === "regular"
-            ? t("logical_expression")
-            : t("spatial_expression")}
-        </Typography>
-        <Box sx={{ position: "relative" }}>
-          <IconButton
-            onClick={toggleMorePopover}
-            sx={{ padding: theme.spacing(1), width: "fit-content" }}
-          >
-            <Icon iconName={ICON_NAME.ELLIPSIS} />
-          </IconButton>
-          {open ? (
-            <CustomMenu close={toggleMorePopover}>
-              <MenuList>
-                <MenuItem onClick={() => deleteOneExpression(expression)}>
-                  <Icon
-                    iconName={ICON_NAME.TRASH}
-                    htmlColor={theme.palette.text.secondary}
-                    sx={{ fontSize: "14px" }}
-                  />
-                  <Typography
-                    variant="body1"
-                    sx={{ ml: 2, fontWeight: 600 }}
-                    color={theme.palette.text.secondary}
-                  >
-                    {t("delete")}
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={() => duplicateExpression(expression)}>
-                  <Icon
-                    iconName={ICON_NAME.CLONE}
-                    htmlColor={theme.palette.text.secondary}
-                    sx={{ fontSize: "14px" }}
-                  />
-                  <Typography
-                    variant="body1"
-                    sx={{ ml: 2, fontWeight: 600 }}
-                    color={theme.palette.text.secondary}
-                  >
-                    {t("duplicate")}
-                  </Typography>
-                </MenuItem>
-              </MenuList>
-            </CustomMenu>
-          ) : null}
-        </Box>
-      </Box>
-      <LayerFieldSelector
-        label="Target Field"
-        selectedField={
-          expression.type === "regular"
-            ? layerAttributes.keys.filter(
-                (key) => key.name === expression.attribute,
-              )[0]
-            : layerSpatialAttributes.filter(
-                (key) => key.name === expression.attribute,
-              )[0]
-        }
-        setSelectedField={targetFieldChangeHandler}
-        fields={
-          expression.type === "regular"
-            ? layerAttributes.keys
-            : layerSpatialAttributes
-        }
-      />
-      <FormControl fullWidth>
-        <InputLabel>{t("select_an_expression")}</InputLabel>
-        <Select
-          value={expression.expression}
-          label={t("select_an_expression")}
-          onChange={(event: SelectChangeEvent) => {
-            modifyExpression(expression, "expression", event.target.value);
-            setExpressionValue("");
-          }}
-          disabled={expression.attribute === "Bounding Box"}
-        >
-          {attributeType
-            ? comparerModes[attributeType].map((attr) => (
-                <MenuItem key={v4()} value={attr.value}>
-                  {t(`filter_expressions.${attr.value}`)}
-                </MenuItem>
-              ))
-            : null}
-        </Select>
-      </FormControl>
-      {getValueCollector()}
-    </Box>
+        </Stack>
+        <Stack direction="column" spacing={2}>
+          {/* {LOGICAL FILTER} */}
+          {expression.type === FilterType.Logical && (
+            <>
+              <LayerFieldSelector
+                label={t("select_field")}
+                fields={layerFields}
+                selectedField={selectedAttribute}
+                setSelectedField={(field) => {
+                  console.log(field)
+                  const existingFieldType = selectedAttribute?.type;
+                  const newFieldType = field?.type;
+                  let newExpression = {
+                    ...expression,
+                    value: "",
+                    attribute: field?.name || "",
+                  };
+                  if (newFieldType !== existingFieldType) {
+                    newExpression = {
+                      ...newExpression,
+                      expression: "",
+                    };
+                  }
+                  setExpression(newExpression);
+                }}
+              />
+              <Selector
+                disabled={!selectedAttribute}
+                selectedItems={selectedExpressionOperation}
+                setSelectedItems={(selectedExpression: SelectorItem) =>
+                  setExpression({
+                    ...expression,
+                    value: "",
+                    expression: selectedExpression?.value as string,
+                  })
+                }
+                items={logicalExpressionTypes}
+                label={t("select_operator")}
+              />
+              {selectedAttribute && selectedExpressionOperation && (
+                <>
+                  {/* Free Text Input */}
+                  {[
+                    "starts_with",
+                    "ends_with",
+                    "contains_the_text",
+                    "does_not_contains_the_text",
+                  ].includes(selectedExpressionOperation.value as string) && (
+                    <TextFieldInput
+                      type="text"
+                      label={t("enter_value")}
+                      value={expression.value as string}
+                      onChange={(value: string) => {
+                        setExpression({
+                          ...expression,
+                          value,
+                        });
+                      }}
+                    />
+                  )}
+                  {/* {Value Selector} */}
+                  {["is", "is_not"].includes(
+                    selectedExpressionOperation.value as string,
+                  ) && (
+                    <SelectorLayerValue
+                      selectedValues={[expression.value as string]}
+                      onSelectedValuesChange={(values: string | null) => {
+                        const fieldType = selectedAttribute?.type;
+                        if (fieldType === "number" && values) {
+                          setExpression({
+                            ...expression,
+                            value: Number(values),
+                          });
+                        }
+                        if (fieldType === "string" && values) {
+                          setExpression({
+                            ...expression,
+                            value: values,
+                          });
+                        }
+                      }}
+                      layerId={activeLayer?.layer_id || ""}
+                      fieldName={expression.attribute}
+                      label={t("select_value")}
+                    />
+                  )}
+
+                  {["includes", "excludes"].includes(
+                    selectedExpressionOperation.value as string,
+                  ) && (
+                    <SelectorLayerValue
+                      selectedValues={
+                        expression.value
+                          ? (expression.value as unknown[]).map(String)
+                          : []
+                      }
+                      onSelectedValuesChange={(values: string[] | null) => {
+                        const fieldType = selectedAttribute?.type;
+                        if (fieldType === "number" && values) {
+                          const _values = values.map((value) => Number(value));
+                          setExpression({
+                            ...expression,
+                            value: _values as number[],
+                          });
+                        }
+                        if (fieldType === "string" && values) {
+                          setExpression({
+                            ...expression,
+                            value: values as string[],
+                          });
+                        }
+                      }}
+                      layerId={activeLayer?.layer_id || ""}
+                      fieldName={expression.attribute}
+                      label={t("select_values")}
+                      multiple
+                    />
+                  )}
+
+                  {/* Number Input */}
+                  {[
+                    "is_at_least",
+                    "is_less_than",
+                    "is_at_most",
+                    "is_greater_than",
+                  ].includes(selectedExpressionOperation.value as string) && (
+                    <>
+                      <TextFieldInput
+                        type="number"
+                        label={t("enter_value")}
+                        value={expression.value as string}
+                        onChange={(value: string) => {
+                          const numberValue = Number(value);
+                          setExpression({
+                            ...expression,
+                            value: numberValue,
+                          });
+                        }}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+          {/* {SPATIAL FILTER} */}
+          {expression.type === FilterType.Spatial && (
+            <>
+              <Selector
+                selectedItems={selectedIntersection}
+                setSelectedItems={(item: SelectorItem) =>
+                  setExpression({
+                    ...expression,
+                    metadata: {
+                      ...expression.metadata,
+                      intersection: {
+                        label: item.label,
+                        geom_type: item.value as SpatialIntersectionGeomType,
+                      },
+                    },
+                  })
+                }
+                items={spatialIntersectionOptions}
+                label={t("select_spatial_intersection")}
+              />
+            </>
+          )}
+        </Stack>
+      </Stack>
+      <Divider />
+    </>
   );
-});
+};
 
 export default Expression;

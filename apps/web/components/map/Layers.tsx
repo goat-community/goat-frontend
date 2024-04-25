@@ -46,8 +46,8 @@ const Layers = (props: LayersProps) => {
       return layer.url ?? "";
     }
     let query = "";
-    if (layer["query"]) {
-      query = `?filter=${encodeURIComponent(JSON.stringify(layer["query"]))}`;
+    if (layer["query"] && layer["query"]["cql"]) {
+      query = `?filter=${encodeURIComponent(JSON.stringify(layer["query"]["cql"]))}`;
     }
     const collectionId = layer["layer_id"] || layer["id"];
     return `${GEOAPI_BASE_URL}/collections/user_data.${collectionId.replace(

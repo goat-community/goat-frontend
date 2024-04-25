@@ -148,7 +148,7 @@ export function LayerValueSelectorPopper(props: {
               sx={{ p: 2 }}
               size="small"
               autoFocus
-              placeholder="Search"
+              placeholder={t("search")}
               value={searchText}
               InputProps={{
                 sx: { pr: 1 },

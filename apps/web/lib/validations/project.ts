@@ -17,7 +17,10 @@ export const projectSchema = contentMetadataSchema.extend({
 export const projectLayerSchema = layerSchema.extend({
   id: z.number(),
   folder_id: z.string(),
-  query: z.object({}).optional().default({}),
+  query: z.object({
+    metadata: z.object({}).optional(),
+    cql: z.object({}).optional(),
+  }).optional(),
   layer_id: z.string().uuid(),
   charts: z.object({}).optional(),
   legend_urls: z.array(z.string()).optional(),

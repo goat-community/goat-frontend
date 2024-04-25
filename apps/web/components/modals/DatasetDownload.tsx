@@ -66,8 +66,8 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
       if (dataCrs) {
         payload["crs"] = `EPSG:${dataCrs}`;
       }
-      if (dataset["layer_id"] && dataset["query"]) {
-        payload["query"] = dataset["query"];
+      if (dataset["layer_id"] && dataset["query"] && dataset["query"]["cql"]) {
+        payload["query"] = dataset["query"]["cql"];
       }
 
       const dataBlob = await downloadDataset(payload as DatasetDownloadRequest);

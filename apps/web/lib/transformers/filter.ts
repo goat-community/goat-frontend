@@ -1,24 +1,28 @@
-// general queries
+import { v4 } from "uuid";
+
+import { FilterType, type Expression } from "@/lib/validations/filter";
+
+export const comparisonAndInclussionOpperators = {
+  is: "=",
+  is_not: "!=",
+  includes: "in",
+  excludes: "not",
+  is_at_least: ">=",
+  is_at_most: "<=",
+  is_less_than: "<",
+  is_greater_than: ">",
+  is_empty_string: "=",
+  is_not_empty_string: "!=",
+}
 
 function createComparisonCondition(
   op: string,
   key: string,
   value: string | number,
 ) {
-  return `{"op":"${op}","args":[{"property":"${key}"},${
-    typeof value === "string" ? `"${value}"` : value
-  }]}`;
+  return `{"op":"${op}","args":[{"property":"${key}"},${typeof value === "string" ? `"${value}"` : value
+    }]}`;
 }
-
-// function createInclusionCondition(
-//   op: string,
-//   key: string,
-//   values: (string | number)[],
-// ) {
-//   return `{"op":"${op}","args":[{"property":"${key}"},${JSON.stringify(
-//     values,
-//   )}]}`;
-// }
 
 function createNestedCondition(
   outerOp: string,
@@ -27,12 +31,11 @@ function createNestedCondition(
   innerOp?: string,
 ) {
   return `{"op": "${outerOp}","args": [
-      ${
-        innerOp
-          ? `{"op":"${innerOp}","args":[{"property":"${key}"},"${value}"]}`
-          : `{ "property":"${key}"},
+      ${innerOp
+      ? `{"op":"${innerOp}","args":[{"property":"${key}"},"${value}"]}`
+      : `{ "property":"${key}"},
       "${value}"`
-      }]}`;
+    }]}`;
 }
 
 export function is(key: string, value: string | number) {
@@ -124,7 +127,6 @@ export function is_between(key: string, value1: number, value2: number) {
 
 export function bbox(value: string) {
   const coordinates = value.split(",").map((coord) => parseFloat(coord));
-  // console.log(value, `{"op":"s_intersects","args":[{"property":"geometry"},{"coordinates":[[[${coordinates[2]},${coordinates[3]}],[${coordinates[0]},${coordinates[3]}],[${coordinates[0]},${coordinates[1]}],[${coordinates[2]},${coordinates[1]}],[${coordinates[2]},${coordinates[3]}]]],"type":"Polygon"}]}`)
   return `{"op":"s_intersects","args":[{"property":"geom"},{"coordinates":[[[${coordinates[2]},${coordinates[3]}],[${coordinates[0]},${coordinates[3]}],[${coordinates[0]},${coordinates[1]}],[${coordinates[2]},${coordinates[1]}],[${coordinates[2]},${coordinates[3]}]]],"type":"Polygon"}]}`;
 }
 
@@ -138,19 +140,18 @@ export function or_operator(args: string[]) {
 
 export function createTheCQLBasedOnExpression(
   expressions,
-  layerAttributes: { keys: { name: string; type: string }[] },
+  layerFields: { name: string; type: string }[],
   logicalOperator?: "and" | "or",
 ) {
-  console.log(expressions);
   const queries = expressions
     .filter((exp) => exp.value && exp.expression && exp.attribute)
     .map((expression) => {
-      const attributeType = layerAttributes.keys.filter(
-        (attrib) => attrib.name === expression.attribute,
+      const attributeType = layerFields.filter(
+        (field) => field.name === expression.attribute,
       ).length
-        ? layerAttributes.keys.filter(
-            (attrib) => attrib.name === expression.attribute,
-          )[0].type
+        ? layerFields.filter(
+          (field) => field.name === expression.attribute,
+        )[0].type
         : undefined;
 
       switch (expression.expression) {
@@ -211,9 +212,105 @@ export function createTheCQLBasedOnExpression(
     });
 
   if (logicalOperator === "and") {
-    console.log(and_operator(queries));
     return JSON.parse(and_operator(queries));
   } else {
     return JSON.parse(or_operator(queries));
   }
+}
+
+
+
+function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
+  return expressionsInsideLogicalOperator.map((expressionToBeProcessed) => {
+    const expression: Expression = {
+      expression: "",
+      attribute: "",
+      value: "",
+      id: v4(),
+      type: FilterType.Logical,
+    };
+
+    const value =
+      expressionToBeProcessed.args.length > 1
+        ? expressionToBeProcessed.args[1]
+        : "";
+
+    if (expressionToBeProcessed.op === "like") {
+      switch (true) {
+        case value.startsWith("%") && value.endsWith("%"):
+          expression.expression = "contains_the_text";
+          break;
+        case value.endsWith("%"):
+          expression.expression = "starts_with";
+          break;
+        case value.startsWith("%"):
+          expression.expression = "ends_with";
+          break;
+        default:
+          expression.expression = "does_not_contains_the_text";
+          break;
+      }
+      expression.attribute = expressionToBeProcessed.args[0].property;
+      expression.value = value.replace(/%/g, "");
+    } else if (expressionToBeProcessed.args.length === 1) {
+      switch (true) {
+        case expressionToBeProcessed.op === "isNull":
+          expression.expression = "is_blank";
+        case expressionToBeProcessed.op === "not":
+          expression.expression = "is_not_blank";
+      }
+      expression.attribute = expressionToBeProcessed.args[0].property;
+      expression.attribute = value;
+    } else if (["and", "or"].includes(expressionToBeProcessed.op)) {
+      switch (expressionToBeProcessed.op) {
+        case "and":
+          expression.expression = "excludes";
+        case "or":
+          expression.expression = "includes";
+      }
+      expression.attribute = expressionToBeProcessed.args[0].args[0].property;
+      expression.value = expressionToBeProcessed.args.map((arg) => arg.args[1]);
+    } else if (expressionToBeProcessed.op === "s_intersects") {
+      const bboxCoordinates = expressionToBeProcessed.args[1].coordinates[0];
+      expression.value = `${bboxCoordinates[1][0]},${bboxCoordinates[2][1]},${bboxCoordinates[0][0]},${bboxCoordinates[1][0]}`;
+      expression.attribute = "Bounding Box";
+      expression.expression = "is";
+      //translate bounding box here
+    } else {
+      expression.expression = Object.keys(
+        comparisonAndInclussionOpperators,
+      ).filter(
+        (comp) =>
+          comparisonAndInclussionOpperators[comp] ===
+          expressionToBeProcessed.op,
+      )[0];
+      expression.attribute = expressionToBeProcessed.args[0].property;
+      expression.value = value;
+    }
+
+
+    if (expressionToBeProcessed.op === "s_intersects") {
+      expression.type = FilterType.Spatial;
+    } else {
+      expression.type = FilterType.Logical;
+    }
+
+    return expression;
+  });
+}
+
+export function parseCQLQueryToObject(condition?: {
+  op: string;
+  args: unknown[];
+}) {
+  if (condition && Object.keys(condition).length) {
+    let expressions: Expression[] = [];
+    const expressionsInsideLogicalOperator =
+      condition.args;
+    expressions = toExpressionObject(expressionsInsideLogicalOperator);
+
+    return expressions;
+  }
+
+  return [];
 }

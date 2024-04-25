@@ -558,7 +558,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               </IconButton>
                             </Tooltip>
                           )}
-                          {layer.query && layer.query["args"]?.length && (
+                          {layer.query?.cql && layer.query?.cql["args"]?.length && (
                             <Tooltip
                               key={layer.id + "_filter"}
                               title={
@@ -599,7 +599,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                                 }}
                               >
                                 <Badge
-                                  badgeContent={layer.query["args"]?.length}
+                                  badgeContent={layer.query?.cql?.["args"]?.length}
                                   color="primary"
                                   sx={{
                                     "& .MuiBadge-badge": {

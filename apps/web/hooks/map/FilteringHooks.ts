@@ -1,140 +1,125 @@
-// // import { useProjectLayers } from "@/lib/api/projects";
-// import { parseCQLQueryToObject } from "@/lib/utils/filtering/cql_to_expression";
-// import { v4 } from "uuid";
-// // import { useFilterQueryExpressions } from "@/lib/api/filter";
-// import { useDispatch } from "react-redux";
-// // import { setMapLoading } from "../../lib/store/map/slice";
+import { useTranslation } from "@/i18n/client";
+import type { SelectorItem } from "@/types/map/common";
+import { useMemo } from "react";
 
-// export const useFilterExpressions = (_projectId?: string) => {
-//   const PROJECTS_API_BASE_URL = new URL(
-//     "api/v2/project",
-//     process.env.NEXT_PUBLIC_API_URL,
-//   ).href;
-//   const dispatch = useDispatch();
-//   // const {
-//   //   data: filterData,
-//   //   mutate,
-//   //   isLoading,
-//   //   error,
-//   // } = useFilterQueryExpressions(projectId ? projectId : "");
+const useLogicalExpressionOperations = (
+  selectedField?: "string" | "number"
+) => {
+  const { t } = useTranslation("common");
+  const logicalExpressionTypes: SelectorItem[] = useMemo(() => {
+    const baseItems = [
+      {
+        label: t("filter_expressions.is"),
+        value: "is",
+      },
+      {
+        label: t("filter_expressions.is_not"),
+        value: "is_not",
 
-//   const getLayerFilterParsedExpressions = (queries) => {
-//     const expressions = Object.keys(queries).map((query) =>
-//       parseCQLQueryToObject(queries[query], query),
-//     );
+      },
+      {
+        label: t("filter_expressions.includes"),
+        value: "includes",
 
-//     return expressions;
-//   };
+      },
+      {
+        label: t("filter_expressions.excludes"),
+        value: "excludes",
+      }];
+    if (selectedField === "number") {
+      return [
+        ...baseItems,
+        {
+          label: t("filter_expressions.is_at_least"),
+          value: "is_at_least",
+        },
+        {
+          label: t("filter_expressions.is_less_than"),
+          value: "is_less_than",
+        },
+        {
+          label: t("filter_expressions.is_at_most"),
+          value: "is_at_most",
+        },
+        {
+          label: t("filter_expressions.is_greater_than"),
+          value: "is_greater_than",
+        },
+        {
+          label: t("filter_expressions.is_between"),
+          value: "is_between",
+        }
+      ];
 
-//   const getLayerQueries = async (_projectId, _id) => {
-//     try {
-//       // const data = [];
-//       // const temporaryLayer = data
-//       //   ? data.find((layer) => layer.id === id)
-//       //   : undefined;
+    } else if (selectedField === "string") {
+      return [
+        ...baseItems,
+        {
+          label: t("filter_expressions.starts_with"),
+          value: "starts_with",
+        },
+        {
+          label: t("filter_expressions.ends_with"),
+          value: "ends_with",
+        },
+        {
+          label: t("filter_expressions.contains_the_text"),
+          value: "contains_the_text",
+        },
+        {
+          label: t("filter_expressions.does_not_contains_the_text"),
+          value: "does_not_contains_the_text",
+        },
+        {
+          label: t("filter_expressions.is_empty_string"),
+          value: "is_empty_string",
+        },
+        {
+          label: t("filter_expressions.is_not_empty_string"),
+          value: "is_not_empty_string",
+        }
+      ];
+    } else if (selectedField === "date") {
+      return [
+        {
+          label: t("filter_expressions.is_on"),
+          value: "is_on",
+        },
+        {
+          label: t("filter_expressions.is_not_on"),
+          value: "is_not_on",
+        },
+        {
+          label: t("filter_expressions.is_before"),
+          value: "is_before",
+        },
+        {
+          label: t("filter_expressions.is_after"),
+          value: "is_after",
+        },
+        {
+          label: t("filter_expressions.in_the_last"),
+          value: "in_the_last",
+        },
+        {
+          label: t("filter_expressions.not_in_the_last"),
+          value: "not_in_the_last",
+        },
+        {
+          label: t("filter_expressions.is_between"),
+          value: "is_between",
+        },
+        {
+          label: t("filter_expressions.is_not_between"),
+          value: "is_not_between",
+        }
+      ];
+    } else {
+      return baseItems;
+    }
+  }, [selectedField, t]);
 
-//       // if (
-//       //   temporaryLayer &&
-//       //   temporaryLayer.query &&
-//       //   Object.keys(temporaryLayer.query).length
-//       // ) {
-//       //   return temporaryLayer.query;
-//       // } else {
-//       //   return {};
-//       // }
-//       return {}
-//     } catch (error) {
-//       throw Error(
-//         `error: make sure you are connected to an internet connection!`,
-//       );
-//     }
-//   };
+  return { logicalExpressionTypes };
+};
 
-//   const getFilterQueries = (layerId: string) => {
-//     if (!isLoading && !error && filterData.length) {
-//       const queries = filterData.filter((layer) => layer.id === layerId)[0].query;
-//       if (queries && Object.keys(queries).length) {
-//         return {
-//           data: Object.keys(queries)
-//             .map((queries) => filterData[queries])
-//             .reverse(),
-//           mutate,
-//         };
-//       }
-//     }
-//     return {data: [], mutate}
-//   };
-
-//   const getFilterQueryExpressions = (layerId: string) => {
-//     if (!isLoading && !error && filterData.length) {
-//       const queries = filterData.filter((layer) => layer.id === layerId)[0]
-//         .query;
-//       dispatch(setMapLoading(false));
-
-//       return { data: getLayerFilterParsedExpressions(queries), mutate };
-//     }
-//     return { data: [], mutate };
-//   };
-
-//   const updateProjectLayerQuery = async (layerId, projectId, filterQuery) => {
-//     try {
-//       await fetch(
-//         `${PROJECTS_API_BASE_URL}/${projectId}/layer?layer_id=${layerId}`,
-//         {
-//           method: "PUT",
-//           headers: { "Content-Type": "application/json" },
-//           body: filterQuery,
-//         },
-//       );
-//     } catch (error) {
-//       throw Error(`error: unable to update the project`);
-//     }
-//   };
-
-//   const deleteAnExpression = async (id, projectId, layerId) => {
-//     const queries = await getLayerQueries(projectId, layerId);
-//     delete queries[id];
-//     updateProjectLayerQuery(
-//       layerId,
-//       projectId,
-//       `{"query": ${JSON.stringify(queries)}}`,
-//     );
-//   };
-
-//   const createExpression = async (projectId, id) => {
-//     const data = await getProjectLayers(projectId);
-
-//     const temporaryLayer = data
-//       ? data.find((layer) => layer.id === id)
-//       : undefined;
-//     if (temporaryLayer) {
-//       temporaryLayer.query[v4()] = "{}";
-//       updateProjectLayerQuery(
-//         id,
-//         projectId,
-//         `{"query": ${JSON.stringify(temporaryLayer.query)}}`,
-//       );
-//     }
-//   };
-
-//   const duplicateAnExpression = async (id, projectId, layerId) => {
-//     const queries = await getLayerQueries(projectId, layerId);
-//     queries[v4()] = queries[id];
-//     updateProjectLayerQuery(
-//       layerId,
-//       projectId,
-//       `{"query": ${JSON.stringify(queries)}}`,
-//     );
-//   };
-
-//   return {
-//     getLayerFilterParsedExpressions,
-//     getLayerQueries,
-//     getFilterQueryExpressions,
-//     updateProjectLayerQuery,
-//     deleteAnExpression,
-//     createExpression,
-//     duplicateAnExpression,
-//     getFilterQueries,
-//   };
-// };
+export default useLogicalExpressionOperations;

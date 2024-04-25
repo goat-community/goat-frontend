@@ -14,20 +14,6 @@ import {
 import type { SelectorItem } from "@/types/map/common";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useCallback, useEffect, useMemo, useState } from "react";
-export const useGetLayerKeys = (layerId: string) => {
-  const { isLoading, error, data } = useLayerKeys(layerId);
-  return {
-    keys:
-      isLoading || error || !data
-        ? []
-        : Object.keys(data.properties)
-            .filter((key) => "name" in data.properties[key])
-            .map((key) => ({
-              name: data.properties[key].name,
-              type: data.properties[key].type,
-            })),
-  };
-};
 
 export const usePTTimeSelectorValues = () => {
   const { t } = useTranslation("common");

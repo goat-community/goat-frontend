@@ -118,6 +118,7 @@ import type { SvgIconProps } from "@mui/material";
 import {
   addImageIcon,
   aggregateIcon,
+  boundingBoxIcon,
   comingSoonIcon,
   dataCategoryIcon,
   funicularIcon,
@@ -246,6 +247,7 @@ export enum ICON_NAME {
   LINE_CHART = "line-chart-icon",
   VERTICAL_BAR_CHART = "vertical-bar-chart",
   HORIZONTAL_BAR_CHART = "horizontal-bar-chart",
+  BOUNDING_BOX = "bounding-box",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -367,6 +369,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.LINE_CHART]: faChartLine,
   [ICON_NAME.VERTICAL_BAR_CHART]: faChartColumn,
   [ICON_NAME.HORIZONTAL_BAR_CHART]: faChartBar,
+  [ICON_NAME.BOUNDING_BOX]: boundingBoxIcon
 };
 
 interface BrandColors {
