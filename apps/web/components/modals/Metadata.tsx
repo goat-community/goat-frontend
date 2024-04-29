@@ -55,9 +55,14 @@ const Metadata: React.FC<MetadataDialogProps> = ({
     try {
       setIsBusy(true);
       const postMethod = type === "layer" ? updateDataset : updateProject;
+      const cleanedData = Object.fromEntries(
+        Object.entries(data).filter(
+          ([_, value]) => value !== null && value !== undefined && value !== "",
+        ),
+      );
       await postMethod(content.id, {
         folder_id: content.folder_id,
-        ...data,
+        ...cleanedData,
       });
       const mutateUrl =
         type === "layer" ? LAYERS_API_BASE_URL : PROJECTS_API_BASE_URL;
@@ -229,7 +234,7 @@ const Metadata: React.FC<MetadataDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
-          mt: 4
+          mt: 4,
         }}
       >
         <Button onClick={onClose} variant="text">
