@@ -46,6 +46,24 @@ export const useLayers = (
   };
 };
 
+export const useCatalogLayers = (
+  queryParams?: PaginatedQueryParams,
+  payload: GetDatasetSchema = {},
+) => {
+  const { data, isLoading, error, mutate, isValidating } =
+    useSWR<LayerPaginated>(
+      [`${LAYERS_API_BASE_URL}/catalog`, queryParams, payload],
+      fetcher,
+    );
+  return {
+    layers: data,
+    isLoading: isLoading,
+    isError: error,
+    mutate,
+    isValidating,
+  };
+}
+
 export const useMetadataAggregated = (payload: GetDatasetSchema = {}) => {
   const { data, isLoading, error, mutate } = useSWR<DatasetMetadataAggregated>(
     [`${LAYERS_API_BASE_URL}/metadata/aggregate`, null, payload],

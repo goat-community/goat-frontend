@@ -1,7 +1,7 @@
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 
 import { useTranslation } from "@/i18n/client";
-import { useLayers } from "@/lib/api/layers";
+import { useCatalogLayers } from "@/lib/api/layers";
 import {
   addProjectLayers,
   useProject,
@@ -57,7 +57,7 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
     in_catalog: true,
   });
 
-  const { layers: datasets, isLoading: isDatasetLoading } = useLayers(
+  const { layers: datasets, isLoading: isDatasetLoading } = useCatalogLayers(
     queryParams,
     datasetSchema,
   );

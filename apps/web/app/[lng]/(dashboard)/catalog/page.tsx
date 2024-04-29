@@ -16,7 +16,7 @@ import {
   debounce,
 } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
-import { useLayers, useMetadataAggregated } from "@/lib/api/layers";
+import { useCatalogLayers, useMetadataAggregated } from "@/lib/api/layers";
 import type { GetDatasetSchema } from "@/lib/validations/layer";
 import { datasetMetadataAggregated } from "@/lib/validations/layer";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
@@ -121,7 +121,7 @@ const Catalog = () => {
   });
   const { metadata, isLoading: filtersLoading } =
     useMetadataAggregated(datasetSchema);
-  const { layers: datasets, isLoading: datasetsLoading } = useLayers(
+  const { layers: datasets, isLoading: datasetsLoading } = useCatalogLayers(
     queryParams,
     datasetSchema,
   );
