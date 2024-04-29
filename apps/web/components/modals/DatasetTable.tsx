@@ -40,8 +40,7 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
 }) => {
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
     dataset["layer_id"] || dataset["id"] || "",
-    undefined,
-    ["layer_id"],
+    undefined
   );
   const defaultParams = {
     limit: 50,

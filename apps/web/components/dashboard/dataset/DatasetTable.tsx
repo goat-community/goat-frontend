@@ -29,7 +29,6 @@ const DatasetTable: React.FC<DatasetTableProps> = ({ dataset }) => {
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
     (dataset["id"] as string) || "",
     undefined,
-    ["layer_id"],
   );
 
   const [dataQueryParams, setDataQueryParams] =

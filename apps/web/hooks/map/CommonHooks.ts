@@ -4,7 +4,7 @@ import { useMemo } from "react";
 const useLayerFields = (
   dataset_id: string,
   filterType?: "string" | "number" | undefined,
-  hiddenFields: string[] = [],
+  hiddenFields: string[] = ["layer_id", "id"],
 ) => {
   const { queryables, isLoading, isError } = useLayerQueryables(
     dataset_id || "",

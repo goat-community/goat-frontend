@@ -108,6 +108,8 @@ export default function MapPage({ params: { projectId } }) {
 
   const handleMapClick = (e: MapLayerMouseEvent) => {
     const features = e.features;
+    // TODO: This can be configurable in the future
+    const hiddenProperties = ["layer_id"];
     if (features && features.length > 0) {
       const feature = features[0];
       setHighlightedFeature(feature);
@@ -121,9 +123,17 @@ export default function MapPage({ params: { projectId } }) {
           feature.geometry.coordinates[1],
         ];
       }
+      const properties = feature.properties
+        ? Object.fromEntries(
+            Object.entries(feature.properties).filter(
+              ([key]) => !hiddenProperties.includes(key),
+            ),
+          )
+        : {};
+
       setPopupInfo({
         lngLat,
-        properties: feature.properties,
+        properties,
         title: layerName ?? "",
       });
     } else {
