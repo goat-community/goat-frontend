@@ -54,6 +54,7 @@ const TextFieldInput: React.FC<TextFieldInputProps> = ({
           if (onFocus) onFocus();
         }}
         onBlur={() => setFocused(false)}
+        disabled={disabled}
         size="small"
         sx={{ pr: 0 }}
         inputProps={{

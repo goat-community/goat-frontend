@@ -37,7 +37,6 @@ const Layers = (props: LayersProps) => {
         id = `${id}-${renderAs}`;
       }
     }
-
     return id;
   };
 

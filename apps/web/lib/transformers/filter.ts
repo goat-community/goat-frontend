@@ -125,9 +125,8 @@ export function is_between(key: string, value1: number, value2: number) {
   return `{"op":"and","args":[{"op":">=","args":[{"property":"${key}"},${value1}]},{"op":"<=","args":[{"property":"${key}"},${value2}]}]}`;
 }
 
-export function bbox(value: string) {
-  const coordinates = value.split(",").map((coord) => parseFloat(coord));
-  return `{"op":"s_intersects","args":[{"property":"geom"},{"coordinates":[[[${coordinates[2]},${coordinates[3]}],[${coordinates[0]},${coordinates[3]}],[${coordinates[0]},${coordinates[1]}],[${coordinates[2]},${coordinates[1]}],[${coordinates[2]},${coordinates[3]}]]],"type":"Polygon"}]}`;
+export function s_intersects(geom: string, geomProperty: string = "geom") {
+  return `{"op":"s_intersects","args":[{"property":"${geomProperty}"},${geom}]}`;
 }
 
 export function and_operator(args: string[]) {
@@ -156,11 +155,7 @@ export function createTheCQLBasedOnExpression(
 
       switch (expression.expression) {
         case "is":
-          if (expression.attribute === "Bounding Box") {
-            return bbox(expression.value);
-          } else {
-            return is(expression.attribute, expression.value);
-          }
+          return is(expression.attribute, expression.value);
         case "is_not":
           return is_not(expression.attribute, expression.value);
         case "is_empty_string":
@@ -208,6 +203,8 @@ export function createTheCQLBasedOnExpression(
             parseInt(expression.value.split("-")[0]),
             parseInt(expression.value.split("-")[1]),
           );
+        case "s_intersects":
+          return s_intersects(expression.value, expression.attribute);
       }
     });
 
@@ -271,11 +268,9 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
       expression.attribute = expressionToBeProcessed.args[0].args[0].property;
       expression.value = expressionToBeProcessed.args.map((arg) => arg.args[1]);
     } else if (expressionToBeProcessed.op === "s_intersects") {
-      const bboxCoordinates = expressionToBeProcessed.args[1].coordinates[0];
-      expression.value = `${bboxCoordinates[1][0]},${bboxCoordinates[2][1]},${bboxCoordinates[0][0]},${bboxCoordinates[1][0]}`;
-      expression.attribute = "Bounding Box";
-      expression.expression = "is";
-      //translate bounding box here
+      expression.expression = "s_intersects";
+      expression.attribute = expressionToBeProcessed.args[0].property;
+      expression.value = JSON.stringify(expressionToBeProcessed.args[1]);
     } else {
       expression.expression = Object.keys(
         comparisonAndInclussionOpperators,
@@ -287,7 +282,6 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
       expression.attribute = expressionToBeProcessed.args[0].property;
       expression.value = value;
     }
-
 
     if (expressionToBeProcessed.op === "s_intersects") {
       expression.type = FilterType.Spatial;

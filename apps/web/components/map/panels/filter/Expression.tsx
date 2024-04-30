@@ -26,6 +26,10 @@ import useLogicalExpressionOperations from "@/hooks/map/FilteringHooks";
 import type { SelectorItem } from "@/types/map/common";
 import TextFieldInput from "@/components/map/panels/common/TextFieldInput";
 import SelectorLayerValue from "@/components/map/panels/common/SelectorLayerValue";
+import { useMap } from "react-map-gl";
+import bboxPolygon from "@turf/bbox-polygon";
+import bbox from "@turf/bbox";
+import type { BBox } from "@turf/helpers";
 
 type ExpressionProps = {
   expression: ExpressionType;
@@ -36,6 +40,7 @@ type ExpressionProps = {
 
 const Expression: React.FC<ExpressionProps> = (props) => {
   const theme = useTheme();
+  const { map } = useMap();
 
   const [expression, setExpression] = useState<ExpressionType>(
     props.expression,
@@ -59,17 +64,6 @@ const Expression: React.FC<ExpressionProps> = (props) => {
     ],
     [t],
   );
-
-  const selectedIntersection = useMemo(() => {
-    return spatialIntersectionOptions.find(
-      (intersection) =>
-        intersection.value ===
-        (expression.metadata?.intersection?.geom_type as string),
-    );
-  }, [
-    expression.metadata?.intersection?.geom_type,
-    spatialIntersectionOptions,
-  ]);
 
   const { activeLayer } = useActiveLayer(projectId as string);
   const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
@@ -130,6 +124,25 @@ const Expression: React.FC<ExpressionProps> = (props) => {
       props.onUpdate(expression);
     }
   }, [expression, hasExpressionChanged, isExpressionValid, props]);
+
+  const selectedIntersection = useMemo(() => {
+    if (!expression.value || expression.type !== FilterType.Spatial) return;
+    const geometry = JSON.parse(expression.value as string);
+    const type = geometry?.properties?.type;
+    return spatialIntersectionOptions.find(
+      (intersection) => intersection.value === type,
+    );
+  }, [expression.type, expression.value, spatialIntersectionOptions]);
+
+  const formatedFeatureLabel = useMemo(() => {
+    if (!expression.value || expression.type !== FilterType.Spatial) return "";
+    const geometry = JSON.parse(expression.value as string);
+    if (geometry?.properties?.type === SpatialIntersectionGeomType.BBOX) {
+      const _bbox = bbox(geometry);
+      return `SW(${_bbox[0].toFixed(2)}, ${_bbox[1].toFixed(2)}); NE(${_bbox[2].toFixed(2)}, ${_bbox[3].toFixed(2)})`;
+    }
+    return geometry?.properties?.label;
+  }, [expression.type, expression.value]);
 
   return (
     <>
@@ -322,21 +335,79 @@ const Expression: React.FC<ExpressionProps> = (props) => {
             <>
               <Selector
                 selectedItems={selectedIntersection}
-                setSelectedItems={(item: SelectorItem) =>
+                placeholder={t("select_spatial_intersection")}
+                setSelectedItems={(item: SelectorItem) => {
+                  let coordinates = [] as number[][];
+                  if (item.value === SpatialIntersectionGeomType.BBOX) {
+                    const bbox = map?.getBounds().toArray().flat();
+                    if (bbox) {
+                      const polygon = bboxPolygon(bbox as BBox);
+                      const geometry = polygon.geometry;
+                      coordinates =
+                        geometry.coordinates as unknown as number[][];
+                    }
+                  }
+                  const geometry = {
+                    coordinates,
+                    type: "Polygon",
+                    properties: {
+                      type: item.value,
+                      label: item.label,
+                    },
+                  };
                   setExpression({
                     ...expression,
-                    metadata: {
-                      ...expression.metadata,
-                      intersection: {
-                        label: item.label,
-                        geom_type: item.value as SpatialIntersectionGeomType,
-                      },
-                    },
-                  })
-                }
+                    attribute: "geom",
+                    expression: "s_intersects",
+                    value: JSON.stringify(geometry),
+                  });
+                }}
                 items={spatialIntersectionOptions}
                 label={t("select_spatial_intersection")}
               />
+              {selectedIntersection?.value ===
+                SpatialIntersectionGeomType.BBOX && (
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  alignItems="end"
+                  sx={{ pt: 2 }}
+                >
+                  <Typography variant="body2" fontWeight="bold">
+                    {formatedFeatureLabel}
+                  </Typography>
+                  <Tooltip title={t("use_current_map_extent")} arrow>
+                    <IconButton
+                      color="secondary"
+                      aria-label="refresh map extent coords"
+                      onClick={() => {
+                        const bbox = map?.getBounds().toArray().flat();
+                        if (bbox) {
+                          const polygon = bboxPolygon(bbox as BBox);
+                          const geometry = polygon.geometry;
+                          //There is no "properties" key in the geometry object in the GeoJSON spec
+                          //This is a bit hacky, but it doesn't break the backend and we can reuse to extract information
+                          //from the geometry object on the intersectionType and the label.
+                          geometry["properties"] = {
+                            type: "bbox",
+                            label: "Map Extent",
+                          };
+                          setExpression({
+                            ...expression,
+                            attribute: "geom",
+                            expression: "s_intersects",
+                            value: JSON.stringify(geometry),
+                          });
+                        }
+                      }}
+                    >
+                      <Icon iconName={ICON_NAME.REFRESH} fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              )}
+              {selectedIntersection?.value ===
+                SpatialIntersectionGeomType.BOUNDARY && <div>Boundary</div>}
             </>
           )}
         </Stack>
