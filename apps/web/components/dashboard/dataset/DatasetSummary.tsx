@@ -42,7 +42,7 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
       field: "lineage",
       heading: t("metadata.headings.lineage"),
       noMetadataAvailable: t("metadata.no_metadata_available.lineage"),
-      type: "text",
+      type: "markdown",
     },
     {
       field: "positional_accuracy",
