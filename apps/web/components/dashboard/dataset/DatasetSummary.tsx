@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { Icon } from "@p4b/ui/components/Icon";
 import React from "react";
+import ReactMarkdown from "react-markdown";
 
 interface DatasetSummaryProps {
   dataset: ProjectLayer | Layer;
@@ -27,7 +28,7 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
       field: "description",
       heading: t("metadata.headings.description"),
       noMetadataAvailable: t("metadata.no_metadata_available.description"),
-      type: "text",
+      type: "markdown",
     },
     {
       field: "data_reference_year",
@@ -96,7 +97,7 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
   return (
     <>
       <Grid container justifyContent="flex-start" spacing={4}>
-        <Grid item xs={12} sm={12} md={8} lg={9} spacing={2}>
+        <Grid item xs={12} sm={12} md={8} lg={9}>
           <Stack spacing={6}>
             {metadataSummaryFields.map(
               ({ field, heading, noMetadataAvailable, type }) => (
@@ -107,6 +108,9 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
                     <Typography variant="body2" sx={{ fontStyle: "italic" }}>
                       {noMetadataAvailable}
                     </Typography>
+                  )}
+                  {type === "markdown" && dataset[field] && (
+                    <ReactMarkdown>{dataset[field]}</ReactMarkdown>
                   )}
                   {type === "email" && dataset[field] && (
                     <Link
