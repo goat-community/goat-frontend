@@ -86,8 +86,20 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     resetPTConfiguration,
   } = usePTTimeSelectorValues();
 
+  const { catchmentAreaShapeTypes: allCatchmentShapeTypes } =
+    useCatchmentAreaShapeTypes();
+  const catchmentAreaShapeTypes = useMemo(() => {
+    if (!allCatchmentShapeTypes) return [];
+    // for pt routing only polygon shape is allowed
+    if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt) {
+      return allCatchmentShapeTypes.filter(
+        (shape) => shape.value === catchmentAreaShapeEnum.Enum.polygon,
+      );
+    } else {
+      return allCatchmentShapeTypes;
+    }
+  }, [allCatchmentShapeTypes, selectedRouting?.value]);
 
-  const { catchmentAreaShapeTypes } = useCatchmentAreaShapeTypes()
   const { startingPointMethods } = useStartingPointMethods();
 
   const isRoutingValid = useMemo(() => {
@@ -239,8 +251,10 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const handleRun = async () => {
     const payload = {
       catchment_area_type: catchmentAreaShapeType.value,
-      polygon_difference: isPolygonDifference,
     };
+    if (isPolygonDifference) {
+      payload["polygon_difference"] = true;
+    }
     if (startingPointMethod.value === "map") {
       const longitude = startingPoints?.map((point) => point[0]);
       const latitude = startingPoints?.map((point) => point[1]);
@@ -279,12 +293,16 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_started")}`);
+          toast.info(
+            `"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_started")}`,
+          );
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch {
-        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_failed")}`)
+        toast.error(
+          `"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_failed")}`,
+        );
       } finally {
         setIsBusy(false);
         handleReset();
@@ -315,13 +333,17 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_started")}`);
+          toast.info(
+            `"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_started")}`,
+          );
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch (e) {
         console.log(e);
-        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_failed")}`);
+        toast.error(
+          `"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_failed")}`,
+        );
       } finally {
         setIsBusy(false);
         handleReset();
@@ -340,13 +362,17 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
         );
         const { job_id } = response;
         if (job_id) {
-          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_started")}`);
+          toast.info(
+            `"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_started")}`,
+          );
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch (e) {
         console.log(e);
-        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_failed")}`);
+        toast.error(
+          `"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_failed")}`,
+        );
       } finally {
         setIsBusy(false);
         handleReset();
@@ -376,9 +402,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   return (
     <Container
       disablePadding={false}
-      header={
-        <ToolsHeader onBack={onBack} title={t("catchment_area")} />
-      }
+      header={<ToolsHeader onBack={onBack} title={t("catchment_area")} />}
       close={onClose}
       body={
         <>

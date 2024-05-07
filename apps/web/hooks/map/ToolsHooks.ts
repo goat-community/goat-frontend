@@ -125,14 +125,14 @@ export const useCatchmentAreaShapeTypes = () => {
         value: catchmentAreaShapeEnum.Enum.polygon,
         label: t("polygon"),
       },
-      // {
-      //   value: catchmentAreaShapeEnum.Enum.network,
-      //   label: t("network"),
-      // },
-      // {
-      //   value: catchmentAreaShapeEnum.Enum.rectangular_grid,
-      //   label: t("rectangular_grid"),
-      // },
+      {
+        value: catchmentAreaShapeEnum.Enum.network,
+        label: t("network"),
+      },
+      {
+        value: catchmentAreaShapeEnum.Enum.rectangular_grid,
+        label: t("rectangular_grid"),
+      },
     ];
   }, [t]);
 

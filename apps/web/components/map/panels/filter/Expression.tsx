@@ -139,7 +139,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
     const geometry = JSON.parse(expression.value as string);
     if (geometry?.properties?.type === SpatialIntersectionGeomType.BBOX) {
       const _bbox = bbox(geometry);
-      return `SW(${_bbox[0].toFixed(2)}, ${_bbox[1].toFixed(2)}); NE(${_bbox[2].toFixed(2)}, ${_bbox[3].toFixed(2)})`;
+      return `SW(${_bbox[0].toFixed(3)}, ${_bbox[1].toFixed(3)}); NE(${_bbox[2].toFixed(3)}, ${_bbox[3].toFixed(3)})`;
     }
     return geometry?.properties?.label;
   }, [expression.type, expression.value]);

@@ -129,7 +129,7 @@ export const ptTimeWindow = z.object({
 export const catchmentAreaBaseSchema = z.object({
   catchment_area_type: catchmentAreaShapeEnum.default("polygon"),
   starting_points: startingPointSchema,
-  polygon_difference: z.boolean(),
+  polygon_difference: z.boolean().optional()
 });
 
 export const activeMobilityAndCarCatchmentAreaSchema =
