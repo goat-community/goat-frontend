@@ -1,6 +1,8 @@
 import { useAppSelector } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
 import { useProject, useProjectLayers } from "@/lib/api/projects";
+import type {
+  LayerType} from "@/lib/validations/layer";
 import {
   featureLayerLinePropertiesSchema,
   featureLayerPointPropertiesSchema,
@@ -40,11 +42,15 @@ export const useLayerSettingsMoreMenu = () => {
           label: t("open_data_table"),
           icon: ICON_NAME.TABLE,
         },
-        ...(viewChart ? [{
-          id: MapLayerActions.CHART,
-          label: t('view_chart'),
-          icon: ICON_NAME.CHART,
-        }] : []),
+        ...(viewChart
+          ? [
+              {
+                id: MapLayerActions.CHART,
+                label: t("view_chart"),
+                icon: ICON_NAME.CHART,
+              },
+            ]
+          : []),
         {
           id: MapLayerActions.DUPLICATE,
           label: t("duplicate"),
@@ -81,11 +87,15 @@ export const useLayerSettingsMoreMenu = () => {
           label: t("open_data_table"),
           icon: ICON_NAME.TABLE,
         },
-        ...(viewChart ? [{
-          id: MapLayerActions.CHART,
-          label: t('view_chart'),
-          icon: ICON_NAME.CHART,
-        }] : []),
+        ...(viewChart
+          ? [
+              {
+                id: MapLayerActions.CHART,
+                label: t("view_chart"),
+                icon: ICON_NAME.CHART,
+              },
+            ]
+          : []),
         {
           id: MapLayerActions.RENAME,
           label: t("rename"),
@@ -172,16 +182,23 @@ export const useFilterQueries = (projectId: string) => {
   return { activeLayer, mutate };
 };
 
-export const useSortedLayers = (projectId: string) => {
+export const useSortedLayers = (
+  projectId: string,
+  excludeLayerTypes: LayerType[] = [],
+) => {
   const { layers: projectLayers } = useProjectLayers(projectId);
   const { project } = useProject(projectId);
   const sortedLayers = useMemo(() => {
     if (!projectLayers || !project) return [];
     if (!project.layer_order) return projectLayers;
-    return projectLayers.sort(
+    const filteredLayers = projectLayers.filter(
+      (layer) => !excludeLayerTypes.includes(layer.type),
+    );
+
+    return filteredLayers.sort(
       (a, b) =>
         project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id),
     );
-  }, [projectLayers, project]);
+  }, [projectLayers, project, excludeLayerTypes]);
   return sortedLayers;
 };

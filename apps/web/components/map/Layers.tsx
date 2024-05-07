@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import type { LayerProps, MapGeoJSONFeature } from "react-map-gl";
 import { Source, Layer as MapLayer } from "react-map-gl";
 import type { ProjectLayer } from "@/lib/validations/project";
@@ -18,11 +18,6 @@ interface LayersProps {
 }
 
 const Layers = (props: LayersProps) => {
-  const displayableLayers = useMemo(
-    () => props.layers?.filter((layer) => layer.type !== "table"),
-    [props.layers],
-  );
-
   const getLayerKey = (layer: ProjectLayer | Layer) => {
     let id = layer.id.toString();
     if (layer.type === "feature") {
@@ -57,8 +52,8 @@ const Layers = (props: LayersProps) => {
 
   return (
     <>
-      {displayableLayers?.length
-        ? displayableLayers.map((layer: ProjectLayer | Layer, index: number) =>
+      {props.layers?.length
+        ? props.layers.map((layer: ProjectLayer | Layer, index: number) =>
             (() => {
               if (["feature", "external_vector_tile"].includes(layer.type)) {
                 return (
@@ -74,9 +69,9 @@ const Layers = (props: LayersProps) => {
                         layer,
                       ) as LayerProps)}
                       beforeId={
-                        index === 0
+                        index === 0 || !props.layers
                           ? undefined
-                          : displayableLayers[index - 1].id.toString()
+                          : props.layers[index - 1].id.toString()
                       }
                       source-layer="default"
                     />

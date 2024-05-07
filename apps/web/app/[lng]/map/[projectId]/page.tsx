@@ -63,7 +63,7 @@ export default function MapPage({ params: { projectId } }) {
     layers: projectLayers,
   } = useProjectLayers(projectId);
 
-  const sortedLayers = useSortedLayers(projectId);
+  const sortedLayers = useSortedLayers(projectId, ["table"]);
 
   const isLoading = useMemo(
     () => isProjectLoading || isInitialViewLoading || areProjectLayersLoading,
