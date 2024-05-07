@@ -305,14 +305,14 @@ export const useStatisticValues = () => {
         value: statisticOperationEnum.Enum.sum,
         label: t("sum"),
       },
-      {
-        value: statisticOperationEnum.Enum.mean,
-        label: t("mean"),
-      },
-      {
-        value: statisticOperationEnum.Enum.median,
-        label: t("median"),
-      },
+      // {
+      //   value: statisticOperationEnum.Enum.mean,
+      //   label: t("mean"),
+      // },
+      // {
+      //   value: statisticOperationEnum.Enum.median,
+      //   label: t("median"),
+      // },
       {
         value: statisticOperationEnum.Enum.min,
         label: t("min"),
