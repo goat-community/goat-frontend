@@ -653,7 +653,7 @@
   "recent_datasets": "Recent Datasets",
   "recent_project": "Recent Projects",
   "recenter_map": "Recenter Map",
-  "rectangular_grid": "Rectangular Grid",
+  "rectangular_grid": "Hexagonal Grid",
   "reference_area_layer": "Reference Area Layer",
   "reference_layer": "Reference Layer",
   "refresh_map_extent_coords": "Refresh map extent",
