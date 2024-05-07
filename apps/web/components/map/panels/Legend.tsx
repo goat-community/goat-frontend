@@ -23,7 +23,7 @@ const LegendPanel = ({ projectId }: PanelProps) => {
       title={t("legend")}
       close={() => dispatch(setActiveLeftPanel(undefined))}
       direction="left"
-      body={sortedLayers && <Legend layers={visibleLayers} />}
+      body={sortedLayers && <Legend layers={visibleLayers} hideZoomLevel />}
     />
   );
 };
