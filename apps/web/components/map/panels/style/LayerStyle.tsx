@@ -19,7 +19,6 @@ import {
   getLayerUniqueValues,
   updateDataset,
   useDataset,
-  useLayerQueryables,
 } from "@/lib/api/layers";
 import SectionHeader from "@/components/map/panels/common/SectionHeader";
 import ColorOptions from "@/components/map/panels/style/color/ColorOptions";
@@ -33,6 +32,7 @@ import { toast } from "react-toastify";
 import MarkerOptions from "@/components/map/panels/style/marker/MarkerOptions";
 import { useMap } from "react-map-gl";
 import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
+import useLayerFields from "@/hooks/map/CommonHooks";
 
 const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation("common");
@@ -45,21 +45,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { layers: projectLayers, mutate: mutateProjectLayers } =
     useProjectLayers(projectId);
 
-  const { queryables } = useLayerQueryables(activeLayer?.layer_id || "");
-
-  const layerFields = useMemo(() => {
-    if (!activeLayer || !queryables) return [];
-    return Object.entries(queryables.properties)
-      .filter(
-        ([_key, value]) => value.type === "string" || value.type === "number",
-      )
-      .map(([key, value]) => {
-        return {
-          name: key,
-          type: value.type,
-        };
-      });
-  }, [activeLayer, queryables]);
+  const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
 
   const updateLayerStyle = useCallback(
     async (newStyle: FeatureLayerProperties) => {
