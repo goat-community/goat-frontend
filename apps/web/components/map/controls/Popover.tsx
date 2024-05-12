@@ -87,7 +87,12 @@ const MapPopover: React.FC<MapPopoverProps> = ({
             alignItems="center"
             justifyContent="space-between"
           >
-            <Stack direction="row" spacing={2} alignItems="center">
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              sx={{ width: "90%" }}
+            >
               <Icon iconName={ICON_NAME.LAYERS} style={{ fontSize: 16 }} />
               <OverflowTypograpy
                 variant="body2"
