@@ -29,10 +29,7 @@ interface ProjectDialogProps {
   onClose?: () => void;
 }
 
-const ProjectModal: React.FC<ProjectDialogProps> = ({
-  open,
-  onClose,
-}) => {
+const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
   const { t } = useTranslation("common");
   const queryParams: GetContentQueryParams = {
     order: "descendent",
@@ -80,20 +77,20 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({
     return watchFormValues.folder_id;
   }, [watchFormValues]);
   const onSubmit = async () => {
-    const values= getValues();
+    const values = getValues();
     try {
+      setIsBusy(true);
       const project = await createProject(values);
       const { id } = project;
       if (id) {
         router.push(`/map/${id}`);
       }
+      onClose?.();
     } catch (_error) {
-      toast.error(t('error_creating_project'));
+      toast.error(t("error_creating_project"));
     } finally {
       setIsBusy(false);
     }
-    setIsBusy(true);
-    setIsBusy(false);
   };
 
   const folderOptions = useMemo(() => {
