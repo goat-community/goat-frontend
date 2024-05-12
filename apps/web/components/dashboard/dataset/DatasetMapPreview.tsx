@@ -75,6 +75,8 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
             style={{ width: "100%", height: "100%" }}
             mapStyle="mapbox://styles/mapbox/light-v11"
             mapboxAccessToken={MAPBOX_TOKEN}
+            dragRotate={false}
+            touchZoomRotate={false}
           >
             <Layers layers={[dataset]} />
           </Map>

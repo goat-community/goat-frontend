@@ -267,6 +267,8 @@ export default function MapPage({ params: { projectId } }) {
                 }
                 mapboxAccessToken={MAPBOX_TOKEN}
                 interactiveLayerIds={interactiveLayerIds}
+                dragRotate={false}
+                touchZoomRotate={false}
                 onMoveEnd={updateViewState}
                 onClick={handleMapClick}
                 onMouseMove={handleMapOverImmediate}
