@@ -63,7 +63,7 @@ const MarkerIconPicker = (props: MarkerIconPickerProps) => {
         }
       >
         {/* {INPUT} */}
-        <Stack spacing={1} sx={{ px: 2 }}>
+        <Stack spacing={1}>
           {props.label && (
             <FormLabelHelper
               color={open ? theme.palette.primary.main : "inherit"}
