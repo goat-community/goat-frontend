@@ -346,6 +346,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       if (layer.id === activeLayerId) {
         dispatch(setActiveLayer(null));
       }
+      mutateProject();
     } catch (error) {
       toast.error(t("error_removing_layer_from_project"));
     }
@@ -354,7 +355,8 @@ const LayerPanel = ({ projectId }: PanelProps) => {
   async function duplicateLayer(layer: ProjectLayer) {
     try {
       await addProjectLayers(projectId, [layer.layer_id]);
-      mutateProjectLayers();
+      mutateProjectLayers()
+      mutateProject();
     } catch (error) {
       toast.error(t("error_duplicating_layer"));
     }
