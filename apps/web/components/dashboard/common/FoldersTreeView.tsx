@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useFolders } from "@/lib/api/folders";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { SelectedFolderForEdit } from "@/components/modals/Folder";
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
@@ -55,23 +55,6 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
   const [open, setOpen] = useState<boolean[]>([true, false, false]);
   const { t } = useTranslation("common");
 
-  const handleListItemClick = (
-    _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    item: SelectedFolder,
-  ) => {
-    setSelectedFolder(item);
-    if (item.id !== "0" && item.type === "folder") {
-      setQueryParams({
-        ...queryParams,
-        folder_id: item.id,
-      });
-    } else {
-      const { folder_id: _, ...rest } = queryParams;
-      setQueryParams({
-        ...rest,
-      });
-    }
-  };
   const [editModal, setEditModal] = useState<EditModal>();
   const { folders } = useFolders({});
   const homeFolder = useMemo(() => {
@@ -104,11 +87,7 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
   const theme = useTheme();
 
   const folderTypes = ["folder", "team", "organization"];
-  const folderTypeTitles = [
-    t("my_content"),
-    t("teams"),
-    t("organizations"),
-  ];
+  const folderTypeTitles = [t("my_content"), t("teams"), t("organizations")];
 
   const moreMenuItems: PopperMenuItem[] = [
     {
@@ -125,7 +104,35 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
   ];
   const [selectedFolder, setSelectedFolder] = useState<
     SelectedFolder | undefined
-  >(homeFolder);
+  >(undefined);
+
+  const handleListItemClick = useCallback(
+    (
+      _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+      item: SelectedFolder,
+    ) => {
+      setSelectedFolder(item);
+      if (item.id !== "0" && item.type === "folder") {
+        setQueryParams({
+          ...queryParams,
+          folder_id: item.id,
+        });
+      } else {
+        const { folder_id: _, ...rest } = queryParams;
+        setQueryParams(rest);
+      }
+    },
+    [queryParams, setQueryParams],
+  );
+
+  useEffect(() => {
+    if (!selectedFolder && folders && homeFolder) {
+      handleListItemClick(
+        {} as React.MouseEvent<HTMLDivElement, MouseEvent>,
+        homeFolder,
+      );
+    }
+  }, [folders, handleListItemClick, homeFolder, selectedFolder]);
 
   return (
     <>

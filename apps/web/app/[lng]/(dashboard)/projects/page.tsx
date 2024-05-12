@@ -90,7 +90,7 @@ const Projects = () => {
           <TileGrid
             view={view}
             items={projects?.items ?? []}
-            isLoading={isProjectLoading}
+            isLoading={isProjectLoading || !queryParams.folder_id}
             type="project"
             onClick={(item) => {
               if (item && item.id) {

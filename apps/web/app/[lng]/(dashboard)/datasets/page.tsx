@@ -94,7 +94,7 @@ const Datasets = () => {
           <TileGrid
             view={view}
             items={datasets?.items ?? []}
-            isLoading={isDatasetLoading}
+            isLoading={isDatasetLoading || !datasetSchema.folder_id}
             type="layer"
             onClick={(item) => {
               if (item && item.id) {
