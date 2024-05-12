@@ -1,5 +1,5 @@
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
-import { Box, Divider, IconButton, Link, Paper, Stack } from "@mui/material";
+import { Box, Divider, IconButton, Link, Paper, Stack, Typography } from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { Popup } from "react-map-gl";
 
@@ -94,16 +94,12 @@ const MapPopover: React.FC<MapPopoverProps> = ({
               sx={{ width: "90%" }}
             >
               <Icon iconName={ICON_NAME.LAYERS} style={{ fontSize: 16 }} />
-              <OverflowTypograpy
+              <Typography
                 variant="body2"
                 fontWeight="bold"
-                tooltipProps={{
-                  placement: "top",
-                  arrow: true,
-                }}
               >
                 {title}
-              </OverflowTypograpy>
+              </Typography>
             </Stack>
             <IconButton onClick={onClose}>
               <Icon iconName={ICON_NAME.XCLOSE} style={{ fontSize: 16 }} />

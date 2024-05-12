@@ -1,5 +1,6 @@
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 import Selector from "@/components/map/panels/common/Selector";
+import TextFieldInput from "@/components/map/panels/common/TextFieldInput";
 import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 import useLayerFields from "@/hooks/map/CommonHooks";
 import { useLayerByGeomType, useLayerDatasetId } from "@/hooks/map/ToolsHooks";
@@ -205,7 +206,19 @@ const HeatmapOpportunitiesSelector = ({
               />
             )}
             {/* SENSITIVITY */}
-            {heatmapType === "gravity" && <p>Sensitivity</p>}
+            {heatmapType === "gravity" && (
+              <p>
+                <TextFieldInput
+                  type="number"
+                  label={t("sensitivity")}
+                  value={opportunity.sensitivity?.toString()}
+                  onChange={(value: string) => {
+                    const numberValue = Number(value);
+                    console.log(numberValue);
+                  }}
+                />
+              </p>
+            )}
 
             {/* NUMBER OF DESTINATIONS */}
             {heatmapType === "closest_average" && (
