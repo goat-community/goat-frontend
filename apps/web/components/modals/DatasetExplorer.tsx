@@ -3,7 +3,11 @@ import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import TileGrid from "@/components/dashboard/common/TileGrid";
 import { useTranslation } from "@/i18n/client";
 import { useLayers } from "@/lib/api/layers";
-import { addProjectLayers, useProject, useProjectLayers } from "@/lib/api/projects";
+import {
+  addProjectLayers,
+  useProject,
+  useProjectLayers,
+} from "@/lib/api/projects";
 import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";
 import { LoadingButton } from "@mui/lab";
@@ -22,8 +26,6 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useMap } from "react-map-gl";
-import { zoomToLayer } from "@/lib/utils/map/navigate";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 
 interface DatasetExplorerProps {
@@ -42,7 +44,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
     order: "descendent",
     order_by: "updated_at",
     size: 10,
-    page: 1
+    page: 1,
   });
   const [datasetSchema, setDatasetSchema] = useState<GetDatasetSchema>({});
 
@@ -56,7 +58,6 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
   const { mutate: mutateProject } = useProject(projectId);
 
   const [selectedDataset, setSelectedDataset] = useState<Layer>();
-  const { map } = useMap();
 
   const handleOnClose = () => {
     onClose && onClose();
@@ -68,11 +69,8 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
       await addProjectLayers(projectId, [selectedDataset.id]);
       mutateProjectLayers();
       mutateProject();
-      if (map && selectedDataset.extent) {
-        zoomToLayer(map, selectedDataset.extent);
-      }
     } catch (error) {
-      toast.error(t('error_adding_layer'));
+      toast.error(t("error_adding_layer"));
     } finally {
       setIsBusy(false);
       handleOnClose();

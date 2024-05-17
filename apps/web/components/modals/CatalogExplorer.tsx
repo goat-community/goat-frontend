@@ -25,8 +25,6 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useMap } from "react-map-gl";
-import { zoomToLayer } from "@/lib/utils/map/navigate";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 import CatalogDatasetCard from "@/components/dashboard/catalog/CatalogDatasetCard";
 import { Loading } from "@p4b/ui/components/Loading";
@@ -68,7 +66,6 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
   const [selectedDataset, setSelectedDataset] = useState<Layer>();
-  const { map } = useMap();
   const debouncedSetSearchText = debounce((value) => {
     setSearchText(value || null);
     const newDatasetSchema = { ...datasetSchema };
@@ -90,9 +87,6 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
       await addProjectLayers(projectId, [selectedDataset.id]);
       mutateProjectLayers();
       mutateProject();
-      if (map && selectedDataset.extent) {
-        zoomToLayer(map, selectedDataset.extent);
-      }
     } catch (error) {
       toast.error(t("error_adding_layer"));
     } finally {
