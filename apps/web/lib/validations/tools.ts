@@ -113,7 +113,7 @@ export const startingPointSchema = z.union([
 ]);
 
 export const timeTravelCost = z.object({
-  max_traveltime: z.number().min(1).max(60),
+  max_traveltime: z.number().min(1).max(90),
   steps: z.number().min(1).max(9),
   speed: z.number().min(1).max(25).optional(),
 });

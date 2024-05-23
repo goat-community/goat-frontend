@@ -47,8 +47,12 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
   isPTValid,
   t,
 }) => {
+  //TODO: move the max travel time value out of the component
   const maxTravelTimeValue =
-    routingType === CatchmentAreaRoutingTypeEnum.Enum.pt ? 60 : 45;
+    routingType === CatchmentAreaRoutingTypeEnum.Enum.pt ||
+    routingType === CatchmentAreaRoutingTypeEnum.Enum.car
+      ? 90
+      : 45;
   return (
     <Stack spacing={2}>
       <Selector
