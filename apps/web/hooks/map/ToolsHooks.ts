@@ -213,19 +213,23 @@ export const useRoutingTypes = () => {
         label: t("routing_modes.bicycle"),
         icon: ICON_NAME.BICYCLE,
       },
+      {
+        value: HeatmapRoutingTypeEnum.Enum.pedelec,
+        label: t("routing_modes.pedelec"),
+        icon: ICON_NAME.PEDELEC,
+      }
     ];
   }, [t]);
 
   const motorizedHeatmapRoutingTypes: SelectorItem[] = useMemo(() => {
     return [
-      //TODO: Uncomment this when PT heatmap is implemented
-      // {
-      //   value: HeatmapRoutingTypeEnum.Enum.public_transport,
-      //   label: t("routing_modes.pt"),
-      //   icon: ICON_NAME.BUS,
-      // },
+      {
+        value: HeatmapRoutingTypeEnum.Enum.car,
+        label: t("routing_modes.car"),
+        icon: ICON_NAME.CAR,
+      },
     ];
-  }, []);
+  }, [t]);
 
   const routingTypes = useMemo(() => {
     return activeMobilityRoutingTypes.concat(motorizedRoutingTypes);

@@ -12,6 +12,8 @@ export const CatchmentAreaRoutingTypeEnum = z.enum([
 export const HeatmapRoutingTypeEnum = z.enum([
   "walking",
   "bicycle",
+  "pedelec",
+  "car",
   "public_transport",
 ]);
 
