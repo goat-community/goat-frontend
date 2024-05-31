@@ -319,13 +319,20 @@ export function secondsToTime(seconds) {
   return formattedTime;
 }
 
-
 export function simpleHash(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash |= 0; // Convert to 32bit integer
   }
   return hash.toString();
+}
+
+export function generateSeries(x: number, max: number) {
+  const series = [] as number[];
+  for (let i = x; i <= max; i += x) {
+    series.push(i);
+  }
+  return series;
 }

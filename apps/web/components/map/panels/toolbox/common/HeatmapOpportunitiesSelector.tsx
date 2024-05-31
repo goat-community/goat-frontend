@@ -1,9 +1,11 @@
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 import Selector from "@/components/map/panels/common/Selector";
+import SelectorFreeSolo from "@/components/map/panels/common/SelectorFreeSolo";
 import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 import useLayerFields from "@/hooks/map/CommonHooks";
 import { useLayerByGeomType, useLayerDatasetId } from "@/hooks/map/ToolsHooks";
 import { useTranslation } from "@/i18n/client";
+import { generateSeries } from "@/lib/utils/helpers";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import type { SelectorItem } from "@/types/map/common";
 import {
@@ -111,6 +113,15 @@ const HeatmapOpportunitiesSelector = ({
     "number",
   );
 
+  const sensitivityOptions = useMemo(() => {
+    const series = generateSeries(50000, 500000);
+    const options = series.map((s) => ({
+      value: s,
+      label: s.toString(),
+    }));
+    return options;
+  }, []);
+
   return (
     <>
       {opportunities.map((opportunity, index) => {
@@ -206,17 +217,33 @@ const HeatmapOpportunitiesSelector = ({
             )}
             {/* SENSITIVITY */}
             {heatmapType === "gravity" && (
-              <p>
-                {/* <TextFieldInput
-                  type="number"
-                  label={t("sensitivity")}
-                  value={opportunity.sensitivity?.toString()}
-                  onChange={(value: string) => {
-                    const numberValue = Number(value);
-                    console.log(numberValue);
-                  }}
-                /> */}
-              </p>
+              <SelectorFreeSolo
+                options={sensitivityOptions}
+                selectedItem={
+                  opportunity.sensitivity
+                    ? {
+                        value: opportunity.sensitivity,
+                        label: opportunity.sensitivity.toString(),
+                      }
+                    : undefined
+                }
+                label={t("sensitivity")}
+                placeholder={t("sensitivity_placeholder")}
+                inputType="number"
+                onSelect={(item: SelectorItem) => {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  let newValue = undefined as any;
+                  if (item)
+                    newValue = Number(item.value);
+                  setOpportunities((prev) =>
+                    prev.map((op) =>
+                      op.layer === opportunity.layer
+                        ? { ...op, sensitivity: newValue }
+                        : op,
+                    ),
+                  );
+                }}
+              />
             )}
 
             {/* NUMBER OF DESTINATIONS */}
