@@ -763,6 +763,7 @@
   "select_values": "Select values",
   "send_invite": "Send Invite",
   "sensitivity": "Sensitivity",
+  "sensitivity_placeholder": "Enter sensitivity",
   "sensitivity_tooltip": "Sensitivity Tooltip",
   "sequential": "Sequential",
   "set_field_to_match": "fields to match",

@@ -763,6 +763,7 @@
   "select_values": "Werte auswählen",
   "send_invite": "Einladung senden",
   "sensitivity": "Sensitivität",
+  "sensitivity_placeholder": "Geben Sie die Empfindlichkeit ein",
   "sensitivity_tooltip": "Die Sensitivität zur Kalibrierung der Widerstandsfunktion.",
   "sequential": "Sequenziell",
   "set_field_to_match": "Felder zum Abgleichen festlegen",
