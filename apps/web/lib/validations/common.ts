@@ -23,6 +23,8 @@ export const contentMetadataSchema = z.object({
 });
 
 export const dataLicense = z.enum([
+  "DDN2",
+  "DDZ2",
   "CC_BY",
   "CC_BY_SA",
   "CC_BY_ND",
@@ -31,11 +33,6 @@ export const dataLicense = z.enum([
   "CC_BY_NC_ND",
   "ODC_BY",
   "ODC_ODbL",
-  "GPL",
-  "LGPL",
-  "APACHE",
-  "MIT",
-  "PROPRIETARY_PLAN4BETTER",
   "OTHER",
 ]);
 
