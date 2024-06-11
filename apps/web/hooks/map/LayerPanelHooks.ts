@@ -1,8 +1,7 @@
 import { useAppSelector } from "@/hooks/store/ContextHooks";
 import { useTranslation } from "@/i18n/client";
 import { useProject, useProjectLayers } from "@/lib/api/projects";
-import type {
-  LayerType} from "@/lib/validations/layer";
+import type { LayerType } from "@/lib/validations/layer";
 import {
   featureLayerLinePropertiesSchema,
   featureLayerPointPropertiesSchema,
@@ -24,6 +23,7 @@ export const useLayerSettingsMoreMenu = () => {
   function getLayerMoreMenuOptions(
     layerType: ProjectLayer["type"],
     viewChart?: boolean,
+    inCatalog?: ProjectLayer["in_catalog"],
   ): PopperMenuItem[] {
     if (layerType === "feature") {
       const featureOptions: PopperMenuItem[] = [
@@ -61,11 +61,15 @@ export const useLayerSettingsMoreMenu = () => {
           label: t("rename"),
           icon: ICON_NAME.EDIT,
         },
-        {
-          id: ContentActions.DOWNLOAD,
-          label: t("download"),
-          icon: ICON_NAME.DOWNLOAD,
-        },
+        ...(inCatalog
+          ? []
+          : [
+              {
+                id: ContentActions.DOWNLOAD,
+                label: t("download"),
+                icon: ICON_NAME.DOWNLOAD,
+              },
+            ]),
         {
           id: ContentActions.DELETE,
           label: t("remove"),
