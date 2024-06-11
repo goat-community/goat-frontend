@@ -21,7 +21,7 @@ import { useTranslation } from "@/i18n/client";
 import { useJobs } from "@/lib/api/jobs";
 import { computeNearbyStations } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
-import { setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
+import { setIsMapGetInfoActive, setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { CatchmentAreaRoutingWithoutPTType } from "@/lib/validations/tools";
 import {
@@ -194,6 +194,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     setStartingPointMethod(startingPointMethods[0]);
     setStartingPointLayer(undefined);
     dispatch(setToolboxStartingPoints(undefined));
+    dispatch(setIsMapGetInfoActive(true));
   };
 
   return (
@@ -335,6 +336,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
                 baseOptions={
                   <>
                     <StartingPointSelectors
+                      isActive={isRoutingValid}
                       startingPointMethod={startingPointMethod}
                       setStartingPointMethod={setStartingPointMethod}
                       startingPointMethods={startingPointMethods}

@@ -17,6 +17,8 @@ import Buffer from "@/components/map/panels/toolbox/tools/buffer/Buffer";
 import Container from "@/components/map/panels/Container";
 import {
   setActiveRightPanel,
+  setIsMapGetInfoActive,
+  setMapCursor,
   setMaskLayer,
   setToolboxStartingPoints,
 } from "@/lib/store/map/slice";
@@ -62,6 +64,8 @@ const Toolbox = () => {
     setValue(undefined);
     dispatch(setMaskLayer(undefined));
     dispatch(setToolboxStartingPoints(undefined));
+    dispatch(setIsMapGetInfoActive(true));
+    dispatch(setMapCursor(undefined));
   };
 
   const handleOnClose = () => {

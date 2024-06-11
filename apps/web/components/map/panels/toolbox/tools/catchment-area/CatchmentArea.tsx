@@ -41,7 +41,7 @@ import { toast } from "react-toastify";
 import { useJobs } from "@/lib/api/jobs";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
-import { setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
+import { setIsMapGetInfoActive, setMapCursor, setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 import {
   useCatchmentAreaShapeTypes,
@@ -244,6 +244,8 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const handleReset = () => {
     dispatch(setMaskLayer(undefined));
     dispatch(setToolboxStartingPoints(undefined));
+    dispatch(setIsMapGetInfoActive(true));
+    dispatch(setMapCursor(undefined));
     setSelectedRouting(undefined);
     handleConfigurationReset();
   };
@@ -604,6 +606,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
               baseOptions={
                 <>
                   <StartingPointSelectors
+                    isActive={isRoutingValid}
                     startingPointMethod={startingPointMethod}
                     setStartingPointMethod={setStartingPointMethod}
                     startingPointMethods={startingPointMethods}

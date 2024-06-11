@@ -10,6 +10,8 @@ export interface MapState {
   toolboxStartingPoints: [number, number][] | undefined;
   activeLeftPanel: MapSidebarItemID | undefined;
   activeRightPanel: MapSidebarItemID | undefined;
+  isMapGetInfoActive: boolean;
+  mapCursor: string | undefined; // Toolbox features will override this. If undefined, the map will use the default cursor with pointer on hover
 }
 
 const initialState = {
@@ -55,6 +57,8 @@ const initialState = {
   activeLeftPanel: MapSidebarItemID.LAYERS,
   toolboxStartingPoints: undefined,
   activeRightPanel: undefined,
+  isMapGetInfoActive: true,
+  mapCursor: undefined,
 } as MapState;
 
 const mapSlice = createSlice({
@@ -100,6 +104,12 @@ const mapSlice = createSlice({
         }
       }
     },
+    setIsMapGetInfoActive: (state, action: PayloadAction<boolean>) => {
+      state.isMapGetInfoActive = action.payload;
+    },
+    setMapCursor: (state, action: PayloadAction<string | undefined>) => {
+      state.mapCursor = action.payload;
+    },
   },
 });
 
@@ -109,6 +119,8 @@ export const {
   setActiveRightPanel,
   setMaskLayer,
   setToolboxStartingPoints,
+  setIsMapGetInfoActive,
+  setMapCursor,
 } = mapSlice.actions;
 
 export const mapReducer = mapSlice.reducer;

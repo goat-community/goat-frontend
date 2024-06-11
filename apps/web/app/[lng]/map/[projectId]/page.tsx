@@ -45,6 +45,10 @@ export default function MapPage({ params: { projectId } }) {
   const theme = useTheme();
   const { t } = useTranslation("common");
   const activeBasemap = useAppSelector(selectActiveBasemap);
+  const isGetInfoActive = useAppSelector(
+    (state) => state.map.isMapGetInfoActive,
+  );
+  const mapCursor = useAppSelector((state) => state.map.mapCursor);
   const mapRef = useRef<MapRef | null>(null);
   const {
     project,
@@ -110,7 +114,7 @@ export default function MapPage({ params: { projectId } }) {
     const features = e.features;
     // TODO: This can be configurable in the future
     const hiddenProperties = ["layer_id"];
-    if (features && features.length > 0) {
+    if (features && features.length > 0 && isGetInfoActive) {
       const feature = features[0];
       setHighlightedFeature(feature);
       const layerName = projectLayers?.find(
@@ -180,7 +184,11 @@ export default function MapPage({ params: { projectId } }) {
       // However, this is the only way to do it with the current version of react-map-gl
       // See https://github.com/visgl/react-map-gl/issues/579#issuecomment-1275163348
       const map = mapRef.current.getMap();
-      map.getCanvas().style.cursor = features?.length ? "pointer" : "";
+      if (mapCursor) {
+        map.getCanvas().style.cursor = mapCursor;
+      } else {
+        map.getCanvas().style.cursor = features?.length ? "pointer" : "";
+      }
     }
   };
 

@@ -19,7 +19,7 @@ import {
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import { v4 } from "uuid";
-import { setToolboxStartingPoints } from "@/lib/store/map/slice";
+import { setIsMapGetInfoActive, setMapCursor, setToolboxStartingPoints } from "@/lib/store/map/slice";
 import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
 import { useParams } from "next/navigation";
 
@@ -166,6 +166,7 @@ const StartingPoints = () => {
 };
 
 interface StartingPointOptionsProps {
+  isActive: boolean;
   startingPointMethod: SelectorItem;
   setStartingPointMethod: (item: SelectorItem) => void;
   startingPointMethods: SelectorItem[];
@@ -174,6 +175,7 @@ interface StartingPointOptionsProps {
 }
 
 const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
+  isActive,
   startingPointMethod,
   setStartingPointMethod,
   startingPointMethods,
@@ -188,6 +190,20 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
     ["point"],
     projectId as string,
   );
+
+
+  useEffect(() => {
+    if (isActive && startingPointMethod.value === "map") {
+      dispatch(setIsMapGetInfoActive(false));
+      dispatch(setMapCursor("crosshair"));
+    } else {
+      dispatch(setIsMapGetInfoActive(true));
+      dispatch(setMapCursor(undefined));
+    }
+
+  }, [dispatch, isActive, startingPointMethod.value])
+
+
   return (
     <>
       <Selector
@@ -203,7 +219,7 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
         tooltip={t("select_starting_point_method_tooltip")}
       />
 
-      {startingPointMethod.value === "browser_layer" && (
+      {startingPointMethod.value === "browser_layer" && isActive && (
         <Selector
           selectedItems={startingPointLayer}
           setSelectedItems={(
@@ -220,7 +236,7 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
         />
       )}
 
-      {startingPointMethod.value === "map" && <StartingPoints />}
+      {startingPointMethod.value === "map" && isActive && <StartingPoints />}
     </>
   );
 };
