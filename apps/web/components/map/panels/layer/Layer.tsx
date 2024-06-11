@@ -355,7 +355,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
   async function duplicateLayer(layer: ProjectLayer) {
     try {
       await addProjectLayers(projectId, [layer.layer_id]);
-      mutateProjectLayers()
+      mutateProjectLayers();
       mutateProject();
     } catch (error) {
       toast.error(t("error_duplicating_layer"));
@@ -560,72 +560,77 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               </IconButton>
                             </Tooltip>
                           )}
-                          {layer.query?.cql && layer.query?.cql["args"]?.length && (
-                            <Tooltip
-                              key={layer.id + "_filter"}
-                              title={
-                                activeLayerId === layer.id &&
-                                activeRightPanel === MapSidebarItemID.FILTER
-                                  ? t("hide_applied_filters")
-                                  : t("show_applied_filters")
-                              }
-                              placement="top"
-                              arrow
-                            >
-                              <IconButton
-                                size="small"
-                                color={
+                          {layer.query?.cql &&
+                            layer.query?.cql["args"]?.length && (
+                              <Tooltip
+                                key={layer.id + "_filter"}
+                                title={
                                   activeLayerId === layer.id &&
                                   activeRightPanel === MapSidebarItemID.FILTER
-                                    ? "primary"
-                                    : "default"
+                                    ? t("hide_applied_filters")
+                                    : t("show_applied_filters")
                                 }
-                                sx={{ pr: 2 }}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  if (
+                                placement="top"
+                                arrow
+                              >
+                                <IconButton
+                                  size="small"
+                                  color={
                                     activeLayerId === layer.id &&
                                     activeRightPanel === MapSidebarItemID.FILTER
-                                  ) {
-                                    dispatch(setActiveRightPanel(undefined));
-                                  } else {
-                                    if (layer.id !== activeLayerId) {
-                                      dispatch(setActiveLayer(layer.id));
-                                    }
-                                    dispatch(
-                                      setActiveRightPanel(
-                                        MapSidebarItemID.FILTER,
-                                      ),
-                                    );
+                                      ? "primary"
+                                      : "default"
                                   }
-                                }}
-                              >
-                                <Badge
-                                  badgeContent={layer.query?.cql?.["args"]?.length}
-                                  color="primary"
-                                  sx={{
-                                    "& .MuiBadge-badge": {
-                                      fontSize: 9,
-                                      height: 15,
-                                      minWidth: 15,
-                                    },
+                                  sx={{ pr: 2 }}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    if (
+                                      activeLayerId === layer.id &&
+                                      activeRightPanel ===
+                                        MapSidebarItemID.FILTER
+                                    ) {
+                                      dispatch(setActiveRightPanel(undefined));
+                                    } else {
+                                      if (layer.id !== activeLayerId) {
+                                        dispatch(setActiveLayer(layer.id));
+                                      }
+                                      dispatch(
+                                        setActiveRightPanel(
+                                          MapSidebarItemID.FILTER,
+                                        ),
+                                      );
+                                    }
                                   }}
                                 >
-                                  <Icon
-                                    htmlColor="inherit"
-                                    iconName={ICON_NAME.FILTER}
-                                    style={{
-                                      fontSize: 15,
+                                  <Badge
+                                    badgeContent={
+                                      layer.query?.cql?.["args"]?.length
+                                    }
+                                    color="primary"
+                                    sx={{
+                                      "& .MuiBadge-badge": {
+                                        fontSize: 9,
+                                        height: 15,
+                                        minWidth: 15,
+                                      },
                                     }}
-                                  />
-                                </Badge>
-                              </IconButton>
-                            </Tooltip>
-                          )}
+                                  >
+                                    <Icon
+                                      htmlColor="inherit"
+                                      iconName={ICON_NAME.FILTER}
+                                      style={{
+                                        fontSize: 15,
+                                      }}
+                                    />
+                                  </Badge>
+                                </IconButton>
+                              </Tooltip>
+                            )}
                           <MoreMenu
                             menuItems={getLayerMoreMenuOptions(
                               layer.type,
                               !!layer.charts,
+                              layer.in_catalog
                             )}
                             menuButton={
                               <Tooltip
