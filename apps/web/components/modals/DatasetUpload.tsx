@@ -97,7 +97,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   };
 
   const acceptedFileTypes = useMemo(() => {
-    return [".gpkg", ".geojson", ".shp", ".kml", ".csv", ".xlsx"];
+    return [".gpkg", ".geojson", ".zip", ".kml", ".csv", ".xlsx"];
   }, []);
 
   const handleChange = (file) => {
@@ -218,7 +218,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
             />
             <Typography variant="caption">
               {t("supported")} <b>GeoPackage</b>,{" "}
-              <b>GeoJSON</b>, <b>Shapefile</b>, <b>KML</b>, <b>CSV</b>,{" "}
+              <b>GeoJSON</b>, <b>Shapefile (.zip)</b>, <b>KML</b>, <b>CSV</b>,{" "}
               <b>XLSX</b>
             </Typography>
           </>
