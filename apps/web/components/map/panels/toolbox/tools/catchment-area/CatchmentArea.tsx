@@ -41,7 +41,12 @@ import { toast } from "react-toastify";
 import { useJobs } from "@/lib/api/jobs";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
-import { setIsMapGetInfoActive, setMapCursor, setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
+import {
+  setIsMapGetInfoActive,
+  setMapCursor,
+  setMaskLayer,
+  setToolboxStartingPoints,
+} from "@/lib/store/map/slice";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 import {
   useCatchmentAreaShapeTypes,
@@ -257,6 +262,15 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     if (isPolygonDifference) {
       payload["polygon_difference"] = true;
     }
+
+    // Set polygon difference to false if the shape is polygon
+    if (
+      !isPolygonDifference &&
+      catchmentAreaShapeType.value === catchmentAreaShapeEnum.Enum.polygon
+    ) {
+      payload["polygon_difference"] = false;
+    }
+
     if (startingPointMethod.value === "map") {
       const longitude = startingPoints?.map((point) => point[0]);
       const latitude = startingPoints?.map((point) => point[1]);
