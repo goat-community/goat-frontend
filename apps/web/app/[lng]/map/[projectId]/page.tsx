@@ -107,13 +107,13 @@ export default function MapPage({ params: { projectId } }) {
     lngLat: [number, number];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     properties: { [name: string]: any } | null;
+    jsonProperties: { [name: string]: unknown } | null;
     title: string;
   } | null>(null);
 
   const handleMapClick = (e: MapLayerMouseEvent) => {
     const features = e.features;
-    // TODO: This can be configurable in the future
-    const hiddenProperties = ["layer_id"];
+    const hiddenProperties = ["layer_id", "id"];
     if (features && features.length > 0 && isGetInfoActive) {
       const feature = features[0];
       setHighlightedFeature(feature);
@@ -127,18 +127,37 @@ export default function MapPage({ params: { projectId } }) {
           feature.geometry.coordinates[1],
         ];
       }
-      const properties = feature.properties
-        ? Object.fromEntries(
-            Object.entries(feature.properties).filter(
-              ([key]) => !hiddenProperties.includes(key),
-            ),
-          )
-        : {};
+      const properties = feature.properties;
+      const jsonProperties = {};
+      const primitiveProperties = {};
+
+      if (properties) {
+        for (const key in properties) {
+          if (!hiddenProperties.includes(key)) {
+            const value = properties[key];
+            try {
+              const parsedValue = JSON.parse(value);
+              if (typeof parsedValue === "object" && parsedValue !== null) {
+                jsonProperties[key] = parsedValue;
+              } else {
+                throw new Error();
+              }
+            } catch (error) {
+              primitiveProperties[key] = value;
+            }
+          }
+        }
+      }
+      // Now you can use jsonProperties for visualization
+      console.log(jsonProperties);
+      console.log(primitiveProperties);
 
       setPopupInfo({
         lngLat,
-        properties,
+        properties: primitiveProperties,
+        jsonProperties: jsonProperties,
         title: layerName ?? "",
+        // jsonProperties,
       });
     } else {
       setHighlightedFeature(null);

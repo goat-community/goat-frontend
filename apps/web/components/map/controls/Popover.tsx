@@ -1,12 +1,25 @@
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
-import { Box, Divider, IconButton, Link, Paper, Stack, Typography } from "@mui/material";
+import { useTranslation } from "@/i18n/client";
+import {
+  Box,
+  Divider,
+  IconButton,
+  Link,
+  Paper,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useState } from "react";
 import { Popup } from "react-map-gl";
 
 export type MapPopoverProps = {
   title: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   properties: { [name: string]: any } | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  jsonProperties: { [name: string]: any } | null;
   lngLat: [number, number];
   onClose: () => void;
 };
@@ -65,19 +78,68 @@ const Row: React.FC<RowProps> = ({ name, value }) => {
   );
 };
 
+interface ViewTableRowProps {
+  name: string;
+  onClick: () => void;
+}
+
+const ViewTableRow: React.FC<ViewTableRowProps> = ({ name, onClick }) => {
+  const { t } = useTranslation("common");
+
+  return (
+    <tr>
+      <td>
+        <OverflowTypograpy
+          variant="body2"
+          tooltipProps={{
+            placement: "top",
+            arrow: true,
+            enterDelay: 200,
+          }}
+        >
+          {name}
+        </OverflowTypograpy>
+      </td>
+      <td style={{ textAlign: "right" }}>
+        <Tooltip
+          placement="top"
+          arrow
+          title={t("view_property_data", {
+            property: name,
+          })}
+        >
+          <IconButton size="small" onClick={onClick}>
+            <Icon iconName={ICON_NAME.TABLE} style={{ fontSize: 16 }} />
+          </IconButton>
+        </Tooltip>
+      </td>
+    </tr>
+  );
+};
+
+interface DetailsViewType {
+  property: string;
+  data: Array<{ [key: string]: string }>;
+}
+
 const MapPopover: React.FC<MapPopoverProps> = ({
   title,
   properties,
+  jsonProperties,
   lngLat,
   onClose,
 }) => {
+  const [detailsView, setDetailsView] = useState<DetailsViewType | undefined>(
+    undefined,
+  );
+
   return (
     <Popup
       onClose={onClose}
       longitude={lngLat[0]}
       latitude={lngLat[1]}
       closeButton={false}
-      maxWidth="300px"
+      maxWidth={detailsView ? "500px" : "300px"}
     >
       <Box>
         <Paper elevation={0}>
@@ -94,10 +156,7 @@ const MapPopover: React.FC<MapPopoverProps> = ({
               sx={{ width: "90%" }}
             >
               <Icon iconName={ICON_NAME.LAYERS} style={{ fontSize: 16 }} />
-              <Typography
-                variant="body2"
-                fontWeight="bold"
-              >
+              <Typography variant="body2" fontWeight="bold">
                 {title}
               </Typography>
             </Stack>
@@ -107,7 +166,7 @@ const MapPopover: React.FC<MapPopoverProps> = ({
           </Stack>
           <Divider sx={{ mb: 0 }} />
           <Box sx={{ maxHeight: "280px", overflowY: "auto" }}>
-            {properties && (
+            {properties && !detailsView && (
               <table
                 style={{
                   tableLayout: "fixed",
@@ -119,8 +178,75 @@ const MapPopover: React.FC<MapPopoverProps> = ({
                   {Object.entries(properties).map(([key, value]) => (
                     <Row key={key} name={key} value={value} />
                   ))}
+                  {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    jsonProperties &&
+                      Object.entries(jsonProperties).map(
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        ([key, _value]: [string, any]) => (
+                          <ViewTableRow
+                            key={key}
+                            name={key}
+                            onClick={() =>
+                              setDetailsView({
+                                property: key,
+                                data: jsonProperties[key],
+                              })
+                            }
+                          />
+                        ),
+                      )
+                  }
                 </tbody>
               </table>
+            )}
+            {detailsView && (
+              <Stack direction="column">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  alignItems="center"
+                  sx={{ width: "90%" }}
+                >
+                  <IconButton
+                    onClick={() => {
+                      setDetailsView(undefined);
+                    }}
+                  >
+                    <Icon
+                      iconName={ICON_NAME.CHEVRON_LEFT}
+                      style={{ fontSize: 16 }}
+                    />
+                  </IconButton>
+                  <Typography variant="body2" fontWeight="bold">
+                    {detailsView.property}
+                  </Typography>
+                </Stack>
+                <Divider sx={{ mb: 0, mt: 0 }} />
+                <table style={{ tableLayout: "fixed", padding: 5 }}>
+                  <thead>
+                    <tr style={{ padding: 10 }}>
+                      {detailsView.data.length > 0 &&
+                        Object.keys(detailsView.data[0]).map((key, index) => (
+                          <th key={index} style={{ paddingRight: 4 }}>
+                            {key}
+                          </th>
+                        ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {detailsView.data.map((item, index) => (
+                      <tr key={index}>
+                        {Object.entries(item).map(([key, value]) => (
+                          <td style={{ paddingRight: 10 }} key={key}>
+                            {value}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Stack>
             )}
           </Box>
         </Paper>
