@@ -42,6 +42,7 @@ export const containsText = (text: string, searchText: string) =>
 export const FieldTypeColors = {
   string: [140, 210, 205],
   number: [248, 194, 28],
+  object: [255, 138, 101],
 };
 
 export const FieldTypeTag = styled("div")<{ fieldType: string }>(

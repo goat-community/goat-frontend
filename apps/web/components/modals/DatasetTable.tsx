@@ -1,7 +1,7 @@
 import { FieldTypeTag } from "@/components/map/common/LayerFieldSelector";
 import useLayerFields from "@/hooks/map/CommonHooks";
 import { useDatasetCollectionItems } from "@/lib/api/layers";
-import { IconButton, Skeleton } from "@mui/material";
+import { Box, Collapse, IconButton, Skeleton } from "@mui/material";
 
 import type {
   GetCollectionItemsQueryParams,
@@ -22,7 +22,9 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useEffect, useMemo, useState } from "react";
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import NoValuesFound from "@/components/map/common/NoValuesFound";
 
@@ -33,6 +35,93 @@ interface DatasetTableDialogProps {
   dataset: ProjectLayer | Layer;
 }
 
+const Row = ({ row, fields }) => {
+  const [open, setOpen] = useState(false);
+
+  const primitiveFields = useMemo(
+    () => fields.filter((field) => field.type !== "object"),
+    [fields],
+  );
+
+  const objectFields = useMemo(
+    () => fields.filter((field) => field.type === "object"),
+    [fields],
+  );
+
+  return (
+    <>
+      <TableRow key={row.id}>
+        {objectFields.length > 0 && (
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+        )}
+        {primitiveFields.map((field, fieldIndex) => (
+          <TableCell key={fieldIndex}>{row.properties[field.name]}</TableCell>
+        ))}
+      </TableRow>
+
+      {!!objectFields.length && (
+        <TableRow>
+          <TableCell
+            style={{ paddingBottom: 0, paddingTop: 0 }}
+            colSpan={primitiveFields.length + 1}
+          >
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 2 }}>
+                {objectFields.map((field) => {
+                  const jsonData = JSON.parse(row.properties[field.name]);
+                  return (
+                    <>
+                      <Stack direction="column" spacing={1} sx={{ py: 1, pl: 4 }}>
+                        <Typography variant="body2" fontWeight="bold">
+                          {field.name}
+                        </Typography>
+                        <FieldTypeTag fieldType={field.type}>
+                          {field.type}
+                        </FieldTypeTag>
+                      </Stack>
+                      <Table
+                        size="small"
+                        aria-label="purchases"
+                        key={field.name}
+                      >
+                        <TableHead>
+                          <TableRow>
+                            {jsonData.length > 0 &&
+                              Object.keys(jsonData[0]).map((key) => (
+                                <TableCell key={key}>{key}</TableCell>
+                              ))}
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {jsonData.map((item, rowIndex) => (
+                            <TableRow key={rowIndex}>
+                              {Object.values(item).map((value: string, cellIndex) => (
+                                <TableCell key={cellIndex}>{value}</TableCell>
+                              ))}
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </>
+                  );
+                })}
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+};
+
 const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
   open,
   onClose,
@@ -40,7 +129,7 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
 }) => {
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
     dataset["layer_id"] || dataset["id"] || "",
-    undefined
+    undefined,
   );
   const defaultParams = {
     limit: 50,
@@ -55,6 +144,8 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
     dataset["layer_id"] || dataset["id"] || "",
     dataQueryParams,
   );
+
+  console.log(data);
 
   const [displayData, setDisplayData] = useState(data);
   useEffect(() => {
@@ -105,18 +196,23 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
           <Table size="small" aria-label="simple table" stickyHeader>
             <TableHead>
               <TableRow>
-                {fields.map((field, index) => (
-                  <TableCell key={index}>
-                    <Stack direction="column" spacing={1} sx={{ py: 1 }}>
-                      <Typography variant="body2" fontWeight="bold">
-                        {field.name}
-                      </Typography>
-                      <FieldTypeTag fieldType={field.type}>
-                        {field.type}
-                      </FieldTypeTag>
-                    </Stack>
-                  </TableCell>
-                ))}
+                {fields.some((field) => field.type === "object") && (
+                  <TableCell />
+                )}
+                {fields
+                  .filter((field) => field.type !== "object")
+                  .map((field, index) => (
+                    <TableCell key={index}>
+                      <Stack direction="column" spacing={1} sx={{ py: 1 }}>
+                        <Typography variant="body2" fontWeight="bold">
+                          {field.name}
+                        </Typography>
+                        <FieldTypeTag fieldType={field.type}>
+                          {field.type}
+                        </FieldTypeTag>
+                      </Stack>
+                    </TableCell>
+                  ))}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -133,13 +229,7 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
               )}
               {displayData.features?.length &&
                 displayData.features.map((row) => (
-                  <TableRow key={row.id}>
-                    {fields.map((field, fieldIndex) => (
-                      <TableCell key={fieldIndex}>
-                        {row.properties[field.name]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                  <Row key={row.id} row={row} fields={fields} />
                 ))}
             </TableBody>
           </Table>

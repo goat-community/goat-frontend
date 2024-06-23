@@ -794,6 +794,7 @@
   "starting": "Starting Points",
   "starting_point": "Starting Point",
   "starting_point_desc": "Chose a way to select the starting point/s of the catchment area",
+  "starting_point_max_points": "Maximum starting points:",
   "starting_points": "Starting Points",
   "station_configuration": "Station Configuration",
   "statistics": "Statistics",
