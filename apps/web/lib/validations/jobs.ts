@@ -60,7 +60,7 @@ export const jobSchema = z.object({
   type: jobTypeEnum,
   status: jobStatusLayerUpload,
   status_simple: jobStatusTypeEnum,
-  payload: z.record(z.any()).optional(),
+  msg_simple: z.string().optional(),
   read: z.boolean().optional(),
 });
 
