@@ -81,6 +81,7 @@ const mapSlice = createSlice({
       if (state.activeRightPanel === MapSidebarItemID.TOOLBOX) {
         state.maskLayer = undefined;
         state.toolboxStartingPoints = undefined;
+        state.mapCursor = undefined;
       }
       state.activeRightPanel = action.payload;
     },
