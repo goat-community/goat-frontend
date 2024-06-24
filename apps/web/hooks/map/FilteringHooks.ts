@@ -3,7 +3,7 @@ import type { SelectorItem } from "@/types/map/common";
 import { useMemo } from "react";
 
 const useLogicalExpressionOperations = (
-  selectedField?: "string" | "number"
+  selectedField?: "string" | "number" | "date" | "boolean" | "object",
 ) => {
   const { t } = useTranslation("common");
   const logicalExpressionTypes: SelectorItem[] = useMemo(() => {
