@@ -20,7 +20,7 @@ const useLayerFields = (
         if (filterType) {
           return value.type === filterType;
         } else {
-          return value.type === "string" || value.type === "number";
+          return value.type === "string" || value.type === "number" || value.type === "object";
         }
       })
       .map(([key, value]) => {
