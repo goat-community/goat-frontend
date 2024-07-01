@@ -461,6 +461,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                       if (
                         routing.value === CatchmentAreaRoutingTypeEnum.Enum.pt
                       ) {
+                        dispatch(setToolboxStartingPoints(undefined));
                         dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
                       }
                       if (
@@ -626,6 +627,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                     startingPointMethods={startingPointMethods}
                     startingPointLayer={startingPointLayer}
                     setStartingPointLayer={setStartingPointLayer}
+                    // For PT routing only one starting point is allowed at the moment
+                    maxStartingPoints={
+                      selectedRouting?.value ===
+                      CatchmentAreaRoutingTypeEnum.Enum.pt
+                        ? 1
+                        : undefined
+                    }
                   />
                 </>
               }

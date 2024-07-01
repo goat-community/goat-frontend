@@ -19,11 +19,19 @@ import {
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 import { v4 } from "uuid";
-import { setIsMapGetInfoActive, setMapCursor, setToolboxStartingPoints } from "@/lib/store/map/slice";
+import {
+  setIsMapGetInfoActive,
+  setMapCursor,
+  setToolboxStartingPoints,
+} from "@/lib/store/map/slice";
 import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
 import { useParams } from "next/navigation";
 
-const StartingPoints = () => {
+const StartingPoints = ({
+  maxStartingPoints,
+}: {
+  maxStartingPoints: number | undefined;
+}) => {
   const { map } = useMap();
   const theme = useTheme();
   const { t } = useTranslation("common");
@@ -50,6 +58,9 @@ const StartingPoints = () => {
         number,
         number,
       ];
+      if (maxStartingPoints === 1) {
+        dispatch(setToolboxStartingPoints(undefined));
+      }
       dispatch(setToolboxStartingPoints([coordinate]));
     };
     if (!map) return;
@@ -172,6 +183,7 @@ interface StartingPointOptionsProps {
   startingPointMethods: SelectorItem[];
   startingPointLayer: SelectorItem | undefined;
   setStartingPointLayer: (item: SelectorItem | undefined) => void;
+  maxStartingPoints?: number;
 }
 
 const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
@@ -181,6 +193,7 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
   startingPointMethods,
   startingPointLayer,
   setStartingPointLayer,
+  maxStartingPoints,
 }) => {
   const dispatch = useAppDispatch();
   const { projectId } = useParams();
@@ -191,7 +204,6 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
     projectId as string,
   );
 
-
   useEffect(() => {
     if (isActive && startingPointMethod.value === "map") {
       dispatch(setIsMapGetInfoActive(false));
@@ -200,9 +212,7 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
       dispatch(setIsMapGetInfoActive(true));
       dispatch(setMapCursor(undefined));
     }
-
-  }, [dispatch, isActive, startingPointMethod.value])
-
+  }, [dispatch, isActive, startingPointMethod.value]);
 
   return (
     <>
@@ -236,7 +246,14 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
         />
       )}
 
-      {startingPointMethod.value === "map" && isActive && <StartingPoints />}
+      {startingPointMethod.value === "map" && isActive && (
+        <StartingPoints maxStartingPoints={maxStartingPoints} />
+      )}
+      {maxStartingPoints && (
+        <Typography variant="caption" color="textSecondary">
+          {`${t("starting_point_max_points")} ${maxStartingPoints}`}
+        </Typography>
+      )}
     </>
   );
 };

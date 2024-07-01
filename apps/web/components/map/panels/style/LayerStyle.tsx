@@ -6,12 +6,13 @@ import { setActiveRightPanel } from "@/lib/store/map/slice";
 import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
-import type {
-  ColorMap,
-  FeatureLayerPointProperties,
-  FeatureLayerProperties,
-  LayerUniqueValues,
-  MarkerMap,
+import {
+  classBreaks,
+  type ColorMap,
+  type FeatureLayerPointProperties,
+  type FeatureLayerProperties,
+  type LayerUniqueValues,
+  type MarkerMap,
 } from "@/lib/validations/layer";
 import { useCallback, useMemo, useState } from "react";
 import {
@@ -71,6 +72,12 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     ) => {
       if (!activeLayer) return;
       if (!newStyle[`${updateType}_field`]?.name) return;
+      let classBreakType = newStyle[`${updateType}_scale`];
+      const existingBreaks =
+        activeLayer.properties[`${updateType}_scale_breaks`];
+      if (classBreakType === classBreaks.Enum.custom_breaks && existingBreaks) {
+        return;
+      }
       if (
         newStyle[`${updateType}_scale`] !==
           activeLayer.properties[`${updateType}_scale`] ||
@@ -79,9 +86,12 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
         newStyle[`${updateType}_range`]?.colors?.length !==
           activeLayer.properties[`${updateType}_range`]?.colors?.length
       ) {
+        if (classBreakType === classBreaks.Enum.custom_breaks) {
+          classBreakType = classBreaks.Enum.equal_interval;
+        }
         const breaks = await getLayerClassBreaks(
           activeLayer.layer_id,
-          newStyle[`${updateType}_scale`],
+          classBreakType,
           newStyle[`${updateType}_field`]?.name as string,
           newStyle[`${updateType}_range`]?.colors?.length - 1,
         );

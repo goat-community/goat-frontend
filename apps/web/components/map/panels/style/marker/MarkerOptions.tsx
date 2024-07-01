@@ -70,7 +70,7 @@ const MarkerOptions = ({
           {layerStyle?.[`custom_${type}`] && layerStyle?.[`${type}_field`] && (
             <MarkerSelector
               markerMaps={layerStyle?.[`${type}_mapping`] || []}
-              onCustomOrdinalApply={(markerMaps) => {
+              onCustomApply={(markerMaps) => {
                 const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
                 newStyle[`${type}_mapping`] = markerMaps;
                 if (onStyleChange) {

@@ -1,5 +1,3 @@
-"use client";
-
 import useSWR from "swr";
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type {
@@ -10,6 +8,7 @@ import type {
   ProjectLayer,
 } from "@/lib/validations/project";
 import type { GetContentQueryParams } from "@/lib/validations/common";
+import type { PostScenario, ScenarioResponse } from "@/lib/validations/scenario";
 
 export const PROJECTS_API_BASE_URL = new URL(
   "api/v2/project",
@@ -58,6 +57,22 @@ export const useProjectLayers = (projectId: string) => {
   };
 };
 
+
+export const useProjectScenarios = (projectId: string) => {
+  const { data, isLoading, error, mutate, isValidating } =
+    useSWR<ScenarioResponse>(
+      [`${PROJECTS_API_BASE_URL}/${projectId}/scenario`],
+      fetcher,
+    );
+  return {
+    scenarios: data,
+    isLoading: isLoading,
+    isError: error,
+    mutate,
+    isValidating,
+  };
+};
+
 export const useProjectInitialViewState = (projectId: string) => {
   const { data, isLoading, error, mutate, isValidating } =
     useSWR<ProjectViewState>(
@@ -72,7 +87,6 @@ export const useProjectInitialViewState = (projectId: string) => {
     isValidating,
   };
 };
-
 
 export const useProjectLayerChartData = (
   projectId: string,
@@ -89,7 +103,7 @@ export const useProjectLayerChartData = (
     mutate,
     isValidating,
   };
-}
+};
 
 export const updateProjectInitialViewState = async (
   projectId: string,
@@ -175,6 +189,65 @@ export const addProjectLayers = async (
   }
   return await response.json();
 };
+
+export const createProjectScenario = async (
+  projectId: string,
+  payload: PostScenario,
+) => {
+  const response = await fetchWithAuth(
+    `${PROJECTS_API_BASE_URL}/${projectId}/scenario`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to create project scenario");
+  }
+  return await response.json();
+}
+
+export const updateProjectScenario = async (
+  projectId: string,
+  scenarioId: string,
+  payload: PostScenario,
+) => {
+  const response = await fetchWithAuth(
+    `${PROJECTS_API_BASE_URL}/${projectId}/scenario/${scenarioId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to update project scenario");
+  }
+  return await response.json();
+}
+
+export const deleteProjectScenario = async (
+  projectId: string,
+  scenarioId: string,
+) => {
+  try {
+    await fetchWithAuth(
+      `${PROJECTS_API_BASE_URL}/${projectId}/scenario/${scenarioId}`,
+      {
+        method: "DELETE",
+      },
+    );
+  } catch (error) {
+    console.error(error);
+    throw Error(`deleteProjectScenario: unable to delete scenario with id ${scenarioId}`);
+  }
+}
+
 
 export const updateProject = async (
   projectId: string,

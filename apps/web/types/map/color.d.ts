@@ -13,7 +13,7 @@ export type ColorScaleSelectorProps = {
   selectedColorScaleMethod?: ClassBreaks;
   classBreaksValues?: LayerClassBreaks;
   setSelectedColorScaleMethod: (colorScale: ClassBreaks) => void;
-  onCustomOrdinalApply?: (colorMaps: ColorMap) => void;
+  onCustomApply?: (colorMaps: ColorMap) => void;
   colorSet: ColorSet;
   label?: string;
   tooltip?: string;

@@ -20,6 +20,12 @@ export enum MapLayerActions {
   PROPERTIES = "properties",
 }
 
+export enum ScenarioActions {
+  EDIT = "edit",
+  RENAME = "rename",
+  DELETE = "delete",
+}
+
 export enum LayerStyleActions {
   RESET = "reset",
   SAVE_AS_DEFAULT = "saveAsDefault",

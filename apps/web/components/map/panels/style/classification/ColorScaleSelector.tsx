@@ -1,7 +1,7 @@
 import { ArrowPopper } from "@/components/ArrowPoper";
 import FormLabelHelper from "@/components/common/FormLabelHelper";
 import NumericColorScale from "@/components/map/panels/style/classification/NumericColorScale";
-import OrdinalColorScale from "@/components/map/panels/style/classification/OrdinalColorScale";
+import CustomColorScale from "@/components/map/panels/style/classification/CustomColorScale";
 import { useTranslation } from "@/i18n/client";
 import type { ColorScaleSelectorProps } from "@/types/map/color";
 import { Paper, Stack, Typography } from "@mui/material";
@@ -32,20 +32,22 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
               }}
             >
               {props.activeLayerField.type === "number" &&
-                props.selectedColorScaleMethod !== "ordinal" && (
+                props.selectedColorScaleMethod !== "ordinal" &&
+                props.selectedColorScaleMethod !== "custom_breaks" && (
                   <NumericColorScale
                     {...props}
                     onCancel={() => setOpen(false)}
                     setIsClickAwayEnabled={setIsClickAwayEnabled}
                   />
                 )}
-              {props.selectedColorScaleMethod === "ordinal" && (
-                <OrdinalColorScale
+              {(props.selectedColorScaleMethod === "ordinal" ||
+                props.selectedColorScaleMethod === "custom_breaks") && (
+                <CustomColorScale
                   {...props}
                   onCancel={() => setOpen(false)}
-                  onCustomOrdinalApply={(colorMaps) => {
-                    props.onCustomOrdinalApply &&
-                      props.onCustomOrdinalApply(colorMaps);
+                  onApply={(colorMaps) => {
+                    props.onCustomApply &&
+                      props.onCustomApply(colorMaps);
                     setOpen(false);
                   }}
                   setIsClickAwayEnabled={setIsClickAwayEnabled}

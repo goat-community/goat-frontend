@@ -107,7 +107,7 @@ const ColorOptions = ({
                 activeLayerField={
                   layerStyle[`${type}_field`] || { name: "", type: "string" }
                 }
-                onCustomOrdinalApply={(colorMaps) => {
+                onCustomApply={(colorMaps) => {
                   const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
                   const colorRange = newStyle[`${type}_range`] as ColorRange;
                   colorRange.name = "Custom";

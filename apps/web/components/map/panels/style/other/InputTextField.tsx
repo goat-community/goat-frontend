@@ -6,7 +6,8 @@ const InputTextField = ({
   onBlur,
   min = 0,
   max = 100,
-  step = 1,
+  step,
+  error,
 }: {
   value: number | number[];
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -14,6 +15,7 @@ const InputTextField = ({
   min?: number;
   max?: number;
   step?: number;
+  error?: boolean;
 }) => {
   return (
     <OutlinedInput
@@ -21,16 +23,26 @@ const InputTextField = ({
       size="small"
       onChange={onChange}
       onBlur={onBlur}
-      sx={{ pr: 0 }}
+      sx={{
+        pr: 0,
+        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
+          {
+            display: "none",
+          },
+        "& input[type=number]": {
+          MozAppearance: "textfield",
+        },
+      }}
+      error={error}
       inputProps={{
         step: step,
         min: min,
         max: max,
         type: "number",
         style: {
-          width: "50px",
-          padding: "0px 0px 0px 10px",
-          height: "32px",
+          width: "48px",
+          padding: "0px 0px 0px 5px",
+          height: "30px",
           fontSize: "0.75rem",
         },
       }}

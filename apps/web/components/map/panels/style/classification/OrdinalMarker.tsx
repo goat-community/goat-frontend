@@ -154,7 +154,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
     valueMaps.forEach((item) => {
       markerMaps.push([item.value, item.marker]);
     });
-    props.onCustomOrdinalApply && props.onCustomOrdinalApply(markerMaps);
+    props.onCustomApply && props.onCustomApply(markerMaps);
   }
 
   return (

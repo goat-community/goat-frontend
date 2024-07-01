@@ -1,7 +1,7 @@
 import type { Marker, MarkerMap } from "@/lib/validations/layer";
 
 export type OrdinalMarkerSelectorProps = {
-  onCustomOrdinalApply?: (markerMaps: MarkerMap) => void;
+  onCustomApply?: (markerMaps: MarkerMap) => void;
   setIsClickAwayEnabled?: (isClickAwayEnabled: boolean) => void;
   onCancel?: () => void;
   label?: string;

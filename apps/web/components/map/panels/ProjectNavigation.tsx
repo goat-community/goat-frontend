@@ -7,7 +7,7 @@ import Legend from "@/components/map/panels/Legend";
 import Charts from "@/components/map/panels/Charts";
 import Toolbox from "@/components/map/panels/toolbox/Toolbox";
 import Filter from "@/components/map/panels/filter/Filter";
-import Scenario from "@/components/map/panels/Scenario";
+import Scenario from "@/components/map/panels/scenario/Scenario";
 import LayerStyle from "@/components/map/panels/style/LayerStyle";
 import MapSidebar from "@/components/map/Sidebar";
 import { Zoom } from "@/components/map/controls/Zoom";
@@ -120,7 +120,7 @@ const ProjectNavigation = ({ projectId }) => {
         id: MapSidebarItemID.SCENARIO,
         icon: ICON_NAME.SCENARIO,
         name: t("scenario"),
-        component: <Scenario />,
+        component: <Scenario projectId={projectId} />,
       },
     ],
     width: sidebarWidth,

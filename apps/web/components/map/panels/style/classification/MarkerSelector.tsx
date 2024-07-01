@@ -34,9 +34,9 @@ const MarkerSelector = (props: OrdinalMarkerSelectorProps) => {
               <OrdinalMarker
                 {...props}
                 onCancel={() => setOpen(false)}
-                onCustomOrdinalApply={(colorMaps) => {
-                  props.onCustomOrdinalApply &&
-                    props.onCustomOrdinalApply(colorMaps);
+                onCustomApply={(colorMaps) => {
+                  props.onCustomApply &&
+                    props.onCustomApply(colorMaps);
                   setOpen(false);
                 }}
                 setIsClickAwayEnabled={setIsClickAwayEnabled}

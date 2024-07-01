@@ -12,6 +12,29 @@ import type { RGBColor } from "@/types/map/color";
 
 const HIGHLIGHT_COLOR = "#FFC300";
 
+// Remove duplicates from colorMaps. Mapbox throws an error if the steps are duplicated or not ordered
+// The function will take the last colorMap value if there are duplicates
+//  const colorMaps = [
+//   [["3"], "#F70958"],
+//   [["3"], "#F71958"],
+//   [["12"], "#214CDB"],
+//   [["12"], "#204CDB"],
+//   [["12"], "#860A5A"]
+// ];
+// Output:
+// [[["3"], "#F71958"], [["12"], "#860A5A"]]
+export function removeColorMapsDuplicates(colorMaps) {
+  const map = new Map();
+  for (let i = colorMaps.length - 1; i >= 0; i--) {
+    const key = colorMaps[i][0][0];
+    if (!map.has(key)) {
+      map.set(key, colorMaps[i][1]);
+    }
+  }
+  const result = Array.from(map.entries()).map(([key, value]) => [[key], value]);
+  return result.reverse();
+}
+
 export function getMapboxStyleColor(
   data: ProjectLayer | Layer,
   type: "color" | "stroke_color",
@@ -56,24 +79,68 @@ export function getMapboxStyleColor(
   }
 
   if (
-    !fieldName ||
-    !colors ||
-    data.properties[`${type}_scale_breaks`]?.breaks.length !== colors.length - 1
+    (colorScale !== "custom_breaks" &&
+      (!fieldName ||
+        !colors ||
+        data.properties[`${type}_scale_breaks`]?.breaks.length !==
+          colors.length - 1)) ||
+    (colorScale === "custom_breaks" && (!colorMaps || !fieldName))
   ) {
     return data.properties[type]
       ? rgbToHex(data.properties[type] as RGBColor)
       : "#AAAAAA";
   }
 
-  const colorSteps = colors
+  if (colorScale === "custom_breaks" && colorMaps) {
+    // Info:
+    // For custom breaks value we get the color and break values from colorMap.
+    // Similar to "ordinal" above but we treat them in a different way.
+    const colorSteps = [] as unknown[];
+    const colorMapsFiltered = removeColorMapsDuplicates(colorMaps);
+    colorMapsFiltered.forEach((colorMap, index) => {
+      if (index < colorMapsFiltered.length - 1) {
+        colorSteps.push(
+          colorMap[1],
+          Number(colorMapsFiltered[index + 1]?.[0]?.[0]) || 0,
+        );
+      } else if (
+        index === colorMapsFiltered.length - 1 &&
+        data?.properties?.[`${type}_scale_breaks`]?.max !== undefined
+      ) {
+        const maxValue = data?.properties?.[`${type}_scale_breaks`]?.max;
+        if (
+          maxValue &&
+          Number(colorMapsFiltered[index]?.[0]?.[0]) <
+          maxValue
+        ) {
+          colorSteps.push(
+            colorMap[1],
+            data.properties[`${type}_scale_breaks`]?.max,
+            colorMap[1],
+          );
+        } else {
+          colorSteps.push(colorMap[1]);
+        }
+      }
+    });
+    const config = ["step", ["get", fieldName], ...colorSteps];
+    return config;
+  }
+
+  let _breakValues = data.properties[`${type}_scale_breaks`]?.breaks;
+  let _colors = [...colors];
+  if (_breakValues) {
+    const combined = _breakValues.map((value, index) => [[value], colors[index]]);
+    const filtered = removeColorMapsDuplicates(combined);
+    _breakValues = filtered.map((value) => value[0][0]);
+    _colors = filtered.map((value) => value[1]);
+  }
+  const colorSteps = _colors
     .map((color, index) => {
-      if (index === colors.length - 1) {
-        return [colors[index]];
+      if (index === _colors.length - 1 || !_breakValues) {
+        return [_colors[index]];
       } else {
-        return [
-          color,
-          data.properties[`${type}_scale_breaks`]?.breaks[index] || 0,
-        ];
+        return [color, _breakValues[index] || 0];
       }
     })
     .flat();
@@ -204,7 +271,7 @@ export function getHightlightStyleSpec(highlightFeature: MapGeoJSONFeature) {
         radius = 5;
       } else {
         radius =
-          (highlightFeature.layer.paint?.["circle-radius"] as number < 8
+          ((highlightFeature.layer.paint?.["circle-radius"] as number) < 8
             ? 8
             : highlightFeature.layer.paint?.["circle-radius"]) + strokeWidth;
       }
