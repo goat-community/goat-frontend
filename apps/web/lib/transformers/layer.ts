@@ -83,7 +83,7 @@ export function getMapboxStyleColor(
       (!fieldName ||
         !colors ||
         data.properties[`${type}_scale_breaks`]?.breaks.length !==
-          colors.length - 1)) ||
+        colors.length - 1)) ||
     (colorScale === "custom_breaks" && (!colorMaps || !fieldName))
   ) {
     return data.properties[type]
@@ -126,8 +126,11 @@ export function getMapboxStyleColor(
     const config = ["step", ["get", fieldName], ...colorSteps];
     return config;
   }
+  const breakValues = data.properties[`${type}_scale_breaks`];
 
-  let _breakValues = data.properties[`${type}_scale_breaks`]?.breaks;
+  let _breakValues = breakValues?.breaks ? [...breakValues?.breaks] : [];
+  if (_breakValues && breakValues?.max !== undefined)
+    _breakValues.push(breakValues?.max);
   let _colors = [...colors];
   if (_breakValues) {
     const combined = _breakValues.map((value, index) => [[value], colors[index]]);

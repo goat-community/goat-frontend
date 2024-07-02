@@ -67,14 +67,10 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   );
 
   const createColorMapFromClassBreaks = useCallback(
-    (colors: string[], breakValues: LayerClassBreaks) => {
-      const breaks = [breakValues.min.toString()];
-      breakValues.breaks.forEach((b) => {
-        breaks.push(b.toString());
-      });
+    (colors: string[], breakValues: string[]) => {
       const colorMap = [] as ColorMap;
       colors.forEach((color, index) => {
-        const breakValue = breaks[index] || "0";
+        const breakValue = breakValues[index] || "0";
         colorMap.push([[breakValue], color]);
       });
       return colorMap;
@@ -93,10 +89,28 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       const existingBreaks =
         activeLayer.properties[`${updateType}_scale_breaks`];
       if (classBreakType === classBreaks.Enum.custom_breaks && existingBreaks) {
+        const breakValues = [] as string[];
+        if (classBreakType === activeLayer.properties[`${updateType}_scale`]) {
+          const colorMap =
+            newStyle[`${updateType}_range`]?.color_map;
+          if (colorMap) {
+            colorMap.forEach((colorMapItem) => {
+              if (colorMapItem?.[0]?.[0] !== undefined)
+                breakValues.push(colorMapItem[0][0]);
+            });
+          }
+        } else {
+          if (existingBreaks) {
+            breakValues.push(existingBreaks.min.toString());
+            existingBreaks.breaks.forEach((value) => {
+              breakValues.push(value.toString());
+            });
+          }
+        }
         newStyle[`${updateType}_range`]["color_map"] =
           createColorMapFromClassBreaks(
-            activeLayer.properties[`${updateType}_range`]?.colors || [],
-            existingBreaks,
+            newStyle[`${updateType}_range`]?.colors || [],
+            breakValues,
           );
         return;
       }
