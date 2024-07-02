@@ -41,7 +41,7 @@ const createRangeAndColor = (
   isFirst?: boolean,
   isLast?: boolean,
 ): void => {
-  const range = `${isFirst ? "<" : ""}${formatNumber(rangeStart, 2)} - 
+  const range = `${isFirst ? "<" : ""}${formatNumber(rangeStart, 2)} -
     ${isLast ? ">" : ""}${formatNumber(rangeEnd, 2)}`;
   colorMap.push({
     value: [range],
@@ -55,7 +55,7 @@ function getLegendColorMap(
 ) {
   const colorMap = [] as ColorMapItem[];
   if (properties?.[`${type}_field`]) {
-    if (["ordinal", "custom_breaks"].includes(properties[`${type}_scale`])) {
+    if (["ordinal"].includes(properties[`${type}_scale`])) {
       properties[`${type}_range`].color_map?.forEach((value) => {
         colorMap.push({
           value: value[0],
@@ -63,10 +63,26 @@ function getLegendColorMap(
         });
       });
     } else {
-      const classBreaksValues = properties[
+      const scaleType = properties[`${type}_scale`] as string;
+      let classBreaksValues = properties[
         `${type}_scale_breaks`
       ] as LayerClassBreaks;
-      const colors = properties[`${type}_range`]?.colors;
+      let colors = properties[`${type}_range`]?.colors;
+      if (scaleType === "custom_breaks") {
+        const colorMapValues = properties[`${type}_range`]?.color_map;
+        const _customClassBreaks = JSON.parse(JSON.stringify(classBreaksValues));
+        _customClassBreaks.breaks = [];
+        const _colors = [] as string[];
+        colorMapValues?.forEach((value, index) => {
+          _colors.push(value[1]);
+          if (index === 0) return
+          if (value[0] !== null && value[0] !== undefined)
+            _customClassBreaks.breaks.push(Number(value[0][0]));
+        });
+        classBreaksValues = _customClassBreaks;
+        colors = _colors;
+      }
+
       if (
         classBreaksValues &&
         Array.isArray(classBreaksValues.breaks) &&
