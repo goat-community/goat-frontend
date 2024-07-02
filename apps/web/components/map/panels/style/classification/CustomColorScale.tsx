@@ -222,6 +222,7 @@ const CustomColorScale = (props: CustomColorScaleProps) => {
     return sortedColorMaps;
   }
 
+
   const classBreakOptions = React.useMemo(() => {
     return activeLayerField?.type === "number"
       ? classBreaks.options

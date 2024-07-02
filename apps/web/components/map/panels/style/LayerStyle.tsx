@@ -6,6 +6,7 @@ import { setActiveRightPanel } from "@/lib/store/map/slice";
 import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
+import type { LayerClassBreaks } from "@/lib/validations/layer";
 import {
   classBreaks,
   type ColorMap,
@@ -65,6 +66,22 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     [activeLayer, projectLayers, mutateProjectLayers, projectId],
   );
 
+  const createColorMapFromClassBreaks = useCallback(
+    (colors: string[], breakValues: LayerClassBreaks) => {
+      const breaks = [breakValues.min.toString()];
+      breakValues.breaks.forEach((b) => {
+        breaks.push(b.toString());
+      });
+      const colorMap = [] as ColorMap;
+      colors.forEach((color, index) => {
+        const breakValue = breaks[index] || "0";
+        colorMap.push([[breakValue], color]);
+      });
+      return colorMap;
+    },
+    [],
+  );
+
   const updateColorClassificationBreaks = useCallback(
     async (
       updateType: "color" | "stroke_color",
@@ -76,6 +93,11 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       const existingBreaks =
         activeLayer.properties[`${updateType}_scale_breaks`];
       if (classBreakType === classBreaks.Enum.custom_breaks && existingBreaks) {
+        newStyle[`${updateType}_range`]["color_map"] =
+          createColorMapFromClassBreaks(
+            activeLayer.properties[`${updateType}_range`]?.colors || [],
+            existingBreaks,
+          );
         return;
       }
       if (
@@ -103,7 +125,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
           newStyle[`${updateType}_scale_breaks`] = breaks;
       }
     },
-    [activeLayer],
+    [activeLayer, createColorMapFromClassBreaks],
   );
 
   const updateOrdinalValues = useCallback(
