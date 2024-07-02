@@ -6,7 +6,6 @@ import { setActiveRightPanel } from "@/lib/store/map/slice";
 import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
-import type { LayerClassBreaks } from "@/lib/validations/layer";
 import {
   classBreaks,
   type ColorMap,
