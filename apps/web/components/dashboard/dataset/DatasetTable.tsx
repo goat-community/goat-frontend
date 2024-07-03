@@ -1,31 +1,21 @@
-import { FieldTypeTag } from "@/components/map/common/LayerFieldSelector";
 import useLayerFields from "@/hooks/map/CommonHooks";
 import { useDatasetCollectionItems } from "@/lib/api/layers";
-import { Box, Skeleton } from "@mui/material";
+import { Box } from "@mui/material";
 
 import type {
   GetCollectionItemsQueryParams,
   Layer,
 } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
-import {
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { TablePagination } from "@mui/material";
 import { useEffect, useState } from "react";
-import NoValuesFound from "@/components/map/common/NoValuesFound";
+import DatasetTable from "@/components/common/DatasetTable";
 
-interface DatasetTableProps {
+interface DatasetTableTabProps {
   dataset: ProjectLayer | Layer;
 }
 
-const DatasetTable: React.FC<DatasetTableProps> = ({ dataset }) => {
+const DatasetTableTab: React.FC<DatasetTableTabProps> = ({ dataset }) => {
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
     (dataset["id"] as string) || "",
     undefined,
@@ -72,56 +62,11 @@ const DatasetTable: React.FC<DatasetTableProps> = ({ dataset }) => {
           overflowX: "hidden",
         }}
       >
-        {areFieldsLoading && !displayData && (
-          <>
-            <Skeleton variant="rectangular" height={60} sx={{ m: 4 }} />
-            <Skeleton variant="rectangular" height={240} sx={{ m: 4 }} />
-          </>
-        )}
-
-        {!areFieldsLoading && displayData && (
-          <Table size="small" aria-label="simple table" stickyHeader>
-            <TableHead>
-              <TableRow>
-                {fields.map((field, index) => (
-                  <TableCell key={index}>
-                    <Stack direction="column" spacing={1} sx={{ py: 1 }}>
-                      <Typography variant="body2" fontWeight="bold">
-                        {field.name}
-                      </Typography>
-                      <FieldTypeTag fieldType={field.type}>
-                        {field.type}
-                      </FieldTypeTag>
-                    </Stack>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {displayData.features.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    align="center"
-                    colSpan={fields.length}
-                    sx={{ borderBottom: "none" }}
-                  >
-                    <NoValuesFound />
-                  </TableCell>
-                </TableRow>
-              )}
-              {displayData.features?.length &&
-                displayData.features.map((row) => (
-                  <TableRow key={row.id}>
-                    {fields.map((field, fieldIndex) => (
-                      <TableCell key={fieldIndex}>
-                        {row.properties[field.name]}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        )}
+        <DatasetTable
+          areFieldsLoading={areFieldsLoading}
+          displayData={displayData}
+          fields={fields}
+        />
       </Box>
       {displayData && (
         <TablePagination
@@ -143,4 +88,4 @@ const DatasetTable: React.FC<DatasetTableProps> = ({ dataset }) => {
   );
 };
 
-export default DatasetTable;
+export default DatasetTableTab;
