@@ -394,15 +394,16 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   collapsed={collapseStrokeColorOptions}
                   selectedField={activeLayer?.properties.stroke_color_field}
                   onStyleChange={async (newStyle: FeatureLayerProperties) => {
+                    console.log(activeLayer);
                     if (
                       newStyle.stroke_color_field?.type === "number" &&
-                      newStyle.color_scale !== "ordinal"
+                      newStyle.stroke_color_scale !== "ordinal"
                     ) {
                       await updateColorClassificationBreaks(
                         "stroke_color",
                         newStyle,
                       );
-                    } else if (newStyle.color_scale === "ordinal") {
+                    } else if (newStyle.stroke_color_scale === "ordinal") {
                       await updateOrdinalValues("stroke_color", newStyle);
                     }
                     updateLayerStyle(newStyle);
