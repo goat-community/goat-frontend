@@ -78,7 +78,6 @@ export default function Geocoder({
   const [focused, setFocused] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
   const { map } = useMap();
-
   const theme = useTheme();
 
   const fetch = useMemo(
@@ -88,13 +87,21 @@ export default function Geocoder({
           request: { value: string },
           onresult: (_error: Error, fc: FeatureCollection) => void,
         ) => {
+          const mapCenter = map?.getCenter();
+          let _proximity;
+          if (mapCenter) {
+            _proximity = {
+              longitude: mapCenter.lng,
+              latitude: mapCenter.lat,
+            };
+          }
           search(
             endpoint,
             source,
             accessToken,
             request.value,
             onresult,
-            proximity,
+            _proximity,
             country,
             bbox,
             types,
@@ -105,18 +112,7 @@ export default function Geocoder({
         },
         400,
       ),
-    [
-      accessToken,
-      autocomplete,
-      bbox,
-      country,
-      endpoint,
-      language,
-      limit,
-      proximity,
-      source,
-      types,
-    ],
+    [accessToken, autocomplete, bbox, country, endpoint, language, limit, map, source, types],
   );
 
   useEffect(() => {
