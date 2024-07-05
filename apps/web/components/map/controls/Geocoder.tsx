@@ -88,8 +88,8 @@ export default function Geocoder({
           onresult: (_error: Error, fc: FeatureCollection) => void,
         ) => {
           const mapCenter = map?.getCenter();
-          let _proximity;
-          if (mapCenter) {
+          let _proximity = proximity;
+          if (mapCenter && !proximity) {
             _proximity = {
               longitude: mapCenter.lng,
               latitude: mapCenter.lat,
