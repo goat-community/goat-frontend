@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import Container from "@/components/map/panels/Container";
-import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 import { useTranslation } from "@/i18n/client";
 import { useParams } from "next/navigation";
 import type { CatchmentAreaRoutingType } from "@/lib/validations/tools";

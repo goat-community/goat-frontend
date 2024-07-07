@@ -1,6 +1,6 @@
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 import Container from "@/components/map/panels/Container";
-import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 import { useTranslation } from "@/i18n/client";
 import { Box, Typography, useTheme } from "@mui/material";
 import SectionHeader from "@/components/map/panels/common/SectionHeader";

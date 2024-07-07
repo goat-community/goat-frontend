@@ -5,7 +5,7 @@ import SectionHeader from "@/components/map/panels/common/SectionHeader";
 import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
-import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 import useLayerFields from "@/hooks/map/CommonHooks";
 import {
   useLayerByGeomType,

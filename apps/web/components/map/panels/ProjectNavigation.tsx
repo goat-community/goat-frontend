@@ -120,7 +120,7 @@ const ProjectNavigation = ({ projectId }) => {
         id: MapSidebarItemID.SCENARIO,
         icon: ICON_NAME.SCENARIO,
         name: t("scenario"),
-        component: <Scenario />,
+        component: <Scenario projectId={projectId} />,
       },
     ],
     width: sidebarWidth,

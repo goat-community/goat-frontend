@@ -5,7 +5,7 @@ import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import PTTimeSelectors from "@/components/map/panels/toolbox/common/PTTimeSelectors";
 import StartingPointSelectors from "@/components/map/panels/toolbox/common/StartingPointsSelectors";
-import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 import {
   getDefaultConfigValue,
   getTravelCostConfigValues,

@@ -42,19 +42,23 @@ const ScenarioModal: React.FC<ScenarioProps> = ({
   scenario,
 }) => {
   const { t } = useTranslation("common");
-  console.log(projectId);
-  console.log(scenario);
   const [isBusy, setIsBusy] = useState(false);
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isValid },
   } = useForm<PostScenario>({
     mode: "onChange",
     resolver: zodResolver(postScenarioSchema),
+    defaultValues: {
+      name: scenario?.name,
+    },
   });
 
   const handleOnClose = () => {
+    setIsBusy(false);
+    reset();
     onClose && onClose();
   };
 
@@ -76,8 +80,7 @@ const ScenarioModal: React.FC<ScenarioProps> = ({
         toast.error(t("error_creating_scenario"));
       }
     } finally {
-      setIsBusy(false);
-      onClose && onClose();
+      handleOnClose();
     }
   };
 

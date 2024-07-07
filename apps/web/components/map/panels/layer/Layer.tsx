@@ -76,6 +76,24 @@ type SortableLayerTileProps = {
   body: React.ReactNode;
 };
 
+export const iconMapping = {
+  point: ICON_NAME.POINT_FEATURE,
+  line: ICON_NAME.LINE_FEATURE,
+  polygon: ICON_NAME.POLYGON_FEATURE,
+  table: ICON_NAME.TABLE,
+};
+
+export function getLayerIcon(layer: ProjectLayer) {
+  if (layer.type === "table") {
+    return iconMapping.table;
+  }
+  if (layer.type === "feature" && layer.feature_layer_geometry_type) {
+    return iconMapping[layer.feature_layer_geometry_type];
+  }
+
+  return ICON_NAME.LAYERS;
+}
+
 export function SortableLayerTile(props: SortableLayerTileProps) {
   const theme = useTheme();
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -468,9 +486,19 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                       layer={layer}
                       body={
                         <>
-                          <Typography variant="caption" noWrap>
-                            {t(`common:${layer.type}`)}
-                          </Typography>
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
+                          >
+                            <Typography
+                              variant="caption"
+                              fontWeight="bold"
+                              noWrap
+                            >
+                              {t(`common:${layer.type}`)}
+                            </Typography>
+                          </Stack>
 
                           {renameLayer?.id === layer.id ? (
                             <TextField
@@ -630,7 +658,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                             menuItems={getLayerMoreMenuOptions(
                               layer.type,
                               !!layer.charts,
-                              layer.in_catalog
+                              layer.in_catalog,
                             )}
                             menuButton={
                               <Tooltip

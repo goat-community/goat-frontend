@@ -5,7 +5,7 @@ import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import SliderInput from "@/components/map/panels/common/SliderInput";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
-import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
