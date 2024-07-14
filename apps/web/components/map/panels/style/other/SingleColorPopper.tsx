@@ -1,7 +1,10 @@
-import SingleColorSelector from "@/components/map/panels/style/color/SingleColorSelector";
-import { rgbToHex } from "@/lib/utils/helpers";
-import type { ColorItem } from "@/types/map/color";
 import { Box, Fade, Popper } from "@mui/material";
+
+import { rgbToHex } from "@/lib/utils/helpers";
+
+import type { ColorItem } from "@/types/map/color";
+
+import SingleColorSelector from "@/components/map/panels/style/color/SingleColorSelector";
 
 export function SingleColorPopper(props: {
   editingItem: ColorItem | null;
@@ -13,7 +16,7 @@ export function SingleColorPopper(props: {
       open={props.editingItem !== null}
       anchorEl={props.anchorEl}
       transition
-      sx={{ zIndex: 2000, maxWidth: "240px"}}
+      sx={{ zIndex: 2000, maxWidth: "240px" }}
       placement="left"
       modifiers={[
         {
@@ -22,8 +25,7 @@ export function SingleColorPopper(props: {
             offset: [0, 75],
           },
         },
-      ]}
-    >
+      ]}>
       {({ TransitionProps }) => (
         <Fade {...TransitionProps}>
           <Box sx={{ py: 3, bgcolor: "background.paper", borderRadius: 1 }}>

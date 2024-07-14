@@ -1,3 +1,23 @@
+import { Box, Stack, Switch, Typography, useTheme } from "@mui/material";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useJobs } from "@/lib/api/jobs";
+import { computeBuffer } from "@/lib/api/tools";
+import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import { bufferDefaults, bufferSchema } from "@/lib/validations/tools";
+
+import type { SelectorItem } from "@/types/map/common";
+import type { IndicatorBaseProps } from "@/types/map/toolbox";
+
+import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
 import FormLabelHelper from "@/components/common/FormLabelHelper";
 import Container from "@/components/map/panels/Container";
 import SectionHeader from "@/components/map/panels/common/SectionHeader";
@@ -7,20 +27,6 @@ import SliderInput from "@/components/map/panels/common/SliderInput";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
-import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
-import { useTranslation } from "@/i18n/client";
-import { useJobs } from "@/lib/api/jobs";
-import { computeBuffer } from "@/lib/api/tools";
-import { setRunningJobIds } from "@/lib/store/jobs/slice";
-import { bufferDefaults, bufferSchema } from "@/lib/validations/tools";
-import type { SelectorItem } from "@/types/map/common";
-import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import { Box, Stack, Switch, Typography, useTheme } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
 
 const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { projectId } = useParams();
@@ -35,20 +41,15 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
   const isValid = useMemo(() => {
     return true;
   }, []);
-  const [bufferLayer, setBufferLayer] = useState<SelectorItem | undefined>(
-    undefined,
-  );
-  const [distance, setDistance] = useState<number>(
-    bufferDefaults.default_distance,
-  );
+  const [bufferLayer, setBufferLayer] = useState<SelectorItem | undefined>(undefined);
+  const [distance, setDistance] = useState<number>(bufferDefaults.default_distance);
   const [steps, setSteps] = useState<SelectorItem | undefined>({
     value: bufferDefaults.default_steps,
     label: bufferDefaults.default_steps.toString(),
   });
 
   const [isPolygonUnion, setIsPolygonUnion] = useState<boolean>(true);
-  const [isPolygonDifference, setIsPolygonDifference] =
-    useState<boolean>(false);
+  const [isPolygonDifference, setIsPolygonDifference] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isPolygonUnion) {
@@ -56,11 +57,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
   }, [isPolygonUnion]);
 
-  const { filteredLayers } = useLayerByGeomType(
-    ["feature"],
-    undefined,
-    projectId as string,
-  );
+  const { filteredLayers } = useLayerByGeomType(["feature"], undefined, projectId as string);
 
   const handleRun = async () => {
     const payload = {
@@ -108,12 +105,8 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
             sx={{
               display: "flex",
               flexDirection: "column",
-            }}
-          >
-            <Typography
-              variant="body2"
-              sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-            >
+            }}>
+            <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
               {t("buffer_description")}
             </Typography>
             <SectionHeader
@@ -129,9 +122,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
                 <>
                   <Selector
                     selectedItems={bufferLayer}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       setBufferLayer(item as SelectorItem);
                     }}
                     items={filteredLayers}
@@ -156,10 +147,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
               baseOptions={
                 <>
                   <Stack>
-                    <FormLabelHelper
-                      label={`${t("buffer_distance")} (Meter)`}
-                      color="inherit"
-                    />
+                    <FormLabelHelper label={`${t("buffer_distance")} (Meter)`} color="inherit" />
                     <SliderInput
                       value={distance}
                       min={bufferDefaults.min_distance}
@@ -175,9 +163,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
                   </Stack>
                   <Selector
                     selectedItems={steps}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       setSteps(item as SelectorItem);
                     }}
                     items={getTravelCostConfigValues(1, 9)}
@@ -185,37 +171,21 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
                     tooltip={t("buffer_steps_tooltip")}
                   />
                   <Stack>
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                    >
-                      <FormLabelHelper
-                        label={t("polygon_union")}
-                        color="inherit"
-                      />
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
+                      <FormLabelHelper label={t("polygon_union")} color="inherit" />
                       <Switch
                         size="small"
                         checked={isPolygonUnion}
                         onChange={() => setIsPolygonUnion(!isPolygonUnion)}
                       />
                     </Stack>
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                    >
-                      <FormLabelHelper
-                        label={t("polygon_difference")}
-                        color="inherit"
-                      />
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
+                      <FormLabelHelper label={t("polygon_difference")} color="inherit" />
                       <Switch
                         size="small"
                         disabled={!isPolygonUnion}
                         checked={isPolygonDifference}
-                        onChange={() =>
-                          setIsPolygonDifference(!isPolygonDifference)
-                        }
+                        onChange={() => setIsPolygonDifference(!isPolygonDifference)}
                       />
                     </Stack>
                   </Stack>

@@ -1,19 +1,13 @@
+import { Box, Grid, MenuItem, Select, Stack, TextField, Typography, useTheme } from "@mui/material";
+import { useMemo } from "react";
+
 import { useTranslation } from "@/i18n/client";
+
 import { formatNumber } from "@/lib/utils/helpers";
 import type { ClassBreaks, ColorMap, ColorRange } from "@/lib/validations/layer";
 import { classBreaks } from "@/lib/validations/layer";
+
 import type { ColorScaleSelectorProps } from "@/types/map/color";
-import {
-  Box,
-  Grid,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { useMemo } from "react";
 
 type NumericColorScaleProps = ColorScaleSelectorProps & {
   setIsClickAwayEnabled: (isClickAwayEnabled: boolean) => void;
@@ -37,10 +31,7 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
       const roundedValue = formatNumber(value, 2).toString();
       intervalValues.push([[roundedValue], color]);
       if (index === classBreaksValues.breaks.length - 1) {
-        intervalValues.push([
-          null,
-          colors[index + 1] !== undefined ? colors[index + 1] : staticColor,
-        ]);
+        intervalValues.push([null, colors[index + 1] !== undefined ? colors[index + 1] : staticColor]);
       }
     });
 
@@ -66,31 +57,19 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
         }}
         onChange={(e) => {
           props.setSelectedColorScaleMethod(e.target.value as ClassBreaks);
-        }}
-      >
+        }}>
         {classBreaks.options.map((option, index) => (
           <MenuItem key={index} value={String(option)}>
             {t(`${option}`)}
           </MenuItem>
         ))}
       </Select>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        py={2}
-      >
+      <Stack direction="row" justifyContent="space-between" alignItems="center" py={2}>
         <Typography variant="caption">
-          Min:{" "}
-          <b>
-            {classBreaksValues?.min ? formatNumber(classBreaksValues?.min) : ""}
-          </b>
+          Min: <b>{classBreaksValues?.min ? formatNumber(classBreaksValues?.min) : ""}</b>
         </Typography>
         <Typography variant="caption">
-          Max:{" "}
-          <b>
-            {classBreaksValues?.max ? formatNumber(classBreaksValues?.max) : ""}
-          </b>
+          Max: <b>{classBreaksValues?.max ? formatNumber(classBreaksValues?.max) : ""}</b>
         </Typography>
       </Stack>
       <Box sx={{ maxHeight: "240px", overflowY: "auto", pt: 2 }}>
@@ -109,20 +88,10 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
                   />
                 </Grid>
                 <Grid item xs={10} key={`color_${colorMapValues[index][0]}`}>
-                  <Stack
-                    justifyContent="end"
-                    alignItems="center"
-                    spacing={1}
-                    direction="row"
-                    sx={{ px: 2 }}
-                  >
+                  <Stack justifyContent="end" alignItems="center" spacing={1} direction="row" sx={{ px: 2 }}>
                     <TextField
                       margin="dense"
-                      value={
-                        index === 0
-                          ? `<${classBreaksValues?.min}`
-                          : colorMapValues[index - 1][0]
-                      }
+                      value={index === 0 ? `<${classBreaksValues?.min}` : colorMapValues[index - 1][0]}
                       disabled
                       InputProps={{ sx: { height: "32px" } }}
                       sx={{
@@ -154,9 +123,7 @@ const NumericColorScale = (props: NumericColorScaleProps) => {
         </Grid>
       </Box>
       <Stack sx={{ pt: 4 }}>
-        <Typography variant="caption">
-          {t("common:change_colors_and_steps")}
-        </Typography>
+        <Typography variant="caption">{t("common:change_colors_and_steps")}</Typography>
       </Stack>
     </Box>
   );

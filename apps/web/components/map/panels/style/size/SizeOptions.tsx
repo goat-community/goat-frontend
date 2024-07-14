@@ -1,12 +1,12 @@
+import { useCallback, useMemo, useState } from "react";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { FeatureLayerProperties, LayerFieldType } from "@/lib/validations/layer";
+
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import SliderInput from "@/components/map/panels/common/SliderInput";
-import { useTranslation } from "@/i18n/client";
-import type {
-  FeatureLayerProperties,
-  LayerFieldType,
-} from "@/lib/validations/layer";
-import { useCallback, useMemo, useState } from "react";
 
 const SizeOptions = ({
   type,
@@ -28,15 +28,10 @@ const SizeOptions = ({
   const { t } = useTranslation("common");
 
   const [value, setValue] = useState(
-    layerStyle?.[`${type}_field`]
-      ? layerStyle?.[`${type}_range`] || [0, 50]
-      : layerStyle?.[`${type}`] || 0,
+    layerStyle?.[`${type}_field`] ? layerStyle?.[`${type}_range`] || [0, 50] : layerStyle?.[`${type}`] || 0
   );
 
-  const isRange = useMemo(
-    () => (layerStyle?.[`${type}_field`] ? true : false),
-    [layerStyle, type],
-  );
+  const isRange = useMemo(() => (layerStyle?.[`${type}_field`] ? true : false), [layerStyle, type]);
 
   const _onStyleChange = useCallback(
     (value) => {
@@ -48,7 +43,7 @@ const SizeOptions = ({
       }
       onStyleChange && onStyleChange(newStyle);
     },
-    [layerStyle, isRange, type, onStyleChange],
+    [layerStyle, isRange, type, onStyleChange]
   );
 
   return (

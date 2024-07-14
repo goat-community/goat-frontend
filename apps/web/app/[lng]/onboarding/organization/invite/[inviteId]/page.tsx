@@ -1,29 +1,21 @@
 "use client";
-import {
-  Alert,
-  Avatar,
-  Box,
-  Link,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import AuthContainer from "@p4b/ui/components/AuthContainer";
-import AuthLayout from "@p4b/ui/components/AuthLayout";
+
+import { LoadingButton } from "@mui/lab";
+import { Alert, Avatar, Box, Link, Stack, Typography, useTheme } from "@mui/material";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
-import {
-  acceptInvitation,
-  declineInvitation,
-  useInvitations,
-} from "@/lib/api/users";
-import type { GetInvitationsQueryParams } from "@/lib/validations/user";
+import AuthContainer from "@p4b/ui/components/AuthContainer";
+import AuthLayout from "@p4b/ui/components/AuthLayout";
 import { Loading } from "@p4b/ui/components/Loading";
-import type { ResponseResult } from "@/types/common";
+
 import { useTranslation } from "@/i18n/client";
-import { LoadingButton } from "@mui/lab";
+
+import { acceptInvitation, declineInvitation, useInvitations } from "@/lib/api/users";
+import type { GetInvitationsQueryParams } from "@/lib/validations/user";
+
+import type { ResponseResult } from "@/types/common";
 
 export default function OrganizationInviteJoin({ params: { inviteId } }) {
   const theme = useTheme();
@@ -32,8 +24,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
     type: "organization",
     invitation_id: inviteId,
   });
-  const { invitations, isLoading: isInvitationLoading } =
-    useInvitations(queryParams);
+  const { invitations, isLoading: isInvitationLoading } = useInvitations(queryParams);
   const { status, data: session, update } = useSession();
   const router = useRouter();
   const [isBusy, setIsBusy] = useState(false);
@@ -111,29 +102,19 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                     />
                   </Stack>
                 )}
-                {!invitation && (
-                  <Typography variant="h5">{t("we_are_sorry")}</Typography>
-                )}
+                {!invitation && <Typography variant="h5">{t("we_are_sorry")}</Typography>}
               </>
             }
             headerAlert={
               responseResult.status && (
-                <Alert severity={responseResult.status}>
-                  {responseResult.message}
-                </Alert>
+                <Alert severity={responseResult.status}>{responseResult.message}</Alert>
               )
             }
             body={
               <>
-                {!invitation && (
-                  <Typography variant="body1">
-                    {t("invite_not_found_message")}
-                  </Typography>
-                )}
+                {!invitation && <Typography variant="body1">{t("invite_not_found_message")}</Typography>}
                 {invitation && invitation.status == "pending" && (
-                  <Typography variant="body1">
-                    {t("invite_join_organization_description")}
-                  </Typography>
+                  <Typography variant="body1">{t("invite_join_organization_description")}</Typography>
                 )}
               </>
             }
@@ -142,8 +123,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                 <Box
                   sx={{
                     mt: theme.spacing(6),
-                  }}
-                >
+                  }}>
                   {!invitation && (
                     <Link id="backToApplication" href="/">
                       « {t("back_to_application")}
@@ -159,8 +139,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                         onClick={handleAcceptInvite}
                         sx={{
                           mb: theme.spacing(2),
-                        }}
-                      >
+                        }}>
                         {t("accept")}
                       </LoadingButton>
                       <LoadingButton
@@ -170,8 +149,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
                         variant="text"
                         sx={{
                           color: theme.palette.error.main,
-                        }}
-                      >
+                        }}>
                         {t("decline")}
                       </LoadingButton>
                     </>

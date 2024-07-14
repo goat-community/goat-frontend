@@ -11,7 +11,6 @@ interface Extent {
   };
 }
 
-
 export interface Expression {
   id: string;
   attribute: string | null;
@@ -68,14 +67,6 @@ export interface LayerPropsMode {
 interface ComparerMode {
   label: string;
   value: string;
-  type:
-    | "number"
-    | "date"
-    | "text"
-    | "select"
-    | "dual_number"
-    | "none"
-    | "year_filter"
-    | "dualDate";
+  type: "number" | "date" | "text" | "select" | "dual_number" | "none" | "year_filter" | "dualDate";
   select: boolean;
 }

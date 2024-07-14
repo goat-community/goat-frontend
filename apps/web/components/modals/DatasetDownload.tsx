@@ -1,15 +1,6 @@
-import { useTranslation } from "@/i18n/client";
-import { downloadDataset } from "@/lib/api/layers";
-import type { FeatureDataExchangeType } from "@/lib/validations/common";
-import {
-  featureDataExchangeCRS,
-  featureDataExchangeType,
-  tableDataExchangeType,
-} from "@/lib/validations/common";
-import type { DatasetDownloadRequest, Layer } from "@/lib/validations/layer";
-import type { ProjectLayer } from "@/lib/validations/project";
 import { LoadingButton } from "@mui/lab";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -19,11 +10,21 @@ import {
   Select,
   Stack,
   Typography,
-  Box,
 } from "@mui/material";
-
 import { useState } from "react";
 import { toast } from "react-toastify";
+
+import { useTranslation } from "@/i18n/client";
+
+import { downloadDataset } from "@/lib/api/layers";
+import type { FeatureDataExchangeType } from "@/lib/validations/common";
+import {
+  featureDataExchangeCRS,
+  featureDataExchangeType,
+  tableDataExchangeType,
+} from "@/lib/validations/common";
+import type { DatasetDownloadRequest, Layer } from "@/lib/validations/layer";
+import type { ProjectLayer } from "@/lib/validations/project";
 
 interface DownloadDatasetDialogProps {
   open: boolean;
@@ -41,17 +42,14 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
   dataset,
 }) => {
   const { t } = useTranslation("common");
-  const [dataDownloadType, setDataDownloadType] =
-    useState<FeatureDataExchangeType>(
-      dataset.type === "feature"
-        ? featureDataExchangeType.Enum.gpkg
-        : tableDataExchangeType.Enum.csv,
-    );
+  const [dataDownloadType, setDataDownloadType] = useState<FeatureDataExchangeType>(
+    dataset.type === "feature" ? featureDataExchangeType.Enum.gpkg : tableDataExchangeType.Enum.csv
+  );
 
   const [isBusy, setIsBusy] = useState(false);
 
   const [dataCrs, setDataCrs] = useState<string | null>(
-    dataset.type === "feature" ? featureDataExchangeCRS.Enum["3857"] : null,
+    dataset.type === "feature" ? featureDataExchangeCRS.Enum["3857"] : null
   );
 
   const handleDownload = async () => {
@@ -103,10 +101,7 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
               }}
               id="download-simple-select"
               value={dataDownloadType}
-              onChange={(e) =>
-                setDataDownloadType(e.target.value as FeatureDataExchangeType)
-              }
-            >
+              onChange={(e) => setDataDownloadType(e.target.value as FeatureDataExchangeType)}>
               {dataset.type === "feature" &&
                 featureDataExchangeType.options.map((type: string) => (
                   <MenuItem key={type} value={type}>
@@ -132,8 +127,7 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
                 }}
                 id="download-crs-select"
                 value={dataCrs}
-                onChange={(e) => setDataCrs(e.target.value as string)}
-              >
+                onChange={(e) => setDataCrs(e.target.value as string)}>
                 {dataset.type === "feature" &&
                   featureDataExchangeCRS.options.map((type: string) => (
                     <MenuItem key={type} value={type}>
@@ -149,18 +143,13 @@ const DatsetDownloadModal: React.FC<DownloadDatasetDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
-        }}
-      >
+        }}>
         <Button onClick={onClose} variant="text">
           <Typography variant="body2" fontWeight="bold">
             {t("cancel")}
           </Typography>
         </Button>
-        <LoadingButton
-          loading={isBusy}
-          onClick={handleDownload}
-          disabled={disabled}
-        >
+        <LoadingButton loading={isBusy} onClick={handleDownload} disabled={disabled}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {t("download")}
           </Typography>

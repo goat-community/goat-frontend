@@ -1,19 +1,18 @@
-import type { IndicatorBaseProps } from "@/types/map/toolbox";
+import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
+
 import { useTranslation } from "@/i18n/client";
 
-import HeatmapContainer from "@/components/map/panels/toolbox/common/HeatmapContainer";
-import { useMemo, useState } from "react";
-import Selector from "@/components/map/panels/common/Selector";
-import type { SelectorItem } from "@/types/map/common";
-import {
-  heatmapGravitySchema,
-  heatmapImpedanceFunctionEnum,
-} from "@/lib/validations/tools";
-import { useParams } from "next/navigation";
-
-import type { LayerFieldType } from "@/lib/validations/layer";
-import { computeHeatmapGravity } from "@/lib/api/tools";
 import { useProjectLayers } from "@/lib/api/projects";
+import { computeHeatmapGravity } from "@/lib/api/tools";
+import type { LayerFieldType } from "@/lib/validations/layer";
+import { heatmapGravitySchema, heatmapImpedanceFunctionEnum } from "@/lib/validations/tools";
+
+import type { SelectorItem } from "@/types/map/common";
+import type { IndicatorBaseProps } from "@/types/map/toolbox";
+
+import Selector from "@/components/map/panels/common/Selector";
+import HeatmapContainer from "@/components/map/panels/toolbox/common/HeatmapContainer";
 import HeatmapOpportunitiesSelector from "@/components/map/panels/toolbox/common/HeatmapOpportunitiesSelector";
 
 type Opportunity = {
@@ -31,9 +30,9 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
     value: heatmapImpedanceFunctionEnum.Enum.gaussian,
     label: t(heatmapImpedanceFunctionEnum.Enum.gaussian),
   };
-  const [impedanceFunction, setImpedanceFunction] = useState<
-    SelectorItem | undefined
-  >(defaultImpedanceFunction);
+  const [impedanceFunction, setImpedanceFunction] = useState<SelectorItem | undefined>(
+    defaultImpedanceFunction
+  );
 
   const impedanceFunctions = useMemo(() => {
     return heatmapImpedanceFunctionEnum.options.map((value) => {
@@ -55,8 +54,7 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
       destinationPotentialColumn: undefined,
     },
   ];
-  const [opportunities, setOpportunities] =
-    useState<Opportunity[]>(defaultOpportunities);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>(defaultOpportunities);
 
   const isValid = useMemo(() => {
     return true;
@@ -68,8 +66,7 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
       opportunities: opportunities.map((opportunity) => {
         return {
           opportunity_layer_project_id:
-            layers &&
-            layers.find((layer) => layer.id === opportunity.layer?.value)?.id,
+            layers && layers.find((layer) => layer.id === opportunity.layer?.value)?.id,
           max_traveltime: opportunity.maxTravelTime?.value,
           sensitivity: opportunity.sensitivity,
         };
@@ -102,9 +99,7 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
         <>
           <Selector
             selectedItems={impedanceFunction}
-            setSelectedItems={(
-              item: SelectorItem[] | SelectorItem | undefined,
-            ) => {
+            setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
               setImpedanceFunction(item as SelectorItem);
             }}
             items={impedanceFunctions}

@@ -1,14 +1,13 @@
-import useLayerFields from "@/hooks/map/CommonHooks";
-import { useDatasetCollectionItems } from "@/lib/api/layers";
 import { Box } from "@mui/material";
-
-import type {
-  GetCollectionItemsQueryParams,
-  Layer,
-} from "@/lib/validations/layer";
-import type { ProjectLayer } from "@/lib/validations/project";
 import { TablePagination } from "@mui/material";
 import { useEffect, useState } from "react";
+
+import { useDatasetCollectionItems } from "@/lib/api/layers";
+import type { GetCollectionItemsQueryParams, Layer } from "@/lib/validations/layer";
+import type { ProjectLayer } from "@/lib/validations/project";
+
+import useLayerFields from "@/hooks/map/CommonHooks";
+
 import DatasetTable from "@/components/common/DatasetTable";
 
 interface DatasetTableTabProps {
@@ -18,18 +17,14 @@ interface DatasetTableTabProps {
 const DatasetTableTab: React.FC<DatasetTableTabProps> = ({ dataset }) => {
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
     (dataset["id"] as string) || "",
-    undefined,
+    undefined
   );
 
-  const [dataQueryParams, setDataQueryParams] =
-    useState<GetCollectionItemsQueryParams>({
-      limit: 25,
-      offset: 0,
-    });
-  const { data } = useDatasetCollectionItems(
-    (dataset["id"] as string) || "",
-    dataQueryParams,
-  );
+  const [dataQueryParams, setDataQueryParams] = useState<GetCollectionItemsQueryParams>({
+    limit: 25,
+    offset: 0,
+  });
+  const { data } = useDatasetCollectionItems((dataset["id"] as string) || "", dataQueryParams);
 
   const [displayData, setDisplayData] = useState(data);
   useEffect(() => {
@@ -45,9 +40,7 @@ const DatasetTableTab: React.FC<DatasetTableTabProps> = ({ dataset }) => {
     }));
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDataQueryParams({
       limit: parseInt(event.target.value, 10),
       offset: 0,
@@ -60,13 +53,8 @@ const DatasetTableTab: React.FC<DatasetTableTabProps> = ({ dataset }) => {
         sx={{
           height: `calc(100vh - 440px)`,
           overflowX: "hidden",
-        }}
-      >
-        <DatasetTable
-          areFieldsLoading={areFieldsLoading}
-          displayData={displayData}
-          fields={fields}
-        />
+        }}>
+        <DatasetTable areFieldsLoading={areFieldsLoading} displayData={displayData} fields={fields} />
       </Box>
       {displayData && (
         <TablePagination
@@ -75,11 +63,7 @@ const DatasetTableTab: React.FC<DatasetTableTabProps> = ({ dataset }) => {
           component="div"
           count={displayData.numberMatched}
           rowsPerPage={dataQueryParams.limit}
-          page={
-            dataQueryParams.offset
-              ? dataQueryParams.offset / dataQueryParams.limit
-              : 0
-          }
+          page={dataQueryParams.offset ? dataQueryParams.offset / dataQueryParams.limit : 0}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />

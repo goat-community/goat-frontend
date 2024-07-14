@@ -1,6 +1,7 @@
-import InputTextField from "@/components/map/panels/style/other/InputTextField";
 import type { SxProps } from "@mui/material";
 import { Slider, Stack, useTheme } from "@mui/material";
+
+import InputTextField from "@/components/map/panels/style/other/InputTextField";
 
 const SliderInput = ({
   value,
@@ -29,8 +30,7 @@ const SliderInput = ({
       }}
       direction={isRange ? "column" : "row"}
       spacing={4}
-      alignItems="center"
-    >
+      alignItems="center">
       <Slider
         size="small"
         min={min}
@@ -65,8 +65,7 @@ const SliderInput = ({
           direction="row"
           justifyContent="space-between"
           width="100%"
-          style={{ marginTop: theme.spacing(1) }}
-        >
+          style={{ marginTop: theme.spacing(1) }}>
           <InputTextField
             value={value[0]}
             onChange={(event) => {

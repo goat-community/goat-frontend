@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const LegendMobile = () => {
-  return (
-    <div>
-      Legend
-    </div>
-  )
-}
+  return <div>Legend</div>;
+};
 
-export default LegendMobile
+export default LegendMobile;

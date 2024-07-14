@@ -1,29 +1,32 @@
-import Container from "@/components/map/panels/Container";
-import SectionHeader from "@/components/map/panels/common/SectionHeader";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
-import Selector from "@/components/map/panels/common/Selector";
-import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
-import PTTimeSelectors from "@/components/map/panels/toolbox/common/PTTimeSelectors";
-import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
-import {
-  useLayerByGeomType,
-  usePTTimeSelectorValues,
-} from "@/hooks/map/ToolsHooks";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+import { Box, Typography, useTheme } from "@mui/material";
+import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
 import { useJobs } from "@/lib/api/jobs";
 import { computeOevGueteKlassen } from "@/lib/api/tools";
 import { accessibilityIndicatorsStaticPayload } from "@/lib/constants/payloads";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
 import { oevGueteklassenSchema } from "@/lib/validations/tools";
+
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import { Box, Typography, useTheme } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useParams } from "next/navigation";
-import { useMemo, useState } from "react";
-import { toast } from "react-toastify";
+
+import { useLayerByGeomType, usePTTimeSelectorValues } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import Container from "@/components/map/panels/Container";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import Selector from "@/components/map/panels/common/Selector";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import PTTimeSelectors from "@/components/map/panels/toolbox/common/PTTimeSelectors";
 
 const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
@@ -35,14 +38,8 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const { projectId } = useParams();
-  const { filteredLayers } = useLayerByGeomType(
-    ["feature"],
-    ["polygon"],
-    projectId as string,
-  );
-  const [referenceLayer, setReferenceLayer] = useState<
-    SelectorItem | undefined
-  >(undefined);
+  const { filteredLayers } = useLayerByGeomType(["feature"], ["polygon"], projectId as string);
+  const [referenceLayer, setReferenceLayer] = useState<SelectorItem | undefined>(undefined);
 
   const {
     // ptModes,
@@ -77,15 +74,10 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
     try {
       setIsBusy(true);
       const parsedPayload = oevGueteklassenSchema.parse(payload);
-      const response = await computeOevGueteKlassen(
-        parsedPayload,
-        projectId as string,
-      );
+      const response = await computeOevGueteKlassen(parsedPayload, projectId as string);
       const { job_id } = response;
       if (job_id) {
-        toast.info(
-          `"${t(jobTypeEnum.Enum.oev_gueteklasse)}" - ${t("job_started")}`,
-        );
+        toast.info(`"${t(jobTypeEnum.Enum.oev_gueteklasse)}" - ${t("job_started")}`);
         mutate();
         dispatch(setRunningJobIds([...runningJobIds, job_id]));
       }
@@ -106,9 +98,7 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
     <>
       <Container
         disablePadding={false}
-        header={
-          <ToolsHeader onBack={onBack} title={t("oev_gueteklasse_header")} />
-        }
+        header={<ToolsHeader onBack={onBack} title={t("oev_gueteklasse_header")} />}
         close={onClose}
         body={
           <>
@@ -116,13 +106,9 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-              }}
-            >
+              }}>
               {/* DESCRIPTION */}
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-              >
+              <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
                 {t("oev_gueteklasse_description")}
               </Typography>
 
@@ -166,9 +152,7 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
                   <>
                     <Selector
                       selectedItems={referenceLayer}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         setReferenceLayer(item as SelectorItem);
                       }}
                       items={filteredLayers}

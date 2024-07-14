@@ -1,20 +1,19 @@
 "use client";
 
-import React from "react";
-
 import {
   AppBar,
   Box,
-  Stack,
-  Toolbar as MUIToolbar,
-  useTheme,
-  IconButton,
   Divider,
+  IconButton,
   Link,
+  Toolbar as MUIToolbar,
+  Stack,
+  useTheme,
 } from "@mui/material";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import React from "react";
 
 import { GOATLogoIconOnlyGreen } from "@p4b/ui/assets/svg/GOATLogoIconOnlyGreen";
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 export type MapToolbarProps = {
   LeftToolbarChild?: React.ReactNode;
@@ -25,13 +24,7 @@ export type MapToolbarProps = {
 };
 
 export function Toolbar(props: MapToolbarProps) {
-  const {
-    LeftToolbarChild,
-    RightToolbarChild,
-    height,
-    showHambugerMenu,
-    onMenuIconClick,
-  } = props;
+  const { LeftToolbarChild, RightToolbarChild, height, showHambugerMenu, onMenuIconClick } = props;
 
   const theme = useTheme();
 
@@ -43,16 +36,14 @@ export function Toolbar(props: MapToolbarProps) {
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 2,
         borderBottom: "1px solid rgba(58, 53, 65, 0.12)",
-      }}
-    >
+      }}>
       <MUIToolbar
         variant="dense"
         sx={{
           minHeight: height,
           height: height,
           boxShadow: "0px 0px 10px 0px rgba(58, 53, 65, 0.1)",
-        }}
-      >
+        }}>
         {showHambugerMenu && (
           <>
             <IconButton onClick={onMenuIconClick}>
@@ -69,19 +60,15 @@ export function Toolbar(props: MapToolbarProps) {
             width: "32px",
             height: "32px",
             cursor: "pointer",
-          }}
-        >
+          }}>
           <Box
             sx={{
               transition: "transform 0.2s ease-in-out",
               "&:hover": {
                 transform: "scale(1.1)",
               },
-            }}
-          >
-            <GOATLogoIconOnlyGreen
-              style={{ width: "32px", height: "32px", cursor: "pointer" }}
-            />
+            }}>
+            <GOATLogoIconOnlyGreen style={{ width: "32px", height: "32px", cursor: "pointer" }} />
           </Box>
         </Link>
 
@@ -91,8 +78,7 @@ export function Toolbar(props: MapToolbarProps) {
           sx={{
             mx: theme.spacing(2),
             gap: theme.spacing(2),
-          }}
-        >
+          }}>
           {LeftToolbarChild}
         </Stack>
         <Box sx={{ flexGrow: 1 }} />

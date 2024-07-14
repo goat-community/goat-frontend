@@ -1,16 +1,15 @@
-import { useTranslation } from "@/i18n/client";
-import ColorSelector from "@/components/map/panels/style/color/ColorSelector";
-import type {
-  ColorRange,
-  FeatureLayerProperties,
-  LayerFieldType,
-} from "@/lib/validations/layer";
 import { useMemo, useState } from "react";
-import ColorScaleSelector from "@/components/map/panels/style/classification/ColorScaleSelector";
-import SliderInput from "@/components/map/panels/common/SliderInput";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { ColorRange, FeatureLayerProperties, LayerFieldType } from "@/lib/validations/layer";
+
 import FormLabelHelper from "@/components/common/FormLabelHelper";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import SliderInput from "@/components/map/panels/common/SliderInput";
+import ColorScaleSelector from "@/components/map/panels/style/classification/ColorScaleSelector";
+import ColorSelector from "@/components/map/panels/style/color/ColorSelector";
 
 const ColorOptions = ({
   type,
@@ -35,9 +34,7 @@ const ColorOptions = ({
 
   const colorSet = useMemo(
     () => ({
-      selectedColor: layerStyle?.[`${type}_field`]
-        ? layerStyle?.[`${type}_range`]
-        : layerStyle?.[`${type}`],
+      selectedColor: layerStyle?.[`${type}_field`] ? layerStyle?.[`${type}_range`] : layerStyle?.[`${type}`],
       isRange: layerStyle?.[`${type}_field`] ? true : false,
       setColor: (color) => {
         const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
@@ -49,7 +46,7 @@ const ColorOptions = ({
         onStyleChange && onStyleChange(newStyle);
       },
     }),
-    [layerStyle, onStyleChange, type],
+    [layerStyle, onStyleChange, type]
   );
   const [opacity, setOpacity] = useState(layerStyle?.opacity || 1);
 
@@ -60,9 +57,7 @@ const ColorOptions = ({
         <ColorSelector
           scaleType={layerStyle?.[`${type}_scale`]}
           colorSet={colorSet}
-          label={
-            layerStyle?.[`${type}_field`] ? t("palette") : t("color")
-          }
+          label={layerStyle?.[`${type}_field`] ? t("palette") : t("color")}
         />
       }
       advancedOptions={
@@ -76,10 +71,7 @@ const ColorOptions = ({
               if (field?.type === "string") {
                 newStyle[`${type}_scale`] = "ordinal";
               }
-              if (
-                field?.type === "number" &&
-                layerStyle?.[`${type}_scale`] == "ordinal"
-              ) {
+              if (field?.type === "number" && layerStyle?.[`${type}_scale`] == "ordinal") {
                 newStyle[`${type}_scale`] = "quantile";
               }
               if (onStyleChange) {
@@ -89,39 +81,34 @@ const ColorOptions = ({
             label={t("color_based_on")}
             tooltip={t("color_based_on_desc")}
           />
-          {layerStyle?.[`${type}_field`] &&
-            Array.isArray(layerStyle?.[`${type}_range`]?.colors) && (
-              <ColorScaleSelector
-                colorSet={colorSet}
-                selectedColorScaleMethod={
-                  layerStyle?.[`${type}_scale`] || "quantile"
-                }
-                classBreaksValues={layerStyle?.[`${type}_scale_breaks`]}
-                setSelectedColorScaleMethod={(colorScale) => {
-                  const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
-                  newStyle[`${type}_scale`] = colorScale;
-                  onStyleChange && onStyleChange(newStyle);
-                }}
-                label={t("color_scale")}
-                activeLayerId={layerId}
-                activeLayerField={
-                  layerStyle[`${type}_field`] || { name: "", type: "string" }
-                }
-                onCustomApply={(colorMaps) => {
-                  const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
-                  const colorRange = newStyle[`${type}_range`] as ColorRange;
-                  colorRange.name = "Custom";
-                  colorRange.category = "Custom";
-                  colorRange.color_map = colorMaps;
-                  // We have to overwrite the color range colors with the new ones from the colorMaps.
-                  // This are considered custom colors.
-                  colorRange.colors = colorMaps.map((colorMap) => colorMap[1]);
-                  colorRange.type = "custom";
-                  onStyleChange && onStyleChange(newStyle);
-                }}
-                intervals={layerStyle?.[`${type}_range`]?.colors.length}
-              />
-            )}
+          {layerStyle?.[`${type}_field`] && Array.isArray(layerStyle?.[`${type}_range`]?.colors) && (
+            <ColorScaleSelector
+              colorSet={colorSet}
+              selectedColorScaleMethod={layerStyle?.[`${type}_scale`] || "quantile"}
+              classBreaksValues={layerStyle?.[`${type}_scale_breaks`]}
+              setSelectedColorScaleMethod={(colorScale) => {
+                const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
+                newStyle[`${type}_scale`] = colorScale;
+                onStyleChange && onStyleChange(newStyle);
+              }}
+              label={t("color_scale")}
+              activeLayerId={layerId}
+              activeLayerField={layerStyle[`${type}_field`] || { name: "", type: "string" }}
+              onCustomApply={(colorMaps) => {
+                const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
+                const colorRange = newStyle[`${type}_range`] as ColorRange;
+                colorRange.name = "Custom";
+                colorRange.category = "Custom";
+                colorRange.color_map = colorMaps;
+                // We have to overwrite the color range colors with the new ones from the colorMaps.
+                // This are considered custom colors.
+                colorRange.colors = colorMaps.map((colorMap) => colorMap[1]);
+                colorRange.type = "custom";
+                onStyleChange && onStyleChange(newStyle);
+              }}
+              intervals={layerStyle?.[`${type}_range`]?.colors.length}
+            />
+          )}
           {type === "color" && (
             <>
               <FormLabelHelper label={t("opacity")} color="inherit" />

@@ -1,5 +1,6 @@
-import React from "react";
 import { Stack, Typography, useTheme } from "@mui/material";
+import React from "react";
+
 import type { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Icon } from "@p4b/ui/components/Icon";
 
@@ -22,8 +23,7 @@ const EmptySection: React.FC<Props> = ({ icon, label }) => {
         justifyContent: "center",
         alignItems: "center",
         height: "100%",
-      }}
-    >
+      }}>
       <Icon iconName={icon} htmlColor={theme.palette.text.secondary} />
       <Typography variant="h6" color={theme.palette.text.secondary}>
         {label}

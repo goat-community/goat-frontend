@@ -8,11 +8,7 @@ export interface OverflowTypograpyProps extends TypographyProps {
   tooltipProps?: Omit<TooltipProps, "title" | "children">;
 }
 
-export const OverflowTypograpy: FC<OverflowTypograpyProps> = ({
-  children,
-  tooltipProps,
-  ...props
-}) => {
+export const OverflowTypograpy: FC<OverflowTypograpyProps> = ({ children, tooltipProps, ...props }) => {
   const ref = useRef<HTMLSpanElement>(null);
   const [tooltipEnabled, setTooltipEnabled] = useState(false);
 
@@ -30,18 +26,8 @@ export const OverflowTypograpy: FC<OverflowTypograpyProps> = ({
   }, []);
 
   return (
-    <Tooltip
-      title={children}
-      disableHoverListener={!tooltipEnabled}
-      {...tooltipProps}
-    >
-      <Typography
-        ref={ref}
-        noWrap
-        overflow="hidden"
-        textOverflow="ellipsis"
-        {...props}
-      >
+    <Tooltip title={children} disableHoverListener={!tooltipEnabled} {...tooltipProps}>
+      <Typography ref={ref} noWrap overflow="hidden" textOverflow="ellipsis" {...props}>
         {children}
       </Typography>
     </Tooltip>

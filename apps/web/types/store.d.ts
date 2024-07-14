@@ -1,7 +1,8 @@
-import type { Expression } from "./map/filtering";
+import type { ContentState } from "@/lib/store/content/slice";
 import type { LayerState } from "@/lib/store/layer/slice";
 import type { MapState } from "@/lib/store/map/slice";
-import type { ContentState } from "@/lib/store/content/slice";
+
+import type { Expression } from "./map/filtering";
 
 export interface IStore {
   map: MapState;

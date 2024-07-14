@@ -1,15 +1,10 @@
-import { ArrowPopper } from "@/components/ArrowPoper";
-import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Paper,
-  useTheme,
-} from "@mui/material";
+import { List, ListItemButton, ListItemIcon, ListItemText, Paper, useTheme } from "@mui/material";
+import { useState } from "react";
+
 import type { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Icon } from "@p4b/ui/components/Icon";
-import { useState } from "react";
+
+import { ArrowPopper } from "@/components/ArrowPoper";
 
 export interface PopperMenuItem {
   id: string;
@@ -46,8 +41,7 @@ export default function PopperMenu(props: PopperMenuProps) {
             maxWidth: 340,
             overflow: "auto",
             py: theme.spacing(2),
-          }}
-        >
+          }}>
           <List dense={true} disablePadding>
             {menuItems.map((item, index) => (
               <ListItemButton
@@ -63,21 +57,15 @@ export default function PopperMenu(props: PopperMenuProps) {
                   ...(item.color && {
                     color: item.color,
                   }),
-                }}
-              >
+                }}>
                 {item.icon && (
                   <ListItemIcon
                     sx={{
                       color: item.color || "inherit",
                       pr: 4,
                       minWidth: 0,
-                    }}
-                  >
-                    <Icon
-                      style={{ fontSize: 15 }}
-                      iconName={item.icon}
-                      htmlColor={item.color || "inherit"}
-                    />
+                    }}>
+                    <Icon style={{ fontSize: 15 }} iconName={item.icon} htmlColor={item.color || "inherit"} />
                   </ListItemIcon>
                 )}
                 <ListItemText
@@ -94,14 +82,12 @@ export default function PopperMenu(props: PopperMenuProps) {
             ))}
           </List>
         </Paper>
-      }
-    >
+      }>
       <div
         onClick={(event) => {
           event.stopPropagation();
           setPopperMenuOpen(!popperMenuOpen);
-        }}
-      >
+        }}>
         {menuButton}
       </div>
     </ArrowPopper>

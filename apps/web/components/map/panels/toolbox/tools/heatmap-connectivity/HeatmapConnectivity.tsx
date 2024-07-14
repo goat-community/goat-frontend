@@ -1,15 +1,21 @@
-import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import { useTranslation } from "@/i18n/client";
-import HeatmapContainer from "@/components/map/panels/toolbox/common/HeatmapContainer";
-import { heatmapConnectivitySchema } from "@/lib/validations/tools";
-import { computeHeatmapConnectivity } from "@/lib/api/tools";
-import type { SelectorItem } from "@/types/map/common";
-import Selector from "@/components/map/panels/common/Selector";
-import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
-import { useState } from "react";
-import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
 import { useParams } from "next/navigation";
+import { useState } from "react";
+
 import { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { computeHeatmapConnectivity } from "@/lib/api/tools";
+import { heatmapConnectivitySchema } from "@/lib/validations/tools";
+
+import type { SelectorItem } from "@/types/map/common";
+import type { IndicatorBaseProps } from "@/types/map/toolbox";
+
+import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
+
+import Selector from "@/components/map/panels/common/Selector";
+import HeatmapContainer from "@/components/map/panels/toolbox/common/HeatmapContainer";
+import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 
 const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
@@ -19,17 +25,9 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
     value: 20,
     label: "20 (Min)",
   };
-  const [maxTravelTime, setMaxTravelTime] = useState<SelectorItem | undefined>(
-    defaultMaxTravelTime,
-  );
-  const { filteredLayers } = useLayerByGeomType(
-    ["feature"],
-    ["polygon"],
-    projectId as string,
-  );
-  const [referenceLayer, setReferenceLayer] = useState<
-    SelectorItem | undefined
-  >(undefined);
+  const [maxTravelTime, setMaxTravelTime] = useState<SelectorItem | undefined>(defaultMaxTravelTime);
+  const { filteredLayers } = useLayerByGeomType(["feature"], ["polygon"], projectId as string);
+  const [referenceLayer, setReferenceLayer] = useState<SelectorItem | undefined>(undefined);
 
   const isValid = true;
   const handleRun = () => {
@@ -64,9 +62,7 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
           {/* MAX TRAVEL TIME */}
           <Selector
             selectedItems={maxTravelTime}
-            setSelectedItems={(
-              item: SelectorItem[] | SelectorItem | undefined,
-            ) => {
+            setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
               setMaxTravelTime(item as SelectorItem);
             }}
             items={getTravelCostConfigValues(3, 30, "min")}
@@ -75,9 +71,7 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
           />
           <Selector
             selectedItems={referenceLayer}
-            setSelectedItems={(
-              item: SelectorItem[] | SelectorItem | undefined,
-            ) => {
+            setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
               setReferenceLayer(item as SelectorItem);
             }}
             items={filteredLayers}

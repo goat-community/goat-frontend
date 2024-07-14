@@ -1,15 +1,15 @@
 "use client";
 
-import { postOrganizationSchema } from "@/lib/validations/organization";
 import { zodResolver } from "@hookform/resolvers/zod";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
   Alert,
   Box,
   Button,
-  Stack,
-  Step,
   Checkbox,
   FormControlLabel,
+  Stack,
+  Step,
   StepLabel,
   Stepper,
   TextField,
@@ -17,27 +17,28 @@ import {
   useTheme,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
-import { useState, useRef, useMemo } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import type * as z from "zod";
+
 import AuthContainer from "@p4b/ui/components/AuthContainer";
 import AuthLayout from "@p4b/ui/components/AuthLayout";
+
+import { createOrganization } from "@/lib/api/organizations";
+import { ORG_DEFAULT_AVATAR } from "@/lib/constants";
+import { postOrganizationSchema } from "@/lib/validations/organization";
+
+import type { ResponseResult } from "@/types/common";
+
+import { useOrganizationSetup } from "@/hooks/onboarding/OrganizationCreate";
+
 import { RhfAutocompleteField } from "@/components/common/form-inputs/AutocompleteField";
 import { RhfSelectField } from "@/components/common/form-inputs/SelectField";
-import { useOrganizationSetup } from "@/hooks/onboarding/OrganizationCreate";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { useRouter } from "next/navigation";
-import { createOrganization } from "@/lib/api/organizations";
-import type { ResponseResult } from "@/types/common";
-import { ORG_DEFAULT_AVATAR } from "@/lib/constants";
 
 type FormData = z.infer<typeof postOrganizationSchema>;
 
-const STEPS = [
-  "new_organization",
-  "organization_profile",
-  "organization_contact",
-];
+const STEPS = ["new_organization", "organization_profile", "organization_contact"];
 
 export default function OrganizationOnBoarding() {
   const theme = useTheme();
@@ -101,13 +102,7 @@ export default function OrganizationOnBoarding() {
       !errors.department &&
       !errors.use_case
     );
-  }, [
-    watchFormValues,
-    errors.type,
-    errors.industry,
-    errors.department,
-    errors.use_case,
-  ]);
+  }, [watchFormValues, errors.type, errors.industry, errors.department, errors.use_case]);
 
   const allowSubmit = useMemo(() => {
     return (
@@ -146,12 +141,8 @@ export default function OrganizationOnBoarding() {
           headerTitle={
             <>
               <Stack sx={{ mb: 8 }} spacing={2}>
-                <Typography variant="h5">
-                  {t(`common:${STEPS[activeStep]}_title`)}
-                </Typography>
-                <Typography variant="body2">
-                  {t(`common:${STEPS[activeStep]}_subtitle`)}
-                </Typography>
+                <Typography variant="h5">{t(`common:${STEPS[activeStep]}_title`)}</Typography>
+                <Typography variant="body2">{t(`common:${STEPS[activeStep]}_subtitle`)}</Typography>
               </Stack>
               <Box sx={{ width: "100%" }}>
                 <Stepper activeStep={activeStep}>
@@ -165,11 +156,7 @@ export default function OrganizationOnBoarding() {
             </>
           }
           headerAlert={
-            responseResult.status && (
-              <Alert severity={responseResult.status}>
-                {responseResult.message}
-              </Alert>
-            )
+            responseResult.status && <Alert severity={responseResult.status}>{responseResult.message}</Alert>
           }
           body={
             <>
@@ -181,11 +168,7 @@ export default function OrganizationOnBoarding() {
                         <TextField
                           fullWidth
                           required
-                          helperText={
-                            errors.name
-                              ? errors.name?.message
-                              : t("common:organization_name_desc")
-                          }
+                          helperText={errors.name ? errors.name?.message : t("common:organization_name_desc")}
                           label={t("common:organization_name_label")}
                           id="name"
                           {...register("name")}
@@ -248,9 +231,7 @@ export default function OrganizationOnBoarding() {
                           required
                           type="number"
                           helperText={errors.name ? errors.name?.message : null}
-                          label={t(
-                            "common:organization_contact_phone_label",
-                          )}
+                          label={t("common:organization_contact_phone_label")}
                           {...register("phone_number")}
                           error={errors.name ? true : false}
                         />
@@ -268,16 +249,8 @@ export default function OrganizationOnBoarding() {
                           render={({ field: { onChange, value } }) => {
                             return (
                               <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    sx={{ ml: -3 }}
-                                    onChange={onChange}
-                                    checked={value}
-                                  />
-                                }
-                                label={t(
-                                  "common:organization_subscribe_to_newsletter",
-                                )}
+                                control={<Checkbox sx={{ ml: -3 }} onChange={onChange} checked={value} />}
+                                label={t("common:organization_subscribe_to_newsletter")}
                               />
                             );
                           }}
@@ -286,9 +259,7 @@ export default function OrganizationOnBoarding() {
                           <Typography variant="body1">
                             {t("common:organization_onboarding_trial_note")}
                           </Typography>
-                          <Typography variant="body2">
-                            {t("common:organization_accept_terms")}
-                          </Typography>
+                          <Typography variant="body2">{t("common:organization_accept_terms")}</Typography>
                         </Stack>
                       </>
                     )}
@@ -304,8 +275,7 @@ export default function OrganizationOnBoarding() {
                     aria-label="finish-org-creation"
                     name="organization-submit"
                     type="submit"
-                    disabled={!allowSubmit}
-                  >
+                    disabled={!allowSubmit}>
                     {t("common:lets_get_started")}
                   </LoadingButton>
                 )}
@@ -317,13 +287,8 @@ export default function OrganizationOnBoarding() {
                       sx={{
                         mt: theme.spacing(8),
                       }}
-                      disabled={
-                        activeStep == 0
-                          ? !allowNextFirstStep
-                          : !allowNextSecondStep
-                      }
-                      onClick={handleNext}
-                    >
+                      disabled={activeStep == 0 ? !allowNextFirstStep : !allowNextSecondStep}
+                      onClick={handleNext}>
                       {t("common:next")}
                     </Button>
                   )}
@@ -335,8 +300,7 @@ export default function OrganizationOnBoarding() {
                       fullWidth
                       disabled={isBusy}
                       onClick={handleBack}
-                      variant="text"
-                    >
+                      variant="text">
                       {t("common:back")}
                     </Button>
                   )}

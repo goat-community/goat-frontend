@@ -14,6 +14,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "lint:fix": "eslint . --ext .ts,.js,.tsx,.jsx --fix",
     "lint:report": "eslint . --format json --output-file ../../lint-results/goat.json",
+    "prettier": "prettier --write .",
     "typecheck": "tsc --project ./tsconfig.json --pretty --noEmit"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "@loaders.gl/core": "^4.0.3",
     "@loaders.gl/gis": "^4.0.3",
     "@loaders.gl/wkt": "^4.0.3",
+    "@mapbox/mapbox-gl-draw": "^1.4.3",
     "@mui/icons-material": "latest",
     "@mui/lab": "5.0.0-alpha.132",
     "@mui/material": "latest",
@@ -40,8 +42,12 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@turf/bbox": "^6.5.0",
     "@turf/bbox-polygon": "^6.5.0",
+    "@turf/circle": "^7.0.0",
+    "@turf/distance": "^7.0.0",
     "@turf/helpers": "^6.5.0",
+    "@turf/length": "^7.0.0",
     "@types/mapbox-gl": "^2.7.11",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.6",
     "accept-language": "^3.0.18",
     "axios": "^1.4.0",
     "clsx": "^2.0.0",
@@ -99,6 +105,7 @@
     "cross-env": "^7.0.3",
     "es-check": "^7.1.1",
     "eslint-config-p4b": "workspace:*",
+    "@p4b/prettier-config": "workspace:*",
     "size-limit": "^8.2.6"
   }
 }

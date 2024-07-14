@@ -1,4 +1,5 @@
-import { Typography, useTheme, Stack, Switch, IconButton } from "@mui/material";
+import { IconButton, Stack, Switch, Typography, useTheme } from "@mui/material";
+
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 const SectionHeader = ({
@@ -28,26 +29,19 @@ const SectionHeader = ({
           iconName={icon}
           style={{
             fontSize: "17px",
-            color: active
-              ? theme.palette.text.secondary
-              : theme.palette.text.disabled,
+            color: active ? theme.palette.text.secondary : theme.palette.text.disabled,
           }}
         />
         <Typography
           variant="body2"
           fontWeight="bold"
           sx={{ pl: 2 }}
-          color={
-            active ? theme.palette.text.secondary : theme.palette.text.disabled
-          }
-        >
+          color={active ? theme.palette.text.secondary : theme.palette.text.disabled}>
           {label}
         </Typography>
       </Stack>
       <Stack direction="row" alignItems="center">
-        {alwaysActive ? null : (
-          <Switch size="small" checked={!!active} onChange={onToggleChange} />
-        )}
+        {alwaysActive ? null : <Switch size="small" checked={!!active} onChange={onToggleChange} />}
 
         {!disableAdvanceOptions && (
           <IconButton
@@ -61,13 +55,8 @@ const SectionHeader = ({
               if (setCollapsed) {
                 setCollapsed(!collapsed);
               }
-            }}
-          >
-            <Icon
-              htmlColor="inherit"
-              iconName={ICON_NAME.SLIDERS}
-              style={{ fontSize: "15px" }}
-            />
+            }}>
+            <Icon htmlColor="inherit" iconName={ICON_NAME.SLIDERS} style={{ fontSize: "15px" }} />
           </IconButton>
         )}
       </Stack>

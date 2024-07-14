@@ -1,35 +1,36 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
-import type { PaletteMode } from "@mui/material";
-import {
-  Typography,
-  Box,
-  MenuItem,
-  useTheme,
-  Stack,
-  TextField,
-  InputAdornment,
-  Link,
-  Divider,
-} from "@mui/material";
-import Cookies from "js-cookie";
-import { THEME_COOKIE_NAME as themeCookieName } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import DarkModeIcon from "@mui/icons-material/Brightness4";
 import LightModeIcon from "@mui/icons-material/Brightness7";
+import type { PaletteMode } from "@mui/material";
 import {
-  systemSettingsSchemaUpdate,
-  type SystemSettingsUpdate,
-} from "@/lib/validations/system";
-import { updateSystemSettings } from "@/lib/api/system";
-import { toast } from "react-toastify";
-import { ColorModeContext } from "@/components/@mui/ThemeRegistry";
-import { languages, cookieName as lngCookieName } from "@/i18n/settings";
+  Box,
+  Divider,
+  InputAdornment,
+  Link,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import Cookies from "js-cookie";
 import NextLink from "next/link";
+import React, { useContext, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+import { languages, cookieName as lngCookieName } from "@/i18n/settings";
+
+import { updateSystemSettings } from "@/lib/api/system";
+import { THEME_COOKIE_NAME as themeCookieName } from "@/lib/constants";
+import { type SystemSettingsUpdate, systemSettingsSchemaUpdate } from "@/lib/validations/system";
+
+import { ColorModeContext } from "@/components/@mui/ThemeRegistry";
 
 const AccountPreferences = ({ params: { lng } }) => {
   const { t } = useTranslation("common");
@@ -96,16 +97,14 @@ const AccountPreferences = ({ params: { lng } }) => {
                   <Icon iconName={ICON_NAME.LANGUAGE} fontSize="small" />
                 </InputAdornment>
               ),
-            }}
-          >
+            }}>
             {languages.map((lng) => (
               <MenuItem value={lng} key={lng} sx={{ p: 0 }}>
                 <Link
                   sx={{ p: 2, width: "100%" }}
                   component={NextLink}
                   href={`/${lng}/settings/account/preferences`}
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
+                  style={{ textDecoration: "none", color: "inherit" }}>
                   {t(lng)}
                 </Link>
               </MenuItem>
@@ -128,8 +127,7 @@ const AccountPreferences = ({ params: { lng } }) => {
                   )}
                 </InputAdornment>
               ),
-            }}
-          >
+            }}>
             {themeModes.map((theme) => (
               <MenuItem key={theme} value={theme}>
                 {t(theme)}

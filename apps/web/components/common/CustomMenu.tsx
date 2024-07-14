@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
 import { Box, useTheme } from "@mui/material";
+import React, { useEffect, useRef } from "react";
 
 interface CustomMenuProps {
   children: React.ReactNode;
@@ -7,7 +7,7 @@ interface CustomMenuProps {
 }
 
 const CustomMenu = (props: CustomMenuProps) => {
-  const {children, close} = props;
+  const { children, close } = props;
 
   const menu = useRef<HTMLDivElement | null>(null);
 
@@ -15,12 +15,12 @@ const CustomMenu = (props: CustomMenuProps) => {
 
   useEffect(() => {
     document.addEventListener("click", handleClickOutside, true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleClickOutside(e: Event) {
-    if(menu.current && !menu.current.contains(e.target as Node)){
-      close()
+    if (menu.current && !menu.current.contains(e.target as Node)) {
+      close();
     }
   }
 
@@ -35,8 +35,7 @@ const CustomMenu = (props: CustomMenuProps) => {
         borderRadius: theme.spacing(2),
         zIndex: "20",
       }}
-      ref={menu}
-    >
+      ref={menu}>
       {children}
     </Box>
   );

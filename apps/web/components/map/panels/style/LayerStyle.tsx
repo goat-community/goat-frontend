@@ -1,50 +1,48 @@
-import Container from "@/components/map/panels/Container";
 import { Box, IconButton, Stack, Tooltip } from "@mui/material";
+import { useCallback, useMemo, useState } from "react";
+import { useMap } from "react-map-gl";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
-import { setActiveRightPanel } from "@/lib/store/map/slice";
-import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+
+import { getLayerClassBreaks, getLayerUniqueValues, updateDataset, useDataset } from "@/lib/api/layers";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
+import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
 import {
-  classBreaks,
   type ColorMap,
   type FeatureLayerPointProperties,
   type FeatureLayerProperties,
   type LayerUniqueValues,
   type MarkerMap,
+  classBreaks,
 } from "@/lib/validations/layer";
-import { useCallback, useMemo, useState } from "react";
-import {
-  getLayerClassBreaks,
-  getLayerUniqueValues,
-  updateDataset,
-  useDataset,
-} from "@/lib/api/layers";
-import SectionHeader from "@/components/map/panels/common/SectionHeader";
-import ColorOptions from "@/components/map/panels/style/color/ColorOptions";
-import SizeOptions from "@/components/map/panels/style/size/SizeOptions";
 import type { ProjectLayer } from "@/lib/validations/project";
+
+import { LayerStyleActions } from "@/types/common";
+
+import useLayerFields from "@/hooks/map/CommonHooks";
+import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { LayerStyleActions } from "@/types/common";
-import { toast } from "react-toastify";
+import Container from "@/components/map/panels/Container";
+import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import ColorOptions from "@/components/map/panels/style/color/ColorOptions";
 import MarkerOptions from "@/components/map/panels/style/marker/MarkerOptions";
-import { useMap } from "react-map-gl";
-import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
-import useLayerFields from "@/hooks/map/CommonHooks";
+import SizeOptions from "@/components/map/panels/style/size/SizeOptions";
 
 const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation("common");
   const { map } = useMap();
   const dispatch = useDispatch();
   const { activeLayer } = useActiveLayer(projectId);
-  const { dataset, mutate: mutateDataset } = useDataset(
-    activeLayer?.layer_id || "",
-  );
-  const { layers: projectLayers, mutate: mutateProjectLayers } =
-    useProjectLayers(projectId);
+  const { dataset, mutate: mutateDataset } = useDataset(activeLayer?.layer_id || "");
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useProjectLayers(projectId);
 
   const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
 
@@ -62,40 +60,31 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       await mutateProjectLayers(layers, false);
       await updateProjectLayer(projectId, activeLayer.id, layerToUpdate);
     },
-    [activeLayer, projectLayers, mutateProjectLayers, projectId],
+    [activeLayer, projectLayers, mutateProjectLayers, projectId]
   );
 
-  const createColorMapFromClassBreaks = useCallback(
-    (colors: string[], breakValues: string[]) => {
-      const colorMap = [] as ColorMap;
-      colors.forEach((color, index) => {
-        const breakValue = breakValues[index] || "0";
-        colorMap.push([[breakValue], color]);
-      });
-      return colorMap;
-    },
-    [],
-  );
+  const createColorMapFromClassBreaks = useCallback((colors: string[], breakValues: string[]) => {
+    const colorMap = [] as ColorMap;
+    colors.forEach((color, index) => {
+      const breakValue = breakValues[index] || "0";
+      colorMap.push([[breakValue], color]);
+    });
+    return colorMap;
+  }, []);
 
   const updateColorClassificationBreaks = useCallback(
-    async (
-      updateType: "color" | "stroke_color",
-      newStyle: FeatureLayerProperties,
-    ) => {
+    async (updateType: "color" | "stroke_color", newStyle: FeatureLayerProperties) => {
       if (!activeLayer) return;
       if (!newStyle[`${updateType}_field`]?.name) return;
       let classBreakType = newStyle[`${updateType}_scale`];
-      const existingBreaks =
-        activeLayer.properties[`${updateType}_scale_breaks`];
+      const existingBreaks = activeLayer.properties[`${updateType}_scale_breaks`];
       if (classBreakType === classBreaks.Enum.custom_breaks && existingBreaks) {
         const breakValues = [] as string[];
         if (classBreakType === activeLayer.properties[`${updateType}_scale`]) {
-          const colorMap =
-            newStyle[`${updateType}_range`]?.color_map;
+          const colorMap = newStyle[`${updateType}_range`]?.color_map;
           if (colorMap) {
             colorMap.forEach((colorMapItem) => {
-              if (colorMapItem?.[0]?.[0] !== undefined)
-                breakValues.push(colorMapItem[0][0]);
+              if (colorMapItem?.[0]?.[0] !== undefined) breakValues.push(colorMapItem[0][0]);
             });
           }
         } else {
@@ -106,18 +95,15 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
             });
           }
         }
-        newStyle[`${updateType}_range`]["color_map"] =
-          createColorMapFromClassBreaks(
-            newStyle[`${updateType}_range`]?.colors || [],
-            breakValues,
-          );
+        newStyle[`${updateType}_range`]["color_map"] = createColorMapFromClassBreaks(
+          newStyle[`${updateType}_range`]?.colors || [],
+          breakValues
+        );
         return;
       }
       if (
-        newStyle[`${updateType}_scale`] !==
-          activeLayer.properties[`${updateType}_scale`] ||
-        newStyle[`${updateType}_field`]?.name !==
-          activeLayer.properties[`${updateType}_field`]?.name ||
+        newStyle[`${updateType}_scale`] !== activeLayer.properties[`${updateType}_scale`] ||
+        newStyle[`${updateType}_field`]?.name !== activeLayer.properties[`${updateType}_field`]?.name ||
         newStyle[`${updateType}_range`]?.colors?.length !==
           activeLayer.properties[`${updateType}_range`]?.colors?.length
       ) {
@@ -128,24 +114,17 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
           activeLayer.layer_id,
           classBreakType,
           newStyle[`${updateType}_field`]?.name as string,
-          newStyle[`${updateType}_range`]?.colors?.length - 1,
+          newStyle[`${updateType}_range`]?.colors?.length - 1
         );
-        if (
-          breaks &&
-          breaks?.breaks?.length ===
-            newStyle[`${updateType}_range`]?.colors?.length - 1
-        )
+        if (breaks && breaks?.breaks?.length === newStyle[`${updateType}_range`]?.colors?.length - 1)
           newStyle[`${updateType}_scale_breaks`] = breaks;
       }
     },
-    [activeLayer, createColorMapFromClassBreaks],
+    [activeLayer, createColorMapFromClassBreaks]
   );
 
   const updateOrdinalValues = useCallback(
-    async (
-      updateType: "color" | "stroke_color" | "marker",
-      newStyle: FeatureLayerProperties,
-    ) => {
+    async (updateType: "color" | "stroke_color" | "marker", newStyle: FeatureLayerProperties) => {
       if (!activeLayer) return;
       if (!newStyle[`${updateType}_field`]?.name) return;
       const oldFieldName = activeLayer.properties[`${updateType}_field`]?.name;
@@ -154,7 +133,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
         const uniqueValues = await getLayerUniqueValues(
           activeLayer.layer_id,
           newStyle[`${updateType}_field`]?.name as string,
-          6,
+          6
         );
         const markerMap = [] as MarkerMap;
         const emptyMarker = { name: "", url: "" };
@@ -165,8 +144,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       } else if (updateType !== "marker") {
         if (
           (newStyle[`${updateType}_scale`] === "ordinal" &&
-            newStyle[`${updateType}_range`]?.name !==
-              activeLayer.properties[`${updateType}_range`]?.name) ||
+            newStyle[`${updateType}_range`]?.name !== activeLayer.properties[`${updateType}_range`]?.name) ||
           !newStyle[`${updateType}_range`]?.color_map ||
           oldFieldName !== newFieldName
         ) {
@@ -174,44 +152,35 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
           const uniqueValues = await getLayerUniqueValues(
             activeLayer.layer_id,
             newStyle[`${updateType}_field`]?.name as string,
-            colors?.length,
+            colors?.length
           );
 
           const colorMap = [] as ColorMap;
-          uniqueValues.items.forEach(
-            (item: LayerUniqueValues, index: number) => {
-              colorMap.push([[item.value], colors[index]]);
-            },
-          );
+          uniqueValues.items.forEach((item: LayerUniqueValues, index: number) => {
+            colorMap.push([[item.value], colors[index]]);
+          });
           newStyle[`${updateType}_range`].color_map = colorMap;
         }
       }
       updateLayerStyle(newStyle);
     },
-    [activeLayer, updateLayerStyle],
+    [activeLayer, updateLayerStyle]
   );
 
   const onToggleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>, property: string) => {
-      const newStyle =
-        JSON.parse(JSON.stringify(activeLayer?.properties)) || {};
+      const newStyle = JSON.parse(JSON.stringify(activeLayer?.properties)) || {};
       newStyle[property] = event.target.checked;
-      if (
-        property === "stroked" &&
-        activeLayer?.properties?.["custom_marker"]
-      ) {
+      if (property === "stroked" && activeLayer?.properties?.["custom_marker"]) {
         newStyle["custom_marker"] = false;
       }
-      if (
-        property === "custom_marker" &&
-        activeLayer?.properties?.["stroked"]
-      ) {
+      if (property === "custom_marker" && activeLayer?.properties?.["stroked"]) {
         newStyle["stroked"] = false;
       }
 
       updateLayerStyle(newStyle);
     },
-    [activeLayer, updateLayerStyle],
+    [activeLayer, updateLayerStyle]
   );
 
   const resetStyle = useCallback(async () => {
@@ -255,18 +224,14 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     return (
       activeLayer?.properties["custom_marker"] &&
       (activeLayer?.properties["marker"]?.name ||
-        (activeLayer?.properties["marker_field"] &&
-          activeLayer?.properties["marker_mapping"]?.length > 0))
+        (activeLayer?.properties["marker_field"] && activeLayer?.properties["marker_mapping"]?.length > 0))
     );
   }, [activeLayer]);
 
   const [collapseFillOptions, setCollapseFillOptions] = useState(true);
-  const [collapseStrokeColorOptions, setCollapseStrokeColorOptions] =
-    useState(true);
-  const [collapseStrokeWidthOptions, setCollapseStrokeWidthOptions] =
-    useState(true);
-  const [collapsedMarkerIconOptions, setCollapsedMarkerIconOptions] =
-    useState(true);
+  const [collapseStrokeColorOptions, setCollapseStrokeColorOptions] = useState(true);
+  const [collapseStrokeWidthOptions, setCollapseStrokeWidthOptions] = useState(true);
+  const [collapsedMarkerIconOptions, setCollapsedMarkerIconOptions] = useState(true);
   const [collapseRadiusOptions, setCollapseRadiusOptions] = useState(true);
   const [collapseLabelOptions, setCollapseLabelOptions] = useState(true);
 
@@ -278,34 +243,21 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       body={
         <>
           {activeLayer && (
-            <Stack
-              direction="row"
-              alignItems="center"
-              spacing={2}
-              sx={{ mb: 4 }}
-            >
-              <ProjectLayerDropdown
-                projectId={projectId}
-                layerTypes={["feature"]}
-              />
+            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
+              <ProjectLayerDropdown projectId={projectId} layerTypes={["feature"]} />
               <MoreMenu
                 menuItems={layerStyleMoreMenuOptions}
                 menuButton={
                   <Tooltip title={t("more_options")} arrow placement="top">
                     <IconButton>
-                      <Icon
-                        iconName={ICON_NAME.MORE_VERT}
-                        style={{ fontSize: 15 }}
-                      />
+                      <Icon iconName={ICON_NAME.MORE_VERT} style={{ fontSize: 15 }} />
                     </IconButton>
                   </Tooltip>
                 }
                 onSelect={async (menuItem: PopperMenuItem) => {
                   if (menuItem.id === LayerStyleActions.RESET) {
                     resetStyle();
-                  } else if (
-                    menuItem.id === LayerStyleActions.SAVE_AS_DEFAULT
-                  ) {
+                  } else if (menuItem.id === LayerStyleActions.SAVE_AS_DEFAULT) {
                     saveStyleAsDatasetDefault();
                   }
                 }}
@@ -316,15 +268,12 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
             sx={{
               display: "flex",
               flexDirection: "column",
-            }}
-          >
+            }}>
             {activeLayer && (
               <Stack>
                 {/* {FILL COLOR} */}
                 {activeLayer.feature_layer_geometry_type &&
-                  ["polygon", "point"].includes(
-                    activeLayer.feature_layer_geometry_type,
-                  ) && (
+                  ["polygon", "point"].includes(activeLayer.feature_layer_geometry_type) && (
                     <>
                       <SectionHeader
                         active={activeLayer?.properties.filled}
@@ -332,9 +281,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                           onToggleChange(event, "filled");
                         }}
                         label={
-                          activeLayer?.feature_layer_geometry_type === "line"
-                            ? t("color")
-                            : t("fill_color")
+                          activeLayer?.feature_layer_geometry_type === "line" ? t("color") : t("fill_color")
                         }
                         collapsed={collapseFillOptions}
                         setCollapsed={setCollapseFillOptions}
@@ -346,17 +293,9 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         layerFields={layerFields}
                         collapsed={collapseFillOptions}
                         selectedField={activeLayer?.properties.color_field}
-                        onStyleChange={async (
-                          newStyle: FeatureLayerProperties,
-                        ) => {
-                          if (
-                            newStyle.color_field?.type === "number" &&
-                            newStyle.color_scale !== "ordinal"
-                          ) {
-                            await updateColorClassificationBreaks(
-                              "color",
-                              newStyle,
-                            );
+                        onStyleChange={async (newStyle: FeatureLayerProperties) => {
+                          if (newStyle.color_field?.type === "number" && newStyle.color_scale !== "ordinal") {
+                            await updateColorClassificationBreaks("color", newStyle);
                           } else if (newStyle.color_scale === "ordinal") {
                             await updateOrdinalValues("color", newStyle);
                           }
@@ -374,14 +313,8 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   onToggleChange={(event) => {
                     onToggleChange(event, "stroked");
                   }}
-                  alwaysActive={
-                    activeLayer?.feature_layer_geometry_type === "line"
-                  }
-                  label={
-                    activeLayer?.feature_layer_geometry_type === "line"
-                      ? t("color")
-                      : t("stroke_color")
-                  }
+                  alwaysActive={activeLayer?.feature_layer_geometry_type === "line"}
+                  label={activeLayer?.feature_layer_geometry_type === "line" ? t("color") : t("stroke_color")}
                   collapsed={collapseStrokeColorOptions}
                   setCollapsed={setCollapseStrokeColorOptions}
                 />
@@ -398,10 +331,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                       newStyle.stroke_color_field?.type === "number" &&
                       newStyle.stroke_color_scale !== "ordinal"
                     ) {
-                      await updateColorClassificationBreaks(
-                        "stroke_color",
-                        newStyle,
-                      );
+                      await updateColorClassificationBreaks("stroke_color", newStyle);
                     } else if (newStyle.stroke_color_scale === "ordinal") {
                       await updateOrdinalValues("stroke_color", newStyle);
                     }
@@ -413,18 +343,14 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                 {/* {LINE STROKE} */}
                 {/* {fix: only for point and line. stroke_width doesn't yet work with polygon due to webgl limitation} */}
                 {activeLayer.feature_layer_geometry_type &&
-                  ["line"].includes(
-                    activeLayer.feature_layer_geometry_type,
-                  ) && (
+                  ["line"].includes(activeLayer.feature_layer_geometry_type) && (
                     <>
                       <SectionHeader
                         active={!!activeLayer?.properties.stroked}
                         onToggleChange={(event) => {
                           onToggleChange(event, "stroked");
                         }}
-                        alwaysActive={
-                          activeLayer?.feature_layer_geometry_type === "line"
-                        }
+                        alwaysActive={activeLayer?.feature_layer_geometry_type === "line"}
                         label={t("stroke_width")}
                         collapsed={collapseStrokeWidthOptions}
                         setCollapsed={setCollapseStrokeWidthOptions}
@@ -440,9 +366,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                           updateLayerStyle(newStyle);
                         }}
                         layerFields={layerFields}
-                        selectedField={
-                          activeLayer?.properties["stroke_width_field"]
-                        }
+                        selectedField={activeLayer?.properties["stroke_width_field"]}
                       />
                     </>
                   )}
@@ -468,16 +392,11 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         layerId={activeLayer?.layer_id}
                         active={!!activeLayer?.properties["custom_marker"]}
                         collapsed={collapsedMarkerIconOptions}
-                        onStyleChange={async (
-                          newStyle: FeatureLayerProperties,
-                        ) => {
+                        onStyleChange={async (newStyle: FeatureLayerProperties) => {
                           if (!map) return;
                           await updateOrdinalValues("marker", newStyle);
                           updateLayerStyle(newStyle);
-                          addOrUpdateMarkerImages(
-                            newStyle as FeatureLayerPointProperties,
-                            map,
-                          );
+                          addOrUpdateMarkerImages(newStyle as FeatureLayerPointProperties, map);
                         }}
                         layerFields={layerFields}
                         selectedField={activeLayer?.properties["marker_field"]}
@@ -505,20 +424,13 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                             layerStyle={activeLayer?.properties}
                             active={markerExists}
                             collapsed={collapseRadiusOptions}
-                            onStyleChange={(
-                              newStyle: FeatureLayerProperties,
-                            ) => {
+                            onStyleChange={(newStyle: FeatureLayerProperties) => {
                               if (!map) return;
                               updateLayerStyle(newStyle);
-                              addOrUpdateMarkerImages(
-                                newStyle as FeatureLayerPointProperties,
-                                map,
-                              );
+                              addOrUpdateMarkerImages(newStyle as FeatureLayerPointProperties, map);
                             }}
                             layerFields={layerFields}
-                            selectedField={
-                              activeLayer?.properties["marker_size_field"]
-                            }
+                            selectedField={activeLayer?.properties["marker_size_field"]}
                           />
                         </>
                       )}
@@ -539,15 +451,11 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                             layerStyle={activeLayer?.properties}
                             active={true}
                             collapsed={collapseRadiusOptions}
-                            onStyleChange={(
-                              newStyle: FeatureLayerProperties,
-                            ) => {
+                            onStyleChange={(newStyle: FeatureLayerProperties) => {
                               updateLayerStyle(newStyle);
                             }}
                             layerFields={layerFields}
-                            selectedField={
-                              activeLayer?.properties["radius_field"]
-                            }
+                            selectedField={activeLayer?.properties["radius_field"]}
                           />
                         </>
                       )}

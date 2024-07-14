@@ -1,29 +1,35 @@
-import Container from "@/components/map/panels/Container";
-
-import { useState } from "react";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { DragIndicator } from "@mui/icons-material";
 import {
-  useTheme,
+  Badge,
   Box,
+  Button,
   Card,
+  ClickAwayListener,
   Grid,
   IconButton,
-  Typography,
-  Stack,
-  Tooltip,
-  TextField,
-  Button,
+  ListItemIcon,
   Menu,
   MenuItem,
-  ListItemIcon,
   MenuList,
-  ClickAwayListener,
-  Badge,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+  useTheme,
 } from "@mui/material";
+import { useState } from "react";
+import React from "react";
+import { useMap } from "react-map-gl";
+import { toast } from "react-toastify";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
 
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
-import MoreMenu from "@/components/common/PopperMenu";
 import {
   addProjectLayers,
   deleteProjectLayer,
@@ -32,39 +38,29 @@ import {
   useProject,
   useProjectLayers,
 } from "@/lib/api/projects";
-import React from "react";
-import { DragIndicator } from "@mui/icons-material";
-import type { ProjectLayer } from "@/lib/validations/project";
-import { DndContext, closestCenter } from "@dnd-kit/core";
-import {
-  SortableContext,
-  arrayMove,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import {
-  useLayerSettingsMoreMenu,
-  useSortedLayers,
-} from "@/hooks/map/LayerPanelHooks";
-import { toast } from "react-toastify";
-import { ContentActions, MapLayerActions } from "@/types/common";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 import { setActiveLayer } from "@/lib/store/layer/slice";
-import { useMap } from "react-map-gl";
-import { zoomToLayer } from "@/lib/utils/map/navigate";
-import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 import { setActiveLeftPanel, setActiveRightPanel } from "@/lib/store/map/slice";
+import { zoomToLayer } from "@/lib/utils/map/navigate";
+import type { ProjectLayer } from "@/lib/validations/project";
+
+import { ContentActions, MapLayerActions } from "@/types/common";
 import { MapSidebarItemID } from "@/types/map/common";
-import DatasetUploadModal from "@/components/modals/DatasetUpload";
-import DatasetExplorerModal from "@/components/modals/DatasetExplorer";
-import { DragHandle } from "@/components/common/DragHandle";
-import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import type { PanelProps } from "@/types/map/sidebar";
-import EmptySection from "@/components/common/EmptySection";
+
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
+import { useLayerSettingsMoreMenu, useSortedLayers } from "@/hooks/map/LayerPanelHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import { DragHandle } from "@/components/common/DragHandle";
+import EmptySection from "@/components/common/EmptySection";
+import { OverflowTypograpy } from "@/components/common/OverflowTypography";
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import MoreMenu from "@/components/common/PopperMenu";
+import Container from "@/components/map/panels/Container";
 import CatalogExplorerModal from "@/components/modals/CatalogExplorer";
+import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
+import DatasetExplorerModal from "@/components/modals/DatasetExplorer";
+import DatasetUploadModal from "@/components/modals/DatasetUpload";
 import MapLayerChartModal from "@/components/modals/MapLayerChart";
 
 type SortableLayerTileProps = {
@@ -96,8 +92,7 @@ export function getLayerIcon(layer: ProjectLayer) {
 
 export function SortableLayerTile(props: SortableLayerTileProps) {
   const theme = useTheme();
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -112,9 +107,7 @@ export function SortableLayerTile(props: SortableLayerTileProps) {
         my: 2,
         pr: 0,
         pl: 1,
-        borderLeft: props.active
-          ? `5px ${theme.palette.primary.main} solid`
-          : "5px transparent solid",
+        borderLeft: props.active ? `5px ${theme.palette.primary.main} solid` : "5px transparent solid",
         py: 2,
         ":hover": {
           boxShadow: 6,
@@ -128,8 +121,7 @@ export function SortableLayerTile(props: SortableLayerTileProps) {
       }}
       key={props.id}
       ref={setNodeRef}
-      style={style}
-    >
+      style={style}>
       <Grid container alignItems="center" spacing={2}>
         <Grid item xs={1}>
           <DragHandle {...attributes} listeners={listeners}>
@@ -165,8 +157,7 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
     setAnchorEl(null);
   };
 
-  const [addLayerSourceOpen, setAddSourceOpen] =
-    useState<AddLayerSourceType | null>(null);
+  const [addLayerSourceOpen, setAddSourceOpen] = useState<AddLayerSourceType | null>(null);
   const openAddLayerSourceDialog = (addType: AddLayerSourceType) => {
     handleClose();
     setAddSourceOpen(addType);
@@ -207,10 +198,7 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
           onClick={handleClick}
           fullWidth
           size="small"
-          startIcon={
-            <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />
-          }
-        >
+          startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {t("common:add_layer")}
           </Typography>
@@ -229,21 +217,14 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
             "aria-labelledby": "basic-button",
             sx: { width: anchorEl && anchorEl.offsetWidth - 10, p: 0 },
           }}
-          onClose={handleClose}
-        >
+          onClose={handleClose}>
           <Box>
             <ClickAwayListener onClickAway={handleClose}>
               <MenuList>
                 {menuItems.map((item, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={() => openAddLayerSourceDialog(item.sourceType)}
-                  >
+                  <MenuItem key={index} onClick={() => openAddLayerSourceDialog(item.sourceType)}>
                     <ListItemIcon>
-                      <Icon
-                        iconName={item.iconName}
-                        style={{ fontSize: "15px" }}
-                      />
+                      <Icon iconName={item.iconName} style={{ fontSize: "15px" }} />
                     </ListItemIcon>
                     <Typography variant="body2">{item.label}</Typography>
                   </MenuItem>
@@ -254,25 +235,13 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
         </Menu>
       </Stack>
       {addLayerSourceOpen === AddLayerSourceType.DatasourceExplorer && (
-        <DatasetExplorerModal
-          open={true}
-          onClose={closeAddLayerSourceModal}
-          projectId={projectId}
-        />
+        <DatasetExplorerModal open={true} onClose={closeAddLayerSourceModal} projectId={projectId} />
       )}
       {addLayerSourceOpen === AddLayerSourceType.DatasourceUpload && (
-        <DatasetUploadModal
-          open={true}
-          onClose={closeAddLayerSourceModal}
-          projectId={projectId}
-        />
+        <DatasetUploadModal open={true} onClose={closeAddLayerSourceModal} projectId={projectId} />
       )}
       {addLayerSourceOpen === AddLayerSourceType.CatalogExplorer && (
-        <CatalogExplorerModal
-          open={true}
-          onClose={closeAddLayerSourceModal}
-          projectId={projectId}
-        />
+        <CatalogExplorerModal open={true} onClose={closeAddLayerSourceModal} projectId={projectId} />
       )}
     </>
   );
@@ -283,16 +252,11 @@ const LayerPanel = ({ projectId }: PanelProps) => {
   const { map } = useMap();
   const theme = useTheme();
   const dispatch = useAppDispatch();
-  const [previousRightPanel, setPreviousRightPanel] = useState<
-    MapSidebarItemID | undefined
-  >(undefined);
-  const { layers: projectLayers, mutate: mutateProjectLayers } =
-    useProjectLayers(projectId);
+  const [previousRightPanel, setPreviousRightPanel] = useState<MapSidebarItemID | undefined>(undefined);
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useProjectLayers(projectId);
 
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
-  const activeRightPanel = useAppSelector(
-    (state) => state.map.activeRightPanel,
-  );
+  const activeRightPanel = useAppSelector((state) => state.map.activeRightPanel);
   const { project, mutate: mutateProject } = useProject(projectId);
   const sortedLayers = useSortedLayers(projectId);
   useJobStatus(() => {
@@ -300,9 +264,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
     mutateProject();
   });
 
-  const [renameLayer, setRenameLayer] = useState<ProjectLayer | undefined>(
-    undefined,
-  );
+  const [renameLayer, setRenameLayer] = useState<ProjectLayer | undefined>(undefined);
   const [newLayerName, setNewLayerName] = useState<string>("");
   const {
     getLayerMoreMenuOptions,
@@ -387,11 +349,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       const index = udpatedProjectLayers.findIndex((l) => l.id === layer.id);
       udpatedProjectLayers[index].name = newLayerName;
       mutateProjectLayers(udpatedProjectLayers, false);
-      await updateProjectLayer(
-        projectId,
-        layer.id,
-        udpatedProjectLayers[index],
-      );
+      await updateProjectLayer(projectId, layer.id, udpatedProjectLayers[index]);
     } catch (error) {
       toast.error(t("error_renaming_layer"));
     } finally {
@@ -413,8 +371,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
       direction="left"
       body={
         <>
-          {(moreMenuState?.id === ContentActions.DOWNLOAD ||
-            moreMenuState?.id === ContentActions.TABLE) &&
+          {(moreMenuState?.id === ContentActions.DOWNLOAD || moreMenuState?.id === ContentActions.TABLE) &&
             activeLayerMoreMenu && (
               <>
                 <ContentDialogWrapper
@@ -426,27 +383,24 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                 />
               </>
             )}
-          {moreMenuState?.id === MapLayerActions.CHART &&
-            activeLayerMoreMenu && (
-              <MapLayerChartModal
-                open={true}
-                onClose={closeMoreMenu}
-                layer={activeLayerMoreMenu}
-                projectId={projectId}
-              />
-            )}
+          {moreMenuState?.id === MapLayerActions.CHART && activeLayerMoreMenu && (
+            <MapLayerChartModal
+              open={true}
+              onClose={closeMoreMenu}
+              layer={activeLayerMoreMenu}
+              projectId={projectId}
+            />
+          )}
           <Box>
             {sortedLayers && sortedLayers?.length > 0 && (
               <DndContext
                 collisionDetection={closestCenter}
                 modifiers={[restrictToVerticalAxis]}
                 onDragEnd={handleDragEnd}
-                autoScroll={false}
-              >
+                autoScroll={false}>
                 <SortableContext
                   items={sortedLayers.map((layer) => layer.id)}
-                  strategy={verticalListSortingStrategy}
-                >
+                  strategy={verticalListSortingStrategy}>
                   {sortedLayers?.map((layer) => (
                     <SortableLayerTile
                       key={layer.id}
@@ -459,16 +413,12 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                           MapSidebarItemID.STYLE,
                         ];
                         const isActiveRightPanelInIds =
-                          activeRightPanel &&
-                          rightPanelIds.includes(activeRightPanel);
+                          activeRightPanel && rightPanelIds.includes(activeRightPanel);
 
                         dispatch(setActiveLayer(layer.id));
                         setPreviousRightPanel(undefined);
 
-                        if (
-                          layer.id === activeLayerId &&
-                          isActiveRightPanelInIds
-                        ) {
+                        if (layer.id === activeLayerId && isActiveRightPanelInIds) {
                           setPreviousRightPanel(activeRightPanel);
                           dispatch(setActiveRightPanel(undefined));
                         }
@@ -486,16 +436,8 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                       layer={layer}
                       body={
                         <>
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                            alignItems="center"
-                          >
-                            <Typography
-                              variant="caption"
-                              fontWeight="bold"
-                              noWrap
-                            >
+                          <Stack direction="row" spacing={2} alignItems="center">
+                            <Typography variant="caption" fontWeight="bold" noWrap>
                               {t(`common:${layer.type}`)}
                             </Typography>
                           </Stack>
@@ -516,10 +458,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                                 setNewLayerName(e.target.value);
                               }}
                               onBlur={async () => {
-                                if (
-                                  newLayerName !== "" &&
-                                  layer.name !== newLayerName
-                                ) {
+                                if (newLayerName !== "" && layer.name !== newLayerName) {
                                   await renameLayerName(layer);
                                 } else {
                                   setNewLayerName("");
@@ -534,30 +473,20 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               tooltipProps={{
                                 placement: "bottom",
                                 arrow: true,
-                              }}
-                            >
+                              }}>
                               {layer.name}
                             </OverflowTypograpy>
                           )}
                         </>
                       }
                       actions={
-                        <Stack
-                          direction="row"
-                          justifyContent="flex-end"
-                          sx={{ pr: 2 }}
-                        >
+                        <Stack direction="row" justifyContent="flex-end" sx={{ pr: 2 }}>
                           {layer.type === "table" ? null : (
                             <Tooltip
                               key={layer.id}
-                              title={
-                                layer.properties.visibility
-                                  ? t("show_layer")
-                                  : t("hide_layer")
-                              }
+                              title={layer.properties.visibility ? t("show_layer") : t("hide_layer")}
                               arrow
-                              placement="top"
-                            >
+                              placement="top">
                               <IconButton
                                 size="small"
                                 onClick={(event) => {
@@ -565,21 +494,14 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                                   toggleLayerVisibility(layer);
                                 }}
                                 sx={{
-                                  transition: theme.transitions.create(
-                                    ["opacity"],
-                                    {
-                                      duration:
-                                        theme.transitions.duration.standard,
-                                    },
-                                  ),
+                                  transition: theme.transitions.create(["opacity"], {
+                                    duration: theme.transitions.duration.standard,
+                                  }),
                                   opacity: !layer.properties.visibility ? 1 : 0,
-                                }}
-                              >
+                                }}>
                                 <Icon
                                   iconName={
-                                    !layer.properties.visibility
-                                      ? ICON_NAME.EYE_SLASH
-                                      : ICON_NAME.EYE
+                                    !layer.properties.visibility ? ICON_NAME.EYE_SLASH : ICON_NAME.EYE
                                   }
                                   style={{
                                     fontSize: 15,
@@ -588,110 +510,78 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               </IconButton>
                             </Tooltip>
                           )}
-                          {layer.query?.cql &&
-                            layer.query?.cql["args"]?.length && (
-                              <Tooltip
-                                key={layer.id + "_filter"}
-                                title={
-                                  activeLayerId === layer.id &&
-                                  activeRightPanel === MapSidebarItemID.FILTER
-                                    ? t("hide_applied_filters")
-                                    : t("show_applied_filters")
+                          {layer.query?.cql && layer.query?.cql["args"]?.length && (
+                            <Tooltip
+                              key={layer.id + "_filter"}
+                              title={
+                                activeLayerId === layer.id && activeRightPanel === MapSidebarItemID.FILTER
+                                  ? t("hide_applied_filters")
+                                  : t("show_applied_filters")
+                              }
+                              placement="top"
+                              arrow>
+                              <IconButton
+                                size="small"
+                                color={
+                                  activeLayerId === layer.id && activeRightPanel === MapSidebarItemID.FILTER
+                                    ? "primary"
+                                    : "default"
                                 }
-                                placement="top"
-                                arrow
-                              >
-                                <IconButton
-                                  size="small"
-                                  color={
+                                sx={{ pr: 2 }}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  if (
                                     activeLayerId === layer.id &&
                                     activeRightPanel === MapSidebarItemID.FILTER
-                                      ? "primary"
-                                      : "default"
+                                  ) {
+                                    dispatch(setActiveRightPanel(undefined));
+                                  } else {
+                                    if (layer.id !== activeLayerId) {
+                                      dispatch(setActiveLayer(layer.id));
+                                    }
+                                    dispatch(setActiveRightPanel(MapSidebarItemID.FILTER));
                                   }
-                                  sx={{ pr: 2 }}
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    if (
-                                      activeLayerId === layer.id &&
-                                      activeRightPanel ===
-                                        MapSidebarItemID.FILTER
-                                    ) {
-                                      dispatch(setActiveRightPanel(undefined));
-                                    } else {
-                                      if (layer.id !== activeLayerId) {
-                                        dispatch(setActiveLayer(layer.id));
-                                      }
-                                      dispatch(
-                                        setActiveRightPanel(
-                                          MapSidebarItemID.FILTER,
-                                        ),
-                                      );
-                                    }
-                                  }}
-                                >
-                                  <Badge
-                                    badgeContent={
-                                      layer.query?.cql?.["args"]?.length
-                                    }
-                                    color="primary"
-                                    sx={{
-                                      "& .MuiBadge-badge": {
-                                        fontSize: 9,
-                                        height: 15,
-                                        minWidth: 15,
-                                      },
-                                    }}
-                                  >
-                                    <Icon
-                                      htmlColor="inherit"
-                                      iconName={ICON_NAME.FILTER}
-                                      style={{
-                                        fontSize: 15,
-                                      }}
-                                    />
-                                  </Badge>
-                                </IconButton>
-                              </Tooltip>
-                            )}
-                          <MoreMenu
-                            menuItems={getLayerMoreMenuOptions(
-                              layer.type,
-                              !!layer.charts,
-                              layer.in_catalog,
-                            )}
-                            menuButton={
-                              <Tooltip
-                                title={t("more_options")}
-                                arrow
-                                placement="top"
-                              >
-                                <IconButton size="small">
+                                }}>
+                                <Badge
+                                  badgeContent={layer.query?.cql?.["args"]?.length}
+                                  color="primary"
+                                  sx={{
+                                    "& .MuiBadge-badge": {
+                                      fontSize: 9,
+                                      height: 15,
+                                      minWidth: 15,
+                                    },
+                                  }}>
                                   <Icon
-                                    iconName={ICON_NAME.MORE_VERT}
-                                    style={{ fontSize: 15 }}
+                                    htmlColor="inherit"
+                                    iconName={ICON_NAME.FILTER}
+                                    style={{
+                                      fontSize: 15,
+                                    }}
                                   />
+                                </Badge>
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          <MoreMenu
+                            menuItems={getLayerMoreMenuOptions(layer.type, !!layer.charts, layer.in_catalog)}
+                            menuButton={
+                              <Tooltip title={t("more_options")} arrow placement="top">
+                                <IconButton size="small">
+                                  <Icon iconName={ICON_NAME.MORE_VERT} style={{ fontSize: 15 }} />
                                 </IconButton>
                               </Tooltip>
                             }
                             onSelect={async (menuItem: PopperMenuItem) => {
                               if (menuItem.id === MapLayerActions.PROPERTIES) {
                                 openPropertiesPanel(layer);
-                              } else if (
-                                menuItem.id === ContentActions.DELETE
-                              ) {
+                              } else if (menuItem.id === ContentActions.DELETE) {
                                 await deleteLayer(layer);
-                              } else if (
-                                menuItem.id === MapLayerActions.DUPLICATE
-                              ) {
+                              } else if (menuItem.id === MapLayerActions.DUPLICATE) {
                                 await duplicateLayer(layer);
-                              } else if (
-                                menuItem.id === MapLayerActions.RENAME
-                              ) {
+                              } else if (menuItem.id === MapLayerActions.RENAME) {
                                 setRenameLayer(layer);
-                              } else if (
-                                menuItem.id === MapLayerActions.ZOOM_TO
-                              ) {
+                              } else if (menuItem.id === MapLayerActions.ZOOM_TO) {
                                 if (map) {
                                   zoomToLayer(map, layer.extent);
                                 }
@@ -709,10 +599,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
             )}
           </Box>
           {sortedLayers?.length === 0 && (
-            <EmptySection
-              label={t("no_layers_added")}
-              icon={ICON_NAME.LAYERS}
-            />
+            <EmptySection label={t("no_layers_added")} icon={ICON_NAME.LAYERS} />
           )}
         </>
       }

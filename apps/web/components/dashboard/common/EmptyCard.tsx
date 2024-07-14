@@ -1,6 +1,7 @@
 import { Box, Card, CardMedia, Tooltip, useTheme } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 export interface EmptyCardProps {
   tooltip: string;
@@ -26,8 +27,7 @@ const EmptyCardActionButton = (props: EmptyCardActionButtonProps) => {
         right: 0,
         bottom: 0,
         backgroundColor: "transparent",
-      }}
-    >
+      }}>
       <Box
         sx={{
           display: "flex",
@@ -42,20 +42,10 @@ const EmptyCardActionButton = (props: EmptyCardActionButtonProps) => {
           "&:hover": {
             color: theme.palette.primary.main,
           },
-        }}
-      >
-        <Tooltip
-          open={tooltipOpen}
-          disableHoverListener
-          title={props.tooltip}
-          placement="top"
-        >
+        }}>
+        <Tooltip open={tooltipOpen} disableHoverListener title={props.tooltip} placement="top">
           <div>
-            <Icon
-              iconName={ICON_NAME.CIRCLE_PLUS}
-              fontSize="large"
-              htmlColor="inherit"
-            />
+            <Icon iconName={ICON_NAME.CIRCLE_PLUS} fontSize="large" htmlColor="inherit" />
           </div>
         </Tooltip>
       </Box>
@@ -76,13 +66,11 @@ export default function EmptyCard(props: EmptyCardProps) {
           cursor: "pointer",
           boxShadow: 10,
         },
-      }}
-    >
+      }}>
       <Box
         sx={{
           overflow: "hidden",
-        }}
-      >
+        }}>
         <CardMedia
           component="img"
           sx={{

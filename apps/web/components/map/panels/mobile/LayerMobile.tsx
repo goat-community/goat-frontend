@@ -1,5 +1,5 @@
+import { Autocomplete, Checkbox, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { Checkbox, TextField, Autocomplete, Typography } from "@mui/material";
 
 const LayerMobile = () => {
   interface layerObject {
@@ -39,9 +39,7 @@ const LayerMobile = () => {
 
   const getSelectedOptions = () => {
     const selectedOptions = sampleLayers.filter(
-      (option) =>
-        selectedOption &&
-        selectedOption.some((vendor) => vendor.label === option.label),
+      (option) => selectedOption && selectedOption.some((vendor) => vendor.label === option.label)
     );
 
     return selectedOptions;
@@ -77,12 +75,7 @@ const LayerMobile = () => {
         fullWidth
         size="small"
         renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Checkboxes"
-            value={[]}
-            placeholder="Favorites"
-          />
+          <TextField {...params} label="Checkboxes" value={[]} placeholder="Favorites" />
         )}
         value={getSelectedOptions()}
         renderTags={() => null}

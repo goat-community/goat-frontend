@@ -1,17 +1,13 @@
-import {
-  Box,
-  CardMedia,
-  Grid,
-  Paper,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, CardMedia, Grid, Paper, Stack, Typography, useTheme } from "@mui/material";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
 import type { Layer } from "@/lib/validations/layer";
 import { datasetMetadataAggregated } from "@/lib/validations/layer";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useGetMetadataValueTranslation } from "@/hooks/map/DatasetHooks";
-import { useTranslation } from "@/i18n/client";
 
 export const METADATA_HEADER_ICONS = {
   type: ICON_NAME.LAYERS,
@@ -48,19 +44,17 @@ const CatalogDatasetCard = ({
           },
         },
         ...(selected && {
-          backgroundColor: "rgba(43, 179, 129, 0.2)"
+          backgroundColor: "rgba(43, 179, 129, 0.2)",
         }),
       }}
-      elevation={3}
-    >
+      elevation={3}>
       <Grid container justifyContent="flex-start" spacing={2}>
         <Grid item xs={12} sm={6} md={4} lg={3} sx={{ pl: 0 }}>
           <Box
             sx={{
               overflow: "hidden",
               height: "100%",
-            }}
-          >
+            }}>
             <CardMedia
               component="img"
               sx={{
@@ -89,51 +83,44 @@ const CatalogDatasetCard = ({
                   display: "-webkit-box",
                   WebkitBoxOrient: "vertical",
                   WebkitLineClamp: 3,
-                }}
-              >
+                }}>
                 <Typography variant="body2" color="text.secondary">
                   {dataset.description || t("common:no_description")}
                 </Typography>
               </Box>
             </Stack>
             <Grid container justifyContent="flex-start" sx={{ pl: 0 }}>
-              {Object.keys(datasetMetadataAggregated.shape).map(
-                (key, index) => {
-                  return (
-                    <Grid
-                      item
-                      {...(index <
-                        Object.keys(datasetMetadataAggregated.shape).length -
-                          1 && {
-                        xs: 12,
-                        sm: 6,
-                        md: 4,
-                        lg: 3,
-                      })}
-                      key={key}
-                      sx={{ pl: 0 }}
-                    >
-                      <Stack
-                        direction="row"
-                        width="100%"
-                        alignItems="center"
-                        justifyContent="start"
-                        sx={{ py: 2, pr: 2 }}
-                        spacing={2}
-                      >
-                        <Icon
-                          iconName={METADATA_HEADER_ICONS[key]}
-                          style={{ fontSize: 14 }}
-                          htmlColor={theme.palette.text.secondary}
-                        />
-                        <Typography variant="body2" fontWeight="bold">
-                          {getMetadataValueTranslation(key, dataset[key])}
-                        </Typography>
-                      </Stack>
-                    </Grid>
-                  );
-                },
-              )}
+              {Object.keys(datasetMetadataAggregated.shape).map((key, index) => {
+                return (
+                  <Grid
+                    item
+                    {...(index < Object.keys(datasetMetadataAggregated.shape).length - 1 && {
+                      xs: 12,
+                      sm: 6,
+                      md: 4,
+                      lg: 3,
+                    })}
+                    key={key}
+                    sx={{ pl: 0 }}>
+                    <Stack
+                      direction="row"
+                      width="100%"
+                      alignItems="center"
+                      justifyContent="start"
+                      sx={{ py: 2, pr: 2 }}
+                      spacing={2}>
+                      <Icon
+                        iconName={METADATA_HEADER_ICONS[key]}
+                        style={{ fontSize: 14 }}
+                        htmlColor={theme.palette.text.secondary}
+                      />
+                      <Typography variant="body2" fontWeight="bold">
+                        {getMetadataValueTranslation(key, dataset[key])}
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                );
+              })}
             </Grid>
           </Stack>
         </Grid>

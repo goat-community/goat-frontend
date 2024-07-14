@@ -1,9 +1,10 @@
-import { useTranslation } from "@/i18n/client";
-import { dataCategory, dataLicense } from "@/lib/validations/common";
-import { useMemo } from "react";
 import { countries } from "country-flag-icons";
 import getUnicodeFlagIcon from "country-flag-icons/unicode";
+import { useMemo } from "react";
 
+import { useTranslation } from "@/i18n/client";
+
+import { dataCategory, dataLicense } from "@/lib/validations/common";
 
 export const useContentMetadataHooks = () => {
   const { t } = useTranslation(["common", "countries"]);
@@ -40,6 +41,6 @@ export const useContentMetadataHooks = () => {
     t,
     dataCategoryOptions,
     geographicalCodeOptions,
-    licenseOptions
+    licenseOptions,
   };
 };

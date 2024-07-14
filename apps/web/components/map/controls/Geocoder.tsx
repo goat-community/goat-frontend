@@ -1,26 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import parse from "@/lib/utils/parse";
-import { useEffect, useMemo, useState } from "react";
-import { useMap } from "react-map-gl";
 import {
+  Autocomplete,
   Divider,
   Fab,
   IconButton,
+  InputBase,
   ListItemButton,
   ListItemText,
+  Paper,
   Popper,
   Tooltip,
-  debounce,
-  Paper,
-  Autocomplete,
-  InputBase,
   Typography,
+  debounce,
   useTheme,
 } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import search from "@/lib/services/geocoder";
 import type { FeatureCollection } from "geojson";
+import { useEffect, useMemo, useState } from "react";
+import { useMap } from "react-map-gl";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import search from "@/lib/services/geocoder";
 import { match } from "@/lib/utils/match";
+import parse from "@/lib/utils/parse";
 
 import type { Result } from "@/types/map/controllers";
 
@@ -43,9 +45,7 @@ type Props = {
 const COORDINATE_REGEX_STRING =
   "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)";
 const COORDINATE_REGEX = RegExp(COORDINATE_REGEX_STRING);
-export const testForCoordinates = (
-  query: string,
-): [true, number, number] | [false, string] => {
+export const testForCoordinates = (query: string): [true, number, number] | [false, string] => {
   const isValid = COORDINATE_REGEX.test(query.trim());
 
   if (!isValid) {
@@ -70,7 +70,7 @@ export default function Geocoder({
   autocomplete,
   language,
   placeholder,
-  tooltip
+  tooltip,
 }: Props) {
   const [value, setValue] = useState<Result | null>(null);
   const [options, setOptions] = useState<readonly Result[]>([]);
@@ -82,37 +82,31 @@ export default function Geocoder({
 
   const fetch = useMemo(
     () =>
-      debounce(
-        (
-          request: { value: string },
-          onresult: (_error: Error, fc: FeatureCollection) => void,
-        ) => {
-          const mapCenter = map?.getCenter();
-          let _proximity = proximity;
-          if (mapCenter && !proximity) {
-            _proximity = {
-              longitude: mapCenter.lng,
-              latitude: mapCenter.lat,
-            };
-          }
-          search(
-            endpoint,
-            source,
-            accessToken,
-            request.value,
-            onresult,
-            _proximity,
-            country,
-            bbox,
-            types,
-            limit,
-            autocomplete,
-            language,
-          );
-        },
-        400,
-      ),
-    [accessToken, autocomplete, bbox, country, endpoint, language, limit, map, source, types],
+      debounce((request: { value: string }, onresult: (_error: Error, fc: FeatureCollection) => void) => {
+        const mapCenter = map?.getCenter();
+        let _proximity = proximity;
+        if (mapCenter && !proximity) {
+          _proximity = {
+            longitude: mapCenter.lng,
+            latitude: mapCenter.lat,
+          };
+        }
+        search(
+          endpoint,
+          source,
+          accessToken,
+          request.value,
+          onresult,
+          _proximity,
+          country,
+          bbox,
+          types,
+          limit,
+          autocomplete,
+          language
+        );
+      }, 400),
+    [accessToken, autocomplete, bbox, country, endpoint, language, limit, map, source, types]
   );
 
   useEffect(() => {
@@ -159,7 +153,7 @@ export default function Geocoder({
                 feature: feature,
                 label: feature.place_name,
               }))
-              .filter((feature) => feature.label),
+              .filter((feature) => feature.label)
           );
         }
       }
@@ -187,13 +181,8 @@ export default function Geocoder({
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
-                }}
-              >
-                <Icon
-                  iconName={ICON_NAME.SEARCH}
-                  htmlColor="inherit"
-                  fontSize="small"
-                />
+                }}>
+                <Icon iconName={ICON_NAME.SEARCH} htmlColor="inherit" fontSize="small" />
               </Fab>
             </Tooltip>
           )}
@@ -263,22 +252,16 @@ export default function Geocoder({
                       [theme.breakpoints.down("sm")]: {
                         width: 270,
                       },
-                    }}
-                  >
+                    }}>
                     <Icon
                       iconName={ICON_NAME.SEARCH}
                       fontSize="small"
                       sx={{
-                        color: focused
-                          ? theme.palette.primary.main
-                          : theme.palette.text.secondary,
+                        color: focused ? theme.palette.primary.main : theme.palette.text.secondary,
                         margin: theme.spacing(2),
                       }}
                     />
-                    <Divider
-                      sx={{ height: 28, margin: theme.spacing(0.5) }}
-                      orientation="vertical"
-                    />
+                    <Divider sx={{ height: 28, margin: theme.spacing(0.5) }} orientation="vertical" />
                     <InputBase
                       {...params.InputProps}
                       {...rest}
@@ -287,9 +270,7 @@ export default function Geocoder({
                         flex: 1,
                         padding: 0,
                       }}
-                      placeholder={
-                        placeholder || "Enter an address or coordinates"
-                      }
+                      placeholder={placeholder || "Enter an address or coordinates"}
                       onBlur={() => {
                         setFocused(false);
                       }}
@@ -308,15 +289,12 @@ export default function Geocoder({
                           setInputValue("");
                           setValue(null);
                           setOptions([]);
-                        }}
-                      >
+                        }}>
                         <Icon
                           iconName={ICON_NAME.CLOSE}
                           fontSize="small"
                           sx={{
-                            color: focused
-                              ? theme.palette.primary.main
-                              : theme.palette.text.secondary,
+                            color: focused ? theme.palette.primary.main : theme.palette.text.secondary,
                             margin: theme.spacing(2),
                           }}
                         />
@@ -330,15 +308,12 @@ export default function Geocoder({
                         }}
                         onClick={() => {
                           setCollapsed(true);
-                        }}
-                      >
+                        }}>
                         <Icon
                           iconName={ICON_NAME.CHEVRON_LEFT}
                           fontSize="small"
                           sx={{
-                            color: focused
-                              ? theme.palette.primary.main
-                              : theme.palette.text.secondary,
+                            color: focused ? theme.palette.primary.main : theme.palette.text.secondary,
                             margin: theme.spacing(2),
                           }}
                         />
@@ -359,8 +334,7 @@ export default function Geocoder({
                         "&:hover": {
                           backgroundColor: theme.palette.background.default,
                         },
-                      }}
-                    >
+                      }}>
                       <ListItemText
                         primary={
                           <Typography
@@ -370,25 +344,18 @@ export default function Geocoder({
                               overflow: "hidden",
                               width: "270px",
                             }}
-                            variant="body2"
-                          >
-                            {parts.map(
-                              (
-                                part: { highlight: boolean; text: string },
-                                index: number,
-                              ) => (
-                                <Typography
-                                  key={index}
-                                  component="span"
-                                  variant="inherit"
-                                  sx={{
-                                    fontWeight: part.highlight ? 600 : 300,
-                                  }}
-                                >
-                                  {part.text}
-                                </Typography>
-                              ),
-                            )}
+                            variant="body2">
+                            {parts.map((part: { highlight: boolean; text: string }, index: number) => (
+                              <Typography
+                                key={index}
+                                component="span"
+                                variant="inherit"
+                                sx={{
+                                  fontWeight: part.highlight ? 600 : 300,
+                                }}>
+                                {part.text}
+                              </Typography>
+                            ))}
                           </Typography>
                         }
                       />

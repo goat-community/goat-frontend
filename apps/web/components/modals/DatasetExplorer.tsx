@@ -1,15 +1,3 @@
-import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
-import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
-import TileGrid from "@/components/dashboard/common/TileGrid";
-import { useTranslation } from "@/i18n/client";
-import { useLayers } from "@/lib/api/layers";
-import {
-  addProjectLayers,
-  useProject,
-  useProjectLayers,
-} from "@/lib/api/projects";
-import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
-import type { Project } from "@/lib/validations/project";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -26,7 +14,18 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useLayers } from "@/lib/api/layers";
+import { addProjectLayers, useProject, useProjectLayers } from "@/lib/api/projects";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
+import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
+import type { Project } from "@/lib/validations/project";
+
+import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
+import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
+import TileGrid from "@/components/dashboard/common/TileGrid";
 
 interface DatasetExplorerProps {
   open: boolean;
@@ -34,11 +33,7 @@ interface DatasetExplorerProps {
   projectId: string;
 }
 
-const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
-  open,
-  onClose,
-  projectId,
-}) => {
+const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({ open, onClose, projectId }) => {
   const { t } = useTranslation("common");
   const [queryParams, setQueryParams] = useState<PaginatedQueryParams>({
     order: "descendent",
@@ -118,28 +113,21 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
                     type="layer"
                   />
 
-                  {!isDatasetLoading &&
-                    datasets &&
-                    datasets?.items.length > 0 && (
-                      <Stack
-                        direction="row"
-                        justifyContent="center"
-                        alignItems="center"
-                        sx={{ p: 4 }}
-                      >
-                        <Pagination
-                          count={datasets.pages || 1}
-                          size="large"
-                          page={queryParams.page || 1}
-                          onChange={(_e, page) => {
-                            setQueryParams({
-                              ...queryParams,
-                              page,
-                            });
-                          }}
-                        />
-                      </Stack>
-                    )}
+                  {!isDatasetLoading && datasets && datasets?.items.length > 0 && (
+                    <Stack direction="row" justifyContent="center" alignItems="center" sx={{ p: 4 }}>
+                      <Pagination
+                        count={datasets.pages || 1}
+                        size="large"
+                        page={queryParams.page || 1}
+                        onChange={(_e, page) => {
+                          setQueryParams({
+                            ...queryParams,
+                            page,
+                          });
+                        }}
+                      />
+                    </Stack>
+                  )}
                 </Stack>
               </Grid>
             </Grid>
@@ -151,8 +139,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
             pt: 6,
             pb: 2,
             justifyContent: "flex-end",
-          }}
-        >
+          }}>
           <Stack direction="row" spacing={2}>
             <Button onClick={handleOnClose} variant="text">
               <Typography variant="body2" fontWeight="bold">
@@ -164,8 +151,7 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({
               variant="contained"
               color="primary"
               onClick={handleOnAdd}
-              disabled={!selectedDataset || isDatasetLoading}
-            >
+              disabled={!selectedDataset || isDatasetLoading}>
               {t("add_layer")}
             </LoadingButton>
           </Stack>

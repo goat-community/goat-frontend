@@ -1,24 +1,30 @@
+import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { useMemo, useState } from "react";
+import { Trans } from "react-i18next";
+import { toast } from "react-toastify";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { deleteProjectScenario, updateProject, useProject, useProjectScenarios } from "@/lib/api/projects";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
+import type { Scenario } from "@/lib/validations/scenario";
+
+import { ScenarioActions } from "@/types/common";
+
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
+
 import EmptySection from "@/components/common/EmptySection";
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
-import Container from "@/components/map/panels/Container";
-import { SortableTile } from "@/components/map/panels/common/SortableTile";
-import ScenarioModal from "@/components/modals/ScenarioModal";
-import { useAppDispatch } from "@/hooks/store/ContextHooks";
-import { useTranslation } from "@/i18n/client";
-import { deleteProjectScenario, useProjectScenarios } from "@/lib/api/projects";
-import { setActiveRightPanel } from "@/lib/store/map/slice";
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
-import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useState } from "react";
-import { ScenarioActions } from "@/types/common";
-import ConfirmModal from "@/components/modals/Confirm";
-import { toast } from "react-toastify";
-import { Trans } from "react-i18next";
-import type { Scenario } from "@/lib/validations/scenario";
+import Container from "@/components/map/panels/Container";
+import { SortableTile } from "@/components/map/panels/common/SortableTile";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 import ScenarioFeaturesEditor from "@/components/map/panels/scenario/ScenarioFeaturesEditor";
+import ConfirmModal from "@/components/modals/Confirm";
+import ScenarioModal from "@/components/modals/ScenarioModal";
 
 const CreateScenarioAction = ({
   projectId,
@@ -39,10 +45,7 @@ const CreateScenarioAction = ({
           onClick={() => setOpen(true)}
           fullWidth
           size="small"
-          startIcon={
-            <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />
-          }
-        >
+          startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {t("common:create_scenario")}
           </Typography>
@@ -66,23 +69,25 @@ const ScenarioPanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation("common");
 
   const { scenarios, mutate, isLoading } = useProjectScenarios(projectId);
-  const [confirmDeleteScenarioDialogOpen, setConfirmDeleteScenarioDialogOpen] =
-    useState(false);
-  const [isEditScenarioMetadataModalOpen, setIsEditScenarioMetadataModalOpen] =
-    useState(false);
+  const [confirmDeleteScenarioDialogOpen, setConfirmDeleteScenarioDialogOpen] = useState(false);
+  const [isEditScenarioMetadataModalOpen, setIsEditScenarioMetadataModalOpen] = useState(false);
 
-  const [selectedScenario, setSelectedScenario] = useState<
-    Scenario | undefined
-  >(undefined);
+  const [selectedScenario, setSelectedScenario] = useState<Scenario | undefined>(undefined);
 
-  const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(
-    undefined,
-  );
+  const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(undefined);
 
-  // TODO: Active Scenario should be handled in the project config object
-  const [activeScenario, setActiveScenario] = useState<Scenario | undefined>(
-    undefined,
-  );
+  const { project, mutate: mutateProject } = useProject(projectId);
+
+  const activeScenario = useMemo(() => {
+    return scenarios?.items?.find((scenario) => scenario.id === project?.active_scenario_id);
+  }, [scenarios, project]);
+
+  const setActiveScenario = async (scenario: Scenario) => {
+    const updatedProject = JSON.parse(JSON.stringify(project));
+    updatedProject.active_scenario_id = project?.active_scenario_id === scenario.id ? null : scenario.id;
+    mutateProject(updatedProject, false);
+    await updateProject(projectId, updatedProject);
+  };
 
   const scenarioOptions: PopperMenuItem[] = [
     {
@@ -189,19 +194,14 @@ const ScenarioPanel = ({ projectId }: { projectId: string }) => {
                         tooltipProps={{
                           placement: "bottom",
                           arrow: true,
-                        }}
-                      >
+                        }}>
                         {scenario.name}
                       </OverflowTypograpy>
                     </>
                   }
                   isSortable={false}
                   actions={
-                    <Stack
-                      direction="row"
-                      justifyContent="flex-end"
-                      sx={{ pr: 2 }}
-                    >
+                    <Stack direction="row" justifyContent="flex-end" sx={{ pr: 2 }}>
                       <MoreMenu
                         disablePortal
                         menuItems={scenarioOptions}
@@ -209,9 +209,7 @@ const ScenarioPanel = ({ projectId }: { projectId: string }) => {
                           if (menuItem.id === ScenarioActions.DELETE) {
                             setSelectedScenario(scenario);
                             setConfirmDeleteScenarioDialogOpen(true);
-                          } else if (
-                            menuItem.id === ScenarioActions.EDIT_METADATA
-                          ) {
+                          } else if (menuItem.id === ScenarioActions.EDIT_METADATA) {
                             setSelectedScenario(scenario);
                             setIsEditScenarioMetadataModalOpen(true);
                           } else if (menuItem.id === ScenarioActions.EDIT) {
@@ -220,16 +218,9 @@ const ScenarioPanel = ({ projectId }: { projectId: string }) => {
                           }
                         }}
                         menuButton={
-                          <Tooltip
-                            title={t("more_options")}
-                            arrow
-                            placement="top"
-                          >
+                          <Tooltip title={t("more_options")} arrow placement="top">
                             <IconButton size="small">
-                              <Icon
-                                iconName={ICON_NAME.MORE_VERT}
-                                style={{ fontSize: 15 }}
-                              />
+                              <Icon iconName={ICON_NAME.MORE_VERT} style={{ fontSize: 15 }} />
                             </IconButton>
                           </Tooltip>
                         }
@@ -240,17 +231,12 @@ const ScenarioPanel = ({ projectId }: { projectId: string }) => {
               ))}
 
               {!isLoading && scenarios?.items?.length === 0 && (
-                <EmptySection
-                  label={t("no_scenarios_created")}
-                  icon={ICON_NAME.SCENARIO}
-                />
+                <EmptySection label={t("no_scenarios_created")} icon={ICON_NAME.SCENARIO} />
               )}
             </>
           )}
 
-          {editingScenario && (
-            <ScenarioFeaturesEditor scenario={editingScenario} projectId={projectId} />
-          )}
+          {editingScenario && <ScenarioFeaturesEditor scenario={editingScenario} projectId={projectId} />}
         </>
       }
       action={

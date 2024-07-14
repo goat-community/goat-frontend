@@ -1,24 +1,22 @@
 "use client";
 
-import { useProjects } from "@/lib/api/projects";
-import {
-  Box,
-  Button,
-  Container,
-  Divider,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Divider, Stack, Typography } from "@mui/material";
 import React from "react";
-import BlogSection from "@/components/dashboard/home/BlogSection";
-import ProjectSection from "@/components/dashboard/home/ProjectSection";
-import DataSection from "@/components/dashboard/home/DataSection";
-import { useLayers } from "@/lib/api/layers";
-import type { PaginatedQueryParams } from "@/lib/validations/common";
+
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
+import { useLayers } from "@/lib/api/layers";
+import { useProjects } from "@/lib/api/projects";
+import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type { Layer } from "@/lib/validations/layer";
+
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
+
+import BlogSection from "@/components/dashboard/home/BlogSection";
+import DataSection from "@/components/dashboard/home/DataSection";
+import ProjectSection from "@/components/dashboard/home/ProjectSection";
 
 const Home = () => {
   const { t } = useTranslation("common");
@@ -55,36 +53,23 @@ const Home = () => {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Typography variant="h6">{t("recent_project")}</Typography>
             <Button
               variant="text"
               size="small"
-              endIcon={
-                <Icon
-                  iconName={ICON_NAME.CHEVRON_RIGHT}
-                  style={{ fontSize: 12 }}
-                />
-              }
+              endIcon={<Icon iconName={ICON_NAME.CHEVRON_RIGHT} style={{ fontSize: 12 }} />}
               href="/projects"
               sx={{
                 borderRadius: 0,
-              }}
-            >
+              }}>
               {t("see_all")}
             </Button>
           </Box>
           <Divider sx={{ mb: 4 }} />
-          <ProjectSection
-            projects={projects?.items ?? []}
-            isLoading={isProjectLoading}
-          />
+          <ProjectSection projects={projects?.items ?? []} isLoading={isProjectLoading} />
         </Stack>
-        <DataSection
-          layers={(layers?.items as Layer[]) ?? []}
-          isLoading={isLayerLoading}
-        />
+        <DataSection layers={(layers?.items as Layer[]) ?? []} isLoading={isLayerLoading} />
         <BlogSection />
       </Stack>
     </Container>

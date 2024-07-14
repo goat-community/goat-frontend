@@ -1,27 +1,32 @@
-import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
-import Container from "@/components/map/panels/Container";
-import SectionHeader from "@/components/map/panels/common/SectionHeader";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
-import Selector from "@/components/map/panels/common/Selector";
+import { Box, Typography, useTheme } from "@mui/material";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 
-import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
-import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
-import useLayerFields from "@/hooks/map/CommonHooks";
-import { useLayerByGeomType, useLayerDatasetId } from "@/hooks/map/ToolsHooks";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
 import { useJobs } from "@/lib/api/jobs";
 import { computeOriginDestination } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import { originDestinationMatrixSchema } from "@/lib/validations/tools";
+
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import { Box, Typography, useTheme } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+
+import useLayerFields from "@/hooks/map/CommonHooks";
+import { useLayerByGeomType, useLayerDatasetId } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
+import Container from "@/components/map/panels/Container";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import Selector from "@/components/map/panels/common/Selector";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 
 const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
@@ -37,23 +42,18 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { filteredLayers: filteredODLayers } = useLayerByGeomType(
     ["feature"],
     ["polygon", "point"],
-    projectId as string,
+    projectId as string
   );
   const { filteredLayers: filteredODMatrices } = useLayerByGeomType(
     ["table"],
     undefined,
-    projectId as string,
+    projectId as string
   );
   // OD Layer
   const [ODLayer, setODLayer] = useState<SelectorItem | undefined>(undefined);
-  const odLayerDatasetId = useLayerDatasetId(
-    ODLayer?.value as number | undefined,
-    projectId as string,
-  );
+  const odLayerDatasetId = useLayerDatasetId(ODLayer?.value as number | undefined, projectId as string);
   const { layerFields: ODLayerFields } = useLayerFields(odLayerDatasetId || "");
-  const [uniqueIdField, setUniqueIdField] = useState<
-    LayerFieldType | undefined
-  >(undefined);
+  const [uniqueIdField, setUniqueIdField] = useState<LayerFieldType | undefined>(undefined);
 
   // reset OdLayerFields when ODLayer changes
   useEffect(() => {
@@ -62,24 +62,13 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   // OD Matrix
   const [ODMatrix, setODMatrix] = useState<SelectorItem | undefined>(undefined);
-  const odMatrixDatasetId = useLayerDatasetId(
-    ODMatrix?.value as number | undefined,
-    projectId as string,
-  );
-  const { layerFields: ODMatrixFields } = useLayerFields(
-    odMatrixDatasetId || "",
-  );
+  const odMatrixDatasetId = useLayerDatasetId(ODMatrix?.value as number | undefined, projectId as string);
+  const { layerFields: ODMatrixFields } = useLayerFields(odMatrixDatasetId || "");
 
-  const [originField, setOriginField] = useState<LayerFieldType | undefined>(
-    undefined,
-  );
-  const [destinationField, setDestinationField] = useState<
-    LayerFieldType | undefined
-  >(undefined);
+  const [originField, setOriginField] = useState<LayerFieldType | undefined>(undefined);
+  const [destinationField, setDestinationField] = useState<LayerFieldType | undefined>(undefined);
 
-  const [weightField, setWeightField] = useState<LayerFieldType | undefined>(
-    undefined,
-  );
+  const [weightField, setWeightField] = useState<LayerFieldType | undefined>(undefined);
 
   useEffect(() => {
     setOriginField(undefined);
@@ -91,7 +80,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
     ODMatrixFields: LayerFieldType[] | undefined,
     excludeFieldNames: (string | undefined)[],
     selectedField?: LayerFieldType,
-    allowedTypes?: string[],
+    allowedTypes?: string[]
   ) => {
     return useMemo(() => {
       if (!ODMatrixFields) return [];
@@ -99,8 +88,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
       return ODMatrixFields.filter(
         (field) =>
           field.name === selectedField?.name ||
-          (!validFieldNames.includes(field.name) &&
-            (!allowedTypes || allowedTypes.includes(field.type))),
+          (!validFieldNames.includes(field.name) && (!allowedTypes || allowedTypes.includes(field.type)))
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ODMatrixFields, ...excludeFieldNames, selectedField]);
@@ -109,40 +97,26 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
   const originFields = useFilteredFields(
     ODMatrixFields,
     [destinationField?.name, weightField?.name],
-    originField,
+    originField
   );
   const destinationFields = useFilteredFields(
     ODMatrixFields,
     [originField?.name, weightField?.name],
-    destinationField,
+    destinationField
   );
   const weightFields = useFilteredFields(
     ODMatrixFields,
     [originField?.name, destinationField?.name],
     weightField,
-    ["number"],
+    ["number"]
   );
 
   const isValid = useMemo(() => {
-    if (
-      !ODLayer ||
-      !ODMatrix ||
-      !uniqueIdField ||
-      !originField ||
-      !destinationField ||
-      !weightField
-    ) {
+    if (!ODLayer || !ODMatrix || !uniqueIdField || !originField || !destinationField || !weightField) {
       return false;
     }
     return true;
-  }, [
-    ODLayer,
-    ODMatrix,
-    destinationField,
-    originField,
-    uniqueIdField,
-    weightField,
-  ]);
+  }, [ODLayer, ODMatrix, destinationField, originField, uniqueIdField, weightField]);
 
   const handleRun = async () => {
     const payload = {
@@ -156,10 +130,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
     try {
       setIsBusy(true);
       const parsedPayload = originDestinationMatrixSchema.parse(payload);
-      const response = await computeOriginDestination(
-        parsedPayload,
-        projectId as string,
-      );
+      const response = await computeOriginDestination(parsedPayload, projectId as string);
       const { job_id } = response;
       if (job_id) {
         toast.info(t("od_matrix_computation_started"));
@@ -187,9 +158,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
     <>
       <Container
         disablePadding={false}
-        header={
-          <ToolsHeader onBack={onBack} title={t("origin_destination_header")} />
-        }
+        header={<ToolsHeader onBack={onBack} title={t("origin_destination_header")} />}
         close={onClose}
         body={
           <>
@@ -197,13 +166,9 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-              }}
-            >
+              }}>
               {/* DESCRIPTION */}
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-              >
+              <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
                 {t("origin_destination_description")}
               </Typography>
               {/* OD LAYER && MATRIX */}
@@ -221,9 +186,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
                   <>
                     <Selector
                       selectedItems={ODLayer}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         setODLayer(item as SelectorItem);
                       }}
                       items={filteredODLayers}
@@ -262,9 +225,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
                   <>
                     <Selector
                       selectedItems={ODMatrix}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         setODMatrix(item as SelectorItem);
                       }}
                       items={filteredODMatrices}

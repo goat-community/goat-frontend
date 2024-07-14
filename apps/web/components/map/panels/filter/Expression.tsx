@@ -1,35 +1,34 @@
+import { Divider, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import bbox from "@turf/bbox";
+import bboxPolygon from "@turf/bbox-polygon";
+import type { BBox } from "@turf/helpers";
+import { useParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { useMap } from "react-map-gl";
+
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
 import {
-  FilterType,
   type Expression as ExpressionType,
+  FilterType,
   SpatialIntersectionGeomType,
 } from "@/lib/validations/filter";
-import { useTranslation } from "@/i18n/client";
+
 import { FilterExpressionActions } from "@/types/common";
+import type { SelectorItem } from "@/types/map/common";
+
+import useLayerFields from "@/hooks/map/CommonHooks";
+import useLogicalExpressionOperations from "@/hooks/map/FilteringHooks";
+import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
-import useLayerFields from "@/hooks/map/CommonHooks";
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
-import { useParams } from "next/navigation";
 import Selector from "@/components/map/panels/common/Selector";
-import useLogicalExpressionOperations from "@/hooks/map/FilteringHooks";
-import type { SelectorItem } from "@/types/map/common";
-import TextFieldInput from "@/components/map/panels/common/TextFieldInput";
 import SelectorLayerValue from "@/components/map/panels/common/SelectorLayerValue";
-import { useMap } from "react-map-gl";
-import bboxPolygon from "@turf/bbox-polygon";
-import bbox from "@turf/bbox";
-import type { BBox } from "@turf/helpers";
+import TextFieldInput from "@/components/map/panels/common/TextFieldInput";
 
 type ExpressionProps = {
   expression: ExpressionType;
@@ -42,9 +41,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
   const theme = useTheme();
   const { map } = useMap();
 
-  const [expression, setExpression] = useState<ExpressionType>(
-    props.expression,
-  );
+  const [expression, setExpression] = useState<ExpressionType>(props.expression);
 
   const { t } = useTranslation("common");
   const { projectId } = useParams();
@@ -62,7 +59,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
         icon: ICON_NAME.DRAW_POLYGON,
       },
     ],
-    [t],
+    [t]
   );
 
   const { activeLayer } = useActiveLayer(projectId as string);
@@ -71,14 +68,10 @@ const Expression: React.FC<ExpressionProps> = (props) => {
     return layerFields.find((field) => field.name === expression.attribute);
   }, [layerFields, expression.attribute]);
 
-  const { logicalExpressionTypes } = useLogicalExpressionOperations(
-    selectedAttribute?.type,
-  );
+  const { logicalExpressionTypes } = useLogicalExpressionOperations(selectedAttribute?.type);
 
   const selectedExpressionOperation = useMemo(() => {
-    const operation = logicalExpressionTypes.find(
-      (operation) => operation.value === expression.expression,
-    );
+    const operation = logicalExpressionTypes.find((operation) => operation.value === expression.expression);
     return operation;
   }, [expression.expression, logicalExpressionTypes]);
 
@@ -87,11 +80,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
   }, [expression, props.expression]);
 
   const isExpressionValid = useMemo(() => {
-    return (
-      expression.attribute &&
-      expression.expression &&
-      !!expression.value.toString()
-    );
+    return expression.attribute && expression.expression && !!expression.value.toString();
   }, [expression]);
 
   const expressionMoreMenuOptions = useMemo(() => {
@@ -112,12 +101,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
     ];
 
     return layerStyleMoreMenuOptions;
-  }, [
-    isExpressionValid,
-    t,
-    theme.palette.error.main,
-    theme.palette.text.secondary,
-  ]);
+  }, [isExpressionValid, t, theme.palette.error.main, theme.palette.text.secondary]);
 
   useEffect(() => {
     if (hasExpressionChanged && isExpressionValid) {
@@ -129,9 +113,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
     if (!expression.value || expression.type !== FilterType.Spatial) return;
     const geometry = JSON.parse(expression.value as string);
     const type = geometry?.properties?.type;
-    return spatialIntersectionOptions.find(
-      (intersection) => intersection.value === type,
-    );
+    return spatialIntersectionOptions.find((intersection) => intersection.value === type);
   }, [expression.type, expression.value, spatialIntersectionOptions]);
 
   const formatedFeatureLabel = useMemo(() => {
@@ -150,11 +132,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
         <Stack direction="row" justifyContent="space-between">
           <Stack direction="row" alignItems="center">
             <Icon
-              iconName={
-                expression.type === FilterType.Logical
-                  ? ICON_NAME.TABLE
-                  : ICON_NAME.MAP
-              }
+              iconName={expression.type === FilterType.Logical ? ICON_NAME.TABLE : ICON_NAME.MAP}
               style={{
                 fontSize: "17px",
                 color: theme.palette.text.secondary,
@@ -169,10 +147,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
             menuButton={
               <Tooltip title={t("more_options")} arrow placement="top">
                 <IconButton>
-                  <Icon
-                    iconName={ICON_NAME.MORE_HORIZ}
-                    style={{ fontSize: 15 }}
-                  />
+                  <Icon iconName={ICON_NAME.MORE_HORIZ} style={{ fontSize: 15 }} />
                 </IconButton>
               </Tooltip>
             }
@@ -227,12 +202,9 @@ const Expression: React.FC<ExpressionProps> = (props) => {
               {selectedAttribute && selectedExpressionOperation && (
                 <>
                   {/* Free Text Input */}
-                  {[
-                    "starts_with",
-                    "ends_with",
-                    "contains_the_text",
-                    "does_not_contains_the_text",
-                  ].includes(selectedExpressionOperation.value as string) && (
+                  {["starts_with", "ends_with", "contains_the_text", "does_not_contains_the_text"].includes(
+                    selectedExpressionOperation.value as string
+                  ) && (
                     <TextFieldInput
                       type="text"
                       label={t("enter_value")}
@@ -246,9 +218,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
                     />
                   )}
                   {/* {Value Selector} */}
-                  {["is", "is_not"].includes(
-                    selectedExpressionOperation.value as string,
-                  ) && (
+                  {["is", "is_not"].includes(selectedExpressionOperation.value as string) && (
                     <SelectorLayerValue
                       selectedValues={expression.value as string}
                       onSelectedValuesChange={(values: string | null) => {
@@ -272,15 +242,9 @@ const Expression: React.FC<ExpressionProps> = (props) => {
                     />
                   )}
 
-                  {["includes", "excludes"].includes(
-                    selectedExpressionOperation.value as string,
-                  ) && (
+                  {["includes", "excludes"].includes(selectedExpressionOperation.value as string) && (
                     <SelectorLayerValue
-                      selectedValues={
-                        expression.value
-                          ? (expression.value as unknown[]).map(String)
-                          : []
-                      }
+                      selectedValues={expression.value ? (expression.value as unknown[]).map(String) : []}
                       onSelectedValuesChange={(values: string[] | null) => {
                         const fieldType = selectedAttribute?.type;
                         if (fieldType === "number" && values) {
@@ -305,12 +269,9 @@ const Expression: React.FC<ExpressionProps> = (props) => {
                   )}
 
                   {/* Number Input */}
-                  {[
-                    "is_at_least",
-                    "is_less_than",
-                    "is_at_most",
-                    "is_greater_than",
-                  ].includes(selectedExpressionOperation.value as string) && (
+                  {["is_at_least", "is_less_than", "is_at_most", "is_greater_than"].includes(
+                    selectedExpressionOperation.value as string
+                  ) && (
                     <>
                       <TextFieldInput
                         type="number"
@@ -343,8 +304,7 @@ const Expression: React.FC<ExpressionProps> = (props) => {
                     if (bbox) {
                       const polygon = bboxPolygon(bbox as BBox);
                       const geometry = polygon.geometry;
-                      coordinates =
-                        geometry.coordinates as unknown as number[][];
+                      coordinates = geometry.coordinates as unknown as number[][];
                     }
                   }
                   const geometry = {
@@ -365,14 +325,8 @@ const Expression: React.FC<ExpressionProps> = (props) => {
                 items={spatialIntersectionOptions}
                 label={t("select_spatial_intersection")}
               />
-              {selectedIntersection?.value ===
-                SpatialIntersectionGeomType.BBOX && (
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  alignItems="end"
-                  sx={{ pt: 2 }}
-                >
+              {selectedIntersection?.value === SpatialIntersectionGeomType.BBOX && (
+                <Stack direction="row" spacing={2} alignItems="end" sx={{ pt: 2 }}>
                   <Typography variant="body2" fontWeight="bold">
                     {formatedFeatureLabel}
                   </Typography>
@@ -399,15 +353,13 @@ const Expression: React.FC<ExpressionProps> = (props) => {
                             value: JSON.stringify(geometry),
                           });
                         }
-                      }}
-                    >
+                      }}>
                       <Icon iconName={ICON_NAME.REFRESH} fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 </Stack>
               )}
-              {selectedIntersection?.value ===
-                SpatialIntersectionGeomType.BOUNDARY && <div>Boundary</div>}
+              {selectedIntersection?.value === SpatialIntersectionGeomType.BOUNDARY && <div>Boundary</div>}
             </>
           )}
         </Stack>

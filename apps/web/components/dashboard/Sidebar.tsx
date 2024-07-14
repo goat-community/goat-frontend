@@ -1,4 +1,3 @@
-import type { NavItem } from "@/types/common/navigation";
 import type { CSSObject, Theme } from "@mui/material";
 import {
   Link,
@@ -10,11 +9,14 @@ import {
   SwipeableDrawer,
   useTheme,
 } from "@mui/material";
-
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
+import type { NavItem } from "@/types/common/navigation";
 
 const openedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {
@@ -43,7 +45,7 @@ const DashboardSidebar = (props: Props) => {
   const theme = useTheme();
   const pathname = usePathname();
 
-  const {t} = useTranslation("common");
+  const { t } = useTranslation("common");
 
   const MobileDrawerProps = {
     open: navVisible,
@@ -106,8 +108,7 @@ const DashboardSidebar = (props: Props) => {
       }}
       sx={{
         width: hidden ? width : collapsedWidth,
-        zIndex: (theme) =>
-          hidden ? theme.zIndex.drawer + 2 : theme.zIndex.drawer,
+        zIndex: (theme) => (hidden ? theme.zIndex.drawer + 2 : theme.zIndex.drawer),
         "& .MuiPaper-root": {
           ...(!hidden && {
             width: navVisible ? width : collapsedWidth,
@@ -123,8 +124,7 @@ const DashboardSidebar = (props: Props) => {
           backgroundColor: theme.palette.background.paper,
           borderRight: "1px solid rgba(58, 53, 65, 0.12)",
         },
-      }}
-    >
+      }}>
       <List dense>
         {navigation.map((item) => (
           <Link
@@ -132,34 +132,28 @@ const DashboardSidebar = (props: Props) => {
             href={item.link}
             component={NextLink}
             passHref
-            style={{ textDecoration: "none" }}
-          >
+            style={{ textDecoration: "none" }}>
             <ListItem
               disablePadding
               sx={{
                 display: "block",
-              }}
-            >
+              }}>
               <ListItemButton
                 selected={item.current}
                 sx={{
                   minHeight: 48,
-                }}
-              >
+                }}>
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
                     ml: 0,
                     mr: 6,
                     justifyContent: "center",
-                  }}
-                >
+                  }}>
                   <Icon
                     iconName={item.icon}
                     fontSize="small"
-                    htmlColor={
-                      item.current ? theme.palette.primary.main : "inherit"
-                    }
+                    htmlColor={item.current ? theme.palette.primary.main : "inherit"}
                   />
                 </ListItemIcon>
                 <ListItemText

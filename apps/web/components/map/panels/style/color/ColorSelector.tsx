@@ -1,14 +1,17 @@
+import { Paper, Stack } from "@mui/material";
+import { styled, useTheme } from "@mui/material/styles";
+import { useCallback, useState } from "react";
+
+import { rgbToHex } from "@/lib/utils/helpers";
+import type { ColorRange } from "@/lib/validations/layer";
+
+import type { ColorSet, RGBColor } from "@/types/map/color";
+
 import { ArrowPopper } from "@/components/ArrowPoper";
 import FormLabelHelper from "@/components/common/FormLabelHelper";
 import ColorPalette from "@/components/map/panels/style/color/ColorPalette";
 import ColorRangeSelector from "@/components/map/panels/style/color/ColorRangeSelector";
 import SingleColorSelector from "@/components/map/panels/style/color/SingleColorSelector";
-import { rgbToHex } from "@/lib/utils/helpers";
-import type { ColorRange } from "@/lib/validations/layer";
-import type { ColorSet, RGBColor } from "@/types/map/color";
-import { Paper, Stack } from "@mui/material";
-import { styled, useTheme } from "@mui/material/styles";
-import { useCallback, useState } from "react";
 
 type ColorSelectorProps = {
   scaleType?: string;
@@ -17,16 +20,14 @@ type ColorSelectorProps = {
   tooltip?: string;
 };
 
-const ColorBlock = styled("div")<{ theme; backgroundcolor: RGBColor }>(
-  ({ theme, backgroundcolor }) => ({
-    width: "100%",
-    height: "18px",
-    borderRadius: theme.spacing(1),
-    backgroundColor: Array.isArray(backgroundcolor)
-      ? `rgb(${backgroundcolor.slice(0, 3).join(",")})`
-      : "transparent",
-  }),
-);
+const ColorBlock = styled("div")<{ theme; backgroundcolor: RGBColor }>(({ theme, backgroundcolor }) => ({
+  width: "100%",
+  height: "18px",
+  borderRadius: theme.spacing(1),
+  backgroundColor: Array.isArray(backgroundcolor)
+    ? `rgb(${backgroundcolor.slice(0, 3).join(",")})`
+    : "transparent",
+}));
 
 const ColorSelector = (props: ColorSelectorProps) => {
   const theme = useTheme();
@@ -37,7 +38,7 @@ const ColorSelector = (props: ColorSelectorProps) => {
     (color: RGBColor | ColorRange) => {
       colorSet.setColor(color);
     },
-    [colorSet],
+    [colorSet]
   );
 
   return (
@@ -56,8 +57,7 @@ const ColorSelector = (props: ColorSelectorProps) => {
                 boxShadow: "rgba(0, 0, 0, 0.16) 0px 6px 12px 0px",
                 width: "235px",
                 maxHeight: "500px",
-              }}
-            >
+              }}>
               {colorSet.isRange ? (
                 <ColorRangeSelector
                   scaleType={props.scaleType}
@@ -74,8 +74,7 @@ const ColorSelector = (props: ColorSelectorProps) => {
               )}
             </Paper>
           </>
-        }
-      >
+        }>
         {/* {INPUT} */}
         <Stack spacing={1}>
           {props.label && (
@@ -94,8 +93,7 @@ const ColorSelector = (props: ColorSelectorProps) => {
               border: "1px solid",
               outline: "2px solid transparent",
               minHeight: "40px",
-              borderColor:
-                theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
+              borderColor: theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
               ...(open && {
                 outline: `2px solid ${theme.palette.primary.main}`,
               }),
@@ -103,22 +101,14 @@ const ColorSelector = (props: ColorSelectorProps) => {
               p: 2,
               "&:hover": {
                 ...(!open && {
-                  borderColor:
-                    theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF",
+                  borderColor: theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF",
                 }),
               },
-            }}
-          >
-            
+            }}>
             {colorSet.isRange ? (
-              <ColorPalette
-                colors={(colorSet.selectedColor as ColorRange).colors}
-              />
+              <ColorPalette colors={(colorSet.selectedColor as ColorRange).colors} />
             ) : (
-              <ColorBlock
-                theme={theme}
-                backgroundcolor={colorSet.selectedColor as RGBColor}
-              />
+              <ColorBlock theme={theme} backgroundcolor={colorSet.selectedColor as RGBColor} />
             )}
             {colorSet.label ? <div>{colorSet.label}</div> : null}
           </Stack>

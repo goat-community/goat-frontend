@@ -1,13 +1,17 @@
-import HeatmapContainer from "@/components/map/panels/toolbox/common/HeatmapContainer";
-import type { Opportunity } from "@/components/map/panels/toolbox/common/HeatmapOpportunitiesSelector";
-import HeatmapOpportunitiesSelector from "@/components/map/panels/toolbox/common/HeatmapOpportunitiesSelector";
+import { useParams } from "next/navigation";
+import { useState } from "react";
+
 import { useTranslation } from "@/i18n/client";
+
 import { useProjectLayers } from "@/lib/api/projects";
 import { computeHeatmapClosestAverage } from "@/lib/api/tools";
 import { heatmapClosestAverageSchema } from "@/lib/validations/tools";
+
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+
+import HeatmapContainer from "@/components/map/panels/toolbox/common/HeatmapContainer";
+import type { Opportunity } from "@/components/map/panels/toolbox/common/HeatmapOpportunitiesSelector";
+import HeatmapOpportunitiesSelector from "@/components/map/panels/toolbox/common/HeatmapOpportunitiesSelector";
 
 const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
@@ -27,8 +31,7 @@ const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
       },
     },
   ];
-  const [opportunities, setOpportunities] =
-    useState<Opportunity[]>(defaultOpportunities);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>(defaultOpportunities);
 
   const handleReset = () => {
     setOpportunities(defaultOpportunities);
@@ -39,8 +42,7 @@ const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
       opportunities: opportunities.map((opportunity) => {
         return {
           opportunity_layer_project_id:
-            layers &&
-            layers.find((layer) => layer.id === opportunity.layer?.value)?.id,
+            layers && layers.find((layer) => layer.id === opportunity.layer?.value)?.id,
           max_traveltime: opportunity.maxTravelTime?.value,
           number_of_destinations: opportunity.numberOfDestinations?.value,
         };

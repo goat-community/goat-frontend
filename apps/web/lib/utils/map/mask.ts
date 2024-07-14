@@ -23,9 +23,7 @@ export type GeoJSONFeatureCollection = {
   features: GeoJSONFeature[];
 };
 
-function createMask(
-  featureCollection: GeoJSONFeatureCollection,
-): GeoJSONFeature {
+function createMask(featureCollection: GeoJSONFeatureCollection): GeoJSONFeature {
   const worldPolygon = [
     [-180, -90],
     [180, -90],

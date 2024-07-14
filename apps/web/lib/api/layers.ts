@@ -1,4 +1,5 @@
 import useSWR from "swr";
+
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type {
@@ -18,25 +19,15 @@ import type {
   PostDataset,
 } from "@/lib/validations/layer";
 
-export const LAYERS_API_BASE_URL = new URL(
-  "api/v2/layer",
-  process.env.NEXT_PUBLIC_API_URL,
-).href;
+export const LAYERS_API_BASE_URL = new URL("api/v2/layer", process.env.NEXT_PUBLIC_API_URL).href;
 
-export const COLLECTIONS_API_BASE_URL = new URL(
-  "collections",
-  process.env.NEXT_PUBLIC_GEOAPI_URL,
-).href;
+export const COLLECTIONS_API_BASE_URL = new URL("collections", process.env.NEXT_PUBLIC_GEOAPI_URL).href;
 
-export const useLayers = (
-  queryParams?: PaginatedQueryParams,
-  payload: GetDatasetSchema = {},
-) => {
-  const { data, isLoading, error, mutate, isValidating } =
-    useSWR<LayerPaginated>(
-      [`${LAYERS_API_BASE_URL}`, queryParams, payload],
-      fetcher,
-    );
+export const useLayers = (queryParams?: PaginatedQueryParams, payload: GetDatasetSchema = {}) => {
+  const { data, isLoading, error, mutate, isValidating } = useSWR<LayerPaginated>(
+    [`${LAYERS_API_BASE_URL}`, queryParams, payload],
+    fetcher
+  );
   return {
     layers: data,
     isLoading: isLoading,
@@ -46,15 +37,11 @@ export const useLayers = (
   };
 };
 
-export const useCatalogLayers = (
-  queryParams?: PaginatedQueryParams,
-  payload: GetDatasetSchema = {},
-) => {
-  const { data, isLoading, error, mutate, isValidating } =
-    useSWR<LayerPaginated>(
-      [`${LAYERS_API_BASE_URL}/catalog`, queryParams, payload],
-      fetcher,
-    );
+export const useCatalogLayers = (queryParams?: PaginatedQueryParams, payload: GetDatasetSchema = {}) => {
+  const { data, isLoading, error, mutate, isValidating } = useSWR<LayerPaginated>(
+    [`${LAYERS_API_BASE_URL}/catalog`, queryParams, payload],
+    fetcher
+  );
   return {
     layers: data,
     isLoading: isLoading,
@@ -62,12 +49,12 @@ export const useCatalogLayers = (
     mutate,
     isValidating,
   };
-}
+};
 
 export const useMetadataAggregated = (payload: GetDatasetSchema = {}) => {
   const { data, isLoading, error, mutate } = useSWR<DatasetMetadataAggregated>(
     [`${LAYERS_API_BASE_URL}/metadata/aggregate`, null, payload],
-    fetcher,
+    fetcher
   );
   return { metadata: data, isLoading, isError: error, mutate };
 };
@@ -75,15 +62,12 @@ export const useMetadataAggregated = (payload: GetDatasetSchema = {}) => {
 export const useDataset = (datasetId: string) => {
   const { data, isLoading, error, mutate } = useSWR<Layer>(
     () => (datasetId ? [`${LAYERS_API_BASE_URL}/${datasetId}`] : null),
-    fetcher,
+    fetcher
   );
   return { dataset: data, isLoading, isError: error, mutate };
 };
 
-export const updateDataset = async (
-  datasetId: string,
-  payload: PostDataset,
-) => {
+export const updateDataset = async (datasetId: string, payload: PostDataset) => {
   const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/${datasetId}`, {
     method: "PUT",
     body: JSON.stringify(payload),
@@ -97,17 +81,11 @@ export const updateDataset = async (
   return response;
 };
 
-export const useDatasetCollectionItems = (
-  datasetId: string,
-  queryParams?: GetCollectionItemsQueryParams,
-) => {
+export const useDatasetCollectionItems = (datasetId: string, queryParams?: GetCollectionItemsQueryParams) => {
   const collectionId = `user_data.${datasetId.replace(/-/g, "")}`;
   const { data, isLoading, error, mutate } = useSWR<DatasetCollectionItems>(
-    () =>
-      datasetId
-        ? [`${COLLECTIONS_API_BASE_URL}/${collectionId}/items`, queryParams]
-        : null,
-    fetcher,
+    () => (datasetId ? [`${COLLECTIONS_API_BASE_URL}/${collectionId}/items`, queryParams] : null),
+    fetcher
   );
   return { data, isLoading, isError: error, mutate };
 };
@@ -116,9 +94,8 @@ export const useLayerQueryables = (layerId: string) => {
   // remove dashes from layerId UUID
   const _layerId = `user_data.${layerId.replace(/-/g, "")}`;
   const { data, isLoading, error } = useSWR<LayerQueryables>(
-    () =>
-      layerId ? [`${COLLECTIONS_API_BASE_URL}/${_layerId}/queryables`] : null,
-    fetcher,
+    () => (layerId ? [`${COLLECTIONS_API_BASE_URL}/${_layerId}/queryables`] : null),
+    fetcher
   );
   return { queryables: data, isLoading, isError: error };
 };
@@ -127,7 +104,7 @@ export const useLayerQueryables = (layerId: string) => {
 export const useLayerKeys = (layerId: string) => {
   const { data, isLoading, error } = useSWR<LayerPaginated>(
     [`${COLLECTIONS_API_BASE_URL}/${layerId}/queryables`],
-    fetcher,
+    fetcher
   );
   return { data, isLoading, error };
 };
@@ -136,16 +113,14 @@ export const useLayerClassBreaks = (
   layerId: string,
   operation?: ClassBreaks,
   column?: string,
-  breaks?: number,
+  breaks?: number
 ) => {
   const { data, isLoading, error } = useSWR<LayerClassBreaks>(
     () =>
       operation && column && breaks
-        ? [
-            `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`,
-          ]
+        ? [`${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`]
         : null,
-    fetcher,
+    fetcher
   );
   return { classBreaks: data, isLoading, isError: error };
 };
@@ -161,10 +136,7 @@ export const deleteLayer = async (id: string) => {
   }
 };
 
-export const createInternalLayer = async (
-  payload: CreateFeatureLayer,
-  projectId?: string,
-) => {
+export const createInternalLayer = async (payload: CreateFeatureLayer, projectId?: string) => {
   const url = new URL(`${LAYERS_API_BASE_URL}/internal`);
   if (projectId) {
     url.searchParams.append("project_id", projectId);
@@ -199,13 +171,13 @@ export const getLayerClassBreaks = async (
   layerId: string,
   operation: ClassBreaks,
   column: string,
-  breaks: number,
+  breaks: number
 ): Promise<LayerClassBreaks> => {
   const response = await fetchWithAuth(
     `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`,
     {
       method: "GET",
-    },
+    }
   );
   if (!response.ok) {
     throw new Error("Failed to get class breaks");
@@ -216,15 +188,13 @@ export const getLayerClassBreaks = async (
 export const getLayerUniqueValues = async (
   layerId: string,
   column: string,
-  size?: number,
+  size?: number
 ): Promise<LayerUniqueValuesPaginated> => {
   const response = await fetchWithAuth(
-    `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${
-      size ? `?size=${size}` : ""
-    }`,
+    `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${size ? `?size=${size}` : ""}`,
     {
       method: "GET",
-    },
+    }
   );
   if (!response.ok) {
     throw new Error("Failed to get unique values");
@@ -232,18 +202,10 @@ export const getLayerUniqueValues = async (
   return await response.json();
 };
 
-export const useUniqueValues = (
-  layerId: string,
-  column: string,
-  page?: number,
-) => {
+export const useUniqueValues = (layerId: string, column: string, page?: number) => {
   const { data, isLoading, error } = useSWR<LayerUniqueValuesPaginated>(
-    [
-      `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${
-        page ? `?page=${page}` : ""
-      }`,
-    ],
-    fetcher,
+    [`${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}${page ? `?page=${page}` : ""}`],
+    fetcher
   );
   return { data, isLoading, error };
 };
@@ -251,46 +213,32 @@ export const useUniqueValues = (
 export const useLayerUniqueValues = (
   layerId: string,
   column: string,
-  queryParams?: GetLayerUniqueValuesQueryParams,
+  queryParams?: GetLayerUniqueValuesQueryParams
 ) => {
-  const { data, isLoading, error, mutate, isValidating } =
-    useSWR<LayerUniqueValuesPaginated>(
-      [
-        `${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}`,
-        queryParams,
-      ],
-      fetcher,
-    );
+  const { data, isLoading, error, mutate, isValidating } = useSWR<LayerUniqueValuesPaginated>(
+    [`${LAYERS_API_BASE_URL}/${layerId}/unique-values/${column}`, queryParams],
+    fetcher
+  );
   return { data, isLoading, error, mutate, isValidating };
 };
 
 export const downloadDataset = async (payload: DatasetDownloadRequest) => {
-  const response = await fetchWithAuth(
-    `${LAYERS_API_BASE_URL}/internal/${payload.id}/export`,
-    {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/internal/${payload.id}/export`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
   if (!response.ok) {
     throw new Error("Failed to download layer");
   }
   return await response.blob();
 };
-export const useClassBreak = (
-  layerId: string,
-  operation: string,
-  column: string,
-  breaks: number,
-) => {
+export const useClassBreak = (layerId: string, operation: string, column: string, breaks: number) => {
   const { data, isLoading, error } = useSWR<Record<string, number>>(
-    [
-      `${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`,
-    ],
-    fetcher,
+    [`${LAYERS_API_BASE_URL}/${layerId}/class-breaks/${operation}/${column}?breaks=${breaks}`],
+    fetcher
   );
   return { data, isLoading, error };
 };

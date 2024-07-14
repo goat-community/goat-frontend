@@ -1,9 +1,14 @@
 "use client";
-import React from "react";
-import NextAppDirEmotionCacheProvider from "./EmotionCache";
-import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
+
 import type { PaletteMode } from "@mui/material";
+import React from "react";
+
+import ThemeProvider from "@p4b/ui/theme/ThemeProvider";
+
 import { useTranslation } from "@/i18n/client";
+
+import NextAppDirEmotionCacheProvider from "./EmotionCache";
+
 export const ColorModeContext = React.createContext({
   changeColorMode: (_mode: PaletteMode) => {},
 });
@@ -22,7 +27,7 @@ export default function ThemeRegistry({
         setMode(mode);
       },
     }),
-    [],
+    []
   );
   return (
     <>
@@ -32,8 +37,7 @@ export default function ThemeRegistry({
             settings={{
               mode,
               locale: i18n?.language || "en",
-            }}
-          >
+            }}>
             {children}
           </ThemeProvider>
         </NextAppDirEmotionCacheProvider>

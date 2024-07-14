@@ -1,15 +1,16 @@
-import dayjs from "dayjs";
 import Color from "color";
-import type { HexColor, RGBColor } from "@/types/map/color";
-import type { ColorRange } from "@/lib/validations/layer";
+import dayjs from "dayjs";
 
+import type { ColorRange } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
+
+import type { HexColor, RGBColor } from "@/types/map/color";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function filterSearch<T extends Record<string, any>>(
   allArray: T[],
   searchKey: keyof T,
-  searchText: string,
+  searchText: string
 ) {
   if (searchText !== "") {
     return allArray.filter((item) => {
@@ -75,10 +76,7 @@ export const supportedFileTypes = [
   "json",
 ];
 
-export const calculateLayersCountByKey = (
-  data: [] | undefined,
-  keyToCount: string,
-) => {
+export const calculateLayersCountByKey = (data: [] | undefined, keyToCount: string) => {
   let count = 0;
 
   data?.forEach((obj) => {
@@ -93,7 +91,7 @@ export const calculateLayersCountByKey = (
 export const calculateLayersCountByKeyAndValue = (
   data: [] | undefined,
   keyToCount: string,
-  value: string,
+  value: string
 ) => {
   let count = 0;
 
@@ -106,26 +104,17 @@ export const calculateLayersCountByKeyAndValue = (
   return count;
 };
 
-export function changeColorOpacity(params: {
-  color: string;
-  opacity: number;
-}): string {
+export function changeColorOpacity(params: { color: string; opacity: number }): string {
   const { color, opacity } = params;
   return new Color(color).rgb().alpha(opacity).string();
 }
 
-export function getFrequentValuesOnProperty<T>(
-  arrayGiven: T[],
-  property: keyof T,
-): string[] {
-  const typeCounts: Record<string, number> = arrayGiven.reduce(
-    (counts, currObject) => {
-      const propertyValue = currObject[property] as string;
-      counts[propertyValue] = (counts[propertyValue] || 0) + 1;
-      return counts;
-    },
-    {},
-  );
+export function getFrequentValuesOnProperty<T>(arrayGiven: T[], property: keyof T): string[] {
+  const typeCounts: Record<string, number> = arrayGiven.reduce((counts, currObject) => {
+    const propertyValue = currObject[property] as string;
+    counts[propertyValue] = (counts[propertyValue] || 0) + 1;
+    return counts;
+  }, {});
 
   return Object.keys(typeCounts).sort((a, b) => typeCounts[b] - typeCounts[a]);
 }
@@ -145,11 +134,8 @@ export type Order = "asc" | "desc";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getComparator<Key extends keyof any>(
   order: Order,
-  orderBy: Key,
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
-) => number {
+  orderBy: Key
+): (a: { [key in Key]: number | string }, b: { [key in Key]: number | string }) => number {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -162,7 +148,7 @@ export function getComparator<Key extends keyof any>(
 export function stableSort<T>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   array: readonly any[],
-  comparator: (a, b) => number,
+  comparator: (a, b) => number
 ) {
   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
   stabilizedThis.sort((a, b) => {
@@ -186,14 +172,7 @@ export function isHexColor(hex: string): RegExpExecArray | null {
 }
 
 export function isValidRGB(rgb) {
-  return (
-    rgb.r >= 0 &&
-    rgb.r <= 255 &&
-    rgb.g >= 0 &&
-    rgb.g <= 255 &&
-    rgb.b >= 0 &&
-    rgb.b <= 255
-  );
+  return rgb.r >= 0 && rgb.r <= 255 && rgb.g >= 0 && rgb.g <= 255 && rgb.b >= 0 && rgb.b <= 255;
 }
 
 export function hexToRgb(hex: string): RGBColor {
@@ -230,10 +209,7 @@ export function rgbToHex([r, g, b]: RGBColor): HexColor {
  * @param reversed
  * @param colorRange
  */
-export function reverseColorRange(
-  reversed: boolean,
-  colorRange: ColorRange,
-): ColorRange | null {
+export function reverseColorRange(reversed: boolean, colorRange: ColorRange): ColorRange | null {
   if (!colorRange) return null;
   // if (colorRange.reversed) return colorRange;
   return {
@@ -243,11 +219,7 @@ export function reverseColorRange(
   };
 }
 
-export default function range(
-  start: number,
-  stop?: number,
-  step?: number,
-): number[] {
+export default function range(start: number, stop?: number, step?: number): number[] {
   start = +start;
   stop = stop !== undefined ? +stop : start;
   step = step !== undefined ? +step : 1;
@@ -284,14 +256,7 @@ export function timeToSeconds(timeString) {
   const [hours, minutes] = timeString.split(":").map(Number);
 
   // Validate the input format
-  if (
-    isNaN(hours) ||
-    isNaN(minutes) ||
-    hours < 0 ||
-    hours >= 24 ||
-    minutes < 0 ||
-    minutes >= 60
-  ) {
+  if (isNaN(hours) || isNaN(minutes) || hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60) {
     throw new Error('Invalid time format. Please use "HH:MM".');
   }
 
@@ -307,15 +272,11 @@ export function secondsToTime(seconds) {
 
   // Calculate the hours and minutes
   const totalSecondsInHour = 60 * 60; // 60 minutes * 60 seconds
-  const hours = Math.floor(
-    (seconds % (24 * totalSecondsInHour)) / totalSecondsInHour,
-  );
+  const hours = Math.floor((seconds % (24 * totalSecondsInHour)) / totalSecondsInHour);
   const minutes = Math.floor((seconds % totalSecondsInHour) / 60);
 
   // Format the result as HH:MM
-  const formattedTime = `${String(hours).padStart(2, "0")}:${String(
-    minutes,
-  ).padStart(2, "0")}`;
+  const formattedTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   return formattedTime;
 }
 

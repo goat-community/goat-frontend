@@ -1,14 +1,16 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
+
 import { ORGANIZATION_API_URL } from "@/lib/api/apiConstants";
 import { filterSearch, makeArrayUnique } from "@/lib/utils/helpers";
-import axios from "axios";
-import { useState, useEffect } from "react";
-import useSWR from "swr";
-import type {IUser} from "@/types/dashboard/organization";
+
+import type { IUser } from "@/types/dashboard/organization";
 
 // Get all users in order to manage them
 export const useUsersData = (searchWord?: string) => {
   const UsersFetcher = (url: string) => {
-    return axios(url).then((res: { data: IUser[] } ) => res.data);
+    return axios(url).then((res: { data: IUser[] }) => res.data);
   };
 
   const { data, error, isLoading } = useSWR(ORGANIZATION_API_URL, UsersFetcher);

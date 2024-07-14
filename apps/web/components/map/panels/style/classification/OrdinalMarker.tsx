@@ -1,3 +1,17 @@
+import type { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import { Box, Button, Chip, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import React from "react";
+import { v4 } from "uuid";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { MarkerMap } from "@/lib/validations/layer";
+
+import type { MarkerItem, MarkerMapItem, OrdinalMarkerSelectorProps, ValueItem } from "@/types/map/marker";
+
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 import { MarkerPopper } from "@/components/map/panels/style/marker/MarkerPopper";
 import DropdownFooter from "@/components/map/panels/style/other/DropdownFooter";
@@ -5,29 +19,6 @@ import { LayerValueSelectorPopper } from "@/components/map/panels/style/other/La
 import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
 import { SortableItem } from "@/components/map/panels/style/other/SortableItem";
 import SortableWrapper from "@/components/map/panels/style/other/SortableWrapper";
-import { useTranslation } from "@/i18n/client";
-import type { MarkerMap } from "@/lib/validations/layer";
-import type {
-  MarkerItem,
-  MarkerMapItem,
-  OrdinalMarkerSelectorProps,
-  ValueItem,
-} from "@/types/map/marker";
-import type { DragEndEvent } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
-import {
-  Box,
-  Button,
-  Chip,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import React from "react";
-import { v4 } from "uuid";
 
 const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
   const theme = useTheme();
@@ -40,20 +31,15 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
         value: markerMap[0],
         marker: markerMap[1],
       };
-    }) || [],
+    }) || []
   );
 
-  const [editingMarkerItem, setEditingMarkerItem] =
-    React.useState<MarkerItem | null>(null);
-  const [editingValues, setEditingValues] = React.useState<ValueItem | null>(
-    null,
-  );
+  const [editingMarkerItem, setEditingMarkerItem] = React.useState<MarkerItem | null>(null);
+  const [editingValues, setEditingValues] = React.useState<ValueItem | null>(null);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   function onMarkerChange(item: MarkerItem) {
-    const index = valueMaps.findIndex(
-      (marker: MarkerMapItem) => marker.id === item.id,
-    );
+    const index = valueMaps.findIndex((marker: MarkerMapItem) => marker.id === item.id);
     if (index !== -1) {
       const newMarkerMaps = [...valueMaps];
       newMarkerMaps[index] = {
@@ -85,18 +71,12 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
     }
   }
 
-  const handleMarkerPicker = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>,
-    item: MarkerItem,
-  ) => {
+  const handleMarkerPicker = (event: React.MouseEvent<HTMLElement, MouseEvent>, item: MarkerItem) => {
     setEditingMarkerItem(item);
     setAnchorEl(event.currentTarget);
   };
 
-  const handleValueSelector = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>,
-    item: MarkerMapItem,
-  ) => {
+  const handleValueSelector = (event: React.MouseEvent<HTMLElement, MouseEvent>, item: MarkerMapItem) => {
     const valueItem = {
       id: item.id,
       values: item.value,
@@ -127,9 +107,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
       } else {
         // check if the values are already in other valueMaps (not selected). If yes, remove it
         if (Array.isArray(value.value) && values?.length) {
-          const updatedOtherValues = value.value.filter(
-            (item) => !values.includes(item),
-          );
+          const updatedOtherValues = value.value.filter((item) => !values.includes(item));
           updatedValues.push({
             ...value,
             value: updatedOtherValues?.length ? updatedOtherValues : null,
@@ -159,11 +137,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
 
   return (
     <>
-      <MarkerPopper
-        editingItem={editingMarkerItem}
-        anchorEl={anchorEl}
-        onMarkerChange={onMarkerChange}
-      />
+      <MarkerPopper editingItem={editingMarkerItem} anchorEl={anchorEl} onMarkerChange={onMarkerChange} />
       {editingValues && (
         <LayerValueSelectorPopper
           open={!!editingValues?.id}
@@ -180,16 +154,12 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
         onClick={() => {
           setEditingValues(null);
           setEditingMarkerItem(null);
-        }}
-      >
+        }}>
         <Box sx={{ maxHeight: "340px", overflowY: "auto" }}>
           <SortableWrapper handleDragEnd={handleDragEnd} items={valueMaps}>
             {valueMaps?.map((item: MarkerMapItem) => (
               <SortableItem
-                active={
-                  item.id === editingMarkerItem?.id ||
-                  item.id === editingValues?.id
-                }
+                active={item.id === editingMarkerItem?.id || item.id === editingValues?.id}
                 key={item.id}
                 item={item}
                 label={item.marker?.name || t("select_marker")}
@@ -206,8 +176,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
                           marker: item.marker,
                         } as MarkerItem;
                         handleMarkerPicker(e, markerItem);
-                      }}
-                    >
+                      }}>
                       {!item.marker.name && (
                         <Icon
                           iconName={ICON_NAME.ADD_IMAGE}
@@ -218,10 +187,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
                         />
                       )}
                       {item.marker.url && (
-                        <MaskedImageIcon
-                          imageUrl={`${item.marker.url}`}
-                          dimension="19px"
-                        />
+                        <MaskedImageIcon imageUrl={`${item.marker.url}`} dimension="19px" />
                       )}
                     </IconButton>
                   </>
@@ -238,8 +204,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
                       />
                     </IconButton>
                   </>
-                }
-              >
+                }>
                 <Stack
                   direction="row"
                   sx={{
@@ -248,8 +213,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
                     "&:hover": {
                       color: "primary.main",
                     },
-                  }}
-                >
+                  }}>
                   <OverflowTypograpy
                     variant="body2"
                     fontWeight="bold"
@@ -262,12 +226,9 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
                       ...(item.id === editingValues?.id && {
                         color: theme.palette.primary.main,
                       }),
-                      transition: theme.transitions.create(
-                        ["color", "transform"],
-                        {
-                          duration: theme.transitions.duration.standard,
-                        },
-                      ),
+                      transition: theme.transitions.create(["color", "transform"], {
+                        duration: theme.transitions.duration.standard,
+                      }),
                       "&:hover": {
                         cursor: "pointer",
                         color: theme.palette.primary.main,
@@ -277,11 +238,8 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
                       placement: "top",
                       arrow: true,
                       enterDelay: 200,
-                    }}
-                  >
-                    <>
-                      {item.value?.length ? item.value[0] : t("assign_values")}
-                    </>
+                    }}>
+                    <>{item.value?.length ? item.value[0] : t("assign_values")}</>
                   </OverflowTypograpy>
                   {item?.value?.length && item.value.length > 1 && (
                     <Tooltip
@@ -292,13 +250,8 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
                           {item.value.slice(0, 4).join("\n")}
                           {item.value.length > 4 && "\n ..."}
                         </div>
-                      }
-                    >
-                      <Chip
-                        size="small"
-                        sx={{ ml: 2 }}
-                        label={`+${item.value.length - 1}`}
-                      />
+                      }>
+                      <Chip size="small" sx={{ ml: 2 }} label={`+${item.value.length - 1}`} />
                     </Tooltip>
                   )}
                 </Stack>
@@ -310,10 +263,7 @@ const OrdinalMarker = (props: OrdinalMarkerSelectorProps) => {
             variant="text"
             sx={{ borderRadius: 0, ml: 4, my: 2 }}
             size="small"
-            startIcon={
-              <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />
-            }
-          >
+            startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />}>
             <Typography variant="body2" fontWeight="bold" color="inherit">
               {t("common:add_step")}
             </Typography>

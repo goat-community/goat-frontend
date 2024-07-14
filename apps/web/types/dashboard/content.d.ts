@@ -1,4 +1,3 @@
-
 export interface ContentDialogBaseProps extends DialogBaseProps {
   open: boolean;
   onClose?: () => void;

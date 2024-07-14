@@ -1,5 +1,6 @@
 import * as z from "zod";
-import { responseSchema } from "@/lib/validations/response";
+
+import { DEFAULT_COLOR, DEFAULT_COLOR_RANGE } from "@/lib/constants/color";
 import {
   contentMetadataSchema,
   dataCategory,
@@ -11,12 +12,10 @@ import {
   layerType,
   paginatedSchema,
 } from "@/lib/validations/common";
-import { DEFAULT_COLOR, DEFAULT_COLOR_RANGE } from "@/lib/constants/color";
+import { responseSchema } from "@/lib/validations/response";
 
 const HexColor = z.string();
-const ColorMap = z.array(
-  z.tuple([z.union([z.array(z.string()), z.null()]), HexColor]),
-);
+const ColorMap = z.array(z.tuple([z.union([z.array(z.string()), z.null()]), HexColor]));
 
 export const classBreaks = z.enum([
   "quantile",
@@ -59,14 +58,8 @@ export const TextLabelSchema = z.object({
   anchor: z.enum(["start", "middle", "end"]).optional().default("middle"),
   alignment: z.enum(["center", "left", "right"]).optional().default("center"),
   background: z.boolean().optional().default(false),
-  background_color: z
-    .array(z.number().min(0).max(255))
-    .optional()
-    .default([0, 0, 200, 255]),
-  outline_color: z
-    .array(z.number().min(0).max(255))
-    .optional()
-    .default([255, 0, 0, 255]),
+  background_color: z.array(z.number().min(0).max(255)).optional().default([0, 0, 200, 255]),
+  outline_color: z.array(z.number().min(0).max(255)).optional().default([255, 0, 0, 255]),
   outline_width: z.number().min(0).max(100).optional().default(0),
 });
 
@@ -88,10 +81,7 @@ export const colorSchema = z.object({
 });
 
 export const strokeColorSchema = z.object({
-  stroke_color: z
-    .array(z.number().min(0).max(255))
-    .optional()
-    .default(DEFAULT_COLOR),
+  stroke_color: z.array(z.number().min(0).max(255)).optional().default(DEFAULT_COLOR),
   stroke_color_range: ColorRange.optional().default(DEFAULT_COLOR_RANGE),
   stroke_color_field: layerFieldType.optional(),
   stroke_color_scale: classBreaks.optional().default("quantile"),
@@ -118,9 +108,7 @@ export const marker = z.object({
   url: z.string(),
 });
 
-const MarkerMap = z.array(
-  z.tuple([z.union([z.array(z.string()), z.null()]), marker]),
-);
+const MarkerMap = z.array(z.tuple([z.union([z.array(z.string()), z.null()]), marker]));
 
 export const markerSchema = z.object({
   custom_marker: z.boolean().default(false),
@@ -143,24 +131,20 @@ export const featureLayerBasePropertiesSchema = z
   .merge(strokeColorSchema)
   .merge(strokeWidthSchema);
 
-export const featureLayerPointPropertiesSchema =
-  featureLayerBasePropertiesSchema
-    .merge(strokeColorSchema)
-    .merge(radiusSchema)
-    .merge(markerSchema);
+export const featureLayerPointPropertiesSchema = featureLayerBasePropertiesSchema
+  .merge(strokeColorSchema)
+  .merge(radiusSchema)
+  .merge(markerSchema);
 
-export const featureLayerLinePropertiesSchema =
-  featureLayerBasePropertiesSchema;
+export const featureLayerLinePropertiesSchema = featureLayerBasePropertiesSchema;
 
-export const featureLayerPolygonPropertiesSchema =
-  featureLayerBasePropertiesSchema.merge(strokeColorSchema);
+export const featureLayerPolygonPropertiesSchema = featureLayerBasePropertiesSchema.merge(strokeColorSchema);
 
 export const featureLayerProperties = featureLayerPointPropertiesSchema
   .or(featureLayerLinePropertiesSchema)
   .or(featureLayerPolygonPropertiesSchema);
 
-
-  // lineage, positional_accuracy, attribute_accuracy, completeness
+// lineage, positional_accuracy, attribute_accuracy, completeness
 export const layerMetadataSchema = contentMetadataSchema.extend({
   lineage: z.string().optional(),
   positional_accuracy: z.string().optional(),
@@ -224,15 +208,13 @@ export const createNewScenarioLayerSchema = createLayerBaseSchema.extend({
   scenario_type: z.enum(["point", "area"]),
 });
 
-export const createNewExternalImageryLayerSchema = createLayerBaseSchema.extend(
-  {
-    type: z.literal("imagery_layer"),
-    url: z.string().url(),
-    data_type: data_type,
-    legend_urls: z.array(z.string().url()).optional(),
-    extent: z.string().optional(),
-  },
-);
+export const createNewExternalImageryLayerSchema = createLayerBaseSchema.extend({
+  type: z.literal("imagery_layer"),
+  url: z.string().url(),
+  data_type: data_type,
+  legend_urls: z.array(z.string().url()).optional(),
+  extent: z.string().optional(),
+});
 
 export const createNewExternalTileLayerSchema = createLayerBaseSchema.extend({
   type: z.literal("tile_layer"),
@@ -276,7 +258,7 @@ export const datasetCollectionItems = z.object({
       id: z.number(),
       properties: z.object({}),
       type: z.string(),
-    }),
+    })
   ),
   id: z.string().optional(),
   links: z.array(
@@ -285,7 +267,7 @@ export const datasetCollectionItems = z.object({
       rel: z.string(),
       type: z.string(),
       title: z.string(),
-    }),
+    })
   ),
   numberMatched: z.number(),
   numberReturned: z.number(),
@@ -337,18 +319,12 @@ export const datasetMetadataAggregated = z.object({
 });
 
 export type DatasetCollectionItems = z.infer<typeof datasetCollectionItems>;
-export type GetCollectionItemsQueryParams = z.infer<
-  typeof datasetCollectionItemsQueryParams
->;
+export type GetCollectionItemsQueryParams = z.infer<typeof datasetCollectionItemsQueryParams>;
 export type GetDatasetSchema = z.infer<typeof getDatasetSchema>;
 export type DatasetMetadataValue = z.infer<typeof datasetMetadataValue>;
-export type DatasetMetadataAggregated = z.infer<
-  typeof datasetMetadataAggregated
->;
+export type DatasetMetadataAggregated = z.infer<typeof datasetMetadataAggregated>;
 
-export type DatasetDownloadRequest = z.infer<
-  typeof datasetDownloadRequestSchema
->;
+export type DatasetDownloadRequest = z.infer<typeof datasetDownloadRequestSchema>;
 
 export const layerResponseSchema = responseSchema(layerSchema);
 export const layerTypesArray = Object.values(layerType.Values);
@@ -359,20 +335,12 @@ export type ColorMap = z.infer<typeof ColorMap>;
 export type Layer = z.infer<typeof layerSchema>;
 export type PostDataset = z.infer<typeof postDatasetSchema>;
 export type FeatureLayerProperties = z.infer<typeof featureLayerProperties>;
-export type FeatureLayerPointProperties = z.infer<
-  typeof featureLayerPointPropertiesSchema
->;
-export type FeatureLayerLineProperties = z.infer<
-  typeof featureLayerLinePropertiesSchema
->;
-export type FeatureLayerPolygonProperties = z.infer<
-  typeof featureLayerPolygonPropertiesSchema
->;
+export type FeatureLayerPointProperties = z.infer<typeof featureLayerPointPropertiesSchema>;
+export type FeatureLayerLineProperties = z.infer<typeof featureLayerLinePropertiesSchema>;
+export type FeatureLayerPolygonProperties = z.infer<typeof featureLayerPolygonPropertiesSchema>;
 export type LayerPaginated = z.infer<typeof layerResponseSchema>;
 export type LayerUniqueValues = z.infer<typeof uniqueValuesSchema>;
-export type LayerUniqueValuesPaginated = z.infer<
-  typeof uniqueValuesResponseSchema
->;
+export type LayerUniqueValuesPaginated = z.infer<typeof uniqueValuesResponseSchema>;
 export type Marker = z.infer<typeof marker>;
 export type MarkerMap = z.infer<typeof MarkerMap>;
 export type LayerType = z.infer<typeof layerType>;
@@ -382,17 +350,9 @@ export type LayerClassBreaks = z.infer<typeof layerClassBreaks>;
 export type LayerFieldType = z.infer<typeof layerFieldType>;
 export type LayerMetadata = z.infer<typeof layerMetadataSchema>;
 export type FeatureLayerType = z.infer<typeof featureLayerType>;
-export type GetLayerUniqueValuesQueryParams = z.infer<
-  typeof getLayerUniqueValuesQueryParamsSchema
->;
+export type GetLayerUniqueValuesQueryParams = z.infer<typeof getLayerUniqueValuesQueryParamsSchema>;
 
 export type CreateFeatureLayer = z.infer<typeof createFeatureLayerSchema>;
-export type CreateNewScenarioLayer = z.infer<
-  typeof createNewScenarioLayerSchema
->;
-export type CreateNewExternalImageryLayer = z.infer<
-  typeof createNewExternalImageryLayerSchema
->;
-export type CreateNewExternalTileLayer = z.infer<
-  typeof createNewExternalTileLayerSchema
->;
+export type CreateNewScenarioLayer = z.infer<typeof createNewScenarioLayerSchema>;
+export type CreateNewExternalImageryLayer = z.infer<typeof createNewExternalImageryLayerSchema>;
+export type CreateNewExternalTileLayer = z.infer<typeof createNewExternalTileLayerSchema>;

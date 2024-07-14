@@ -1,5 +1,9 @@
-import { useAppSelector } from "@/hooks/store/ContextHooks";
+import { useMemo, useState } from "react";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
 import { useProject, useProjectLayers } from "@/lib/api/projects";
 import type { LayerType } from "@/lib/validations/layer";
 import {
@@ -7,13 +11,11 @@ import {
   featureLayerPointPropertiesSchema,
   featureLayerPolygonPropertiesSchema,
 } from "@/lib/validations/layer";
-import {
-  projectLayerSchema,
-  type ProjectLayer,
-} from "@/lib/validations/project";
+import { type ProjectLayer, projectLayerSchema } from "@/lib/validations/project";
+
 import { ContentActions, MapLayerActions } from "@/types/common";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useMemo, useState } from "react";
+
+import { useAppSelector } from "@/hooks/store/ContextHooks";
 
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 
@@ -23,7 +25,7 @@ export const useLayerSettingsMoreMenu = () => {
   function getLayerMoreMenuOptions(
     layerType: ProjectLayer["type"],
     viewChart?: boolean,
-    inCatalog?: ProjectLayer["in_catalog"],
+    inCatalog?: ProjectLayer["in_catalog"]
   ): PopperMenuItem[] {
     if (layerType === "feature") {
       const featureOptions: PopperMenuItem[] = [
@@ -150,25 +152,20 @@ export const useActiveLayer = (projectId: string) => {
   const { layers: projectLayers, mutate } = useProjectLayers(projectId);
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
   const activeLayer = useMemo(() => {
-    const activeLayer = projectLayers?.find(
-      (layer) => layer.id === activeLayerId,
-    );
+    const activeLayer = projectLayers?.find((layer) => layer.id === activeLayerId);
     if (!activeLayer) return undefined;
     const properties = activeLayer?.properties;
     if (!properties) return undefined;
     const parsedActiveLayer = projectLayerSchema.parse(activeLayer);
     if (parsedActiveLayer.feature_layer_geometry_type === "point") {
-      parsedActiveLayer.properties =
-        featureLayerPointPropertiesSchema.parse(properties);
+      parsedActiveLayer.properties = featureLayerPointPropertiesSchema.parse(properties);
     }
     if (parsedActiveLayer.feature_layer_geometry_type === "line") {
-      parsedActiveLayer.properties =
-        featureLayerLinePropertiesSchema.parse(properties);
+      parsedActiveLayer.properties = featureLayerLinePropertiesSchema.parse(properties);
     }
 
     if (parsedActiveLayer.feature_layer_geometry_type === "polygon") {
-      parsedActiveLayer.properties =
-        featureLayerPolygonPropertiesSchema.parse(properties);
+      parsedActiveLayer.properties = featureLayerPolygonPropertiesSchema.parse(properties);
     }
 
     return parsedActiveLayer;
@@ -179,29 +176,21 @@ export const useActiveLayer = (projectId: string) => {
 export const useFilterQueries = (projectId: string) => {
   const { layers: projectLayers, mutate } = useProjectLayers(projectId);
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
-  const activeLayer = projectLayers?.find(
-    (layer) => layer.id === activeLayerId,
-  );
+  const activeLayer = projectLayers?.find((layer) => layer.id === activeLayerId);
 
   return { activeLayer, mutate };
 };
 
-export const useSortedLayers = (
-  projectId: string,
-  excludeLayerTypes: LayerType[] = [],
-) => {
+export const useSortedLayers = (projectId: string, excludeLayerTypes: LayerType[] = []) => {
   const { layers: projectLayers } = useProjectLayers(projectId);
   const { project } = useProject(projectId);
   const sortedLayers = useMemo(() => {
     if (!projectLayers || !project) return [];
     if (!project.layer_order) return projectLayers;
-    const filteredLayers = projectLayers.filter(
-      (layer) => !excludeLayerTypes.includes(layer.type),
-    );
+    const filteredLayers = projectLayers.filter((layer) => !excludeLayerTypes.includes(layer.type));
 
     return filteredLayers.sort(
-      (a, b) =>
-        project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id),
+      (a, b) => project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id)
     );
   }, [projectLayers, project, excludeLayerTypes]);
   return sortedLayers;

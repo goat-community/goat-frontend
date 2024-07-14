@@ -1,8 +1,9 @@
 import { useSortable } from "@dnd-kit/sortable";
-import { Grid, MenuItem, Stack, useTheme } from "@mui/material";
 import { CSS } from "@dnd-kit/utilities";
-import { DragHandle } from "@/components/common/DragHandle";
 import { DragIndicator } from "@mui/icons-material";
+import { Grid, MenuItem, Stack, useTheme } from "@mui/material";
+
+import { DragHandle } from "@/components/common/DragHandle";
 
 type SortableItemProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,8 +16,7 @@ type SortableItemProps = {
 };
 
 export function SortableItem(props: SortableItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.item.id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.item.id });
   const theme = useTheme();
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -41,8 +41,7 @@ export function SortableItem(props: SortableItemProps) {
             opacity: 1,
           },
         },
-      }}
-    >
+      }}>
       <Grid container alignItems="center" justifyContent="start" spacing={2}>
         <Grid item xs={1} sx={{ mx: 1 }}>
           <DragHandle {...attributes} listeners={listeners}>

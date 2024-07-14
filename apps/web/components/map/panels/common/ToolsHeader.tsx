@@ -1,6 +1,7 @@
 import { IconButton, Stack, Typography } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import React from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 interface ToolsHeaderProps {
   onBack: () => void;
@@ -19,8 +20,7 @@ const ToolsHeader: React.FC<ToolsHeaderProps> = ({ onBack, title, docs }) => {
         fontWeight="bold"
         sx={{
           display: "flex",
-        }}
-      >
+        }}>
         {title}
       </Typography>
       {docs && (

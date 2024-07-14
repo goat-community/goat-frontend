@@ -1,21 +1,12 @@
-import type { MiddlewareFactory } from "@/middlewares/types";
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
-import {
-  NextResponse,
-  type NextFetchEvent,
-  type NextMiddleware,
-} from "next/server";
-import { fallbackLng, cookieName } from "@/i18n/settings";
+import { type NextFetchEvent, type NextMiddleware, NextResponse } from "next/server";
 
-const protectedPaths = [
-  "/home",
-  "/projects",
-  "datasets",
-  "/settings",
-  "/map",
-  "/onboarding",
-];
+import { cookieName, fallbackLng } from "@/i18n/settings";
+
+import type { MiddlewareFactory } from "@/middlewares/types";
+
+const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map", "/onboarding"];
 
 export const withAuth: MiddlewareFactory = (next: NextMiddleware) => {
   return async (request: NextRequest, _next: NextFetchEvent) => {
@@ -27,19 +18,13 @@ export const withAuth: MiddlewareFactory = (next: NextMiddleware) => {
     const signInPage = `${lngPath}/auth/login/`;
     const errorPage = `${lngPath}/auth/error/`;
 
-    const _protectedPaths = protectedPaths.map((p) =>
-      lngPath ? `${lngPath}${p}` : p,
-    );
+    const _protectedPaths = protectedPaths.map((p) => (lngPath ? `${lngPath}${p}` : p));
 
-    if (!_protectedPaths.some((p) => pathname.startsWith(p)))
-      return await next(request, _next);
+    if (!_protectedPaths.some((p) => pathname.startsWith(p))) return await next(request, _next);
 
     const nextAuthSecret = process.env.NEXTAUTH_SECRET;
     if (!nextAuthSecret) {
-      console.error(
-        `[next-auth][error][NO_SECRET]`,
-        `\nhttps://next-auth.js.org/errors#no_secret`,
-      );
+      console.error(`[next-auth][error][NO_SECRET]`, `\nhttps://next-auth.js.org/errors#no_secret`);
       const errorUrl = new URL(`${basePath}${errorPage}`, origin);
       errorUrl.searchParams.append("error", "Configuration");
 
@@ -57,10 +42,7 @@ export const withAuth: MiddlewareFactory = (next: NextMiddleware) => {
 
     // the user is not logged in, redirect to the sign-in page
     const signInUrl = new URL(`${basePath}${signInPage}`, origin);
-    signInUrl.searchParams.append(
-      "callbackUrl",
-      `${basePath}${pathname}${search}`,
-    );
+    signInUrl.searchParams.append("callbackUrl", `${basePath}${pathname}${search}`);
     return NextResponse.redirect(signInUrl);
   };
 };

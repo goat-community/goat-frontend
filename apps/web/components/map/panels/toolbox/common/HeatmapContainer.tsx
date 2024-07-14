@@ -1,28 +1,30 @@
-import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import Container from "@/components/map/panels/Container";
-import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
-import { useTranslation } from "@/i18n/client";
 import { Box, Typography, useTheme } from "@mui/material";
-import SectionHeader from "@/components/map/panels/common/SectionHeader";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
-import type { SelectorItem } from "@/types/map/common";
-import Selector from "@/components/map/panels/common/Selector";
-import { setMaskLayer } from "@/lib/store/map/slice";
-import { useRoutingTypes } from "@/hooks/map/ToolsHooks";
-import { useMemo, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
-import { setRunningJobIds } from "@/lib/store/jobs/slice";
-
-import {
-  HeatmapRoutingTypeEnum,
-  catchmentAreaMaskLayerNames,
-} from "@/lib/validations/tools";
-import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
-import { toast } from "react-toastify";
-import { useJobs } from "@/lib/api/jobs";
 import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import type { ZodObject } from "zod";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useJobs } from "@/lib/api/jobs";
+import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import { setMaskLayer } from "@/lib/store/map/slice";
+import { HeatmapRoutingTypeEnum, catchmentAreaMaskLayerNames } from "@/lib/validations/tools";
+
+import type { SelectorItem } from "@/types/map/common";
+import type { IndicatorBaseProps } from "@/types/map/toolbox";
+
+import { useRoutingTypes } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import Container from "@/components/map/panels/Container";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import Selector from "@/components/map/panels/common/Selector";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 
 type HeatmapContainerProps = IndicatorBaseProps & {
   handleConfigurationReset?: () => void;
@@ -65,9 +67,7 @@ const HeatmapContainer = ({
     setSelectedRouting,
   } = useRoutingTypes();
   const routingTypes = useMemo(() => {
-    return activeMobilityHeatmapRoutingTypes.concat(
-      motorizedHeatmapRoutingTypes,
-    );
+    return activeMobilityHeatmapRoutingTypes.concat(motorizedHeatmapRoutingTypes);
   }, [activeMobilityHeatmapRoutingTypes, motorizedHeatmapRoutingTypes]);
   const [isBusy, setIsBusy] = useState(false);
 
@@ -102,11 +102,10 @@ const HeatmapContainer = ({
       routing_type: selectedRouting?.value,
       ...payload,
     };
-    let heatmap_type = `${type}_active_mobility`
+    let heatmap_type = `${type}_active_mobility`;
     if (selectedRouting?.value === HeatmapRoutingTypeEnum.Enum.public_transport) {
       heatmap_type = `${type}_pt`;
     }
-
 
     try {
       const parsedPayload = schema.parse(_payload);
@@ -136,12 +135,8 @@ const HeatmapContainer = ({
             sx={{
               display: "flex",
               flexDirection: "column",
-            }}
-          >
-            <Typography
-              variant="body2"
-              sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-            >
+            }}>
+            <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
               {description}
             </Typography>
 
@@ -160,28 +155,16 @@ const HeatmapContainer = ({
                 <>
                   <Selector
                     selectedItems={selectedRouting}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       const routing = item as SelectorItem;
                       setSelectedRouting(routing);
-                      if (
-                        routing.value ===
-                        HeatmapRoutingTypeEnum.Enum.public_transport
-                      ) {
+                      if (routing.value === HeatmapRoutingTypeEnum.Enum.public_transport) {
                         dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
                       }
-                      if (
-                        routing.value !==
-                        HeatmapRoutingTypeEnum.Enum.public_transport
-                      ) {
+                      if (routing.value !== HeatmapRoutingTypeEnum.Enum.public_transport) {
                         // same mask layer for active mobility and car.
                         // it can be changed in the future
-                        dispatch(
-                          setMaskLayer(
-                            catchmentAreaMaskLayerNames.active_mobility,
-                          ),
-                        );
+                        dispatch(setMaskLayer(catchmentAreaMaskLayerNames.active_mobility));
                       }
                     }}
                     items={routingTypes}
@@ -203,10 +186,7 @@ const HeatmapContainer = ({
                   icon={ICON_NAME.SETTINGS}
                   disableAdvanceOptions={true}
                 />
-                <SectionOptions
-                  active={_isValid}
-                  baseOptions={<>{configChildren}</>}
-                />
+                <SectionOptions active={_isValid} baseOptions={<>{configChildren}</>} />
               </>
             )}
 
@@ -220,10 +200,7 @@ const HeatmapContainer = ({
                   icon={ICON_NAME.LOCATION_MARKER}
                   disableAdvanceOptions={true}
                 />
-                <SectionOptions
-                  active={_isValid}
-                  baseOptions={<>{opportunitiesChildren}</>}
-                />
+                <SectionOptions active={_isValid} baseOptions={<>{opportunitiesChildren}</>} />
               </>
             )}
           </Box>

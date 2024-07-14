@@ -1,13 +1,19 @@
-import TileCard from "@/components/dashboard/common/TileCard";
-import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
-import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
+import { Box, Grid, Skeleton } from "@mui/material";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
 import type { Layer } from "@/lib/validations/layer";
 import type { Project } from "@/lib/validations/project";
+
 import type { ContentActions } from "@/types/common";
-import { Box, Grid, Skeleton } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useTranslation } from "@/i18n/client";
+
+import { useContentMoreMenu } from "@/hooks/dashboard/ContentHooks";
+
 import EmptySection from "@/components/common/EmptySection";
+import TileCard from "@/components/dashboard/common/TileCard";
+import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 
 interface TileGridProps {
   view: "list" | "grid";
@@ -32,13 +38,8 @@ const TileGrid = (props: TileGridProps) => {
     lg: 3,
   };
 
-  const {
-    getMoreMenuOptions,
-    activeContent,
-    moreMenuState,
-    closeMoreMenu,
-    openMoreMenu,
-  } = useContentMoreMenu();
+  const { getMoreMenuOptions, activeContent, moreMenuState, closeMoreMenu, openMoreMenu } =
+    useContentMoreMenu();
 
   return (
     <>
@@ -59,20 +60,13 @@ const TileGrid = (props: TileGridProps) => {
           ...(props.view === "list" && {
             boxShadow: props.enableActions ? 3 : 0,
           }),
-        }}
-      >
+        }}>
         <Grid container spacing={props.view === "list" ? 0 : 5}>
           {!isLoading && items?.length === 0 && (
             <Grid item xs={12}>
               <EmptySection
-                label={
-                  props.type === "project"
-                    ? t("no_projects_found")
-                    : t("no_datasets_found")
-                }
-                icon={
-                  props.type === "project" ? ICON_NAME.MAP : ICON_NAME.DATABASE
-                }
+                label={props.type === "project" ? t("no_projects_found") : t("no_datasets_found")}
+                icon={props.type === "project" ? ICON_NAME.MAP : ICON_NAME.DATABASE}
               />
             </Grid>
           )}
@@ -86,13 +80,9 @@ const TileGrid = (props: TileGridProps) => {
                   }
                 }}
                 key={item?.id ?? index}
-                {...(props.view === "list" ? listProps : gridProps)}
-              >
+                {...(props.view === "list" ? listProps : gridProps)}>
                 {!item ? (
-                  <Skeleton
-                    variant="rectangular"
-                    height={props.view === "list" ? 80 : 200}
-                  />
+                  <Skeleton variant="rectangular" height={props.view === "list" ? 80 : 200} />
                 ) : (
                   <TileCard
                     selected={props.selected}
@@ -104,7 +94,7 @@ const TileGrid = (props: TileGridProps) => {
                   />
                 )}
               </Grid>
-            ),
+            )
           )}
         </Grid>
       </Box>

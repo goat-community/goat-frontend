@@ -1,95 +1,116 @@
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useMap } from "react-map-gl";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useProjectLayers, useProjectScenarioFeatures } from "@/lib/api/projects";
+import type { Scenario, ScenarioFeatures } from "@/lib/validations/scenario";
+
+import type { SelectorItem } from "@/types/map/common";
+
 import SectionHeader from "@/components/map/panels/common/SectionHeader";
 import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import { getLayerIcon } from "@/components/map/panels/layer/Layer";
-import { useTranslation } from "@/i18n/client";
-import { useProjectLayers } from "@/lib/api/projects";
-import type { Scenario } from "@/lib/validations/scenario";
-import type { SelectorItem } from "@/types/map/common";
-import { Box, Typography, useTheme } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useMemo, useState } from "react";
+import FeatureEditorTools from "@/components/map/panels/scenario/FeatureEditorTools";
 
-
-
-{/* <TableRow key={v4()}>
-<TableCell align="center" sx={{ px: 2 }}>
-  <Typography variant="caption" fontWeight="bold">
-    {point[0].toFixed(4)}
-  </Typography>
-</TableCell>
-<TableCell align="center" sx={{ px: 2 }}>
-  <Typography variant="caption" fontWeight="bold">
-    {point[1].toFixed(4)}
-  </Typography>
-</TableCell>
-<TableCell align="right" sx={{ px: 2 }}>
-  <Stack
-    direction="row"
-    alignItems="center"
-    justifyContent="end"
-    spacing={1}
-  >
-    <Tooltip
-      title={t("zoom_to_starting_point")}
-      placement="top"
-    >
-      <IconButton
-        size="small"
-        onClick={() => handleZoomToStartingPoint(point)}
-        sx={{
-          "&:hover": {
-            color: theme.palette.primary.main,
-          },
-        }}
-      >
-        <Icon
-          iconName={ICON_NAME.ZOOM_IN}
-          style={{ fontSize: "12px" }}
-          htmlColor="inherit"
-        />
-      </IconButton>
-    </Tooltip>
-    <Tooltip
-      title={t("delete_starting_point")}
-      placement="top"
-    >
-      <IconButton
-        size="small"
-        sx={{
-          "&:hover": {
-            color: theme.palette.error.main,
-          },
-        }}
-        onClick={() => handleDeleteStartingPoint(index)}
-      >
-        <Icon
-          iconName={ICON_NAME.TRASH}
-          style={{ fontSize: "12px" }}
-          htmlColor="inherit"
-        />
-      </IconButton>
-    </Tooltip>
-  </Stack>
-</TableCell>
-</TableRow>
-))} */}
-
-
-
-const ScenarioFeaturesEditor = ({
-  scenario,
-  projectId,
-}: {
-  scenario: Scenario;
-  projectId: string;
-}) => {
-  const theme = useTheme();
-  const [selectedEditLayer, setSelectedEditLayer] = useState<
-    SelectorItem | undefined
-  >(undefined);
+const ScenarioFeaturesTable = ({ scenarioFeatures }: { scenarioFeatures: ScenarioFeatures | undefined }) => {
   const { t } = useTranslation("common");
+  return (
+    <>
+      <Table size="small" aria-label="scenario features table" stickyHeader>
+        <TableHead>
+          <TableRow>
+            <TableCell align="left">
+              <Typography variant="caption" fontWeight="bold">
+                Layer
+              </Typography>
+            </TableCell>
+            <TableCell align="left">
+              <Typography variant="caption" fontWeight="bold">
+                Type
+              </Typography>
+            </TableCell>
+            <TableCell align="right"> </TableCell>
+          </TableRow>
+        </TableHead>
+      </Table>
+
+      <TableContainer style={{ marginTop: 0, maxHeight: 250 }}>
+        <Table size="small" aria-label="scenario features table">
+          <TableBody>
+            {!scenarioFeatures?.features?.length && (
+              <TableRow>
+                <TableCell align="center" colSpan={3}>
+                  <Typography variant="caption" fontWeight="bold">
+                    {t("no_scenario_features")}
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
+            {/* Scenario Feature Table  */}
+            {!scenarioFeatures
+              ? null
+              : scenarioFeatures.features.map((_feature, index) => (
+                  <TableRow key={index}>
+                    <TableCell align="center" sx={{ px: 2 }}>
+                      <Typography variant="caption" fontWeight="bold">
+                        1
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center" sx={{ px: 2 }}>
+                      <Typography variant="caption" fontWeight="bold">
+                        2
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right" sx={{ px: 2 }}>
+                      <Typography variant="caption" fontWeight="bold">
+                        3
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
+};
+
+const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; projectId: string }) => {
+  const theme = useTheme();
+  const [selectedEditLayer, setSelectedEditLayer] = useState<SelectorItem | undefined>(undefined);
+  const { t } = useTranslation("common");
+  const { map } = useMap();
   const { layers: projectLayers } = useProjectLayers(projectId);
+  const { scenarioFeatures } = useProjectScenarioFeatures(projectId, scenario.id);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleFeatureCreate = (e: any) => {
+    console.log(e);
+  };
+
+  useEffect(() => {
+    if (!map) return;
+    map.on(MapboxDraw.constants.events.CREATE, handleFeatureCreate);
+    return () => {
+      map.off(MapboxDraw.constants.events.CREATE, handleFeatureCreate);
+    };
+  }, [map]);
 
   const scenarioEditLayers = useMemo(() => {
     const scenarioLayers = [] as SelectorItem[];
@@ -109,21 +130,21 @@ const ScenarioFeaturesEditor = ({
     return scenarioLayers;
   }, [projectLayers]);
 
-  const scenarioFeatures = []
+  const selectedScenarioLayer = useMemo(() => {
+    if (selectedEditLayer) {
+      return projectLayers?.find((layer) => layer.id === selectedEditLayer.value);
+    }
+  }, [selectedEditLayer, projectLayers]);
 
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-      }}
-    >
-      <Typography
-        variant="body2"
-        sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-      >
-        GOAT allows the development of custom scenarios which can later be used
-        for computing indicators to assess the impact of the interventions.
+      }}>
+      <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
+        GOAT allows the development of custom scenarios which can later be used for computing indicators to
+        assess the impact of the interventions.
       </Typography>
       <SectionHeader
         active={true}
@@ -138,9 +159,7 @@ const ScenarioFeaturesEditor = ({
           <>
             <Selector
               selectedItems={selectedEditLayer}
-              setSelectedItems={(
-                item: SelectorItem[] | SelectorItem | undefined,
-              ) => {
+              setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                 setSelectedEditLayer(item as SelectorItem);
               }}
               items={scenarioEditLayers}
@@ -164,7 +183,9 @@ const ScenarioFeaturesEditor = ({
         active={selectedEditLayer !== undefined}
         baseOptions={
           <>
-            <p>.</p>
+            {selectedScenarioLayer !== undefined && (
+              <FeatureEditorTools projectLayer={selectedScenarioLayer} scenarioFeatures={scenarioFeatures} />
+            )}
           </>
         }
       />
@@ -179,10 +200,10 @@ const ScenarioFeaturesEditor = ({
       />
 
       <SectionOptions
-        active={true}
+        active={scenarioFeatures !== undefined}
         baseOptions={
           <>
-            <p>.</p>
+            <ScenarioFeaturesTable scenarioFeatures={scenarioFeatures} />
           </>
         }
       />

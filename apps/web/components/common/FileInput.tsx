@@ -1,37 +1,29 @@
-import React from "react";
-import prettyBytes from "pretty-bytes";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CloseIcon from "@mui/icons-material/Close";
+import type { InputBaseComponentProps } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import type { TextFieldProps as MuiTextFieldProps } from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
-import type { InputBaseComponentProps } from "@mui/material";
-import {
-  fileListToArray,
-  getFileDetails,
-  getTotalFilesSize,
-  matchIsFile,
-} from "@/lib/utils/file";
+import prettyBytes from "pretty-bytes";
+import React from "react";
+
+import { fileListToArray, getFileDetails, getTotalFilesSize, matchIsFile } from "@/lib/utils/file";
 
 type NonUndefined<T> = T extends undefined ? never : T;
 
-type TextFieldProps = Omit<
-  MuiTextFieldProps,
-  "onChange" | "select" | "type" | "multiline" | "defaultValue"
->;
+type TextFieldProps = Omit<MuiTextFieldProps, "onChange" | "select" | "type" | "multiline" | "defaultValue">;
 
-export type MuiFileInputProps<T extends boolean | undefined> =
-  TextFieldProps & {
-    value?: T extends true ? File[] : File | null;
-    hideSizeText?: boolean;
-    multiple?: T;
-    getInputText?: (files: T extends true ? File[] : File | null) => string;
-    getSizeText?: (files: T extends true ? File[] : File | null) => string;
-    onChange?: (value: T extends true ? File[] : File | null) => void;
-  };
+export type MuiFileInputProps<T extends boolean | undefined> = TextFieldProps & {
+  value?: T extends true ? File[] : File | null;
+  hideSizeText?: boolean;
+  multiple?: T;
+  getInputText?: (files: T extends true ? File[] : File | null) => string;
+  getSizeText?: (files: T extends true ? File[] : File | null) => string;
+  onChange?: (value: T extends true ? File[] : File | null) => void;
+};
 
 type InputProps = InputBaseComponentProps & {
   text: string | { filename: string; extension: string };
@@ -83,38 +75,33 @@ const Filename = styled("div")`
 `;
 
 // eslint-disable-next-line react/display-name
-const Input = React.forwardRef(
-  (props: InputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
-    const { text, isPlaceholder, placeholder, ...restInputProps } = props;
-    // eslint-disable-next-line react/hook-use-state
-    const id = React.useId();
+const Input = React.forwardRef((props: InputProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+  const { text, isPlaceholder, placeholder, ...restInputProps } = props;
+  // eslint-disable-next-line react/hook-use-state
+  const id = React.useId();
 
-    return (
-      <Label htmlFor={id}>
-        <input {...restInputProps} ref={ref} id={id} />
-        {text ? (
-          <span
-            aria-placeholder={placeholder}
-            className={isPlaceholder ? "MuiFileInput-placeholder" : ""}
-          >
-            {typeof text === "string" ? (
-              text
-            ) : (
-              <Filename>
-                <span>{text.filename}</span>
-                <span>.{text.extension}</span>
-              </Filename>
-            )}
-          </span>
-        ) : null}
-      </Label>
-    );
-  },
-);
+  return (
+    <Label htmlFor={id}>
+      <input {...restInputProps} ref={ref} id={id} />
+      {text ? (
+        <span aria-placeholder={placeholder} className={isPlaceholder ? "MuiFileInput-placeholder" : ""}>
+          {typeof text === "string" ? (
+            text
+          ) : (
+            <Filename>
+              <span>{text.filename}</span>
+              <span>.{text.extension}</span>
+            </Filename>
+          )}
+        </span>
+      ) : null}
+    </Label>
+  );
+});
 
 const MuiFileInput = <T extends boolean | undefined>(
   props: MuiFileInputProps<T>,
-  propRef: MuiFileInputProps<T>["ref"],
+  propRef: MuiFileInputProps<T>["ref"]
 ) => {
   const {
     value,
@@ -132,10 +119,7 @@ const MuiFileInput = <T extends boolean | undefined>(
   } = props;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const isMultiple =
-    multiple ||
-    (inputProps?.multiple as boolean) ||
-    (InputProps?.inputProps?.multiple as boolean) ||
-    false;
+    multiple || (inputProps?.multiple as boolean) || (InputProps?.inputProps?.multiple as boolean) || false;
 
   const clearInputValue = () => {
     const inputEl = inputRef.current;
@@ -171,9 +155,7 @@ const MuiFileInput = <T extends boolean | undefined>(
     }
   };
 
-  const hasAtLeastOneFile = Array.isArray(value)
-    ? value.length > 0
-    : matchIsFile(value);
+  const hasAtLeastOneFile = Array.isArray(value) ? value.length > 0 : matchIsFile(value);
 
   const getTheInputText = () => {
     if (value === null || (Array.isArray(value) && value.length === 0)) {
@@ -229,16 +211,9 @@ const MuiFileInput = <T extends boolean | undefined>(
           </InputAdornment>
         ),
         endAdornment: (
-          <InputAdornment
-            position="end"
-            style={{ visibility: hasAtLeastOneFile ? "visible" : "hidden" }}
-          >
+          <InputAdornment position="end" style={{ visibility: hasAtLeastOneFile ? "visible" : "hidden" }}>
             {!hideSizeText ? (
-              <Typography
-                variant="caption"
-                mr="2px"
-                className="MuiFileInput-Typography-size-text"
-              >
+              <Typography variant="caption" mr="2px" className="MuiFileInput-Typography-size-text">
                 {getTotalSizeText()}
               </Typography>
             ) : null}
@@ -247,8 +222,7 @@ const MuiFileInput = <T extends boolean | undefined>(
               size="small"
               disabled={disabled}
               className="MuiFileInput-IconButton"
-              onClick={handleClearAll}
-            >
+              onClick={handleClearAll}>
               <CloseIcon fontSize="small" />
             </IconButton>
           </InputAdornment>
@@ -257,8 +231,7 @@ const MuiFileInput = <T extends boolean | undefined>(
         inputProps: {
           text: getTheInputText(),
           multiple: isMultiple,
-          isPlaceholder:
-            value === null || (Array.isArray(value) && value.length === 0),
+          isPlaceholder: value === null || (Array.isArray(value) && value.length === 0),
           ref: inputRef,
           placeholder,
           ...inputProps,
@@ -271,10 +244,8 @@ const MuiFileInput = <T extends boolean | undefined>(
   );
 };
 
-const MuiFileInputForwarded = React.forwardRef(MuiFileInput) as <
-  T extends boolean | undefined = false,
->(
-  props: MuiFileInputProps<T> & { ref?: MuiFileInputProps<T>["ref"] },
+const MuiFileInputForwarded = React.forwardRef(MuiFileInput) as <T extends boolean | undefined = false>(
+  props: MuiFileInputProps<T> & { ref?: MuiFileInputProps<T>["ref"] }
 ) => ReturnType<typeof MuiFileInput<T>>;
 
 export { MuiFileInputForwarded as MuiFileInput };

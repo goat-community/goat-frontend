@@ -1,21 +1,15 @@
-import { ArrowPopper } from "@/components/ArrowPoper";
-import { ListTile } from "@/components/common/ListTile";
 // import { makeStyles, useTheme } from "@/lib/theme";
-import {
-  Box,
-  IconButton,
-  Paper,
-  Stack,
-  Tooltip,
-  useTheme,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, Paper, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import Fab from "@mui/material/Fab";
 import { useMemo, useState } from "react";
-
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMap } from "react-map-gl";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
+import { ArrowPopper } from "@/components/ArrowPoper";
+import { ListTile } from "@/components/common/ListTile";
 
 interface Item {
   value: string;
@@ -51,8 +45,7 @@ export function BasemapSelector(props: BasemapSelectorProps) {
             alignItems: "flex-end",
             marginTop: theme.spacing(1),
             marginBottom: theme.spacing(1),
-          }}
-        >
+          }}>
           <ArrowPopper
             placement="top-end"
             content={
@@ -67,12 +60,8 @@ export function BasemapSelector(props: BasemapSelectorProps) {
                   </IconButton>
                 </Box>
 
-                <Typography
-                  variant="body1"
-                  fontWeight="bold"
-                  sx={{ margin: theme.spacing(3) }}
-                >
-                  {t('map_style')}
+                <Typography variant="body1" fontWeight="bold" sx={{ margin: theme.spacing(3) }}>
+                  {t("map_style")}
                 </Typography>
                 <ListTile
                   items={styles}
@@ -87,9 +76,8 @@ export function BasemapSelector(props: BasemapSelectorProps) {
             }
             open={open}
             arrow={true}
-            onClose={() => setOpen(false)}
-          >
-            <Tooltip title={t('basemaps')} arrow placement="left">
+            onClose={() => setOpen(false)}>
+            <Tooltip title={t("basemaps")} arrow placement="left">
               <Fab
                 onClick={() => setOpen(!open)}
                 size="large"
@@ -102,8 +90,7 @@ export function BasemapSelector(props: BasemapSelectorProps) {
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
-                }}
-              >
+                }}>
                 <Icon iconName={ICON_NAME.MAP} fontSize="small" htmlColor="inherit" />
               </Fab>
             </Tooltip>

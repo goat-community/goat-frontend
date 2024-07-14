@@ -1,5 +1,5 @@
-import { WKTLoader } from "@loaders.gl/wkt";
 import { encodeSync, parseSync } from "@loaders.gl/core";
+import { WKTLoader } from "@loaders.gl/wkt";
 import { WKTWriter } from "@loaders.gl/wkt";
 
 export function wktToGeoJSON(wkt: string) {

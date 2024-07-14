@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 
-import { FilterType, type Expression } from "@/lib/validations/filter";
+import { type Expression, FilterType } from "@/lib/validations/filter";
 
 export const comparisonAndInclussionOpperators = {
   is: "=",
@@ -13,29 +13,20 @@ export const comparisonAndInclussionOpperators = {
   is_greater_than: ">",
   is_empty_string: "=",
   is_not_empty_string: "!=",
+};
+
+function createComparisonCondition(op: string, key: string, value: string | number) {
+  return `{"op":"${op}","args":[{"property":"${key}"},${typeof value === "string" ? `"${value}"` : value}]}`;
 }
 
-function createComparisonCondition(
-  op: string,
-  key: string,
-  value: string | number,
-) {
-  return `{"op":"${op}","args":[{"property":"${key}"},${typeof value === "string" ? `"${value}"` : value
-    }]}`;
-}
-
-function createNestedCondition(
-  outerOp: string,
-  key: string,
-  value: string,
-  innerOp?: string,
-) {
+function createNestedCondition(outerOp: string, key: string, value: string, innerOp?: string) {
   return `{"op": "${outerOp}","args": [
-      ${innerOp
-      ? `{"op":"${innerOp}","args":[{"property":"${key}"},"${value}"]}`
-      : `{ "property":"${key}"},
+      ${
+        innerOp
+          ? `{"op":"${innerOp}","args":[{"property":"${key}"},"${value}"]}`
+          : `{ "property":"${key}"},
       "${value}"`
-    }]}`;
+      }]}`;
 }
 
 export function is(key: string, value: string | number) {
@@ -47,14 +38,12 @@ export function is_not(key: string, value: string | number) {
 }
 
 export function includes(key: string, values: (string | number)[]) {
-  const args =
-    typeof values === "string" ? [] : values.map((value) => is(key, value));
+  const args = typeof values === "string" ? [] : values.map((value) => is(key, value));
   return or_operator(args);
 }
 
 export function excludes(key: string, values: (string | number)[]) {
-  const args =
-    typeof values === "string" ? [] : values.map((value) => is_not(key, value));
+  const args = typeof values === "string" ? [] : values.map((value) => is_not(key, value));
   return and_operator(args);
 }
 
@@ -140,17 +129,13 @@ export function or_operator(args: string[]) {
 export function createTheCQLBasedOnExpression(
   expressions,
   layerFields: { name: string; type: string }[],
-  logicalOperator?: "and" | "or",
+  logicalOperator?: "and" | "or"
 ) {
   const queries = expressions
     .filter((exp) => exp.value && exp.expression && exp.attribute)
     .map((expression) => {
-      const attributeType = layerFields.filter(
-        (field) => field.name === expression.attribute,
-      ).length
-        ? layerFields.filter(
-          (field) => field.name === expression.attribute,
-        )[0].type
+      const attributeType = layerFields.filter((field) => field.name === expression.attribute).length
+        ? layerFields.filter((field) => field.name === expression.attribute)[0].type
         : undefined;
 
       switch (expression.expression) {
@@ -189,10 +174,7 @@ export function createTheCQLBasedOnExpression(
         case "contains_the_text":
           return contains_the_text(expression.attribute, expression.value);
         case "does_not_contains_the_text":
-          return does_not_contains_the_text(
-            expression.attribute,
-            expression.value,
-          );
+          return does_not_contains_the_text(expression.attribute, expression.value);
         case "is_blank":
           return is_blank(expression.attribute);
         case "is_not_blank":
@@ -201,7 +183,7 @@ export function createTheCQLBasedOnExpression(
           return is_between(
             expression.attribute,
             parseInt(expression.value.split("-")[0]),
-            parseInt(expression.value.split("-")[1]),
+            parseInt(expression.value.split("-")[1])
           );
         case "s_intersects":
           return s_intersects(expression.value, expression.attribute);
@@ -215,8 +197,6 @@ export function createTheCQLBasedOnExpression(
   }
 }
 
-
-
 function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
   return expressionsInsideLogicalOperator.map((expressionToBeProcessed) => {
     const expression: Expression = {
@@ -227,10 +207,7 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
       type: FilterType.Logical,
     };
 
-    const value =
-      expressionToBeProcessed.args.length > 0
-        ? expressionToBeProcessed.args[1]
-        : "";
+    const value = expressionToBeProcessed.args.length > 0 ? expressionToBeProcessed.args[1] : "";
 
     if (expressionToBeProcessed.op === "like") {
       switch (true) {
@@ -272,12 +249,8 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
       expression.attribute = expressionToBeProcessed.args[0].property;
       expression.value = JSON.stringify(expressionToBeProcessed.args[1]);
     } else {
-      expression.expression = Object.keys(
-        comparisonAndInclussionOpperators,
-      ).filter(
-        (comp) =>
-          comparisonAndInclussionOpperators[comp] ===
-          expressionToBeProcessed.op,
+      expression.expression = Object.keys(comparisonAndInclussionOpperators).filter(
+        (comp) => comparisonAndInclussionOpperators[comp] === expressionToBeProcessed.op
       )[0];
       expression.attribute = expressionToBeProcessed.args[0].property;
       expression.value = value;
@@ -293,14 +266,10 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
   });
 }
 
-export function parseCQLQueryToObject(condition?: {
-  op: string;
-  args: unknown[];
-}) {
+export function parseCQLQueryToObject(condition?: { op: string; args: unknown[] }) {
   if (condition && Object.keys(condition).length) {
     let expressions: Expression[] = [];
-    const expressionsInsideLogicalOperator =
-      condition.args;
+    const expressionsInsideLogicalOperator = condition.args;
     expressions = toExpressionObject(expressionsInsideLogicalOperator);
 
     return expressions;

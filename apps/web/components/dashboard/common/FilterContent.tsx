@@ -1,5 +1,3 @@
-import { ArrowPopper } from "@/components/ArrowPoper";
-import { layerTypesArray, type LayerType } from "@/lib/validations/layer";
 import {
   Badge,
   Checkbox,
@@ -12,9 +10,15 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useState } from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
+import { type LayerType, layerTypesArray } from "@/lib/validations/layer";
+
+import { ArrowPopper } from "@/components/ArrowPoper";
 
 export interface FilterContentMenuProps {
   type: "project" | "layer";
@@ -25,8 +29,7 @@ export interface FilterContentMenuProps {
 export default function FilterContentMenu(props: FilterContentMenuProps) {
   const theme = useTheme();
   const [layerTypes, setLayerTypes] = useState<LayerType[]>([]);
-  const [filterContentMenuOpen, setFilterContentMenuOpen] =
-    useState<boolean>(false);
+  const [filterContentMenuOpen, setFilterContentMenuOpen] = useState<boolean>(false);
   const { t } = useTranslation("common");
 
   //todo get tags from api
@@ -47,8 +50,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
             overflow: "auto",
             py: theme.spacing(2),
             px: theme.spacing(3),
-          }}
-        >
+          }}>
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body1" sx={{ pb: 4 }}>
               {t("filter")}
@@ -65,8 +67,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
                     props.onLayerTypeSelect?.([]);
                     props.onTagSelect?.([]);
                   }}
-                  sx={{ cursor: "pointer", color: theme.palette.primary.main }}
-                >
+                  sx={{ cursor: "pointer", color: theme.palette.primary.main }}>
                   {t("clear_all")}
                 </Link>
               ))}
@@ -88,9 +89,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
                           onChange={() => {
                             let newLayerTypes = [...layerTypes];
                             if (layerTypes?.includes(layerType)) {
-                              newLayerTypes = newLayerTypes.filter(
-                                (type) => type !== layerType,
-                              );
+                              newLayerTypes = newLayerTypes.filter((type) => type !== layerType);
                             } else {
                               newLayerTypes.push(layerType);
                             }
@@ -99,11 +98,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
                           }}
                         />
                       }
-                      label={
-                        <Typography variant="body2">
-                          {t(`${layerType}`)}
-                        </Typography>
-                      }
+                      label={<Typography variant="body2">{t(`${layerType}`)}</Typography>}
                     />
                   ))}
                 </Stack>
@@ -140,8 +135,7 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
             )}
           </Grid>
         </Paper>
-      }
-    >
+      }>
       <IconButton
         onClick={(event) => {
           event.stopPropagation();
@@ -155,14 +149,9 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
           ...(layerTypes.length > 0 && {
             color: theme.palette.primary.main,
           }),
-        }}
-      >
+        }}>
         <Badge badgeContent={layerTypes.length} color="primary">
-          <Icon
-            iconName={ICON_NAME.FILTER}
-            fontSize="small"
-            htmlColor="inherit"
-          />
+          <Icon iconName={ICON_NAME.FILTER} fontSize="small" htmlColor="inherit" />
         </Badge>
       </IconButton>
     </ArrowPopper>

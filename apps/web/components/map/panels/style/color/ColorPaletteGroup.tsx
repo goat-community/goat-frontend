@@ -17,11 +17,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+import { Box } from "@mui/material";
 
-import ColorPalette from "@/components/map/panels/style/color/ColorPalette";
 import { reverseColorRange } from "@/lib/utils/helpers";
 import type { ColorRange } from "@/lib/validations/layer";
-import { Box } from "@mui/material";
+
+import ColorPalette from "@/components/map/panels/style/color/ColorPalette";
 
 type ColorPaletteGroupProps = {
   reversed?: boolean;
@@ -39,8 +40,7 @@ const ColorPaletteGroup = (props: ColorPaletteGroupProps) => {
         px: 3,
         maxHeight: "300px",
         overflowY: "auto",
-      }}
-    >
+      }}>
       {colorRanges.map((colorRange, i) => (
         <Box
           sx={{
@@ -52,20 +52,12 @@ const ColorPaletteGroup = (props: ColorPaletteGroupProps) => {
           }}
           key={`${colorRange.name}-${i}`}
           onClick={() =>
-            onSelect(
-              reversed
-                ? (reverseColorRange(true, colorRange) as ColorRange)
-                : colorRange,
-            )
-          }
-        >
+            onSelect(reversed ? (reverseColorRange(true, colorRange) as ColorRange) : colorRange)
+          }>
           <ColorPalette
             colors={colorRange.colors}
             isReversed={reversed}
-            isSelected={
-              colorRange.name === selected.name &&
-              reversed === Boolean(selected.reversed)
-            }
+            isSelected={colorRange.name === selected.name && reversed === Boolean(selected.reversed)}
           />
         </Box>
       ))}

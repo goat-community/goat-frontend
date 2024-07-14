@@ -12,12 +12,7 @@ export default function ToastProvider({ children }: ToastProviderProps) {
   return (
     <>
       {children}
-      <ToastContainer
-        transition={Zoom}
-        position="top-center"
-        hideProgressBar
-        theme={theme.palette.mode}
-      />
+      <ToastContainer transition={Zoom} position="top-center" hideProgressBar theme={theme.palette.mode} />
     </>
   );
 }

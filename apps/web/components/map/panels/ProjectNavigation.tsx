@@ -1,35 +1,34 @@
-import { MAPBOX_TOKEN } from "@/lib/constants";
+import { Box, Collapse, Stack, useTheme } from "@mui/material";
+import React, { useMemo, useRef } from "react";
 
-import React, { useRef, useMemo } from "react";
 import { ICON_NAME } from "@p4b/ui/components/Icon";
-import LayerPanel from "@/components/map/panels/layer/Layer";
-import Legend from "@/components/map/panels/Legend";
-import Charts from "@/components/map/panels/Charts";
-import Toolbox from "@/components/map/panels/toolbox/Toolbox";
-import Filter from "@/components/map/panels/filter/Filter";
-import Scenario from "@/components/map/panels/scenario/Scenario";
-import LayerStyle from "@/components/map/panels/style/LayerStyle";
-import MapSidebar from "@/components/map/Sidebar";
-import { Zoom } from "@/components/map/controls/Zoom";
-import Geocoder from "@/components/map/controls/Geocoder";
-import { Fullscren } from "@/components/map/controls/Fullscreen";
-import { BasemapSelector } from "@/components/map/controls/BasemapSelector";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import { useTranslation } from "@/i18n/client";
 
-import { Box, useTheme, Stack, Collapse } from "@mui/material";
+import { MAPBOX_TOKEN } from "@/lib/constants";
+import { setActiveBasemap, setActiveLeftPanel, setActiveRightPanel } from "@/lib/store/map/slice";
+import { layerType } from "@/lib/validations/common";
+
+import { MapSidebarItemID } from "@/types/map/common";
+
+import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import MapSidebar from "@/components/map/Sidebar";
+import { BasemapSelector } from "@/components/map/controls/BasemapSelector";
+import { Fullscren } from "@/components/map/controls/Fullscreen";
+import Geocoder from "@/components/map/controls/Geocoder";
+import { Zoom } from "@/components/map/controls/Zoom";
+import Charts from "@/components/map/panels/Charts";
+import Legend from "@/components/map/panels/Legend";
+import Filter from "@/components/map/panels/filter/Filter";
+import LayerPanel from "@/components/map/panels/layer/Layer";
+import PropertiesPanel from "@/components/map/panels/properties/Properties";
+import Scenario from "@/components/map/panels/scenario/Scenario";
+import LayerStyle from "@/components/map/panels/style/LayerStyle";
+import Toolbox from "@/components/map/panels/toolbox/Toolbox";
 
 import type { MapSidebarProps } from "../Sidebar";
-import PropertiesPanel from "@/components/map/panels/properties/Properties";
-import {
-  setActiveBasemap,
-  setActiveLeftPanel,
-  setActiveRightPanel,
-} from "@/lib/store/map/slice";
-import { MapSidebarItemID } from "@/types/map/common";
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
-import { layerType } from "@/lib/validations/common";
 
 const sidebarWidth = 52;
 const toolbarHeight = 52;
@@ -99,16 +98,14 @@ const ProjectNavigation = ({ projectId }) => {
         icon: ICON_NAME.FILTER,
         name: t("filter"),
         component: <Filter projectId={projectId} />,
-        disabled:
-          !activeLayer || activeLayer?.type !== layerType.Values.feature,
+        disabled: !activeLayer || activeLayer?.type !== layerType.Values.feature,
       },
       {
         id: MapSidebarItemID.STYLE,
         icon: ICON_NAME.STYLE,
         name: t("layer_design"),
         component: <LayerStyle projectId={projectId} />,
-        disabled:
-          !activeLayer || activeLayer?.type !== layerType.Values.feature,
+        disabled: !activeLayer || activeLayer?.type !== layerType.Values.feature,
       },
       {
         id: MapSidebarItemID.TOOLBOX,
@@ -129,24 +126,18 @@ const ProjectNavigation = ({ projectId }) => {
 
   const activeRightComponent = useMemo(() => {
     if (activeRight) {
-      return rightSidebar.topItems?.find((item) => item.id === activeRight)
-        ?.component;
+      return rightSidebar.topItems?.find((item) => item.id === activeRight)?.component;
     } else if (prevActiveRightRef.current) {
-      return rightSidebar.topItems?.find(
-        (item) => item.id === prevActiveRightRef.current,
-      )?.component;
+      return rightSidebar.topItems?.find((item) => item.id === prevActiveRightRef.current)?.component;
     }
     return undefined;
   }, [activeRight, rightSidebar.topItems]);
 
   const activeLeftComponent = useMemo(() => {
     if (activeLeft) {
-      return leftSidebar.topItems?.find((item) => item.id === activeLeft)
-        ?.component;
+      return leftSidebar.topItems?.find((item) => item.id === activeLeft)?.component;
     } else if (prevActiveLeftRef.current) {
-      return leftSidebar.topItems?.find(
-        (item) => item.id === prevActiveLeftRef.current,
-      )?.component;
+      return leftSidebar.topItems?.find((item) => item.id === prevActiveLeftRef.current)?.component;
     }
     return undefined;
   }, [activeLeft, leftSidebar.topItems]);
@@ -162,8 +153,7 @@ const ProjectNavigation = ({ projectId }) => {
           [theme.breakpoints.down("sm")]: {
             display: "none",
           },
-        }}
-      >
+        }}>
         <MapSidebar
           {...leftSidebar}
           active={activeLeft}
@@ -172,11 +162,7 @@ const ProjectNavigation = ({ projectId }) => {
               window.open(item.link, "_blank");
               return;
             } else {
-              dispatch(
-                setActiveLeftPanel(
-                  item.id === activeLeft ? undefined : item.id,
-                ),
-              );
+              dispatch(setActiveLeftPanel(item.id === activeLeft ? undefined : item.id));
             }
           }}
         />
@@ -194,8 +180,7 @@ const ProjectNavigation = ({ projectId }) => {
           [theme.breakpoints.down("sm")]: {
             left: "0",
           },
-        }}
-      >
+        }}>
         <Collapse
           timeout={200}
           orientation="horizontal"
@@ -204,18 +189,15 @@ const ProjectNavigation = ({ projectId }) => {
           onExited={() => {
             dispatch(setActiveLeftPanel(undefined));
             prevActiveLeftRef.current = undefined;
-          }}
-        >
-          {(activeLeft !== undefined ||
-            prevActiveLeftRef.current !== undefined) && (
+          }}>
+          {(activeLeft !== undefined || prevActiveLeftRef.current !== undefined) && (
             <Box
               sx={{
                 height: `calc(100% - ${toolbarHeight}px)`,
                 marginTop: `${toolbarHeight}px`,
                 width: 300,
                 pointerEvents: "all",
-              }}
-            >
+              }}>
               {activeLeftComponent}
             </Box>
           )}
@@ -228,14 +210,9 @@ const ProjectNavigation = ({ projectId }) => {
             justifyContent: "space-between",
             marginTop: `${toolbarHeight}px`,
             padding: theme.spacing(4),
-          }}
-        >
+          }}>
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
-            <Geocoder
-              accessToken={MAPBOX_TOKEN}
-              placeholder={t("enter_an_address")}
-              tooltip={t("search")}
-            />
+            <Geocoder accessToken={MAPBOX_TOKEN} placeholder={t("enter_an_address")} tooltip={t("search")} />
           </Stack>
         </Stack>
       </Stack>
@@ -251,8 +228,7 @@ const ProjectNavigation = ({ projectId }) => {
           [theme.breakpoints.down("sm")]: {
             right: "0",
           },
-        }}
-      >
+        }}>
         <Stack
           direction="column"
           sx={{
@@ -260,14 +236,10 @@ const ProjectNavigation = ({ projectId }) => {
             justifyContent: "space-between",
             marginTop: `${toolbarHeight}px`,
             padding: theme.spacing(4),
-          }}
-        >
+          }}>
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
             <Zoom tooltipZoomIn={t("zoom_in")} tooltipZoomOut={t("zoom_out")} />
-            <Fullscren
-              tooltipOpen={t("fullscreen")}
-              tooltipExit={t("exit_fullscreen")}
-            />
+            <Fullscren tooltipOpen={t("fullscreen")} tooltipExit={t("exit_fullscreen")} />
           </Stack>
           <Stack direction="column" sx={{ pointerEvents: "all" }}>
             <BasemapSelector
@@ -286,18 +258,15 @@ const ProjectNavigation = ({ projectId }) => {
           onExit={() => {
             dispatch(setActiveRightPanel(undefined));
             prevActiveRightRef.current = undefined;
-          }}
-        >
-          {(activeRight !== undefined ||
-            prevActiveRightRef.current !== undefined) && (
+          }}>
+          {(activeRight !== undefined || prevActiveRightRef.current !== undefined) && (
             <Box
               sx={{
                 height: `calc(100% - ${toolbarHeight}px)`,
                 marginTop: `${toolbarHeight}px`,
                 width: 300,
                 pointerEvents: "all",
-              }}
-            >
+              }}>
               {activeRightComponent}
             </Box>
           )}
@@ -312,8 +281,7 @@ const ProjectNavigation = ({ projectId }) => {
           [theme.breakpoints.down("sm")]: {
             display: "none",
           },
-        }}
-      >
+        }}>
         <MapSidebar
           {...rightSidebar}
           active={activeRight}
@@ -322,11 +290,7 @@ const ProjectNavigation = ({ projectId }) => {
               window.open(item.link, "_blank");
               return;
             } else {
-              dispatch(
-                setActiveRightPanel(
-                  item.id === activeRight ? undefined : item.id,
-                ),
-              );
+              dispatch(setActiveRightPanel(item.id === activeRight ? undefined : item.id));
             }
           }}
         />

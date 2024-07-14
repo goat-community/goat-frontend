@@ -1,7 +1,6 @@
 "use client";
 
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
-import { useTranslation } from "@/i18n/client";
+import { LoadingButton } from "@mui/lab";
 import {
   Avatar,
   Box,
@@ -19,20 +18,27 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import MoreMenu from "@/components/common/PopperMenu";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useOrganizationMembers } from "@/lib/api/organizations";
+import { useOrganization } from "@/lib/api/users";
 import type { Order } from "@/lib/utils/helpers";
 import { getComparator, stableSort } from "@/lib/utils/helpers";
 import type { OrganizationMember } from "@/lib/validations/organization";
-import { LoadingButton } from "@mui/lab";
-import { useOrgMemberSettingsMoreMenu } from "@/hooks/dashboard/SettingsHooks";
-import OrgMemberDialogWrapper from "@/components/modals/settings/OrgMembersDialogWrapper";
+
 import type { OrgMemberActions } from "@/types/common";
+
+import { useOrgMemberSettingsMoreMenu } from "@/hooks/dashboard/SettingsHooks";
+
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import MoreMenu from "@/components/common/PopperMenu";
 import OrgMemberInviteModal from "@/components/modals/settings/InviteOrgMember";
-import { useOrganization } from "@/lib/api/users";
-import { useOrganizationMembers } from "@/lib/api/organizations";
-import { useSession } from "next-auth/react";
+import OrgMemberDialogWrapper from "@/components/modals/settings/OrgMembersDialogWrapper";
 
 const OrganizationMembers = () => {
   const theme = useTheme();
@@ -43,8 +49,7 @@ const OrganizationMembers = () => {
   const { t } = useTranslation("common");
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] =
-    useState<keyof Omit<OrganizationMember, "roles">>("email");
+  const [orderBy, setOrderBy] = useState<keyof Omit<OrganizationMember, "roles">>("email");
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchFilter, setSearchFilter] = useState<string>("");
 
@@ -69,7 +74,7 @@ const OrganizationMembers = () => {
 
   const _handleRequestSort = (
     _event: React.MouseEvent<unknown>,
-    property: keyof Omit<OrganizationMember, "roles">,
+    property: keyof Omit<OrganizationMember, "roles">
   ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -77,18 +82,14 @@ const OrganizationMembers = () => {
   };
   console.log(_handleRequestSort);
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
   const emptyRows = useMemo(() => {
     if (members) {
-      return page > 0
-        ? Math.max(0, (1 + page) * rowsPerPage - members.length)
-        : 0;
+      return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - members.length) : 0;
     } else {
       return 0;
     }
@@ -99,7 +100,7 @@ const OrganizationMembers = () => {
     const comparator = getComparator(order, orderBy);
     const sortedData = stableSort(members, comparator).slice(
       page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage,
+      page * rowsPerPage + rowsPerPage
     );
     return sortedData.filter((row: OrganizationMember) => {
       if (searchFilter === "") return true;
@@ -132,9 +133,7 @@ const OrganizationMembers = () => {
               <Typography variant="body1" fontWeight="bold">
                 {t("organization_manage_users")}
               </Typography>
-              <Typography variant="caption">
-                {t("organization_manage_users_description")}
-              </Typography>
+              <Typography variant="caption">{t("organization_manage_users_description")}</Typography>
             </Box>
             <Divider />
 
@@ -146,8 +145,7 @@ const OrganizationMembers = () => {
                 alignItems="center"
                 sx={{
                   my: 4,
-                }}
-              >
+                }}>
                 <TextField
                   sx={{ width: "80%" }}
                   placeholder={t("filter_by_email")}
@@ -166,19 +164,13 @@ const OrganizationMembers = () => {
                 <LoadingButton
                   variant="contained"
                   onClick={() => setOpenInviteModal(true)}
-                  startIcon={
-                    <Icon fontSize="small" iconName={ICON_NAME.PLUS} />
-                  }
+                  startIcon={<Icon fontSize="small" iconName={ICON_NAME.PLUS} />}
                   aria-label="send-invite"
-                  name="send-invite"
-                >
+                  name="send-invite">
                   {t("new_org_member")}
                 </LoadingButton>
               </Stack>
-              <Table
-                sx={{ minWidth: 650 }}
-                aria-label="organization members table"
-              >
+              <Table sx={{ minWidth: 650 }} aria-label="organization members table">
                 <TableHead>
                   <TableRow>
                     <TableCell />
@@ -189,10 +181,7 @@ const OrganizationMembers = () => {
                 </TableHead>
                 <TableBody>
                   {filteredData.map((row: OrganizationMember) => (
-                    <TableRow
-                      key={row.id}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
+                    <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                       <TableCell component="th" scope="row">
                         <Avatar alt={row.email} src={row.avatar} />
                       </TableCell>
@@ -202,14 +191,10 @@ const OrganizationMembers = () => {
                       </TableCell>
                       {row.invitation_status === "pending" ? (
                         <TableCell component="th" scope="row">
-                          <Typography variant="body1">
-                            {t("invitation_pending")}
-                          </Typography>
+                          <Typography variant="body1">{t("invitation_pending")}</Typography>
                         </TableCell>
                       ) : (
-                        <TableCell>
-                          {row.roles?.map((role) => t(role)).join(", ")}
-                        </TableCell>
+                        <TableCell>{row.roles?.map((role) => t(role)).join(", ")}</TableCell>
                       )}
 
                       {row.invitation_status === "accepted" &&
@@ -220,10 +205,7 @@ const OrganizationMembers = () => {
                               menuItems={activeMemberMoreMenuOptions}
                               menuButton={
                                 <IconButton size="medium">
-                                  <Icon
-                                    iconName={ICON_NAME.MORE_VERT}
-                                    fontSize="small"
-                                  />
+                                  <Icon iconName={ICON_NAME.MORE_VERT} fontSize="small" />
                                 </IconButton>
                               }
                               onSelect={(menuItem: PopperMenuItem) => {
@@ -243,10 +225,7 @@ const OrganizationMembers = () => {
                             menuItems={pendingInvitationMoreMenuOptions}
                             menuButton={
                               <IconButton size="medium">
-                                <Icon
-                                  iconName={ICON_NAME.MORE_VERT}
-                                  fontSize="small"
-                                />
+                                <Icon iconName={ICON_NAME.MORE_VERT} fontSize="small" />
                               </IconButton>
                             }
                             onSelect={(menuItem: PopperMenuItem) => {
@@ -261,8 +240,7 @@ const OrganizationMembers = () => {
                     <TableRow
                       style={{
                         height: 53 * emptyRows,
-                      }}
-                    >
+                      }}>
                       <TableCell colSpan={6} />
                     </TableRow>
                   )}

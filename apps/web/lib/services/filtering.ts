@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function filterUsingQuery(query: string | undefined, layer_id: string, url: string) {
   try {
-    if(query){
+    if (query) {
       const res = await axios({
         url: `${url}${layer_id}`,
         method: "POST",
@@ -11,8 +11,8 @@ export async function filterUsingQuery(query: string | undefined, layer_id: stri
         },
       });
       return res.data;
-    }else{
-      return {error: "query is invalid"}
+    } else {
+      return { error: "query is invalid" };
     }
   } catch (error) {
     console.error(error);

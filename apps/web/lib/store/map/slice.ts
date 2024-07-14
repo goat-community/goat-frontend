@@ -1,7 +1,8 @@
-import type { Basemap } from "@/types/map/common";
-import { MapSidebarItemID } from "@/types/map/common";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+
+import type { Basemap } from "@/types/map/common";
+import { MapSidebarItemID } from "@/types/map/common";
 
 export interface MapState {
   basemaps: Basemap[];
@@ -68,16 +69,10 @@ const mapSlice = createSlice({
     setActiveBasemap: (state, action: PayloadAction<string>) => {
       state.activeBasemap = action.payload;
     },
-    setActiveLeftPanel: (
-      state,
-      action: PayloadAction<MapSidebarItemID | undefined>,
-    ) => {
+    setActiveLeftPanel: (state, action: PayloadAction<MapSidebarItemID | undefined>) => {
       state.activeLeftPanel = action.payload;
     },
-    setActiveRightPanel: (
-      state,
-      action: PayloadAction<MapSidebarItemID | undefined>,
-    ) => {
+    setActiveRightPanel: (state, action: PayloadAction<MapSidebarItemID | undefined>) => {
       if (state.activeRightPanel === MapSidebarItemID.TOOLBOX) {
         state.maskLayer = undefined;
         state.toolboxStartingPoints = undefined;
@@ -88,20 +83,14 @@ const mapSlice = createSlice({
     setMaskLayer: (state, action: PayloadAction<string | undefined>) => {
       state.maskLayer = action.payload;
     },
-    setToolboxStartingPoints: (
-      state,
-      action: PayloadAction<[number, number][] | undefined>,
-    ) => {
+    setToolboxStartingPoints: (state, action: PayloadAction<[number, number][] | undefined>) => {
       if (state.toolboxStartingPoints === undefined) {
         state.toolboxStartingPoints = action.payload;
       } else {
         if (action.payload === undefined) {
           state.toolboxStartingPoints = undefined;
         } else {
-          state.toolboxStartingPoints = [
-            ...state.toolboxStartingPoints,
-            ...action.payload,
-          ];
+          state.toolboxStartingPoints = [...state.toolboxStartingPoints, ...action.payload];
         }
       }
     },

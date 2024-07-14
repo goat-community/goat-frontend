@@ -1,14 +1,6 @@
-import FolderSelect from "@/components/dashboard/common/FolderSelect";
-import { useTranslation } from "@/i18n/client";
-import { useFolders } from "@/lib/api/folders";
-import { LAYERS_API_BASE_URL, updateDataset } from "@/lib/api/layers";
-import { PROJECTS_API_BASE_URL, updateProject } from "@/lib/api/projects";
-import type { GetContentQueryParams } from "@/lib/validations/common";
-import type { Folder } from "@/lib/validations/folder";
-import type { Layer, PostDataset } from "@/lib/validations/layer";
-import type { PostProject, Project } from "@/lib/validations/project";
 import { LoadingButton } from "@mui/lab";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -16,12 +8,22 @@ import {
   DialogTitle,
   Stack,
   Typography,
-  Box,
 } from "@mui/material";
-
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { mutate } from "swr";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useFolders } from "@/lib/api/folders";
+import { LAYERS_API_BASE_URL, updateDataset } from "@/lib/api/layers";
+import { PROJECTS_API_BASE_URL, updateProject } from "@/lib/api/projects";
+import type { GetContentQueryParams } from "@/lib/validations/common";
+import type { Folder } from "@/lib/validations/folder";
+import type { Layer, PostDataset } from "@/lib/validations/layer";
+import type { PostProject, Project } from "@/lib/validations/project";
+
+import FolderSelect from "@/components/dashboard/common/FolderSelect";
 
 interface ContentMoveToFolderDialogProps {
   open: boolean;
@@ -103,8 +105,7 @@ const ContentMoveToFolderModal: React.FC<ContentMoveToFolderDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
-        }}
-      >
+        }}>
         <Button onClick={onClose} variant="text">
           <Typography variant="body2" fontWeight="bold">
             {t("cancel")}
@@ -113,8 +114,7 @@ const ContentMoveToFolderModal: React.FC<ContentMoveToFolderDialogProps> = ({
         <LoadingButton
           loading={isBusy}
           onClick={handleMoveToFolder}
-          disabled={disabled || selectedFolder?.id === content.folder_id}
-        >
+          disabled={disabled || selectedFolder?.id === content.folder_id}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {t("move")}
           </Typography>

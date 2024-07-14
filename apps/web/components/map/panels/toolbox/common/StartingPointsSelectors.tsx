@@ -1,44 +1,34 @@
-import Selector from "@/components/map/panels/common/Selector";
-import type { SelectorItem } from "@/types/map/common";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
-import { useEffect } from "react";
-import { useMap } from "react-map-gl";
+import { IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import {
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useTranslation } from "@/i18n/client";
-import { v4 } from "uuid";
-import {
-  setIsMapGetInfoActive,
-  setMapCursor,
-  setToolboxStartingPoints,
-} from "@/lib/store/map/slice";
-import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
+import { useMap } from "react-map-gl";
+import { v4 } from "uuid";
 
-const StartingPoints = ({
-  maxStartingPoints,
-}: {
-  maxStartingPoints: number | undefined;
-}) => {
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { setIsMapGetInfoActive, setMapCursor, setToolboxStartingPoints } from "@/lib/store/map/slice";
+
+import type { SelectorItem } from "@/types/map/common";
+
+import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import Selector from "@/components/map/panels/common/Selector";
+
+const StartingPoints = ({ maxStartingPoints }: { maxStartingPoints: number | undefined }) => {
   const { map } = useMap();
   const theme = useTheme();
   const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
-  const startingPoints = useAppSelector(
-    (state) => state.map.toolboxStartingPoints,
-  );
+  const startingPoints = useAppSelector((state) => state.map.toolboxStartingPoints);
 
   const handleZoomToStartingPoint = (coordinate: [number, number]) => {
     if (!map) return;
@@ -54,10 +44,7 @@ const StartingPoints = ({
 
   useEffect(() => {
     const handleMapClick = (event) => {
-      const coordinate = [event.lngLat.lng, event.lngLat.lat] as [
-        number,
-        number,
-      ];
+      const coordinate = [event.lngLat.lng, event.lngLat.lat] as [number, number];
       if (maxStartingPoints === 1) {
         dispatch(setToolboxStartingPoints(undefined));
       }
@@ -119,16 +106,8 @@ const StartingPoints = ({
                       </Typography>
                     </TableCell>
                     <TableCell align="right" sx={{ px: 2 }}>
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="end"
-                        spacing={1}
-                      >
-                        <Tooltip
-                          title={t("zoom_to_starting_point")}
-                          placement="top"
-                        >
+                      <Stack direction="row" alignItems="center" justifyContent="end" spacing={1}>
+                        <Tooltip title={t("zoom_to_starting_point")} placement="top">
                           <IconButton
                             size="small"
                             onClick={() => handleZoomToStartingPoint(point)}
@@ -136,8 +115,7 @@ const StartingPoints = ({
                               "&:hover": {
                                 color: theme.palette.primary.main,
                               },
-                            }}
-                          >
+                            }}>
                             <Icon
                               iconName={ICON_NAME.ZOOM_IN}
                               style={{ fontSize: "12px" }}
@@ -145,10 +123,7 @@ const StartingPoints = ({
                             />
                           </IconButton>
                         </Tooltip>
-                        <Tooltip
-                          title={t("delete_starting_point")}
-                          placement="top"
-                        >
+                        <Tooltip title={t("delete_starting_point")} placement="top">
                           <IconButton
                             size="small"
                             sx={{
@@ -156,8 +131,7 @@ const StartingPoints = ({
                                 color: theme.palette.error.main,
                               },
                             }}
-                            onClick={() => handleDeleteStartingPoint(index)}
-                          >
+                            onClick={() => handleDeleteStartingPoint(index)}>
                             <Icon
                               iconName={ICON_NAME.TRASH}
                               style={{ fontSize: "12px" }}
@@ -198,11 +172,7 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
   const dispatch = useAppDispatch();
   const { projectId } = useParams();
   const { t } = useTranslation("common");
-  const { filteredLayers } = useLayerByGeomType(
-    ["feature"],
-    ["point"],
-    projectId as string,
-  );
+  const { filteredLayers } = useLayerByGeomType(["feature"], ["point"], projectId as string);
 
   useEffect(() => {
     if (isActive && startingPointMethod.value === "map") {
@@ -232,9 +202,7 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
       {startingPointMethod.value === "browser_layer" && isActive && (
         <Selector
           selectedItems={startingPointLayer}
-          setSelectedItems={(
-            item: SelectorItem[] | SelectorItem | undefined,
-          ) => {
+          setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
             setStartingPointLayer(item as SelectorItem);
           }}
           items={filteredLayers}

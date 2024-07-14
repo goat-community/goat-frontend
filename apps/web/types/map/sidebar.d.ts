@@ -1,5 +1,6 @@
-import type { MapSidebarItemID } from "@/types/map/common";
 import type { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import type { MapSidebarItemID } from "@/types/map/common";
 
 export type MapSidebarItem = {
   id: MapSidebarItemID;

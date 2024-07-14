@@ -17,10 +17,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-import type { HexColor, RGBColor } from "@/types/map/color";
 import { styled } from "@mui/material/styles";
 import React from "react";
+
+import type { HexColor, RGBColor } from "@/types/map/color";
 
 type ColorPaletteProps = {
   colors: RGBColor | HexColor[];
@@ -43,17 +43,15 @@ interface PaletteContainerProps {
   isSelected?: boolean;
 }
 
-const PaletteContainer = styled("div")<PaletteContainerProps>(
-  ({ theme, isSelected }) => ({
-    display: "flex",
-    flexGrow: 1,
-    borderWidth: "2px",
-    borderStyle: "solid",
-    borderColor: isSelected ? theme.palette.primary.main : "transparent",
-    padding: theme.spacing(1),
-    borderRadius: theme.spacing(1),
-  }),
-);
+const PaletteContainer = styled("div")<PaletteContainerProps>(({ theme, isSelected }) => ({
+  display: "flex",
+  flexGrow: 1,
+  borderWidth: "2px",
+  borderStyle: "solid",
+  borderColor: isSelected ? theme.palette.primary.main : "transparent",
+  padding: theme.spacing(1),
+  borderRadius: theme.spacing(1),
+}));
 
 const StyledColorBlock = styled("div")({
   flexGrow: 1,
@@ -66,14 +64,9 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({
   isReversed = false,
 }) => (
   <PaletteContainer isSelected={isSelected}>
-    <PaletteWrapper
-      style={{ height, transform: `scale(${isReversed ? -1 : 1}, 1)` }}
-    >
+    <PaletteWrapper style={{ height, transform: `scale(${isReversed ? -1 : 1}, 1)` }}>
       {colors.map((color: number | string, index: number) => (
-        <StyledColorBlock
-          key={`${color}-${index}`}
-          style={{ backgroundColor: String(color) }}
-        />
+        <StyledColorBlock key={`${color}-${index}`} style={{ backgroundColor: String(color) }} />
       ))}
     </PaletteWrapper>
   </PaletteContainer>

@@ -1,21 +1,24 @@
-import { languages } from "@/i18n/settings";
-import ThemeRegistry from "@/components/@mui/ThemeRegistry";
-import AuthProvider from "@/lib/providers/AuthProvider";
-import ToastProvider from "@/lib/providers/ToastProvider";
-import StoreProvider from "@/lib/providers/StoreProvider";
-import { cookies } from "next/headers";
-import { THEME_COOKIE_NAME } from "@/lib/constants";
-import "@/styles/globals.css";
+import type { PaletteMode } from "@mui/material";
 import { dir } from "i18next";
 import type { Metadata } from "next";
-import "react-toastify/dist/ReactToastify.css";
 import { Mulish } from "next/font/google";
-import type { PaletteMode } from "@mui/material";
+import { cookies } from "next/headers";
+import "react-toastify/dist/ReactToastify.css";
+
+import { languages } from "@/i18n/settings";
+
+import { THEME_COOKIE_NAME } from "@/lib/constants";
+import AuthProvider from "@/lib/providers/AuthProvider";
+import StoreProvider from "@/lib/providers/StoreProvider";
+import ToastProvider from "@/lib/providers/ToastProvider";
+
+import ThemeRegistry from "@/components/@mui/ThemeRegistry";
+
+import "@/styles/globals.css";
 
 const mulish = Mulish({
   subsets: ["latin"],
 });
-
 export const metadata: Metadata = {
   title: {
     template: "%s | GOAT",

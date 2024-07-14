@@ -1,15 +1,13 @@
-import {
-  Box,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { Box, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useEffect, useRef, useState } from "react";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { SingleColorSelectorProps } from "@/types/map/color";
+
 import CustomColorPicker from "@/components/map/panels/style/color/CustomColorPicker";
 import PresetColorPicker from "@/components/map/panels/style/color/PresetColorPicker";
-import type { SingleColorSelectorProps } from "@/types/map/color";
-import { useTranslation } from "@/i18n/client";
 
 enum SingleColorType {
   Picker = "picker",
@@ -31,16 +29,12 @@ const CustomStyledSingleColorSelector = styled("div")(({ theme }) => ({
 const SingleColorSelector = (props: SingleColorSelectorProps) => {
   const { t } = useTranslation("common");
   const containerRef = useRef(null);
-  const [colorSelectionType, setColorSelectionType] = useState(
-    SingleColorType.Picker,
-  );
+  const [colorSelectionType, setColorSelectionType] = useState(SingleColorType.Picker);
   const isPickerSelected = colorSelectionType === SingleColorType.Picker;
 
   const handleSelectionTypeChange = () => {
     setColorSelectionType(
-      colorSelectionType === SingleColorType.Picker
-        ? SingleColorType.Preset
-        : SingleColorType.Picker,
+      colorSelectionType === SingleColorType.Picker ? SingleColorType.Preset : SingleColorType.Picker
     );
   };
 
@@ -59,13 +53,11 @@ const SingleColorSelector = (props: SingleColorSelectorProps) => {
         size="small"
         exclusive
         value={colorSelectionType}
-        onChange={handleSelectionTypeChange}
-      >
+        onChange={handleSelectionTypeChange}>
         <ToggleButton
           value={SingleColorType.Picker}
           aria-labelledby="Color picker button"
-          sx={{ overflow: "hidden" }}
-        >
+          sx={{ overflow: "hidden" }}>
           <Typography variant="caption" color="inherit">
             {t("color_picker")}
           </Typography>
@@ -73,8 +65,7 @@ const SingleColorSelector = (props: SingleColorSelectorProps) => {
         <ToggleButton
           sx={{ overflow: "hidden" }}
           value={SingleColorType.Preset}
-          aria-labelledby="Preset colors button"
-        >
+          aria-labelledby="Preset colors button">
           <Typography variant="caption" color="inherit">
             {t("preset_colors")}
           </Typography>

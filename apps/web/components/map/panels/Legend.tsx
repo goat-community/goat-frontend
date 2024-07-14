@@ -1,11 +1,16 @@
-import Container from "@/components/map/panels/Container";
-import { setActiveLeftPanel } from "@/lib/store/map/slice";
-import { useAppDispatch } from "@/hooks/store/ContextHooks";
-import { Legend } from "@/components/map/controls/Legend";
-import type { PanelProps } from "@/types/map/sidebar";
-import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
 import { useMemo } from "react";
+
 import { useTranslation } from "@/i18n/client";
+
+import { setActiveLeftPanel } from "@/lib/store/map/slice";
+
+import type { PanelProps } from "@/types/map/sidebar";
+
+import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
+
+import { Legend } from "@/components/map/controls/Legend";
+import Container from "@/components/map/panels/Container";
 
 const LegendPanel = ({ projectId }: PanelProps) => {
   const { t } = useTranslation("common");
@@ -16,7 +21,7 @@ const LegendPanel = ({ projectId }: PanelProps) => {
       sortedLayers?.filter((layer) => {
         return layer.properties?.visibility;
       }),
-    [sortedLayers],
+    [sortedLayers]
   );
   return (
     <Container

@@ -18,7 +18,7 @@ export const appSubscriptionSchema = z.array(
     subscription_type: appSubscriptionType,
     organization_id: z.string().uuid(),
     seat: z.number().optional(),
-  }),
+  })
 );
 
 export const dataSubscriptionSchema = subscriptionBaseSchema.extend({

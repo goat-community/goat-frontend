@@ -1,24 +1,19 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Pagination,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useState } from "react";
-import { useProjects } from "@/lib/api/projects";
-import TileGrid from "@/components/dashboard/common/TileGrid";
-import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
-import type { GetProjectsQueryParams } from "@/lib/validations/project";
-import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
-import { useTranslation } from "@/i18n/client";
+import { Box, Button, Container, Grid, Pagination, Paper, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useProjects } from "@/lib/api/projects";
+import type { GetProjectsQueryParams } from "@/lib/validations/project";
+
+import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
+import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
+import TileGrid from "@/components/dashboard/common/TileGrid";
 import ProjectModal from "@/components/modals/Project";
 
 const Projects = () => {
@@ -32,39 +27,27 @@ const Projects = () => {
   const [view, setView] = useState<"list" | "grid">("grid");
   const { t } = useTranslation("common");
 
-  const {
-    projects,
-    isLoading: isProjectLoading,
-    isError: _isProjectError,
-  } = useProjects(queryParams);
+  const { projects, isLoading: isProjectLoading, isError: _isProjectError } = useProjects(queryParams);
 
   const [openProjectModal, setOpenProjectModal] = useState(false);
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
-      <ProjectModal
-        type="create"
-        open={openProjectModal}
-        onClose={() => setOpenProjectModal(false)}
-      />
+      <ProjectModal type="create" open={openProjectModal} onClose={() => setOpenProjectModal(false)} />
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           mb: 8,
-        }}
-      >
+        }}>
         <Typography variant="h6">{t("projects")}</Typography>
         <Button
           disableElevation={true}
-          startIcon={
-            <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />
-          }
+          startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />}
           onClick={() => {
             setOpenProjectModal(true);
-          }}
-        >
+          }}>
           {t("new_project")}
         </Button>
       </Box>
@@ -80,10 +63,7 @@ const Projects = () => {
         </Grid>
         <Grid item xs={3}>
           <Paper elevation={3}>
-            <FoldersTreeView
-              queryParams={queryParams}
-              setQueryParams={setQueryParams}
-            />
+            <FoldersTreeView queryParams={queryParams} setQueryParams={setQueryParams} />
           </Paper>
         </Grid>
         <Grid item xs={9}>
@@ -99,12 +79,7 @@ const Projects = () => {
             }}
           />
           {!isProjectLoading && projects && projects?.items.length > 0 && (
-            <Stack
-              direction="row"
-              justifyContent="center"
-              alignItems="center"
-              sx={{ p: 4 }}
-            >
+            <Stack direction="row" justifyContent="center" alignItems="center" sx={{ p: 4 }}>
               <Pagination
                 count={projects.pages || 1}
                 size="large"

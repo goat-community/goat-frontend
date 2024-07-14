@@ -1,16 +1,13 @@
-import { OverflowTypograpy } from "@/components/common/OverflowTypography";
+import { Box, IconButton, LinearProgress, Stack, Typography, useTheme } from "@mui/material";
+import { format, parseISO } from "date-fns";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
 import type { JobStatusType, JobType } from "@/lib/validations/jobs";
-import {
-  Box,
-  IconButton,
-  LinearProgress,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { parseISO, format } from "date-fns";
+
+import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 
 interface JobProgressItemProps {
   id: string;
@@ -53,15 +50,8 @@ export default function JobProgressItem(props: JobProgressItemProps) {
         py: 1,
       }}
       aria-label={name}
-      role="job_item"
-    >
-      <Box
-        flexGrow={1}
-        flexShrink={1}
-        flexBasis="100%"
-        sx={{ mr: 2 }}
-        width="0"
-      >
+      role="job_item">
+      <Box flexGrow={1} flexShrink={1} flexBasis="100%" sx={{ mr: 2 }} width="0">
         <Stack spacing={2}>
           <Box textOverflow="ellipsis" overflow="hidden">
             <OverflowTypograpy
@@ -70,20 +60,15 @@ export default function JobProgressItem(props: JobProgressItemProps) {
               tooltipProps={{
                 placement: "top",
                 arrow: true,
-              }}
-            >
+              }}>
               <>
                 {t(type)} -{" "}
-                {format(parseISO(date), "hh:mma dd/MM/yyyy")
-                  .replace("PM", " PM")
-                  .replace("AM", " AM")}
+                {format(parseISO(date), "hh:mma dd/MM/yyyy").replace("PM", " PM").replace("AM", " AM")}
               </>
             </OverflowTypograpy>
           </Box>
           <LinearProgress
-            {...(status === "failed" ||
-            status === "finished" ||
-            status === "killed"
+            {...(status === "failed" || status === "finished" || status === "killed"
               ? { variant: "determinate", value: 100 }
               : {})}
             sx={{
@@ -115,13 +100,8 @@ export default function JobProgressItem(props: JobProgressItemProps) {
         sx={{
           fontSize: "1.2rem",
           color: statusColors[status],
-        }}
-      >
-        <Icon
-          iconName={statusIcons[status]}
-          htmlColor="inherit"
-          fontSize="inherit"
-        />
+        }}>
+        <Icon iconName={statusIcons[status]} htmlColor="inherit" fontSize="inherit" />
       </IconButton>
     </Box>
   );

@@ -1,8 +1,3 @@
-import Container from "@/components/map/panels/Container";
-import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
-import { useFilterQueries } from "@/hooks/map/LayerPanelHooks";
-import { useTranslation } from "@/i18n/client";
-import { setActiveRightPanel } from "@/lib/store/map/slice";
 import {
   Box,
   Button,
@@ -16,23 +11,28 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  FilterType,
-  type Expression as ExpressionType,
-} from "@/lib/validations/filter";
 import { v4 } from "uuid";
-import Selector from "@/components/map/panels/common/Selector";
-import type { SelectorItem } from "@/types/map/common";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
-import Expression from "@/components/map/panels/filter/Expression";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
+import { createTheCQLBasedOnExpression, parseCQLQueryToObject } from "@/lib/transformers/filter";
+import { type Expression as ExpressionType, FilterType } from "@/lib/validations/filter";
+
+import type { SelectorItem } from "@/types/map/common";
+
 import useLayerFields from "@/hooks/map/CommonHooks";
-import {
-  createTheCQLBasedOnExpression,
-  parseCQLQueryToObject,
-} from "@/lib/transformers/filter";
+import { useFilterQueries } from "@/hooks/map/LayerPanelHooks";
+
+import Container from "@/components/map/panels/Container";
+import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
+import Selector from "@/components/map/panels/common/Selector";
+import Expression from "@/components/map/panels/filter/Expression";
 
 const FilterPanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation("common");
@@ -41,15 +41,11 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
   const { activeLayer } = useFilterQueries(projectId);
   const [previousLayerId, setPreviousLayerId] = useState<string | null>(null);
   const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
-  const { layers: projectLayers, mutate: mutateProjectLayers } =
-    useProjectLayers(projectId);
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useProjectLayers(projectId);
 
   // Add filter expression
-  const [addExpressionAnchorEl, setAddExpressionAnchorEl] =
-    React.useState<null | HTMLElement>(null);
-  const handleAddExpressionClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const [addExpressionAnchorEl, setAddExpressionAnchorEl] = React.useState<null | HTMLElement>(null);
+  const handleAddExpressionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAddExpressionAnchorEl(event.currentTarget);
   };
   const handleAddExpressionClose = () => {
@@ -88,9 +84,7 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
     ];
   }, [t]);
 
-  const [logicalOperator, setLogicalOperator] = useState<
-    SelectorItem | undefined
-  >(defaultLogicalOperator);
+  const [logicalOperator, setLogicalOperator] = useState<SelectorItem | undefined>(defaultLogicalOperator);
 
   const createExpression = (type: FilterType) => {
     if (expressions) {
@@ -115,14 +109,12 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
     }
     if (expressions.length) return;
     const existingExpressions = parseCQLQueryToObject(
-      activeLayer?.query?.cql as { op: string; args: unknown[] },
+      activeLayer?.query?.cql as { op: string; args: unknown[] }
     );
     if (activeLayer?.query?.cql?.["op"] && activeLayer.query.cql !== null) {
       const operator = activeLayer.query.cql["op"];
       if (operator) {
-        setLogicalOperator(
-          logicalOperators.find((item) => item.value === operator),
-        );
+        setLogicalOperator(logicalOperators.find((item) => item.value === operator));
       }
     }
     setExpressions(existingExpressions);
@@ -130,11 +122,7 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
 
   const validateExpressions = (expressions) => {
     return expressions.every((expression) => {
-      return (
-        expression.attribute &&
-        expression.expression &&
-        !!expression.value.toString()
-      );
+      return expression.attribute && expression.expression && !!expression.value.toString();
     });
   };
 
@@ -163,12 +151,11 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
       await updateLayer(null);
       return;
     }
-    if (!activeLayer || !logicalOperator || !validateExpressions(expressions))
-      return;
+    if (!activeLayer || !logicalOperator || !validateExpressions(expressions)) return;
     const query = createTheCQLBasedOnExpression(
       expressions,
       layerFields,
-      logicalOperator.value as "and" | "or",
+      logicalOperator.value as "and" | "or"
     );
     await updateLayer(query);
   };
@@ -184,16 +171,10 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
       close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <>
-          <ProjectLayerDropdown
-            projectId={projectId}
-            layerTypes={["feature", "table"]}
-          />
+          <ProjectLayerDropdown projectId={projectId} layerTypes={["feature", "table"]} />
           {/* DESCRIPTION */}
           {!expressions?.length && (
-            <Typography
-              variant="body2"
-              sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-            >
+            <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
               {t("filter_layer_message")}
             </Typography>
           )}
@@ -202,9 +183,7 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
               <Divider />
               <Selector
                 selectedItems={logicalOperator}
-                setSelectedItems={(
-                  item: SelectorItem[] | SelectorItem | undefined,
-                ) => {
+                setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                   setLogicalOperator(item as SelectorItem);
                   updateLayerQuery(expressions, item);
                 }}
@@ -222,23 +201,18 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
                   key={expression.id}
                   expression={expression}
                   onDelete={async (expression) => {
-                    const updatedExpressions = expressions.filter(
-                      (e) => e.id !== expression.id,
-                    );
+                    const updatedExpressions = expressions.filter((e) => e.id !== expression.id);
                     setExpressions(updatedExpressions);
                     await updateLayerQuery(updatedExpressions, logicalOperator);
                   }}
                   onDuplicate={async (expression: ExpressionType) => {
-                    const updatedExpressions = [
-                      ...expressions,
-                      { ...expression, id: v4() },
-                    ];
+                    const updatedExpressions = [...expressions, { ...expression, id: v4() }];
                     setExpressions(updatedExpressions);
                     await updateLayerQuery(updatedExpressions, logicalOperator);
                   }}
                   onUpdate={async (expression: ExpressionType) => {
                     const updatedExpressions = expressions.map((e) =>
-                      e.id === expression.id ? expression : e,
+                      e.id === expression.id ? expression : e
                     );
                     setExpressions(updatedExpressions);
                     await updateLayerQuery(updatedExpressions, logicalOperator);
@@ -256,13 +230,7 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
                 fullWidth
                 size="small"
                 disabled={!areAllExpressionsValid}
-                startIcon={
-                  <Icon
-                    iconName={ICON_NAME.PLUS}
-                    style={{ fontSize: "15px" }}
-                  />
-                }
-              >
+                startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: "15px" }} />}>
                 <Typography variant="body2" fontWeight="bold" color="inherit">
                   {t("common:add_expression")}
                 </Typography>
@@ -280,14 +248,11 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                   sx: {
-                    width:
-                      addExpressionAnchorEl &&
-                      addExpressionAnchorEl.offsetWidth - 10,
+                    width: addExpressionAnchorEl && addExpressionAnchorEl.offsetWidth - 10,
                     p: 0,
                   },
                 }}
-                onClose={handleAddExpressionClose}
-              >
+                onClose={handleAddExpressionClose}>
                 <Box>
                   <ClickAwayListener onClickAway={handleAddExpressionClose}>
                     <MenuList>
@@ -297,13 +262,9 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
                           onClick={() => {
                             createExpression(item.sourceType);
                             handleAddExpressionClose();
-                          }}
-                        >
+                          }}>
                           <ListItemIcon>
-                            <Icon
-                              iconName={item.iconName}
-                              style={{ fontSize: "15px" }}
-                            />
+                            <Icon iconName={item.iconName} style={{ fontSize: "15px" }} />
                           </ListItemIcon>
                           <Typography variant="body2">{item.label}</Typography>
                         </MenuItem>
@@ -319,8 +280,7 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
                 size="small"
                 color="error"
                 disabled={!expressions?.length}
-                onClick={clearFilter}
-              >
+                onClick={clearFilter}>
                 <Typography variant="body2" color="inherit">
                   {t("common:clear_filter")}
                 </Typography>

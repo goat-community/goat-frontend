@@ -1,5 +1,5 @@
+import { Box, Modal as MUIModal, useTheme } from "@mui/material";
 import React, { forwardRef, memo } from "react";
-import { useTheme, Box, Modal as MUIModal } from "@mui/material";
 
 export type ModalProps = {
   className?: string;
@@ -25,8 +25,7 @@ const Modal = memo(
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+        aria-describedby="modal-modal-description">
         <Box
           sx={{
             position: "absolute",
@@ -39,17 +38,16 @@ const Modal = memo(
             backgroundColor: theme.palette.background.paper,
             padding: `${theme.spacing(5)} ${theme.spacing(5)}`,
             [theme.breakpoints.down("sm")]: {
-              width: "90%"
+              width: "90%",
             },
-          }}
-        >
-          {header ? <Box sx={{paddingBottom: theme.spacing(3)}}>{header}</Box> : null}
+          }}>
+          {header ? <Box sx={{ paddingBottom: theme.spacing(3) }}>{header}</Box> : null}
           <div>{children}</div>
-          {action ? <Box sx={{paddingBottom: theme.spacing(3)}}>{action}</Box> : null}
+          {action ? <Box sx={{ paddingBottom: theme.spacing(3) }}>{action}</Box> : null}
         </Box>
       </MUIModal>
     );
-  }),
+  })
 );
 
 export default Modal;

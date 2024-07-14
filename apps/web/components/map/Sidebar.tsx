@@ -1,20 +1,12 @@
 "use client";
 
-import {
-  Box,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  Tooltip,
-  useTheme,
-} from "@mui/material";
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, Tooltip, useTheme } from "@mui/material";
 import type { CSSProperties } from "react";
 
 import { Icon } from "@p4b/ui/components/Icon";
-import type { MapSidebarItem } from "@/types/map/sidebar";
+
 import type { MapSidebarItemID } from "@/types/map/common";
+import type { MapSidebarItem } from "@/types/map/sidebar";
 
 export type MapSidebarProps = {
   className?: string;
@@ -28,8 +20,7 @@ export type MapSidebarProps = {
 };
 
 const MapSidebarList = (props: MapSidebarListProps) => {
-  const { items, justifyContent, sidebarPosition, active, sidebarWidth } =
-    props;
+  const { items, justifyContent, sidebarPosition, active, sidebarWidth } = props;
   const theme = useTheme();
 
   return (
@@ -41,22 +32,19 @@ const MapSidebarList = (props: MapSidebarListProps) => {
         width: sidebarWidth,
         flexDirection: "column",
         padding: 0,
-      }}
-    >
+      }}>
       {items.map((item) => (
         <Tooltip
           key={`${item.icon}_tooltip`}
           title={item.name}
           arrow
-          placement={sidebarPosition == "left" ? "right" : "left"}
-        >
+          placement={sidebarPosition == "left" ? "right" : "left"}>
           <ListItem
             key={item.icon}
             disablePadding
             sx={{
               display: "block",
-            }}
-          >
+            }}>
             <ListItemButton
               disabled={item.disabled ?? false}
               selected={item.id === active && !item.disabled}
@@ -67,18 +55,11 @@ const MapSidebarList = (props: MapSidebarListProps) => {
                 if (props.onClick) {
                   props.onClick(item);
                 }
-              }}
-            >
-              <ListItemIcon
-                sx={{ minWidth: 0, mr: "auto", justifyContent: "center" }}
-              >
+              }}>
+              <ListItemIcon sx={{ minWidth: 0, mr: "auto", justifyContent: "center" }}>
                 <Icon
                   iconName={item.icon}
-                  htmlColor={
-                    item.id === active && !item.disabled
-                      ? theme.palette.primary.main
-                      : "inherit"
-                  }
+                  htmlColor={item.id === active && !item.disabled ? theme.palette.primary.main : "inherit"}
                   fontSize="small"
                 />
               </ListItemIcon>
@@ -117,16 +98,14 @@ export default function MapSidebar(props: MapSidebarProps) {
           overflowY: "hidden",
           boxSizing: "border-box",
         },
-      }}
-    >
+      }}>
       <Box
         sx={{
           display: "grid",
           height: "100%",
           gridTemplateRows: "repeat(3, 1fr)",
           justify: "center",
-        }}
-      >
+        }}>
         <MapSidebarList
           items={props.topItems ?? []}
           active={props.active}

@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
-import type { PlotParams } from "react-plotly.js";
 import * as deLocale from "plotly.js/lib/locales/de.js";
+import type { PlotParams } from "react-plotly.js";
 
 /**
  * Dynamic import as a workaround to use Plotly in Next.js
@@ -11,7 +11,7 @@ const Plotly = dynamic(
     import("react-plotly.js").then((Plotly) => {
       return Plotly;
     }),
-  { ssr: false },
+  { ssr: false }
 );
 
 export const Plot = ({ ...props }: PlotParams) => {

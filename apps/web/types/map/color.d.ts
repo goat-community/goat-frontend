@@ -1,5 +1,6 @@
-import type { RGBColor } from "@/lib/constants/color";
 import type { MouseEvent } from "react";
+
+import type { RGBColor } from "@/lib/constants/color";
 import type { ColorMap, ColorRange } from "@/lib/validations/layer";
 import type { ClassBreaks } from "@/lib/validations/layer";
 import type { LayerFieldType } from "@/lib/validations/layer";

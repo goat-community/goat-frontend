@@ -1,5 +1,6 @@
-import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 import type { MapRef } from "react-map-gl";
+
+import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 
 // Image prefix for marker images is needed to avoid
 // name conflicts with other images from mapbox basemaps
@@ -14,13 +15,7 @@ export const MARKER_IMAGE_PREFIX = "goat-marker-";
  * @param height number
  * @returns void
  */
-export const loadImage = (
-  map: MapRef,
-  url: string,
-  marker_name: string,
-  width?: number,
-  height?: number,
-) => {
+export const loadImage = (map: MapRef, url: string, marker_name: string, width?: number, height?: number) => {
   const extension = url.split(".").pop()?.toLowerCase();
   const name = `${MARKER_IMAGE_PREFIX}${marker_name}`;
   const addOrUpdateImage = (
@@ -29,7 +24,7 @@ export const loadImage = (
       | ArrayBufferView
       | { width: number; height: number; data: Uint8Array | Uint8ClampedArray }
       | ImageData
-      | ImageBitmap,
+      | ImageBitmap
   ) => {
     if (map?.hasImage(name)) {
       // We can't use `updateImage` because size of the image can't be changed
@@ -57,9 +52,7 @@ export const loadImage = (
         addOrUpdateImage({
           width: canvas.width,
           height: canvas.height,
-          data: new Uint8Array(
-            context.getImageData(0, 0, canvas.width, canvas.height).data.buffer,
-          ),
+          data: new Uint8Array(context.getImageData(0, 0, canvas.width, canvas.height).data.buffer),
         });
       }
     };
@@ -79,10 +72,7 @@ export const loadImage = (
  * @param map MapRef
  * @returns void
  */
-export function addOrUpdateMarkerImages(
-  properties: FeatureLayerPointProperties,
-  map: MapRef | null,
-) {
+export function addOrUpdateMarkerImages(properties: FeatureLayerPointProperties, map: MapRef | null) {
   if (map && properties.custom_marker) {
     const markers = [properties.marker];
     const size = properties.marker_size;

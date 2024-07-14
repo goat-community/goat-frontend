@@ -1,3 +1,5 @@
+import ClearIcon from "@mui/icons-material/Clear";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Checkbox,
   FormControl,
@@ -11,21 +13,18 @@ import {
   styled,
   useTheme,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Clear";
 import { useMemo, useState } from "react";
-import type { LayerFieldType } from "@/lib/validations/layer";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
+
 import { useTranslation } from "@/i18n/client";
 
+import type { LayerFieldType } from "@/lib/validations/layer";
+
+import FormLabelHelper from "@/components/common/FormLabelHelper";
+
 export type SelectorProps<T extends boolean = false> = {
-  selectedField: T extends true
-    ? LayerFieldType[] | undefined
-    : LayerFieldType | undefined;
+  selectedField: T extends true ? LayerFieldType[] | undefined : LayerFieldType | undefined;
   setSelectedField: (
-    field: T extends true
-      ? LayerFieldType[] | undefined
-      : LayerFieldType | undefined,
+    field: T extends true ? LayerFieldType[] | undefined : LayerFieldType | undefined
   ) => void;
   fields: LayerFieldType[];
   label?: string;
@@ -45,22 +44,20 @@ export const FieldTypeColors = {
   object: [255, 138, 101],
 };
 
-export const FieldTypeTag = styled("div")<{ fieldType: string }>(
-  ({ fieldType }) => ({
-    backgroundColor: `rgba(${FieldTypeColors[fieldType]}, 0.1)`,
-    borderRadius: 4,
-    border: `1px solid rgb(${FieldTypeColors[fieldType]})`,
-    color: `rgb(${FieldTypeColors[fieldType]})`,
-    display: "inline-block",
-    fontSize: 10,
-    fontWeight: "bold",
-    padding: "0 5px",
-    marginRight: "10px",
-    textAlign: "center",
-    width: "50px",
-    lineHeight: "20px",
-  }),
-);
+export const FieldTypeTag = styled("div")<{ fieldType: string }>(({ fieldType }) => ({
+  backgroundColor: `rgba(${FieldTypeColors[fieldType]}, 0.1)`,
+  borderRadius: 4,
+  border: `1px solid rgb(${FieldTypeColors[fieldType]})`,
+  color: `rgb(${FieldTypeColors[fieldType]})`,
+  display: "inline-block",
+  fontSize: 10,
+  fontWeight: "bold",
+  padding: "0 5px",
+  marginRight: "10px",
+  textAlign: "center",
+  width: "50px",
+  lineHeight: "20px",
+}));
 
 const LayerFieldSelector = (props: SelectorProps) => {
   const theme = useTheme();
@@ -91,11 +88,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
         <FormLabelHelper
           label={props.label}
           color={
-            props.disabled
-              ? theme.palette.secondary.main
-              : focused
-                ? theme.palette.primary.main
-                : "inherit"
+            props.disabled ? theme.palette.secondary.main : focused ? theme.palette.primary.main : "inherit"
           }
           tooltip={props.tooltip}
         />
@@ -123,15 +116,11 @@ const LayerFieldSelector = (props: SelectorProps) => {
         defaultValue={props.multiple ? [] : ""}
         onChange={(e) => {
           if (!props.multiple) {
-            const field = JSON.parse(
-              e.target.value as string,
-            ) as LayerFieldType;
+            const field = JSON.parse(e.target.value as string) as LayerFieldType;
             setSelectedField(field as LayerFieldType);
           } else if (props.multiple) {
             const fields = e.target.value as string[];
-            const selectedFields = fields.map(
-              (field) => JSON.parse(field) as LayerFieldType,
-            );
+            const selectedFields = fields.map((field) => JSON.parse(field) as LayerFieldType);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setSelectedField(selectedFields as any);
           }
@@ -153,9 +142,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
         startAdornment={
           <>
             {selectedField && FieldTypeColors[selectedField.type] && (
-              <FieldTypeTag fieldType={selectedField.type}>
-                {selectedField.type}
-              </FieldTypeTag>
+              <FieldTypeTag fieldType={selectedField.type}>{selectedField.type}</FieldTypeTag>
             )}
           </>
         }
@@ -165,9 +152,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
             sx={{
               visibility:
                 !selectedField ||
-                (props.multiple &&
-                  Array.isArray(selectedField) &&
-                  selectedField.length === 0)
+                (props.multiple && Array.isArray(selectedField) && selectedField.length === 0)
                   ? "hidden"
                   : "visible",
             }}
@@ -178,22 +163,15 @@ const LayerFieldSelector = (props: SelectorProps) => {
               } else {
                 setSelectedField(undefined);
               }
-            }}
-          >
+            }}>
             <ClearIcon />
           </IconButton>
         }
         renderValue={() => {
           if (!selectedField && !props.multiple)
             return <Typography variant="body2">{t("select_field")}</Typography>;
-          if (
-            props.multiple &&
-            Array.isArray(selectedField) &&
-            selectedField.length === 0
-          )
-            return (
-              <Typography variant="body2">{t("select_fields")}</Typography>
-            );
+          if (props.multiple && Array.isArray(selectedField) && selectedField.length === 0)
+            return <Typography variant="body2">{t("select_fields")}</Typography>;
           return (
             <>
               {selectedField && (
@@ -205,8 +183,7 @@ const LayerFieldSelector = (props: SelectorProps) => {
               )}
             </>
           );
-        }}
-      >
+        }}>
         <ListSubheader sx={{ px: 2, pt: 1 }}>
           <TextField
             size="small"
@@ -228,26 +205,16 @@ const LayerFieldSelector = (props: SelectorProps) => {
           />
         </ListSubheader>
         {displayedfields.map((field) => (
-          <MenuItem
-            sx={{ px: 2 }}
-            key={field.name}
-            value={JSON.stringify(field)}
-          >
+          <MenuItem sx={{ px: 2 }} key={field.name} value={JSON.stringify(field)}>
             {props.multiple && Array.isArray(selectedField) && (
               <Checkbox
                 sx={{ mr: 2, p: 0 }}
                 size="small"
-                checked={
-                  selectedField
-                    ? selectedField.some((f) => f.name === field.name)
-                    : false
-                }
+                checked={selectedField ? selectedField.some((f) => f.name === field.name) : false}
               />
             )}
 
-            {FieldTypeColors[field.type] && (
-              <FieldTypeTag fieldType={field.type}>{field.type}</FieldTypeTag>
-            )}
+            {FieldTypeColors[field.type] && <FieldTypeTag fieldType={field.type}>{field.type}</FieldTypeTag>}
             <Typography variant="body2" fontWeight="bold">
               {field.name}
             </Typography>

@@ -1,40 +1,37 @@
-import { RhfAutocompleteField } from "@/components/common/form-inputs/AutocompleteField";
-import { useContentMetadataHooks } from "@/hooks/map/ContentMetadataHooks";
-import { useTranslation } from "@/i18n/client";
-import { LAYERS_API_BASE_URL, updateDataset } from "@/lib/api/layers";
-import { PROJECTS_API_BASE_URL, updateProject } from "@/lib/api/projects";
-import {
-  layerMetadataSchema,
-  type LayerMetadata,
-} from "@/lib/validations/layer";
-import type { ContentDialogBaseProps } from "@/types/dashboard/content";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@mui/lab";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  Box,
   Button,
-  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
   Stack,
   TextField,
-  Box,
-  Divider,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { mutate } from "swr";
 
+import { useTranslation } from "@/i18n/client";
+
+import { LAYERS_API_BASE_URL, updateDataset } from "@/lib/api/layers";
+import { PROJECTS_API_BASE_URL, updateProject } from "@/lib/api/projects";
+import { type LayerMetadata, layerMetadataSchema } from "@/lib/validations/layer";
+
+import type { ContentDialogBaseProps } from "@/types/dashboard/content";
+
+import { useContentMetadataHooks } from "@/hooks/map/ContentMetadataHooks";
+
+import { RhfAutocompleteField } from "@/components/common/form-inputs/AutocompleteField";
+
 interface MetadataDialogProps extends ContentDialogBaseProps {}
 
-const Metadata: React.FC<MetadataDialogProps> = ({
-  open,
-  onClose,
-  content,
-  type,
-}) => {
+const Metadata: React.FC<MetadataDialogProps> = ({ open, onClose, content, type }) => {
   const { t } = useTranslation("common");
   const [isBusy, setIsBusy] = useState(false);
   const {
@@ -48,24 +45,20 @@ const Metadata: React.FC<MetadataDialogProps> = ({
     defaultValues: { ...content },
   });
 
-  const { dataCategoryOptions, geographicalCodeOptions, licenseOptions } =
-    useContentMetadataHooks();
+  const { dataCategoryOptions, geographicalCodeOptions, licenseOptions } = useContentMetadataHooks();
 
   const onSubmit = async (data: LayerMetadata) => {
     try {
       setIsBusy(true);
       const postMethod = type === "layer" ? updateDataset : updateProject;
       const cleanedData = Object.fromEntries(
-        Object.entries(data).filter(
-          ([_, value]) => value !== null && value !== undefined && value !== "",
-        ),
+        Object.entries(data).filter(([_, value]) => value !== null && value !== undefined && value !== "")
       );
       await postMethod(content.id, {
         folder_id: content.folder_id,
         ...cleanedData,
       });
-      const mutateUrl =
-        type === "layer" ? LAYERS_API_BASE_URL : PROJECTS_API_BASE_URL;
+      const mutateUrl = type === "layer" ? LAYERS_API_BASE_URL : PROJECTS_API_BASE_URL;
       mutate((key) => Array.isArray(key) && key[0] === mutateUrl);
       toast.success(t("metadata_updated_success"));
     } catch (error) {
@@ -79,11 +72,7 @@ const Metadata: React.FC<MetadataDialogProps> = ({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>{t("edit_metadata")}</DialogTitle>
       <DialogContent>
-        <Box
-          component="form"
-          onSubmit={handleSubmit(onSubmit)}
-          sx={{ mt: 1, maxHeight: "500px" }}
-        >
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1, maxHeight: "500px" }}>
           <Stack spacing={4}>
             {type === "layer" && (
               <>
@@ -235,8 +224,7 @@ const Metadata: React.FC<MetadataDialogProps> = ({
         sx={{
           pb: 2,
           mt: 4,
-        }}
-      >
+        }}>
         <Button onClick={onClose} variant="text">
           <Typography variant="body2" fontWeight="bold">
             {t("cancel")}
@@ -246,8 +234,7 @@ const Metadata: React.FC<MetadataDialogProps> = ({
           variant="contained"
           disabled={!isValid}
           loading={isBusy}
-          onClick={handleSubmit(onSubmit)}
-        >
+          onClick={handleSubmit(onSubmit)}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {t("update")}
           </Typography>

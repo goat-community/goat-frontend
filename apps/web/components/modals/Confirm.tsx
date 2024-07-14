@@ -41,8 +41,7 @@ const ConfirmModal: React.FC<ConfirmDialogProps> = ({
           setMatchTextValue("");
         }
         onClose?.();
-      }}
-    >
+      }}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{body}</DialogContentText>
@@ -62,8 +61,7 @@ const ConfirmModal: React.FC<ConfirmDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
-        }}
-      >
+        }}>
         <Button onClick={onClose} variant="text">
           <Typography variant="body2" fontWeight="bold">
             {closeText || "Close"}
@@ -73,8 +71,7 @@ const ConfirmModal: React.FC<ConfirmDialogProps> = ({
           onClick={onConfirm}
           variant="text"
           color="error"
-          disabled={!!matchText && matchTextValue !== matchText}
-        >
+          disabled={!!matchText && matchTextValue !== matchText}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {confirmText || "Confirm"}
           </Typography>

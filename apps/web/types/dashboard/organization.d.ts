@@ -1,6 +1,8 @@
-import type {Option} from "@p4b/types/atomicComponents";
-import type {IconId} from "@p4b/ui/components/theme";
 import type React from "react";
+
+import type { IconId } from "@p4b/ui/components/theme";
+
+import type { Option } from "@p4b/types/atomicComponents";
 
 export interface IUser {
   name: string;

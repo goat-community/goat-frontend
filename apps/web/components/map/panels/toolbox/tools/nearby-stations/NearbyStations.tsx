@@ -1,40 +1,38 @@
-import Container from "@/components/map/panels/Container";
-import SectionHeader from "@/components/map/panels/common/SectionHeader";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
-import Selector from "@/components/map/panels/common/Selector";
-import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
-import PTTimeSelectors from "@/components/map/panels/toolbox/common/PTTimeSelectors";
-import StartingPointSelectors from "@/components/map/panels/toolbox/common/StartingPointsSelectors";
-import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
-import {
-  getDefaultConfigValue,
-  getTravelCostConfigValues,
-} from "@/components/map/panels/toolbox/tools/catchment-area/utils";
-import {
-  usePTTimeSelectorValues,
-  useRoutingTypes,
-  useStartingPointMethods,
-} from "@/hooks/map/ToolsHooks";
+import { Box, Typography, useTheme } from "@mui/material";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
 import { useJobs } from "@/lib/api/jobs";
 import { computeNearbyStations } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { setIsMapGetInfoActive, setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { CatchmentAreaRoutingWithoutPTType } from "@/lib/validations/tools";
-import {
-  catchmentAreaMaskLayerNames,
-  nearbyStationsSchema,
-} from "@/lib/validations/tools";
+import { catchmentAreaMaskLayerNames, nearbyStationsSchema } from "@/lib/validations/tools";
+
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import { Box, Typography, useTheme } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+
+import { usePTTimeSelectorValues, useRoutingTypes, useStartingPointMethods } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import Container from "@/components/map/panels/Container";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import Selector from "@/components/map/panels/common/Selector";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import PTTimeSelectors from "@/components/map/panels/toolbox/common/PTTimeSelectors";
+import StartingPointSelectors from "@/components/map/panels/toolbox/common/StartingPointsSelectors";
+import {
+  getDefaultConfigValue,
+  getTravelCostConfigValues,
+} from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 
 const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
@@ -44,9 +42,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     read: false,
   });
   const dispatch = useAppDispatch();
-  const startingPoints = useAppSelector(
-    (state) => state.map.toolboxStartingPoints,
-  );
+  const startingPoints = useAppSelector((state) => state.map.toolboxStartingPoints);
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const { projectId } = useParams();
 
@@ -54,33 +50,28 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     if (projectId) {
       dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   // Station access routing
-  const { activeMobilityRoutingTypes, selectedRouting, setSelectedRouting } =
-    useRoutingTypes();
+  const { activeMobilityRoutingTypes, selectedRouting, setSelectedRouting } = useRoutingTypes();
 
-  const [maxTravelTime, setMaxTravelTime] = useState<SelectorItem | undefined>(
-    undefined,
-  );
+  const [maxTravelTime, setMaxTravelTime] = useState<SelectorItem | undefined>(undefined);
 
   const [speed, setSpeed] = useState<SelectorItem | undefined>(undefined);
 
   const handleConfigurationReset = useCallback(() => {
     setMaxTravelTime(
       getDefaultConfigValue(
-        (selectedRouting?.value as CatchmentAreaRoutingWithoutPTType) ||
-          "walking",
-        "max_travel_time",
-      ),
+        (selectedRouting?.value as CatchmentAreaRoutingWithoutPTType) || "walking",
+        "max_travel_time"
+      )
     );
     setSpeed(
       getDefaultConfigValue(
-        (selectedRouting?.value as CatchmentAreaRoutingWithoutPTType) ||
-          "walking",
-        "speed",
-      ),
+        (selectedRouting?.value as CatchmentAreaRoutingWithoutPTType) || "walking",
+        "speed"
+      )
     );
   }, [selectedRouting]);
 
@@ -109,33 +100,16 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   // Starting Points
   const { startingPointMethods } = useStartingPointMethods();
-  const [startingPointMethod, setStartingPointMethod] = useState<SelectorItem>(
-    startingPointMethods[0],
-  );
-  const [startingPointLayer, setStartingPointLayer] = useState<
-    SelectorItem | undefined
-  >(undefined);
+  const [startingPointMethod, setStartingPointMethod] = useState<SelectorItem>(startingPointMethods[0]);
+  const [startingPointLayer, setStartingPointLayer] = useState<SelectorItem | undefined>(undefined);
 
   const isValid = useMemo(() => {
-    if (
-      startingPointMethod.value === "browser_layer" &&
-      !startingPointLayer?.value
-    )
-      return false;
+    if (startingPointMethod.value === "browser_layer" && !startingPointLayer?.value) return false;
 
-    if (
-      startingPointMethod.value === "map" &&
-      (!startingPoints || startingPoints.length === 0)
-    )
-      return false;
+    if (startingPointMethod.value === "map" && (!startingPoints || startingPoints.length === 0)) return false;
 
     return isRoutingValid;
-  }, [
-    isRoutingValid,
-    startingPointLayer?.value,
-    startingPointMethod.value,
-    startingPoints,
-  ]);
+  }, [isRoutingValid, startingPointLayer?.value, startingPointMethod.value, startingPoints]);
 
   const handleRun = async () => {
     const payload = {
@@ -165,22 +139,15 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     try {
       setIsBusy(true);
       const parsedPayload = nearbyStationsSchema.parse(payload);
-      const response = await computeNearbyStations(
-        parsedPayload,
-        projectId as string,
-      );
+      const response = await computeNearbyStations(parsedPayload, projectId as string);
       const { job_id } = response;
       if (job_id) {
-        toast.info(
-          `"${t(jobTypeEnum.Enum.nearby_station_access)}" - ${t("job_started")}`,
-        );
+        toast.info(`"${t(jobTypeEnum.Enum.nearby_station_access)}" - ${t("job_started")}`);
         mutate();
         dispatch(setRunningJobIds([...runningJobIds, job_id]));
       }
     } catch {
-      toast.error(
-        `"${t(jobTypeEnum.Enum.nearby_station_access)}" - ${t("job_failed")}`,
-      );
+      toast.error(`"${t(jobTypeEnum.Enum.nearby_station_access)}" - ${t("job_failed")}`);
     } finally {
       setIsBusy(false);
       handleReset();
@@ -201,12 +168,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     <>
       <Container
         disablePadding={false}
-        header={
-          <ToolsHeader
-            onBack={onBack}
-            title={t("nearby_stations_access_header")}
-          />
-        }
+        header={<ToolsHeader onBack={onBack} title={t("nearby_stations_access_header")} />}
         close={onClose}
         body={
           <>
@@ -214,13 +176,9 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
               sx={{
                 display: "flex",
                 flexDirection: "column",
-              }}
-            >
+              }}>
               {/* DESCRIPTION */}
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-              >
+              <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
                 {t("nearby_stations_access_description")}
               </Typography>
 
@@ -239,9 +197,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
                   <>
                     <Selector
                       selectedItems={selectedRouting}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         const routing = item as SelectorItem;
                         setSelectedRouting(routing);
                       }}
@@ -257,9 +213,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
                     <Selector
                       selectedItems={maxTravelTime}
                       disabled={!selectedRouting}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         setMaxTravelTime(item as SelectorItem);
                       }}
                       items={getTravelCostConfigValues(3, 15, "min")}
@@ -270,9 +224,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
                     <Selector
                       selectedItems={speed}
                       disabled={!selectedRouting}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         setSpeed(item as SelectorItem);
                       }}
                       items={getTravelCostConfigValues(1, 25, "Km/h")}
@@ -297,9 +249,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
                   <>
                     <Selector
                       selectedItems={selectedPTModes}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         setSelectedPTModes(item as SelectorItem[]);
                       }}
                       items={ptModes}
