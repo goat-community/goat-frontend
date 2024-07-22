@@ -1,9 +1,11 @@
-import { useTranslation } from "@/i18n/client";
-import type { SelectorItem } from "@/types/map/common";
 import { useMemo } from "react";
 
+import { useTranslation } from "@/i18n/client";
+
+import type { SelectorItem } from "@/types/map/common";
+
 const useLogicalExpressionOperations = (
-  selectedField?: "string" | "number" | "date" | "boolean" | "object",
+  selectedField?: "string" | "number" | "date" | "boolean" | "object"
 ) => {
   const { t } = useTranslation("common");
   const logicalExpressionTypes: SelectorItem[] = useMemo(() => {
@@ -15,17 +17,16 @@ const useLogicalExpressionOperations = (
       {
         label: t("filter_expressions.is_not"),
         value: "is_not",
-
       },
       {
         label: t("filter_expressions.includes"),
         value: "includes",
-
       },
       {
         label: t("filter_expressions.excludes"),
         value: "excludes",
-      }];
+      },
+    ];
     if (selectedField === "number") {
       return [
         ...baseItems,
@@ -48,9 +49,8 @@ const useLogicalExpressionOperations = (
         {
           label: t("filter_expressions.is_between"),
           value: "is_between",
-        }
+        },
       ];
-
     } else if (selectedField === "string") {
       return [
         ...baseItems,
@@ -77,7 +77,7 @@ const useLogicalExpressionOperations = (
         {
           label: t("filter_expressions.is_not_empty_string"),
           value: "is_not_empty_string",
-        }
+        },
       ];
     } else if (selectedField === "date") {
       return [
@@ -112,7 +112,7 @@ const useLogicalExpressionOperations = (
         {
           label: t("filter_expressions.is_not_between"),
           value: "is_not_between",
-        }
+        },
       ];
     } else {
       return baseItems;

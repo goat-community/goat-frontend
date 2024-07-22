@@ -1,7 +1,3 @@
-import { useTranslation } from "@/i18n/client";
-import { deleteMember } from "@/lib/api/organizations";
-import { useOrganization } from "@/lib/api/users";
-import type { OrgMemberDialogBaseProps } from "@/types/dashboard/settings";
 import { LoadingButton } from "@mui/lab";
 import {
   Button,
@@ -14,6 +10,13 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
+
+import { useTranslation } from "@/i18n/client";
+
+import { deleteMember } from "@/lib/api/organizations";
+import { useOrganization } from "@/lib/api/users";
+
+import type { OrgMemberDialogBaseProps } from "@/types/dashboard/settings";
 
 interface DeleteOrgMemberDialogProps extends OrgMemberDialogBaseProps {
   disabled?: boolean;
@@ -59,8 +62,7 @@ const DeleteOrgMemberModal: React.FC<DeleteOrgMemberDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
-        }}
-      >
+        }}>
         <Button onClick={onClose} variant="text" sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold">
             {t("cancel")}
@@ -72,8 +74,7 @@ const DeleteOrgMemberModal: React.FC<DeleteOrgMemberDialogProps> = ({
           variant="text"
           color="error"
           disabled={disabled}
-          sx={{ borderRadius: 0 }}
-        >
+          sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {t("delete")}
           </Typography>

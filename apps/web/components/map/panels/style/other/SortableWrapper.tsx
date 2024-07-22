@@ -1,10 +1,7 @@
-import type { DragEndEvent} from "@dnd-kit/core";
+import type { DragEndEvent } from "@dnd-kit/core";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 const SortableWrapper = ({
   items,
@@ -20,8 +17,7 @@ const SortableWrapper = ({
     collisionDetection={closestCenter}
     modifiers={[restrictToVerticalAxis]}
     onDragEnd={handleDragEnd}
-    autoScroll={false}
-  >
+    autoScroll={false}>
     <SortableContext items={items} strategy={verticalListSortingStrategy}>
       {children}
     </SortableContext>

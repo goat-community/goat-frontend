@@ -1,8 +1,3 @@
-import { useTranslation } from "@/i18n/client";
-import { LAYERS_API_BASE_URL, deleteLayer } from "@/lib/api/layers";
-import { PROJECTS_API_BASE_URL, deleteProject } from "@/lib/api/projects";
-import type { ContentDialogBaseProps } from "@/types/dashboard/content";
-import { Trans } from "react-i18next";
 import {
   Button,
   Dialog,
@@ -12,8 +7,16 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { Trans } from "react-i18next";
 import { toast } from "react-toastify";
 import { mutate } from "swr";
+
+import { useTranslation } from "@/i18n/client";
+
+import { LAYERS_API_BASE_URL, deleteLayer } from "@/lib/api/layers";
+import { PROJECTS_API_BASE_URL, deleteProject } from "@/lib/api/projects";
+
+import type { ContentDialogBaseProps } from "@/types/dashboard/content";
 
 interface ContentDeleteDialogProps extends ContentDialogBaseProps {
   disabled?: boolean;
@@ -39,15 +42,9 @@ const ContentDeleteModal: React.FC<ContentDeleteDialogProps> = ({
         await deleteProject(content?.id);
         mutate((key) => Array.isArray(key) && key[0] === PROJECTS_API_BASE_URL);
       }
-      toast.success(
-        type === "layer"
-          ? t("delete_layer_success")
-          : t("delete_project_success"),
-      );
+      toast.success(type === "layer" ? t("delete_layer_success") : t("delete_project_success"));
     } catch {
-      toast.error(
-        type === "layer" ? t("delete_layer_error") : t("delete_project_error"),
-      );
+      toast.error(type === "layer" ? t("delete_layer_error") : t("delete_project_error"));
     }
 
     onDelete?.();
@@ -55,9 +52,7 @@ const ContentDeleteModal: React.FC<ContentDeleteDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>
-        {type === "layer" ? t("delete_layer") : t("delete_project")}
-      </DialogTitle>
+      <DialogTitle>{type === "layer" ? t("delete_layer") : t("delete_project")}</DialogTitle>
       <DialogContent>
         <DialogContentText>
           {type === "layer" ? (
@@ -79,8 +74,7 @@ const ContentDeleteModal: React.FC<ContentDeleteDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
-        }}
-      >
+        }}>
         <Button onClick={onClose} variant="text" sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold">
             {t("cancel")}
@@ -91,8 +85,7 @@ const ContentDeleteModal: React.FC<ContentDeleteDialogProps> = ({
           variant="text"
           color="error"
           disabled={disabled}
-          sx={{ borderRadius: 0 }}
-        >
+          sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {t("delete")}
           </Typography>

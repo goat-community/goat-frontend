@@ -1,6 +1,7 @@
+import * as z from "zod";
+
 import { paginatedSchema } from "@/lib/validations/common";
 import { inviationQueryParams } from "@/lib/validations/invitation";
-import * as z from "zod";
 
 export const getInvitationsQueryParamsSchema = z
   .object({})
@@ -27,9 +28,7 @@ export const userSchema = userSchemaBase.extend({
 
 export const userSchemaUpdate = userSchemaBase.partial();
 
-export type GetInvitationsQueryParams = z.infer<
-  typeof getInvitationsQueryParamsSchema
->;
+export type GetInvitationsQueryParams = z.infer<typeof getInvitationsQueryParamsSchema>;
 export type User = z.infer<typeof userSchema>;
 export type UserUpdate = z.infer<typeof userSchemaUpdate>;
 export type UserBase = z.infer<typeof userSchemaBase>;

@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
 import { Avatar, Button, Stack, Typography } from "@mui/material";
-import type { Control, Path, FieldValues } from "react-hook-form";
+import React, { useRef } from "react";
+import type { Control, FieldValues, Path } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { toast } from "react-toastify";
+
 import { useTranslation } from "@/i18n/client";
 
 interface RhfAvatarUploadProps<TField extends FieldValues> {
@@ -12,9 +13,7 @@ interface RhfAvatarUploadProps<TField extends FieldValues> {
   avatar: string;
 }
 
-export const RhfAvatar = <TField extends FieldValues>(
-  props: RhfAvatarUploadProps<TField>,
-) => {
+export const RhfAvatar = <TField extends FieldValues>(props: RhfAvatarUploadProps<TField>) => {
   const { control, name, avatar, title } = props;
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
   const { t } = useTranslation("common");
@@ -65,8 +64,7 @@ export const RhfAvatar = <TField extends FieldValues>(
                   color="primary"
                   onClick={() => {
                     hiddenInputRef?.current?.click();
-                  }}
-                >
+                  }}>
                   {t("upload")}
                 </Button>
                 {value && avatar !== value && (
@@ -75,8 +73,7 @@ export const RhfAvatar = <TField extends FieldValues>(
                     color="error"
                     onClick={() => {
                       onChange(avatar);
-                    }}
-                  >
+                    }}>
                     {t("cancel")}
                   </Button>
                 )}

@@ -1,3 +1,4 @@
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Checkbox,
   FormControl,
@@ -10,11 +11,13 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import { useMemo, useState } from "react";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
-import { Icon, type ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { type ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import type { SelectorItem } from "@/types/map/common";
+
+import FormLabelHelper from "@/components/common/FormLabelHelper";
 
 type SelectorProps = {
   selectedItems: SelectorItem[] | SelectorItem | undefined;
@@ -66,9 +69,7 @@ const Selector = (props: SelectorProps) => {
     if (!multiple && !Array.isArray(selectedItems)) {
       return selectedItems ? selectedItems.value : "";
     } else {
-      return selectedItems && Array.isArray(selectedItems)
-        ? selectedItems?.map((item) => item.value)
-        : [];
+      return selectedItems && Array.isArray(selectedItems) ? selectedItems?.map((item) => item.value) : [];
     }
   }, [multiple, selectedItems]);
 
@@ -77,13 +78,7 @@ const Selector = (props: SelectorProps) => {
       {label && (
         <FormLabelHelper
           label={label}
-          color={
-            disabled
-              ? theme.palette.secondary.main
-              : focused
-              ? theme.palette.primary.main
-              : "inherit"
-          }
+          color={disabled ? theme.palette.secondary.main : focused ? theme.palette.primary.main : "inherit"}
           tooltip={tooltip}
         />
       )}
@@ -107,14 +102,12 @@ const Selector = (props: SelectorProps) => {
         disabled={disabled}
         error={!!errorMessage}
         multiple={multiple}
-        defaultValue={multiple ? [] : "" as unknown} //todo: fix this
+        defaultValue={multiple ? [] : ("" as unknown)} //todo: fix this
         value={selectedValue || (multiple ? [] : "")}
         onChange={(e) => {
           if (multiple) {
             const value = e.target.value as string[] | number[];
-            setSelectedItems(
-              items.filter((item) => value.includes(item.value as never)),
-            );
+            setSelectedItems(items.filter((item) => value.includes(item.value as never)));
           }
           if (!multiple) {
             const value = e.target.value as string | number;
@@ -130,10 +123,7 @@ const Selector = (props: SelectorProps) => {
         onBlur={() => setFocused(false)}
         renderValue={() => {
           // {PLACEHOLDER RENDER}
-          if (
-            !selectedItems ||
-            (Array.isArray(selectedItems) && selectedItems?.length === 0)
-          )
+          if (!selectedItems || (Array.isArray(selectedItems) && selectedItems?.length === 0))
             return <Typography variant="body2">{placeholder}</Typography>;
 
           // {SINGLE ITEM RENDER}
@@ -164,19 +154,17 @@ const Selector = (props: SelectorProps) => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
-              }}
-            >
+              }}>
               {Array.isArray(selectedItems) &&
               selectedItems.length === displayedItems.length &&
               allSelectedLabel
                 ? allSelectedLabel
                 : Array.isArray(selectedItems)
-                ? selectedItems.map((item) => item.label).join(", ")
-                : selectedItems.label}
+                  ? selectedItems.map((item) => item.label).join(", ")
+                  : selectedItems.label}
             </Typography>
           );
-        }}
-      >
+        }}>
         {enableSearch && (
           <ListSubheader sx={{ px: 2, pt: 1 }}>
             <TextField
@@ -208,21 +196,12 @@ const Selector = (props: SelectorProps) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-            }}
-          >
+            }}>
             {emptyMessageIcon && (
-              <Icon
-                iconName={emptyMessageIcon}
-                fontSize="small"
-                htmlColor={theme.palette.text.secondary}
-              />
+              <Icon iconName={emptyMessageIcon} fontSize="small" htmlColor={theme.palette.text.secondary} />
             )}
             {emptyMessage && (
-              <Typography
-                variant="body2"
-                fontWeight="bold"
-                color={theme.palette.text.secondary}
-              >
+              <Typography variant="body2" fontWeight="bold" color={theme.palette.text.secondary}>
                 {emptyMessage}
               </Typography>
             )}
@@ -235,11 +214,7 @@ const Selector = (props: SelectorProps) => {
               <Checkbox
                 sx={{ mr: 2, p: 0 }}
                 size="small"
-                checked={
-                  selectedValue?.findIndex(
-                    (selected) => selected === item.value,
-                  ) > -1
-                }
+                checked={selectedValue?.findIndex((selected) => selected === item.value) > -1}
               />
             )}
             {item.icon && (
@@ -260,8 +235,7 @@ const Selector = (props: SelectorProps) => {
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
-              }}
-            >
+              }}>
               {item.label}
             </Typography>
           </MenuItem>

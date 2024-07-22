@@ -1,5 +1,5 @@
 // Copyright (c) 2023 Uber Technologies, Inc; Plan4Better GmbH
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -17,11 +17,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+import { styled } from "@mui/material/styles";
 
 import { ColorsByTheme, Themes } from "@/lib/constants/color";
 import range, { hexToRgb } from "@/lib/utils/helpers";
+
 import type { SingleColorSelectorProps } from "@/types/map/color";
-import { styled } from "@mui/material/styles";
 
 const PALETTE_HEIGHT = "8px";
 const ROWS = 22;
@@ -42,20 +43,15 @@ const StyledColorColumn = styled("div")({
   justifyContent: "space-between",
 });
 
-const StyledColorBlock = styled("div")<{ selected: boolean }>(
-  ({ theme, selected }) => ({
-    flexGrow: 1,
-    height: `${PALETTE_HEIGHT}`,
-    borderWidth: "1px",
-    borderStyle: "solid",
-    borderColor: selected ? theme.palette.primary.main : "transparent",
-  }),
-);
+const StyledColorBlock = styled("div")<{ selected: boolean }>(({ theme, selected }) => ({
+  flexGrow: 1,
+  height: `${PALETTE_HEIGHT}`,
+  borderWidth: "1px",
+  borderStyle: "solid",
+  borderColor: selected ? theme.palette.primary.main : "transparent",
+}));
 
-const PresetColorPicker: React.FC<SingleColorSelectorProps> = ({
-  selectedColor,
-  onSelectColor,
-}) => (
+const PresetColorPicker: React.FC<SingleColorSelectorProps> = ({ selectedColor, onSelectColor }) => (
   <StyledColorPalette className="single-color-palette">
     {Themes.map((theme) => (
       <StyledColorColumn key={theme} className="single-color-palette__column">
@@ -65,16 +61,13 @@ const PresetColorPicker: React.FC<SingleColorSelectorProps> = ({
             style={{
               backgroundColor: ColorsByTheme[theme][key],
               borderColor:
-                selectedColor.toUpperCase() ===
-                ColorsByTheme[theme][key].toUpperCase()
+                selectedColor.toUpperCase() === ColorsByTheme[theme][key].toUpperCase()
                   ? "white"
                   : ColorsByTheme[theme][key],
             }}
             key={`${theme}_${key}`}
             selected={selectedColor === ColorsByTheme[theme][key].toUpperCase()}
-            onClick={(e) =>
-              onSelectColor(hexToRgb(ColorsByTheme[theme][key]), e)
-            }
+            onClick={(e) => onSelectColor(hexToRgb(ColorsByTheme[theme][key]), e)}
           />
         ))}
       </StyledColorColumn>

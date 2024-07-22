@@ -82,13 +82,13 @@ export const MAKI_ICON_TYPES = [
       "marker",
       "marker-stroked",
       "foundation-marker",
-      "bookmark-regular", 
-      "bookmark-solid", 
-      "circle-info-solid", 
-      "flag-regular", 
-      "globe-solid", 
-      "location-crosshairs-solid", 
-      "location-dot-solid", 
+      "bookmark-regular",
+      "bookmark-solid",
+      "circle-info-solid",
+      "flag-regular",
+      "globe-solid",
+      "location-crosshairs-solid",
+      "location-dot-solid",
       "map-pin-solid",
     ],
   },
@@ -109,7 +109,7 @@ export const MAKI_ICON_TYPES = [
       "bread-slice-solid",
       "store-solid",
       "cart-shopping-solid",
-      "basket-shopping-solid", 
+      "basket-shopping-solid",
       "tags-solid",
       "bread-loaf-solid",
       "butcher_meat",
@@ -117,7 +117,7 @@ export const MAKI_ICON_TYPES = [
       "library-icon",
       "grocery-or-supermarket",
       "pharmacy",
-      "wine-glass-solid"
+      "wine-glass-solid",
     ],
   },
   {
@@ -197,7 +197,7 @@ export const MAKI_ICON_TYPES = [
       "veterinary",
       "radiation-solid",
       "stethoscope-solid",
-      "tooth-solid"
+      "tooth-solid",
     ],
   },
   {
@@ -237,4 +237,3 @@ export const MAKI_ICON_TYPES = [
     ],
   },
 ];
-

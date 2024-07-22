@@ -1,12 +1,3 @@
-import EmptySection from "@/components/common/EmptySection";
-import { Plot } from "@/components/common/PlotlyPlot";
-import Selector from "@/components/map/panels/common/Selector";
-import useLayerFields from "@/hooks/map/CommonHooks";
-import { useTranslation } from "@/i18n/client";
-import { useProjectLayerChartData } from "@/lib/api/projects";
-import type { ProjectLayer } from "@/lib/validations/project";
-import type { SelectorItem } from "@/types/map/common";
-
 import {
   Box,
   Button,
@@ -19,10 +10,24 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { Loading } from "@p4b/ui/components/Loading";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+import { Loading } from "@p4b/ui/components/Loading";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useProjectLayerChartData } from "@/lib/api/projects";
+import type { ProjectLayer } from "@/lib/validations/project";
+
+import type { SelectorItem } from "@/types/map/common";
+
+import useLayerFields from "@/hooks/map/CommonHooks";
+
+import EmptySection from "@/components/common/EmptySection";
+import { Plot } from "@/components/common/PlotlyPlot";
+import Selector from "@/components/map/panels/common/Selector";
 
 type MapLayerChartDialogProps = {
   open: boolean;
@@ -31,23 +36,12 @@ type MapLayerChartDialogProps = {
   projectId: string;
 };
 
-const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({
-  open,
-  onClose,
-  layer,
-  projectId,
-}) => {
+const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({ open, onClose, layer, projectId }) => {
   const { t } = useTranslation("common");
   const theme = useTheme();
   const params = useParams();
-  const { chartData, isLoading, isError } = useProjectLayerChartData(
-    projectId,
-    layer.id,
-  );
-  const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
-    layer.layer_id,
-    undefined,
-  );
+  const { chartData, isLoading, isError } = useProjectLayerChartData(projectId, layer.id);
+  const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(layer.layer_id, undefined);
 
   const chartTypes: SelectorItem[] = useMemo(() => {
     return [
@@ -69,9 +63,7 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({
     ];
   }, [t]);
 
-  const [selectedChartType, setSelectedChartType] = useState<
-    SelectorItem | undefined
-  >(chartTypes[0]);
+  const [selectedChartType, setSelectedChartType] = useState<SelectorItem | undefined>(chartTypes[0]);
 
   const lng = typeof params.lng === "string" ? params.lng : "en";
   const [chartType, setChartType] = useState<"bar" | "line">("bar");
@@ -164,28 +156,19 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({
               />
             </Stack>
           )}
-          {isError && (
-            <EmptySection
-              icon={ICON_NAME.CIRCLEINFO}
-              label={t("error_loading_chart_data")}
-            />
-          )}{" "}
+          {isError && <EmptySection icon={ICON_NAME.CIRCLEINFO} label={t("error_loading_chart_data")} />}{" "}
           {(isLoading || areFieldsLoading) && (
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Loading size={40} />
             </Box>
           )}
           {!chartData && !isLoading && !isError && (
-            <EmptySection
-              icon={ICON_NAME.DATABASE}
-              label={t("no_chart_data")}
-            />
+            <EmptySection icon={ICON_NAME.DATABASE} label={t("no_chart_data")} />
           )}
           {chartData && fields && layer.charts && (
             <Plot
@@ -227,8 +210,7 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
-        }}
-      >
+        }}>
         <Button onClick={onClose} variant="text" sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold">
             {t("cancel")}

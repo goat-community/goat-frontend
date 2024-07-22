@@ -1,5 +1,6 @@
-import type { ICON_NAME } from "@p4b/ui/components/Icon";
 import type React from "react";
+
+import type { ICON_NAME } from "@p4b/ui/components/Icon";
 
 export interface ISubscriptionCard {
   icon: ICON_NAME;

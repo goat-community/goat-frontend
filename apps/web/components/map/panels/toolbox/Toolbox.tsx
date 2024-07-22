@@ -1,20 +1,18 @@
-import React, { useState } from "react";
 import {
   Box,
-  useTheme,
-  Typography,
   List,
-  ListItemText,
-  ListItemSecondaryAction,
   ListItemButton,
+  ListItemSecondaryAction,
+  ListItemText,
+  Typography,
+  useTheme,
 } from "@mui/material";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useTranslation } from "@/i18n/client";
-import AccordionWrapper from "@/components/common/AccordionWrapper";
+import React, { useState } from "react";
 
-import Join from "@/components/map/panels/toolbox/tools/join/Join";
-import Buffer from "@/components/map/panels/toolbox/tools/buffer/Buffer";
-import Container from "@/components/map/panels/Container";
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
 import {
   setActiveRightPanel,
   setIsMapGetInfoActive,
@@ -22,16 +20,22 @@ import {
   setMaskLayer,
   setToolboxStartingPoints,
 } from "@/lib/store/map/slice";
+
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
-import CatchmentArea from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentArea";
-import OevGueteklassen from "@/components/map/panels/toolbox/tools/oev-gueteklassen/OevGueteklassen";
-import TripCount from "@/components/map/panels/toolbox/tools/trip-count/TripCount";
+
+import AccordionWrapper from "@/components/common/AccordionWrapper";
+import Container from "@/components/map/panels/Container";
 import Aggregate from "@/components/map/panels/toolbox/tools/aggregate/Aggregate";
-import OriginDestination from "@/components/map/panels/toolbox/tools/origin-destination/OriginDestination";
-import NearbyStations from "@/components/map/panels/toolbox/tools/nearby-stations/NearbyStations";
-import HeatmapConnectivity from "@/components/map/panels/toolbox/tools/heatmap-connectivity/HeatmapConnectivity";
+import Buffer from "@/components/map/panels/toolbox/tools/buffer/Buffer";
+import CatchmentArea from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentArea";
 import HeatmapClosestAverage from "@/components/map/panels/toolbox/tools/heatmap-closest-average/HeatmapClosestAverage";
+import HeatmapConnectivity from "@/components/map/panels/toolbox/tools/heatmap-connectivity/HeatmapConnectivity";
 import HeatmapGravity from "@/components/map/panels/toolbox/tools/heatmap-gravity/HeatmapGravity";
+import Join from "@/components/map/panels/toolbox/tools/join/Join";
+import NearbyStations from "@/components/map/panels/toolbox/tools/nearby-stations/NearbyStations";
+import OevGueteklassen from "@/components/map/panels/toolbox/tools/oev-gueteklassen/OevGueteklassen";
+import OriginDestination from "@/components/map/panels/toolbox/tools/origin-destination/OriginDestination";
+import TripCount from "@/components/map/panels/toolbox/tools/trip-count/TripCount";
 
 const Tabs = ({ tab, handleChange }) => {
   const { t } = useTranslation("common");
@@ -42,10 +46,7 @@ const Tabs = ({ tab, handleChange }) => {
         <ListItemButton key={childTab} onClick={() => handleChange(childTab)}>
           <ListItemText primary={t(`${childTab}`)} />
           <ListItemSecondaryAction>
-            <Icon
-              iconName={ICON_NAME.CHEVRON_RIGHT}
-              sx={{ fontSize: "12px" }}
-            />
+            <Icon iconName={ICON_NAME.CHEVRON_RIGHT} sx={{ fontSize: "12px" }} />
           </ListItemSecondaryAction>
         </ListItemButton>
       ))}
@@ -117,16 +118,12 @@ const Toolbox = () => {
     heatmap_connectivity: {
       name: t("heatmap_connectivity"),
       value: "heatmap_connectivity",
-      element: (
-        <HeatmapConnectivity onBack={handleOnBack} onClose={handleOnClose} />
-      ),
+      element: <HeatmapConnectivity onBack={handleOnBack} onClose={handleOnClose} />,
     },
     heatmap_closest_average: {
       name: t("heatmap_closest_average"),
       value: "heatmap_closest_average",
-      element: (
-        <HeatmapClosestAverage onBack={handleOnBack} onClose={handleOnClose} />
-      ),
+      element: <HeatmapClosestAverage onBack={handleOnBack} onClose={handleOnClose} />,
     },
     heatmap_gravity: {
       name: t("heatmap_gravity"),
@@ -137,20 +134,12 @@ const Toolbox = () => {
     aggregate: {
       name: t("aggregate_points"),
       value: "aggregate",
-      element: (
-        <Aggregate onBack={handleOnBack} onClose={handleOnClose} type="point" />
-      ),
+      element: <Aggregate onBack={handleOnBack} onClose={handleOnClose} type="point" />,
     },
     aggregate_polygon: {
       name: t("aggregate_polygons"),
       value: "aggregate_polygon",
-      element: (
-        <Aggregate
-          onBack={handleOnBack}
-          onClose={handleOnClose}
-          type="polygon"
-        />
-      ),
+      element: <Aggregate onBack={handleOnBack} onClose={handleOnClose} type="polygon" />,
     },
     catchment_area: {
       name: t("catchment_area"),
@@ -165,9 +154,7 @@ const Toolbox = () => {
     oev_guteklassen: {
       name: t("oev_guteklassen"),
       value: "oev_guteklassen",
-      element: (
-        <OevGueteklassen onBack={handleOnBack} onClose={handleOnClose} />
-      ),
+      element: <OevGueteklassen onBack={handleOnBack} onClose={handleOnClose} />,
     },
     trip_count: {
       name: t("trip_count"),
@@ -182,9 +169,7 @@ const Toolbox = () => {
     origin_destination: {
       name: t("origin_destination"),
       value: "origin_destination",
-      element: (
-        <OriginDestination onBack={handleOnBack} onClose={handleOnClose} />
-      ),
+      element: <OriginDestination onBack={handleOnBack} onClose={handleOnClose} />,
     },
   };
 
@@ -214,13 +199,8 @@ const Toolbox = () => {
                           display: "flex",
                           gap: theme.spacing(2),
                           alignItems: "center",
-                        }}
-                      >
-                        <Icon
-                          iconName={tab.icon}
-                          sx={{ fontSize: "16px" }}
-                          htmlColor="inherit"
-                        />
+                        }}>
+                        <Icon iconName={tab.icon} sx={{ fontSize: "16px" }} htmlColor="inherit" />
                         {tab.name}
                       </Typography>
                     }

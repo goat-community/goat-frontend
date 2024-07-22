@@ -1,44 +1,27 @@
-import { FieldTypeTag } from "@/components/map/common/LayerFieldSelector";
-import { Box, Collapse, IconButton, Skeleton } from "@mui/material";
-
-import type { DatasetCollectionItems } from "@/lib/validations/layer";
-import {
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Box, Collapse, IconButton, Skeleton } from "@mui/material";
+import { Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
+
+import type { DatasetCollectionItems } from "@/lib/validations/layer";
+
+import { FieldTypeTag } from "@/components/map/common/LayerFieldSelector";
 import NoValuesFound from "@/components/map/common/NoValuesFound";
 
 const Row = ({ row, fields }) => {
   const [open, setOpen] = useState(false);
 
-  const primitiveFields = useMemo(
-    () => fields.filter((field) => field.type !== "object"),
-    [fields],
-  );
+  const primitiveFields = useMemo(() => fields.filter((field) => field.type !== "object"), [fields]);
 
-  const objectFields = useMemo(
-    () => fields.filter((field) => field.type === "object"),
-    [fields],
-  );
+  const objectFields = useMemo(() => fields.filter((field) => field.type === "object"), [fields]);
 
   return (
     <>
       <TableRow key={row.id}>
         {objectFields.length > 0 && (
           <TableCell>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
+            <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
@@ -50,10 +33,7 @@ const Row = ({ row, fields }) => {
 
       {!!objectFields.length && (
         <TableRow>
-          <TableCell
-            style={{ paddingBottom: 0, paddingTop: 0 }}
-            colSpan={primitiveFields.length + 1}
-          >
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={primitiveFields.length + 1}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 2 }}>
                 {objectFields.map((field) => {
@@ -66,24 +46,14 @@ const Row = ({ row, fields }) => {
 
                   return (
                     <>
-                      <Stack
-                        direction="column"
-                        spacing={1}
-                        sx={{ py: 1, pl: 4 }}
-                      >
+                      <Stack direction="column" spacing={1} sx={{ py: 1, pl: 4 }}>
                         <Typography variant="body2" fontWeight="bold">
                           {field.name}
                         </Typography>
-                        <FieldTypeTag fieldType={field.type}>
-                          {field.type}
-                        </FieldTypeTag>
+                        <FieldTypeTag fieldType={field.type}>{field.type}</FieldTypeTag>
                       </Stack>
                       {isJsonDataArrayOfObjects ? (
-                        <Table
-                          size="small"
-                          aria-label="purchases"
-                          key={field.name}
-                        >
+                        <Table size="small" aria-label="purchases" key={field.name}>
                           <TableHead>
                             <TableRow>
                               {Object.keys(jsonData[0]).map((key) => (
@@ -94,13 +64,9 @@ const Row = ({ row, fields }) => {
                           <TableBody>
                             {jsonData.map((item, rowIndex) => (
                               <TableRow key={rowIndex}>
-                                {Object.values(item).map(
-                                  (value: string, cellIndex) => (
-                                    <TableCell key={cellIndex}>
-                                      {value.toString()}
-                                    </TableCell>
-                                  ),
-                                )}
+                                {Object.values(item).map((value: string, cellIndex) => (
+                                  <TableCell key={cellIndex}>{value.toString()}</TableCell>
+                                ))}
                               </TableRow>
                             ))}
                           </TableBody>
@@ -108,9 +74,7 @@ const Row = ({ row, fields }) => {
                       ) : (
                         // Handle the case where jsonData is not an array of objects
                         // This could be rendering it as a string or handling other data structures in the future.
-                        <Typography>
-                          {JSON.stringify(jsonData, null, 2)}
-                        </Typography>
+                        <Typography>{JSON.stringify(jsonData, null, 2)}</Typography>
                       )}
                     </>
                   );
@@ -130,11 +94,7 @@ interface DatasetTableProps {
   fields: Array<{ name: string; type: string }>; // Adjust the type based on your data structure
 }
 
-const DatasetTable: React.FC<DatasetTableProps> = ({
-  areFieldsLoading,
-  displayData,
-  fields,
-}) => {
+const DatasetTable: React.FC<DatasetTableProps> = ({ areFieldsLoading, displayData, fields }) => {
   return (
     <>
       {areFieldsLoading && !displayData && (
@@ -157,9 +117,7 @@ const DatasetTable: React.FC<DatasetTableProps> = ({
                       <Typography variant="body2" fontWeight="bold">
                         {field.name}
                       </Typography>
-                      <FieldTypeTag fieldType={field.type}>
-                        {field.type}
-                      </FieldTypeTag>
+                      <FieldTypeTag fieldType={field.type}>{field.type}</FieldTypeTag>
                     </Stack>
                   </TableCell>
                 ))}
@@ -168,19 +126,13 @@ const DatasetTable: React.FC<DatasetTableProps> = ({
           <TableBody>
             {displayData.features.length === 0 && (
               <TableRow>
-                <TableCell
-                  align="center"
-                  colSpan={fields.length}
-                  sx={{ borderBottom: "none" }}
-                >
+                <TableCell align="center" colSpan={fields.length} sx={{ borderBottom: "none" }}>
                   <NoValuesFound />
                 </TableCell>
               </TableRow>
             )}
             {displayData.features?.length &&
-              displayData.features.map((row) => (
-                <Row key={row.id} row={row} fields={fields} />
-              ))}
+              displayData.features.map((row) => <Row key={row.id} row={row} fields={fields} />)}
           </TableBody>
         </Table>
       )}

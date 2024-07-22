@@ -1,12 +1,15 @@
-import { ArrowPopper } from "@/components/ArrowPoper";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
-import NumericColorScale from "@/components/map/panels/style/classification/NumericColorScale";
-import CustomColorScale from "@/components/map/panels/style/classification/CustomColorScale";
-import { useTranslation } from "@/i18n/client";
-import type { ColorScaleSelectorProps } from "@/types/map/color";
 import { Paper, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useState } from "react";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { ColorScaleSelectorProps } from "@/types/map/color";
+
+import { ArrowPopper } from "@/components/ArrowPoper";
+import FormLabelHelper from "@/components/common/FormLabelHelper";
+import CustomColorScale from "@/components/map/panels/style/classification/CustomColorScale";
+import NumericColorScale from "@/components/map/panels/style/classification/NumericColorScale";
 
 const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
   const theme = useTheme();
@@ -29,8 +32,7 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
                 boxShadow: "rgba(0, 0, 0, 0.16) 0px 6px 12px 0px",
                 width: "235px",
                 maxHeight: "500px",
-              }}
-            >
+              }}>
               {props.activeLayerField.type === "number" &&
                 props.selectedColorScaleMethod !== "ordinal" &&
                 props.selectedColorScaleMethod !== "custom_breaks" && (
@@ -46,8 +48,7 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
                   {...props}
                   onCancel={() => setOpen(false)}
                   onApply={(colorMaps) => {
-                    props.onCustomApply &&
-                      props.onCustomApply(colorMaps);
+                    props.onCustomApply && props.onCustomApply(colorMaps);
                     setOpen(false);
                   }}
                   setIsClickAwayEnabled={setIsClickAwayEnabled}
@@ -55,8 +56,7 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
               )}
             </Paper>
           </>
-        }
-      >
+        }>
         {/* {INPUT} */}
         <Stack spacing={1}>
           {props.label && (
@@ -75,8 +75,7 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
               border: "1px solid",
               outline: "2px solid transparent",
               minHeight: "40px",
-              borderColor:
-                theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
+              borderColor: theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
               ...(open && {
                 outline: `2px solid ${theme.palette.primary.main}`,
               }),
@@ -84,12 +83,10 @@ const ColorScaleSelector = (props: ColorScaleSelectorProps) => {
               p: 1.7,
               "&:hover": {
                 ...(!open && {
-                  borderColor:
-                    theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF",
+                  borderColor: theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF",
                 }),
               },
-            }}
-          >
+            }}>
             <Typography variant="body2" fontWeight="bold">
               {t(`${props.selectedColorScaleMethod}`)}
             </Typography>

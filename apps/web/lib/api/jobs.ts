@@ -1,22 +1,15 @@
-import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
-import type {
-  JobPaginated,
-  GetJobsQueryParam} from "@/lib/validations/jobs";
-import {
-  jobSchema,
-  type Job
-} from "@/lib/validations/jobs";
 import useSWR from "swr";
 
-export const JOBS_API_BASE_URL = new URL(
-  "api/v2/job",
-  process.env.NEXT_PUBLIC_API_URL,
-).href;
+import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
+import type { GetJobsQueryParam, JobPaginated } from "@/lib/validations/jobs";
+import { type Job, jobSchema } from "@/lib/validations/jobs";
+
+export const JOBS_API_BASE_URL = new URL("api/v2/job", process.env.NEXT_PUBLIC_API_URL).href;
 
 export const useJobs = (queryParams?: GetJobsQueryParam) => {
   const { data, isLoading, error, mutate, isValidating } = useSWR<JobPaginated>(
     [`${JOBS_API_BASE_URL}`, queryParams],
-    fetcher,
+    fetcher
   );
   return {
     jobs: data,
@@ -46,7 +39,6 @@ export const getJob = async (id: string): Promise<Job> => {
   return parsed.data;
 };
 
-
 export const setJobsReadStatus = async (ids: string[]) => {
   const response = await fetchWithAuth(`${JOBS_API_BASE_URL}/read`, {
     method: "PUT",
@@ -60,4 +52,4 @@ export const setJobsReadStatus = async (ids: string[]) => {
   }
 
   return true;
-}
+};

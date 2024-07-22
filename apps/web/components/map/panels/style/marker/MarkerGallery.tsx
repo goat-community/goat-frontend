@@ -1,10 +1,8 @@
-import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
-import {
-  MAKI_ICONS_BASE_URL,
-  MAKI_ICON_SIZE,
-  MAKI_ICON_TYPES,
-} from "@/lib/constants/icons";
 import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
+
+import { MAKI_ICONS_BASE_URL, MAKI_ICON_SIZE, MAKI_ICON_TYPES } from "@/lib/constants/icons";
+
+import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
 
 type MarkerGalleryProps = {
   onSelectMarker?: (marker: { name: string; url: string }) => void;
@@ -17,16 +15,14 @@ const MarkerGallery = (props: MarkerGalleryProps) => {
         boxShadow: "rgba(0, 0, 0, 0.16) 0px 6px 12px 0px",
         width: "235px",
         maxHeight: "500px",
-      }}
-    >
+      }}>
       <Box
         sx={{
           maxHeight: "280px",
           overflowY: "auto",
           p: 2,
           justifyContent: "center",
-        }}
-      >
+        }}>
         {MAKI_ICON_TYPES.map((group) => (
           <Stack key={group.name} direction="column" sx={{ mb: 2 }} spacing={2}>
             <Stack>
@@ -49,8 +45,7 @@ const MarkerGallery = (props: MarkerGalleryProps) => {
                       url: `${MAKI_ICONS_BASE_URL}/${icon}.svg`,
                     });
                   }}
-                  key={icon}
-                >
+                  key={icon}>
                   <MaskedImageIcon
                     imageUrl={`${MAKI_ICONS_BASE_URL}/${icon}.svg`}
                     dimension={`${MAKI_ICON_SIZE}px`}

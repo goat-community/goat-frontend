@@ -38,8 +38,7 @@ const InfiniteScroll = <T,>(props: Props<T>): React.ReactElement<Props<T>> => {
 
   const [intersecting, ref] = useIntersection<HTMLDivElement>();
 
-  const ending =
-    typeof isReachingEnd === "function" ? isReachingEnd(swr) : isReachingEnd;
+  const ending = typeof isReachingEnd === "function" ? isReachingEnd(swr) : isReachingEnd;
 
   useEffect(() => {
     if (intersecting && !isValidating && !ending) {
@@ -49,9 +48,7 @@ const InfiniteScroll = <T,>(props: Props<T>): React.ReactElement<Props<T>> => {
 
   return (
     <>
-      {typeof children === "function"
-        ? data?.map((item) => children(item))
-        : children}
+      {typeof children === "function" ? data?.map((item) => children(item)) : children}
       <div style={{ position: "relative" }}>
         <div ref={ref} style={{ position: "absolute", top: offset }} />
         {ending ? endingIndicator : loadingIndicator}

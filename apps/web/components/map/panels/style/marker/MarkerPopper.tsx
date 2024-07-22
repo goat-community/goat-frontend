@@ -1,6 +1,8 @@
-import MarkerGallery from "@/components/map/panels/style/marker/MarkerGallery";
-import type { MarkerItem } from "@/types/map/marker";
 import { Box, Fade, Popper } from "@mui/material";
+
+import type { MarkerItem } from "@/types/map/marker";
+
+import MarkerGallery from "@/components/map/panels/style/marker/MarkerGallery";
 
 export function MarkerPopper(props: {
   editingItem: MarkerItem | null;
@@ -21,8 +23,7 @@ export function MarkerPopper(props: {
             offset: [0, 75],
           },
         },
-      ]}
-    >
+      ]}>
       {({ TransitionProps }) => (
         <Fade {...TransitionProps}>
           <Box sx={{ bgcolor: "background.paper", borderRadius: 1 }}>

@@ -17,23 +17,17 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-import { useMemo, useState } from "react";
-
-import {
-  MenuItem,
-  Select,
-  Stack,
-  Switch,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { MenuItem, Select, Stack, Switch, Tooltip, Typography } from "@mui/material";
 // eslint-disable-next-line you-dont-need-lodash-underscore/uniq
 import uniq from "lodash.uniq";
+import { useMemo, useState } from "react";
+
+import { useTranslation } from "@/i18n/client";
+
 import { COLOR_RANGES } from "@/lib/constants/color";
 import { numberSort } from "@/lib/utils/helpers";
 import type { ColorRange } from "@/lib/validations/layer";
-import { useTranslation } from "@/i18n/client";
+
 import ColorPaletteGroup from "@/components/map/panels/style/color/ColorPaletteGroup";
 import CustomPalette from "@/components/map/panels/style/color/CustomPalette";
 
@@ -48,12 +42,10 @@ type ColorRangeSelectorProps = {
 export const ALL_TYPES: string[] = uniq(
   COLOR_RANGES.map((c) => c.type)
     .filter((ctype) => ctype)
-    .concat(["all"]) as string[],
+    .concat(["all"]) as string[]
 );
 
-export const ALL_STEPS: number[] = uniq(
-  COLOR_RANGES.map((d) => d.colors.length),
-).sort(numberSort);
+export const ALL_STEPS: number[] = uniq(COLOR_RANGES.map((d) => d.colors.length)).sort(numberSort);
 
 const CONFIG_SETTINGS = {
   type: {
@@ -91,19 +83,10 @@ const PaletteConfig = (props: PaletteConfigProps) => {
   const { label, value, config, onChange, disabled } = props;
   const { t } = useTranslation("common");
   return (
-    <Stack
-      direction="row"
-      justifyContent="space-between"
-      alignItems="center"
-      sx={{ pl: 4, pr: 3 }}
-    >
+    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pl: 4, pr: 3 }}>
       <Typography variant="body2">{t(`${label}`)}</Typography>
       {config.type === "select" && (
-        <Tooltip
-          title={t("steps_disabled_tooltip")}
-          placement="left"
-          disableHoverListener={!disabled}
-        >
+        <Tooltip title={t("steps_disabled_tooltip")} placement="left" disableHoverListener={!disabled}>
           <Select
             disabled={disabled}
             size="small"
@@ -121,8 +104,7 @@ const PaletteConfig = (props: PaletteConfigProps) => {
             }}
             onChange={(e) => {
               onChange(e.target.value);
-            }}
-          >
+            }}>
             {config.options.map((option, index) => (
               <MenuItem key={index} value={String(option)}>
                 {t(`${option}`)}
@@ -132,11 +114,7 @@ const PaletteConfig = (props: PaletteConfigProps) => {
         </Tooltip>
       )}
       {config.type === "switch" && (
-        <Tooltip
-          title={t("steps_disabled_tooltip")}
-          placement="left"
-          disableHoverListener={!disabled}
-        >
+        <Tooltip title={t("steps_disabled_tooltip")} placement="left" disableHoverListener={!disabled}>
           <div>
             <Switch
               disabled={disabled}
@@ -157,8 +135,7 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
 
   const [colorRangeConfig, setColorRangeConfig] = useState({
     type:
-      ["ordinal", "custom_breaks"].includes(props.scaleType as string) ||
-      selectedColorRange.type === "custom"
+      ["ordinal", "custom_breaks"].includes(props.scaleType as string) || selectedColorRange.type === "custom"
         ? "all"
         : selectedColorRange.type,
     steps: selectedColorRange.colors.length || 6,
@@ -168,11 +145,8 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
 
   const filteredColorRange = useMemo(() => {
     return COLOR_RANGES.filter((colorRange) => {
-      const isType =
-        colorRangeConfig.type === "all" ||
-        colorRangeConfig.type === colorRange.type;
-      const isStep =
-        Number(colorRangeConfig.steps) === colorRange.colors.length;
+      const isType = colorRangeConfig.type === "all" || colorRangeConfig.type === colorRange.type;
+      const isStep = Number(colorRangeConfig.steps) === colorRange.colors.length;
 
       return isType && isStep;
     });
@@ -180,8 +154,7 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
 
   return (
     <Stack spacing={2}>
-      {(colorRangeConfig.custom &&
-      !["ordinal", "custom_breaks"].includes(props.scaleType as string)
+      {(colorRangeConfig.custom && !["ordinal", "custom_breaks"].includes(props.scaleType as string)
         ? ["custom"]
         : Object.keys(colorRangeConfig)
       ).map((key) => (
@@ -203,8 +176,7 @@ const ColorRangeSelector = (props: ColorRangeSelectorProps) => {
           setIsBusy={props.setIsBusy}
         />
       ))}
-      {colorRangeConfig.custom &&
-      !["ordinal", "custom_breaks"].includes(props.scaleType as string) ? (
+      {colorRangeConfig.custom && !["ordinal", "custom_breaks"].includes(props.scaleType as string) ? (
         <CustomPalette
           onApply={(colorRange: ColorRange) => {
             onSelectColorRange(colorRange);

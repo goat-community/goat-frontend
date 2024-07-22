@@ -1,9 +1,8 @@
-import { useTheme, Card, Grid, Stack } from "@mui/material";
-
-import React from "react";
-import { DragIndicator } from "@mui/icons-material";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { DragIndicator } from "@mui/icons-material";
+import { Card, Grid, Stack, useTheme } from "@mui/material";
+import React from "react";
 
 import { DragHandle } from "@/components/common/DragHandle";
 
@@ -18,8 +17,7 @@ type SortableTileProps = {
 
 export function SortableTile(props: SortableTileProps) {
   const theme = useTheme();
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -34,9 +32,7 @@ export function SortableTile(props: SortableTileProps) {
         my: 2,
         pr: 0,
         pl: 1,
-        borderLeft: props.active
-          ? `5px ${theme.palette.primary.main} solid`
-          : "5px transparent solid",
+        borderLeft: props.active ? `5px ${theme.palette.primary.main} solid` : "5px transparent solid",
         py: 2,
         ":hover": {
           boxShadow: 6,
@@ -50,8 +46,7 @@ export function SortableTile(props: SortableTileProps) {
       }}
       key={props.id}
       ref={setNodeRef}
-      style={style}
-    >
+      style={style}>
       <Grid container alignItems="center" spacing={2}>
         <Grid item xs={1}>
           {props.isSortable && (

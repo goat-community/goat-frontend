@@ -1,10 +1,12 @@
 "use client";
 
+import { Chip, Stack, Typography, useTheme } from "@mui/material";
+import Divider from "@mui/material/Divider";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import UserInfoMenu from "@/components/UserInfoMenu";
 import { Toolbar } from "@/components/header/Toolbar";
-import { Chip, Stack, useTheme, Typography } from "@mui/material";
-import Divider from "@mui/material/Divider";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 
 export type MapToolbarProps = {
   projectTitle: string;
@@ -27,8 +29,7 @@ export function MapToolbar(props: MapToolbarProps) {
           sx={{
             mx: theme.spacing(2),
             gap: theme.spacing(2),
-          }}
-        >
+          }}>
           <Typography variant="caption" sx={{ marginLeft: theme.spacing(5) }}>
             {projectTitle}
           </Typography>
@@ -50,8 +51,7 @@ export function MapToolbar(props: MapToolbarProps) {
               [theme.breakpoints.down("md")]: {
                 display: "none",
               },
-            }}
-          >
+            }}>
             <Icon iconName={ICON_NAME.SAVE} style={{ fontSize: "13px" }} />
             Last saved: {lastSaved}
           </Typography>

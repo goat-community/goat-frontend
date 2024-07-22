@@ -1,18 +1,15 @@
-import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
-import type {
-  SystemSettings,
-  SystemSettingsUpdate,
-} from "@/lib/validations/system";
 import useSWR from "swr";
 
-export const SYSTEM_API_BASE_URL = new URL(
-  "api/v2/system",
-  process.env.NEXT_PUBLIC_API_URL,
-).href;
+import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
+import type { SystemSettings, SystemSettingsUpdate } from "@/lib/validations/system";
+
+export const SYSTEM_API_BASE_URL = new URL("api/v2/system", process.env.NEXT_PUBLIC_API_URL).href;
 
 export const useSystemSettings = () => {
-  const { data, isLoading, error, mutate, isValidating } =
-    useSWR<SystemSettings>(`${SYSTEM_API_BASE_URL}/settings`, fetcher);
+  const { data, isLoading, error, mutate, isValidating } = useSWR<SystemSettings>(
+    `${SYSTEM_API_BASE_URL}/settings`,
+    fetcher
+  );
   return {
     systemSettings: data,
     isLoading: isLoading,
@@ -23,7 +20,7 @@ export const useSystemSettings = () => {
 };
 
 export const updateSystemSettings = async (
-  system_settings: SystemSettingsUpdate,
+  system_settings: SystemSettingsUpdate
 ): Promise<SystemSettings> => {
   const response = await fetchWithAuth(`${SYSTEM_API_BASE_URL}/settings`, {
     method: "PUT",

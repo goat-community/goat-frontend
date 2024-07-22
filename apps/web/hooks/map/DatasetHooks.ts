@@ -1,8 +1,10 @@
-import { useTranslation } from "@/i18n/client";
-import { useLayerUniqueValues } from "@/lib/api/layers";
-import type { GetLayerUniqueValuesQueryParams } from "@/lib/validations/layer";
 import { debounce } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useLayerUniqueValues } from "@/lib/api/layers";
+import type { GetLayerUniqueValuesQueryParams } from "@/lib/validations/layer";
 
 export const useGetMetadataValueTranslation = () => {
   const { t, i18n } = useTranslation(["common", "countries"]);
@@ -17,7 +19,7 @@ export const useGetMetadataValueTranslation = () => {
 
       return i18n.exists(translationPath) ? t(translationPath) : value;
     },
-    [i18n, t],
+    [i18n, t]
   );
 
   return getMetadataValueTranslation;
@@ -31,7 +33,13 @@ type UseDatasetValueSelectorMethods = {
   onDone?: () => void;
 };
 
-export const useDatasetValueSelectorMethods = ({ selectedValues, onSelectedValuesChange, fieldName, datasetId, onDone }: UseDatasetValueSelectorMethods) => {
+export const useDatasetValueSelectorMethods = ({
+  selectedValues,
+  onSelectedValuesChange,
+  fieldName,
+  datasetId,
+  onDone,
+}: UseDatasetValueSelectorMethods) => {
   const [searchText, setSearchText] = useState("");
   const [queryParams, setQueryParams] = useState<GetLayerUniqueValuesQueryParams>({
     size: 50,
@@ -41,11 +49,7 @@ export const useDatasetValueSelectorMethods = ({ selectedValues, onSelectedValue
 
   const _selectedValues = useMemo(() => selectedValues || [], [selectedValues]);
 
-  const { data, isLoading } = useLayerUniqueValues(
-    datasetId,
-    fieldName,
-    queryParams,
-  );
+  const { data, isLoading } = useLayerUniqueValues(datasetId, fieldName, queryParams);
 
   const debouncedSetSearchText = debounce((value) => {
     const query = {

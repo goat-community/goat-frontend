@@ -1,21 +1,19 @@
 "use client";
 
-import UserInfoMenu from "@/components/UserInfoMenu";
-import {
-  Chip,
-  useTheme,
-  Typography,
-  Stack,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
+import { Chip, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import Divider from "@mui/material/Divider";
-import { Toolbar } from "./Toolbar";
-import JobsPopper from "@/components/jobs/JobsPopper";
-import { parseISO, format } from "date-fns";
-import { useTranslation } from "@/i18n/client";
+import { format, parseISO } from "date-fns";
+
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
 import { DOCS_URL } from "@/lib/constants";
+
+import UserInfoMenu from "@/components/UserInfoMenu";
+import JobsPopper from "@/components/jobs/JobsPopper";
+
+import { Toolbar } from "./Toolbar";
 
 export type HeaderProps = {
   title: string;
@@ -29,14 +27,7 @@ export type HeaderProps = {
 export default function Header(props: HeaderProps) {
   const theme = useTheme();
   const { t } = useTranslation(["common"]);
-  const {
-    tags,
-    title,
-    lastSaved,
-    onMenuIconClick,
-    showHambugerMenu,
-    height = 52,
-  } = props;
+  const { tags, title, lastSaved, onMenuIconClick, showHambugerMenu, height = 52 } = props;
 
   return (
     <Toolbar
@@ -51,10 +42,7 @@ export default function Header(props: HeaderProps) {
           <Divider orientation="vertical" flexItem />
           {lastSaved && (
             <Typography variant="caption">
-              {`${t("common:last_saved")}: ${format(
-                parseISO(lastSaved),
-                "hh:mma dd/MM/yyyy",
-              )
+              {`${t("common:last_saved")}: ${format(parseISO(lastSaved), "hh:mma dd/MM/yyyy")
                 .replace("PM", " PM")
                 .replace("AM", " AM")}`}
             </Typography>
@@ -74,19 +62,13 @@ export default function Header(props: HeaderProps) {
       }
       RightToolbarChild={
         <>
-          <Stack
-            direction="row"
-            spacing={2}
-            justifyContent="center"
-            alignItems="center"
-          >
+          <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
             <Tooltip title={t("common:open_documentation")}>
               <IconButton
                 size="small"
                 onClick={() => {
                   window.open(DOCS_URL, "_blank");
-                }}
-              >
+                }}>
                 <Icon iconName={ICON_NAME.BOOK} fontSize="inherit" />
               </IconButton>
             </Tooltip>

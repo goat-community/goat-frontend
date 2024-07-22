@@ -9,10 +9,7 @@ const routeContextSchema = z.object({
   }),
 });
 
-export async function GET(
-  _: Request,
-  context: z.infer<typeof routeContextSchema>,
-) {
+export async function GET(_: Request, context: z.infer<typeof routeContextSchema>) {
   const {
     params: { projectId },
   } = routeContextSchema.parse(context);

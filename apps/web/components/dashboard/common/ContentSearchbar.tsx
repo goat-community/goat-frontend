@@ -1,4 +1,5 @@
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import GridViewIcon from "@mui/icons-material/GridView";
 import {
   Box,
   Button,
@@ -10,22 +11,23 @@ import {
   debounce,
   useTheme,
 } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import SortByMenu from "@/components/common/PopperMenu";
-import FilterContentMenu from "@/components/dashboard/common/FilterContent";
-import GridViewIcon from "@mui/icons-material/GridView";
-import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import { useState } from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type { GetDatasetSchema, LayerType } from "@/lib/validations/layer";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
-import { useTranslation } from "@/i18n/client";
-import type { PaginatedQueryParams } from "@/lib/validations/common";
+
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import SortByMenu from "@/components/common/PopperMenu";
+import FilterContentMenu from "@/components/dashboard/common/FilterContent";
 
 export interface ContentSearchBarProps {
   contentType: "project" | "layer";
-  setQueryParams?: (
-    params: PaginatedQueryParams | GetProjectsQueryParams,
-  ) => void;
+  setQueryParams?: (params: PaginatedQueryParams | GetProjectsQueryParams) => void;
   queryParams?: PaginatedQueryParams | GetProjectsQueryParams;
   datasetSchema?: GetDatasetSchema;
   setDatasetSchema?: (schema: GetDatasetSchema) => void;
@@ -58,8 +60,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
   };
   const _handleSearchTextChange = (value: string) => {
     props.onSearchTextChange?.(value);
-    const setParams =
-      contentType === "project" ? setQueryParams : setDatasetSchema;
+    const setParams = contentType === "project" ? setQueryParams : setDatasetSchema;
     const params = contentType === "project" ? queryParams : datasetSchema;
     if (setParams) {
       setParams({
@@ -96,9 +97,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
     },
   ];
 
-  const [selectedSortBy, setSelectedSortBy] = useState<PopperMenuItem>(
-    sortByItems[0],
-  );
+  const [selectedSortBy, setSelectedSortBy] = useState<PopperMenuItem>(sortByItems[0]);
 
   const soryByOptions = {
     "sort-by-alpha-asc": { order_by: "name", order: "ascendent" },
@@ -113,8 +112,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
         display: "flex",
         justifyContent: "start",
         alignItems: "center",
-      }}
-    >
+      }}>
       <Paper
         component="form"
         elevation={3}
@@ -125,8 +123,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
           alignItems: "center",
           width: "100%",
           minHeight: "48px",
-        }}
-      >
+        }}>
         {/* Search bar */}
         <Icon
           iconName={ICON_NAME.SEARCH}
@@ -151,8 +148,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
                 onClick={() => {
                   _handleSearchTextChange("");
                   setValue("");
-                }}
-              >
+                }}>
                 <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
               </IconButton>
             )
@@ -186,19 +182,12 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
                     mx: 2,
                     p: 2,
                     borderRadius: 1,
-                  }}
-                >
-                  {selectedSortBy.icon && (
-                    <Icon
-                      iconName={selectedSortBy.icon}
-                      style={{ fontSize: 17 }}
-                    />
-                  )}
+                  }}>
+                  {selectedSortBy.icon && <Icon iconName={selectedSortBy.icon} style={{ fontSize: 17 }} />}
                   <Typography
                     variant="body2"
                     color="inhderit"
-                    sx={{ ml: 2, color: theme.palette.primary.main }}
-                  >
+                    sx={{ ml: 2, color: theme.palette.primary.main }}>
                     {selectedSortBy.label}
                   </Typography>
                 </Button>
@@ -208,10 +197,8 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
             <FilterContentMenu
               type={props.contentType}
               onLayerTypeSelect={(layerTypes: LayerType[]) => {
-                const setParams =
-                  contentType === "project" ? setQueryParams : setDatasetSchema;
-                const params =
-                  contentType === "project" ? queryParams : datasetSchema;
+                const setParams = contentType === "project" ? setQueryParams : setDatasetSchema;
+                const params = contentType === "project" ? queryParams : datasetSchema;
                 if (setParams && params) {
                   if (layerTypes?.length === 0 && "type" in params) {
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -242,8 +229,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
                 ml: 2,
                 p: 2,
                 borderRadius: 1,
-              }}
-            >
+              }}>
               <GridViewIcon />
             </IconButton>
             <IconButton
@@ -255,8 +241,7 @@ export default function ContentSearchBar(props: ContentSearchBarProps) {
                 ml: 0,
                 p: 2,
                 borderRadius: 1,
-              }}
-            >
+              }}>
               <FormatListBulletedIcon />
             </IconButton>
           </>

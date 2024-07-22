@@ -1,22 +1,16 @@
 import useSWR from "swr";
-import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
-import type { Organization } from "@/lib/validations/organization";
-import type { InvitationPaginated } from "@/lib/validations/invitation";
-import type {
-  GetInvitationsQueryParams,
-  User,
-  UserUpdate,
-} from "@/lib/validations/user";
 
-export const USERS_API_BASE_URL = new URL(
-  "api/v1/users",
-  process.env.NEXT_PUBLIC_ACCOUNTS_API_URL,
-).href;
+import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
+import type { InvitationPaginated } from "@/lib/validations/invitation";
+import type { Organization } from "@/lib/validations/organization";
+import type { GetInvitationsQueryParams, User, UserUpdate } from "@/lib/validations/user";
+
+export const USERS_API_BASE_URL = new URL("api/v1/users", process.env.NEXT_PUBLIC_ACCOUNTS_API_URL).href;
 
 export const useOrganization = () => {
   const { data, isLoading, error, mutate, isValidating } = useSWR<Organization>(
     `${USERS_API_BASE_URL}/organization`,
-    fetcher,
+    fetcher
   );
   return {
     organization: data,
@@ -30,7 +24,7 @@ export const useOrganization = () => {
 export const useUserProfile = () => {
   const { data, isLoading, error, mutate, isValidating } = useSWR<User>(
     `${USERS_API_BASE_URL}/profile`,
-    fetcher,
+    fetcher
   );
   return {
     userProfile: data,
@@ -54,11 +48,10 @@ export const updateUserProfile = async (user: UserUpdate) => {
 };
 
 export const useInvitations = (queryParams?: GetInvitationsQueryParams) => {
-  const { data, isLoading, error, mutate, isValidating } =
-    useSWR<InvitationPaginated>(
-      [`${USERS_API_BASE_URL}/invitations`, queryParams],
-      fetcher,
-    );
+  const { data, isLoading, error, mutate, isValidating } = useSWR<InvitationPaginated>(
+    [`${USERS_API_BASE_URL}/invitations`, queryParams],
+    fetcher
+  );
   return {
     invitations: data,
     isLoading: isLoading,
@@ -69,23 +62,17 @@ export const useInvitations = (queryParams?: GetInvitationsQueryParams) => {
 };
 
 export const acceptInvitation = async (invitationId: string) => {
-  const response = await fetchWithAuth(
-    `${USERS_API_BASE_URL}/invitations/${invitationId}`,
-    {
-      method: "PATCH",
-    },
-  );
+  const response = await fetchWithAuth(`${USERS_API_BASE_URL}/invitations/${invitationId}`, {
+    method: "PATCH",
+  });
   if (!response.ok) throw await response.json();
   return response;
 };
 
 export const declineInvitation = async (invitationId: string) => {
-  const response = await fetchWithAuth(
-    `${USERS_API_BASE_URL}/invitations/${invitationId}`,
-    {
-      method: "DELETE",
-    },
-  );
+  const response = await fetchWithAuth(`${USERS_API_BASE_URL}/invitations/${invitationId}`, {
+    method: "DELETE",
+  });
   if (!response.ok) throw await response.json();
   return response;
 };
@@ -96,4 +83,4 @@ export const deleteAccount = async () => {
   });
   if (!response.ok) throw await response.json();
   return response;
-}
+};

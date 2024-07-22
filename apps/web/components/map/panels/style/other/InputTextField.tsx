@@ -25,10 +25,9 @@ const InputTextField = ({
       onBlur={onBlur}
       sx={{
         pr: 0,
-        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button":
-          {
-            display: "none",
-          },
+        "& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button": {
+          display: "none",
+        },
         "& input[type=number]": {
           MozAppearance: "textfield",
         },

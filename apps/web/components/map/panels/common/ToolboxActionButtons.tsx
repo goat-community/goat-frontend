@@ -1,7 +1,8 @@
-import React from "react";
-import { Button, Stack, Typography } from "@mui/material";
-import { useTranslation } from "@/i18n/client";
 import { LoadingButton } from "@mui/lab";
+import { Button, Stack, Typography } from "@mui/material";
+import React from "react";
+
+import { useTranslation } from "@/i18n/client";
 
 interface ToolboxActionButtonsProps {
   resetFunction: () => void;
@@ -16,20 +17,14 @@ const ToolboxActionButtons = (props: ToolboxActionButtonsProps) => {
   const { t } = useTranslation("common");
 
   return (
-    <Stack
-      direction="row"
-      justifyContent="space-between"
-      spacing={2}
-      sx={{ width: "100%" }}
-    >
+    <Stack direction="row" justifyContent="space-between" spacing={2} sx={{ width: "100%" }}>
       <Button
         color="error"
         size="small"
         variant="outlined"
         sx={{ flexGrow: "1" }}
         onClick={resetFunction}
-        disabled={resetDisabled}
-      >
+        disabled={resetDisabled}>
         {t("reset")}
       </Button>
       <LoadingButton
@@ -38,8 +33,7 @@ const ToolboxActionButtons = (props: ToolboxActionButtonsProps) => {
         loading={props.isBusy}
         sx={{ flexGrow: "1" }}
         onClick={runFunction}
-        disabled={runDisabled}
-      >
+        disabled={runDisabled}>
         <Typography variant="body2" fontWeight="bold" color="inherit">
           {t("run")}
         </Typography>

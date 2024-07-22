@@ -1,16 +1,16 @@
 import useSWR from "swr";
+
 import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import type { FolderResponse } from "@/lib/validations/folder";
 
-export const FOLDERS_API_BASE_URL = new URL(
-  "api/v2/folder",
-  process.env.NEXT_PUBLIC_API_URL,
-).href;
+export const FOLDERS_API_BASE_URL = new URL("api/v2/folder", process.env.NEXT_PUBLIC_API_URL).href;
 
 export const useFolders = (queryParams?: GetContentQueryParams) => {
-  const { data, isLoading, error, mutate, isValidating } =
-    useSWR<FolderResponse>([`${FOLDERS_API_BASE_URL}`, queryParams], fetcher);
+  const { data, isLoading, error, mutate, isValidating } = useSWR<FolderResponse>(
+    [`${FOLDERS_API_BASE_URL}`, queryParams],
+    fetcher
+  );
   return {
     folders: data,
     isLoading: isLoading,

@@ -1,10 +1,12 @@
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+
 import { useTranslation } from "@/i18n/client";
+
 import { useJobs } from "@/lib/api/jobs";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
-import { useEffect } from "react";
 
-import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 export function useJobStatus(onSuccess?: () => void, onFailed?: () => void) {
   const { jobs } = useJobs({
@@ -19,9 +21,7 @@ export function useJobStatus(onSuccess?: () => void, onFailed?: () => void) {
       jobs?.items?.forEach((job) => {
         if (runningJobIds.includes(job.id)) {
           if (job.status_simple === "running") return;
-          dispatch(
-            setRunningJobIds(runningJobIds.filter((id) => id !== job.id)),
-          );
+          dispatch(setRunningJobIds(runningJobIds.filter((id) => id !== job.id)));
           const type = t(job.type) || "";
           if (job.status_simple === "finished") {
             onSuccess && onSuccess();

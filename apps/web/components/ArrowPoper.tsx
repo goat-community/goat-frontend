@@ -154,26 +154,21 @@ export function ArrowPopper({
               element: arrowRef,
             },
           },
-        ]}
-      >
+        ]}>
         {({ TransitionProps }) => (
           <Grow {...TransitionProps} timeout={150}>
             <Paper
               sx={{
                 boxShadow: "none",
-              }}
-            >
+              }}>
               <ClickAwayListener
                 onClickAway={() => {
                   if (isClickAwayEnabled) {
                     onClose();
                   }
-                }}
-              >
+                }}>
                 <Paper elevation={0}>
-                  {arrow ? (
-                    <Arrow ref={setArrowRef} className="MuiPopper-arrow" />
-                  ) : null}
+                  {arrow ? <Arrow ref={setArrowRef} className="MuiPopper-arrow" /> : null}
                   <Box>{content}</Box>
                 </Paper>
               </ClickAwayListener>

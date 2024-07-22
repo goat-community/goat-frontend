@@ -1,19 +1,15 @@
-import type { MiddlewareFactory } from "@/middlewares/types";
-import type { NextRequest } from "next/server";
-import {
-  NextResponse,
-  type NextFetchEvent,
-  type NextMiddleware,
-} from "next/server";
-import { fallbackLng, cookieName as lngCookieName } from "@/i18n/settings";
 import { getToken } from "next-auth/jwt";
-import { refreshAccessToken } from "@/app/api/auth/[...nextauth]/options";
+import type { NextRequest } from "next/server";
+import { type NextFetchEvent, type NextMiddleware, NextResponse } from "next/server";
+
+import { fallbackLng, cookieName as lngCookieName } from "@/i18n/settings";
+
 import type { InvitationPaginated } from "@/lib/validations/invitation";
 
-export const USERS_API_BASE_URL = new URL(
-  "api/v1/users",
-  process.env.NEXT_PUBLIC_ACCOUNTS_API_URL,
-).href;
+import { refreshAccessToken } from "@/app/api/auth/[...nextauth]/options";
+import type { MiddlewareFactory } from "@/middlewares/types";
+
+export const USERS_API_BASE_URL = new URL("api/v1/users", process.env.NEXT_PUBLIC_ACCOUNTS_API_URL).href;
 const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map"];
 
 export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
@@ -23,12 +19,9 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
     const lng = request.cookies.get(lngCookieName)?.value;
     const lngPath = lng ? `/${lng}` : fallbackLng ? `/${fallbackLng}` : "";
     const organizationPageCreate = `${lngPath}/onboarding/organization/create`;
-    const _protectedPaths = protectedPaths.map((p) =>
-      lngPath ? `${lngPath}${p}` : p,
-    );
+    const _protectedPaths = protectedPaths.map((p) => (lngPath ? `${lngPath}${p}` : p));
 
-    if (!_protectedPaths.some((p) => pathname.startsWith(p)))
-      return await next(request, _next);
+    if (!_protectedPaths.some((p) => pathname.startsWith(p))) return await next(request, _next);
 
     const token = await getToken({
       req: request,
@@ -37,21 +30,15 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
     if (!token) return await next(request, _next);
     try {
       const refreshedToken = await refreshAccessToken(token);
-      const checkOrganization = await fetch(
-        `${USERS_API_BASE_URL}/organization`,
-        {
-          headers: {
-            Authorization: `Bearer ${refreshedToken.access_token}`,
-          },
+      const checkOrganization = await fetch(`${USERS_API_BASE_URL}/organization`, {
+        headers: {
+          Authorization: `Bearer ${refreshedToken.access_token}`,
         },
-      );
+      });
       if (checkOrganization.ok) {
         const organization = await checkOrganization.json();
         if (organization?.suspended) {
-          const suspendedUrl = new URL(
-            `${lngPath}/onboarding/organization/suspended`,
-            origin,
-          );
+          const suspendedUrl = new URL(`${lngPath}/onboarding/organization/suspended`, origin);
           return NextResponse.redirect(suspendedUrl);
         }
         if (organization?.id) {
@@ -66,30 +53,22 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
           headers: {
             Authorization: `Bearer ${refreshedToken.access_token}`,
           },
-        },
+        }
       );
 
       if (pendingInvitations.ok) {
-        const invitations: InvitationPaginated =
-          await pendingInvitations.json();
+        const invitations: InvitationPaginated = await pendingInvitations.json();
         if (invitations?.items?.length > 0) {
           const invitationId = invitations.items[0].id;
-          const invitationUrl = new URL(
-            `${lngPath}/onboarding/organization/invite/${invitationId}`,
-            origin,
-          );
+          const invitationUrl = new URL(`${lngPath}/onboarding/organization/invite/${invitationId}`, origin);
           return NextResponse.redirect(invitationUrl);
         }
       }
-
     } catch (error) {
       console.error("Error while fetching organization", error);
     }
 
-    const organizationUrl = new URL(
-      `${basePath}${organizationPageCreate}`,
-      origin,
-    );
+    const organizationUrl = new URL(`${basePath}${organizationPageCreate}`, origin);
 
     return NextResponse.redirect(organizationUrl);
   };

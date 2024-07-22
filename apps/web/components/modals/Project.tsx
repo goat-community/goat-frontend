@@ -1,27 +1,22 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogTitle,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
-
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { Box, Button, Dialog, DialogTitle, Stack, TextField, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useFolders } from "@/lib/api/folders";
+import { createProject } from "@/lib/api/projects";
+import type { GetContentQueryParams } from "@/lib/validations/common";
 import type { PostProject } from "@/lib/validations/project";
 import { postProjectSchema } from "@/lib/validations/project";
-import { useFolders } from "@/lib/api/folders";
-import type { GetContentQueryParams } from "@/lib/validations/common";
-import { useMemo, useState } from "react";
+
 import { RhfAutocompleteField } from "@/components/common/form-inputs/AutocompleteField";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { createProject } from "@/lib/api/projects";
-import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-import { useTranslation } from "@/i18n/client";
 
 interface ProjectDialogProps {
   type: "upload" | "create";
@@ -53,8 +48,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
     defaultValues: {
       description: "",
       //todo: get this from user preferences settings.
-      thumbnail_url:
-        "https://assets.plan4better.de/img/goat_new_project_artwork.png",
+      thumbnail_url: "https://assets.plan4better.de/img/goat_new_project_artwork.png",
       initial_view_state: {
         latitude: 48.1502132,
         longitude: 11.5696284,
@@ -99,12 +93,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
         value: folder.id,
         label: folder.name,
         icon: (
-          <Icon
-            fontSize="small"
-            iconName={
-              folder.name === "home" ? ICON_NAME.HOUSE : ICON_NAME.FOLDER
-            }
-          />
+          <Icon fontSize="small" iconName={folder.name === "home" ? ICON_NAME.HOUSE : ICON_NAME.FOLDER} />
         ),
       };
     });
@@ -114,11 +103,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
     <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth="sm">
       <DialogTitle>Create Project</DialogTitle>
       <Box sx={{ px: 4, pb: 2 }}>
-        <Box
-          sx={{ width: "100%" }}
-          component="form"
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <Box sx={{ width: "100%" }} component="form" onSubmit={handleSubmit(onSubmit)}>
           <Stack direction="column" spacing={4} sx={{ my: 1 }}>
             <RhfAutocompleteField
               disabled={isBusy}
@@ -145,17 +130,8 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
               helperText={errors.description?.message}
             />
           </Stack>
-          <Stack
-            direction="row"
-            justifyContent="flex-end"
-            spacing={1}
-            sx={{ mt: 4 }}
-          >
-            <Button
-              onClick={handleOnClose}
-              variant="text"
-              sx={{ borderRadius: 0 }}
-            >
+          <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 4 }}>
+            <Button onClick={handleOnClose} variant="text" sx={{ borderRadius: 0 }}>
               <Typography variant="body2" fontWeight="bold">
                 Cancel
               </Typography>
@@ -165,8 +141,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
               disabled={isBusy || !allowSubmit}
               loading={isBusy}
               variant="contained"
-              color="primary"
-            >
+              color="primary">
               <Typography variant="body2" fontWeight="bold" color="inherit">
                 Create
               </Typography>

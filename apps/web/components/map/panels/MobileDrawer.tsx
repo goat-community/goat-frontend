@@ -1,15 +1,10 @@
-import React from "react";
 import { Global } from "@emotion/react";
-import {
-  styled,
-  CssBaseline,
-  Button,
-  Box,
-  SwipeableDrawer,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, CssBaseline, SwipeableDrawer, styled, useTheme } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import React from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import LayerMobile from "./mobile/LayerMobile";
 import LegendMobile from "./mobile/LegendMobile";
 
@@ -25,10 +20,7 @@ interface MobileDrawerProps {
 
 const Root = styled("div")(({ theme }) => ({
   height: "100%",
-  backgroundColor:
-    theme.palette.mode === "light"
-      ? grey[100]
-      : theme.palette.background.default,
+  backgroundColor: theme.palette.mode === "light" ? grey[100] : theme.palette.background.default,
 }));
 
 const DrawerBox = styled(Box)(({ theme }) => ({
@@ -63,8 +55,7 @@ const MobileDrawer = (props: MobileDrawerProps) => {
     setOpen(newOpen);
   };
 
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
+  const container = window !== undefined ? () => window().document.body : undefined;
 
   return (
     <Root>
@@ -93,11 +84,10 @@ const MobileDrawer = (props: MobileDrawerProps) => {
         }}
         sx={{
           display: "none",
-          [theme.breakpoints.down('md')]: {
-            display: "block"
+          [theme.breakpoints.down("md")]: {
+            display: "block",
           },
-        }}
-      >
+        }}>
         <DrawerBox>
           <Box display="flex" position="relative">
             <Icon
@@ -120,10 +110,9 @@ const MobileDrawer = (props: MobileDrawerProps) => {
             height: "100%",
             overflow: "auto",
             background: theme.palette.background.default,
-          }}
-        >
+          }}>
           <LayerMobile />
-          <LegendMobile/>
+          <LegendMobile />
         </Box>
       </SwipeableDrawer>
     </Root>

@@ -21,9 +21,7 @@ export const fetcher = async (params) => {
   } else {
     url = params;
   }
-  const urlWithParams = queryParams
-    ? `${url}?${new URLSearchParams(queryParams)}`
-    : url;
+  const urlWithParams = queryParams ? `${url}?${new URLSearchParams(queryParams)}` : url;
   const options = {};
   if (payload) {
     options["method"] = "POST";
@@ -56,10 +54,7 @@ export const fetcher = async (params) => {
   return res.json();
 };
 
-export const fetchWithAuth = async (
-  url: string,
-  options?: RequestInit,
-): Promise<Response> => {
+export const fetchWithAuth = async (url: string, options?: RequestInit): Promise<Response> => {
   const session = await getSession();
   if (session?.access_token) {
     if (!options) {

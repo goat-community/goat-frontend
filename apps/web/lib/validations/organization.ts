@@ -1,5 +1,6 @@
-import { invitationStatusEnum } from "@/lib/validations/invitation";
 import * as z from "zod";
+
+import { invitationStatusEnum } from "@/lib/validations/invitation";
 
 const regionEnum = z.enum(["EU"]);
 
@@ -36,14 +37,12 @@ const organizationMemberSchema = z.object({
   avatar: z.string(),
 });
 
-
 export const invitationCreateSchema = z.object({
   user_email: z.string().email(),
   role: z.enum(["admin", "member"]),
   subscription_id: z.string().uuid().optional(),
   expires: z.string().optional(),
 });
-
 
 export const organizationUpdateSchema = organizationBaseSchema.partial();
 

@@ -1,44 +1,34 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Divider,
-  Skeleton,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingButton } from "@mui/lab";
+import { Box, Divider, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import { useTheme } from "@mui/material";
-import { useTranslation } from "@/i18n/client";
+import { signOut } from "next-auth/react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Trans } from "react-i18next";
+import { toast } from "react-toastify";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { deleteAccount, updateUserProfile, useUserProfile } from "@/lib/api/users";
 import type { UserUpdate } from "@/lib/validations/user";
 import { userSchemaUpdate } from "@/lib/validations/user";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { LoadingButton } from "@mui/lab";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import {
-  deleteAccount,
-  updateUserProfile,
-  useUserProfile,
-} from "@/lib/api/users";
+
 import { RhfAvatar } from "@/components/common/form-inputs/AvatarUpload";
-import { toast } from "react-toastify";
 import ConfirmModal from "@/components/modals/Confirm";
-import { signOut } from "next-auth/react";
 
 const Profile = () => {
   const theme = useTheme();
   const { t } = useTranslation("common");
   const { userProfile, isLoading } = useUserProfile();
-  const [isProfileUpdateBusy, setIsProfileUpdateBusy] =
-    useState<boolean>(false);
-  const [isDeleteAccountBusy, setIsDeleteAccountBusy] =
-    useState<boolean>(false);
+  const [isProfileUpdateBusy, setIsProfileUpdateBusy] = useState<boolean>(false);
+  const [isDeleteAccountBusy, setIsDeleteAccountBusy] = useState<boolean>(false);
   const [confirmLogoutDialogOpen, setConfirmLogoutDialogOpen] = useState(false);
-  const [confirmDeleteAccountDialogOpen, setConfirmDeleteAccountDialogOpen] =
-    useState(false);
+  const [confirmDeleteAccountDialogOpen, setConfirmDeleteAccountDialogOpen] = useState(false);
   const {
     register: registerUserProfile,
     handleSubmit: handleUserProfileSubmit,
@@ -106,19 +96,14 @@ const Profile = () => {
   }
   return (
     <Box sx={{ p: 4 }}>
-      <Box
-        component="form"
-        onSubmit={handleUserProfileSubmit(onUserProfileSubmit)}
-      >
+      <Box component="form" onSubmit={handleUserProfileSubmit(onUserProfileSubmit)}>
         <Stack spacing={theme.spacing(6)}>
           <Divider />
           <Box>
             <Typography variant="body1" fontWeight="bold">
               {t("personal_information")}
             </Typography>
-            <Typography variant="caption">
-              {t("update_personal_information")}
-            </Typography>
+            <Typography variant="caption">{t("update_personal_information")}</Typography>
           </Box>
           <Divider />
 
@@ -172,32 +157,21 @@ const Profile = () => {
 
               <TextField
                 required
-                helperText={
-                  errors.email
-                    ? errors.email?.message
-                    : t("email_change_warning")
-                }
+                helperText={errors.email ? errors.email?.message : t("email_change_warning")}
                 label={t("email")}
                 id="name"
                 {...registerUserProfile("email")}
                 error={errors.email ? true : false}
               />
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-end"
-              >
+              <Stack direction="row" alignItems="center" justifyContent="flex-end">
                 <LoadingButton
                   loading={isProfileUpdateBusy}
                   variant="contained"
-                  startIcon={
-                    <Icon fontSize="small" iconName={ICON_NAME.SAVE} />
-                  }
+                  startIcon={<Icon fontSize="small" iconName={ICON_NAME.SAVE} />}
                   aria-label="update-profile"
                   name="update-profile"
                   disabled={isProfileUpdateBusy || !isDirty || !isValid}
-                  type="submit"
-                >
+                  type="submit">
                   {t("update")}
                 </LoadingButton>
               </Stack>
@@ -235,24 +209,15 @@ const Profile = () => {
           />
 
           <Box>
-            <Typography
-              variant="body1"
-              fontWeight="bold"
-              color={theme.palette.error.main}
-            >
+            <Typography variant="body1" fontWeight="bold" color={theme.palette.error.main}>
               {t("danger_zone")}
             </Typography>
-            <Typography variant="caption">
-              {t("danger_zone_account_description")}
-            </Typography>
+            <Typography variant="caption">{t("danger_zone_account_description")}</Typography>
           </Box>
           <Divider />
           <Stack>
             <Typography variant="body1">
-              <Trans
-                i18nKey="common:danger_zone_account_body"
-                components={{ b: <b /> }}
-              />
+              <Trans i18nKey="common:danger_zone_account_body" components={{ b: <b /> }} />
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" justifyContent="flex-end">
@@ -267,8 +232,7 @@ const Profile = () => {
               onClick={() => {
                 setConfirmDeleteAccountDialogOpen(true);
               }}
-              disabled={isProfileUpdateBusy}
-            >
+              disabled={isProfileUpdateBusy}>
               <Typography variant="body1" fontWeight="bold" color="inherit">
                 {t("delete_account")}
               </Typography>

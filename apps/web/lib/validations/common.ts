@@ -47,32 +47,14 @@ export const dataCategory = z.enum([
   "places",
 ]);
 
-export const layerType = z.enum([
-  "feature",
-  "external_imagery",
-  "external_vector_tile",
-  "table",
-]);
+export const layerType = z.enum(["feature", "external_imagery", "external_vector_tile", "table"]);
 
 export const featureLayerType = z.enum(["standard", "tool", "scenario"]);
 
 export const tableDataExchangeType = z.enum(["csv", "xlsx"]);
-export const featureDataExchangeType = z.enum([
-  "csv",
-  "xlsx",
-  "geojson",
-  "gpkg",
-  "kml",
-  "shp",
-]);
+export const featureDataExchangeType = z.enum(["csv", "xlsx", "geojson", "gpkg", "kml", "shp"]);
 
-export const featureDataExchangeCRS = z.enum([
-  "4326",
-  "3857",
-  "4258",
-  "27700",
-  "4269",
-]);
+export const featureDataExchangeCRS = z.enum(["4326", "3857", "4258", "27700", "4269"]);
 
 export const featureLayerGeometryType = z.enum(["point", "line", "polygon"]);
 

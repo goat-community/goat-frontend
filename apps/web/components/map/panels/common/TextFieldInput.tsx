@@ -1,12 +1,7 @@
-import React, { useState } from "react";
-import {
-  FormControl,
-  IconButton,
-  InputAdornment,
-  OutlinedInput,
-  useTheme,
-} from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
+import { FormControl, IconButton, InputAdornment, OutlinedInput, useTheme } from "@mui/material";
+import React, { useState } from "react";
+
 import FormLabelHelper from "@/components/common/FormLabelHelper";
 
 type TextFieldInputProps = {
@@ -17,6 +12,7 @@ type TextFieldInputProps = {
   tooltip?: string;
   onFocus?: () => void;
   type?: "text" | "number";
+  clearable?: boolean;
 };
 
 const TextFieldInput: React.FC<TextFieldInputProps> = ({
@@ -26,7 +22,8 @@ const TextFieldInput: React.FC<TextFieldInputProps> = ({
   disabled,
   tooltip,
   onFocus,
-  type
+  type,
+  clearable = true,
 }) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
@@ -35,13 +32,7 @@ const TextFieldInput: React.FC<TextFieldInputProps> = ({
       {!!label && (
         <FormLabelHelper
           label={label}
-          color={
-            disabled
-              ? theme.palette.secondary.main
-              : focused
-                ? theme.palette.primary.main
-                : "inherit"
-          }
+          color={disabled ? theme.palette.secondary.main : focused ? theme.palette.primary.main : "inherit"}
           tooltip={tooltip}
         />
       )}
@@ -66,14 +57,10 @@ const TextFieldInput: React.FC<TextFieldInputProps> = ({
           },
         }}
         endAdornment={
-          !!value && (
-            <InputAdornment position="end" sx={{mr: 2}}>
-              <IconButton
-                size="small"
-                aria-label="clear input"
-                onClick={() => onChange("")}
-                edge="end"
-              >
+          !!value &&
+          clearable && (
+            <InputAdornment position="end" sx={{ mr: 2 }}>
+              <IconButton size="small" aria-label="clear input" onClick={() => onChange("")} edge="end">
                 <ClearIcon />
               </IconButton>
             </InputAdornment>

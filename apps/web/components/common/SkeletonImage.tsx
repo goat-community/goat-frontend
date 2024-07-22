@@ -1,5 +1,6 @@
 import { Skeleton } from "@mui/material";
 import { Fragment, useState } from "react";
+
 interface Props {
   src: string;
   alt?: string;

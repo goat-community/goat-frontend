@@ -1,6 +1,7 @@
 import { Stack, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
+
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 type NoValuesFoundProps = {
@@ -20,18 +21,9 @@ const NoValuesFound = ({ text }: NoValuesFoundProps) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-      }}
-    >
-      <Icon
-        iconName={ICON_NAME.TABLE}
-        fontSize="small"
-        htmlColor={theme.palette.text.secondary}
-      />
-      <Typography
-        variant="body2"
-        fontWeight="bold"
-        color={theme.palette.text.secondary}
-      >
+      }}>
+      <Icon iconName={ICON_NAME.TABLE} fontSize="small" htmlColor={theme.palette.text.secondary} />
+      <Typography variant="body2" fontWeight="bold" color={theme.palette.text.secondary}>
         {text || t("no_values_found")}
       </Typography>
     </Stack>

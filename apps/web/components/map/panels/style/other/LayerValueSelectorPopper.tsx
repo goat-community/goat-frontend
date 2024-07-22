@@ -1,4 +1,5 @@
-import { useLayerUniqueValues } from "@/lib/api/layers";
+import ClearIcon from "@mui/icons-material/Clear";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   Checkbox,
@@ -15,15 +16,18 @@ import {
   TextField,
   debounce,
 } from "@mui/material";
-import ClearIcon from "@mui/icons-material/Clear";
-import SearchIcon from "@mui/icons-material/Search";
 import { useMemo, useState } from "react";
-import DropdownFooter from "@/components/map/panels/style/other/DropdownFooter";
-import { OverflowTypograpy } from "@/components/common/OverflowTypography";
-import type { GetLayerUniqueValuesQueryParams } from "@/lib/validations/layer";
+
 import { Loading } from "@p4b/ui/components/Loading";
+
 import { useTranslation } from "@/i18n/client";
+
+import { useLayerUniqueValues } from "@/lib/api/layers";
+import type { GetLayerUniqueValuesQueryParams } from "@/lib/validations/layer";
+
+import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 import NoValuesFound from "@/components/map/common/NoValuesFound";
+import DropdownFooter from "@/components/map/panels/style/other/DropdownFooter";
 
 export function LayerValueSelectorPopper(props: {
   open: boolean;
@@ -36,23 +40,15 @@ export function LayerValueSelectorPopper(props: {
 }) {
   const { t } = useTranslation("common");
   const [searchText, setSearchText] = useState("");
-  const [queryParams, setQueryParams] =
-    useState<GetLayerUniqueValuesQueryParams>({
-      size: 50,
-      page: 1,
-      order: "descendent",
-    });
+  const [queryParams, setQueryParams] = useState<GetLayerUniqueValuesQueryParams>({
+    size: 50,
+    page: 1,
+    order: "descendent",
+  });
 
-  const _selectedValues = useMemo(
-    () => props.selectedValues || [],
-    [props.selectedValues],
-  );
+  const _selectedValues = useMemo(() => props.selectedValues || [], [props.selectedValues]);
 
-  const { data, isLoading } = useLayerUniqueValues(
-    props.layerId,
-    props.fieldName,
-    queryParams,
-  );
+  const { data, isLoading } = useLayerUniqueValues(props.layerId, props.fieldName, queryParams);
 
   const debouncedSetSearchText = debounce((value) => {
     const query = {
@@ -118,8 +114,7 @@ export function LayerValueSelectorPopper(props: {
             offset: [0, 115],
           },
         },
-      ]}
-    >
+      ]}>
       {({ TransitionProps }) => (
         <Fade {...TransitionProps}>
           <Box sx={{ bgcolor: "background.paper", borderRadius: 1 }}>
@@ -129,8 +124,7 @@ export function LayerValueSelectorPopper(props: {
                 overflowY: "auto",
                 overflowX: "hidden",
                 p: 2,
-              }}
-            >
+              }}>
               {_selectedValues.map((value) => {
                 return (
                   <Chip
@@ -196,15 +190,12 @@ export function LayerValueSelectorPopper(props: {
 
                     <OverflowTypograpy
                       variant="body2"
-                      fontWeight={
-                        _selectedValues.includes(item.value) ? "bold" : "normal"
-                      }
+                      fontWeight={_selectedValues.includes(item.value) ? "bold" : "normal"}
                       tooltipProps={{
                         placement: "top",
                         arrow: true,
                         enterDelay: 700,
-                      }}
-                    >
+                      }}>
                       {item.value}
                     </OverflowTypograpy>
                   </ListItemButton>
@@ -216,8 +207,7 @@ export function LayerValueSelectorPopper(props: {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                  }}
-                >
+                  }}>
                   <Loading size={40} />
                 </Box>
               )}

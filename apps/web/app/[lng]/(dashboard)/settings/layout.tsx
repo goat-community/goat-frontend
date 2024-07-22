@@ -1,27 +1,30 @@
 "use client";
 
-import React, { useMemo } from "react";
 import {
-  useTheme,
   Box,
   Container,
   Grid,
-  Paper,
+  Link,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Link,
-  ListItem,
-  Typography,
+  Paper,
   Skeleton,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+import React, { useMemo } from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
 import { useUserProfile } from "@/lib/api/users";
 import { isAdmin } from "@/lib/utils/auth";
-import { useTranslation } from "@/i18n/client";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -63,7 +66,7 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
         auth: isAdmin(userProfile?.roles),
       },
     ],
-    [pathname, t, userProfile?.roles],
+    [pathname, t, userProfile?.roles]
   );
 
   return (
@@ -74,8 +77,7 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
           justifyContent: "space-between",
           alignItems: "center",
           mb: 8,
-        }}
-      >
+        }}>
         <Typography variant="h6">{t("settings")}</Typography>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>
@@ -86,16 +88,11 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
             [theme.breakpoints.down("md")]: {
               display: "none",
             },
-          }}
-        >
+          }}>
           <Paper elevation={3}>
             {isUserProfileLoading && <Skeleton variant="rectangular" width="100%" height={200} />}
             {!isUserProfileLoading && (
-              <List
-                sx={{ width: "100%" }}
-                component="nav"
-                aria-labelledby="settings-navigation"
-              >
+              <List sx={{ width: "100%" }} component="nav" aria-labelledby="settings-navigation">
                 {navigation.map((item) =>
                   item.auth !== false ? (
                     <Link
@@ -103,43 +100,35 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
                       href={item.link}
                       component={NextLink}
                       passHref
-                      style={{ textDecoration: "none" }}
-                    >
+                      style={{ textDecoration: "none" }}>
                       <ListItem
                         disablePadding
                         sx={{
                           display: "block",
-                        }}
-                      >
+                        }}>
                         <ListItemButton
                           selected={item.current}
                           sx={{
                             minHeight: 48,
-                          }}
-                        >
+                          }}>
                           <ListItemIcon
                             sx={{
                               minWidth: 0,
                               ml: 0,
                               mr: 6,
                               justifyContent: "center",
-                            }}
-                          >
+                            }}>
                             <Icon
                               iconName={item.icon}
                               fontSize="small"
-                              htmlColor={
-                                item.current
-                                  ? theme.palette.primary.main
-                                  : "inherit"
-                              }
+                              htmlColor={item.current ? theme.palette.primary.main : "inherit"}
                             />
                           </ListItemIcon>
                           <ListItemText primary={item.label} />
                         </ListItemButton>
                       </ListItem>
                     </Link>
-                  ) : null,
+                  ) : null
                 )}
               </List>
             )}

@@ -1,8 +1,9 @@
 import { Fab, Stack, Tooltip, useTheme } from "@mui/material";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
-import { useMap } from "react-map-gl";
 import { useState } from "react";
+import { useMap } from "react-map-gl";
 import screenfull from "screenfull";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 type FullscreenProps = {
   tooltipOpen?: string;
@@ -35,17 +36,11 @@ export function Fullscren(props: FullscreenProps) {
               alignItems: "flex-end",
               marginTop: theme.spacing(1),
               marginBottom: theme.spacing(1),
-            }}
-          >
+            }}>
             <Tooltip
-              title={
-                fullscreen
-                  ? props.tooltipExit || "Exit Fullscreen"
-                  : props.tooltipOpen || "Fullscreen"
-              }
+              title={fullscreen ? props.tooltipExit || "Exit Fullscreen" : props.tooltipOpen || "Fullscreen"}
               arrow
-              placement="left"
-            >
+              placement="left">
               <Fab
                 onClick={() => toggleFullscreen()}
                 size="small"
@@ -57,12 +52,9 @@ export function Fullscren(props: FullscreenProps) {
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
-                }}
-              >
+                }}>
                 <Icon
-                  iconName={
-                    fullscreen ? ICON_NAME.MINIMIZE : ICON_NAME.MAXIMIZE
-                  }
+                  iconName={fullscreen ? ICON_NAME.MINIMIZE : ICON_NAME.MAXIMIZE}
                   htmlColor="inherit"
                   fontSize="small"
                 />

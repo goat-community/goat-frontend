@@ -1,14 +1,16 @@
 "use client";
+
 import { Button, Stack, Typography } from "@mui/material";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 import AuthContainer from "@p4b/ui/components/AuthContainer";
 import AuthLayout from "@p4b/ui/components/AuthLayout";
 
-import { useSession, signOut } from "next-auth/react";
-
 import { useTranslation } from "@/i18n/client";
+
 import { useOrganization } from "@/lib/api/users";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 export default function OrganizationSuspended() {
   const { t } = useTranslation("common");
@@ -26,48 +28,32 @@ export default function OrganizationSuspended() {
   return (
     <AuthLayout>
       <>
-        {status == "authenticated" &&
-          !isOrgLoading &&
-          organization?.suspended && (
-            <AuthContainer
-              headerTitle={<>{t("organization_suspended")}</>}
-              body={
-                <>
-                  <Stack spacing={4}>
-                    <Typography variant="body1">
-                      {t("organization_suspended_message")}
+        {status == "authenticated" && !isOrgLoading && organization?.suspended && (
+          <AuthContainer
+            headerTitle={<>{t("organization_suspended")}</>}
+            body={
+              <>
+                <Stack spacing={4}>
+                  <Typography variant="body1">{t("organization_suspended_message")}</Typography>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    sx={{ mt: 2 }}
+                    onClick={() => {
+                      window.open("https://plan4better.de/en/contact/", "_blank");
+                    }}>
+                    <Typography variant="body1" fontWeight="bold" color="inherit">
+                      {t("contact_us")}
                     </Typography>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      sx={{ mt: 2 }}
-                      onClick={() => {
-                        window.open(
-                          "https://plan4better.de/en/contact/",
-                          "_blank",
-                        );
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        color="inherit"
-                      >
-                        {t("contact_us")}
-                      </Typography>
-                    </Button>
-                    <Button
-                      variant="text"
-                      color="error"
-                      onClick={() => signOut({ callbackUrl: "/" })}
-                    >
-                      {t("logout")}
-                    </Button>
-                  </Stack>
-                </>
-              }
-            />
-          )}
+                  </Button>
+                  <Button variant="text" color="error" onClick={() => signOut({ callbackUrl: "/" })}>
+                    {t("logout")}
+                  </Button>
+                </Stack>
+              </>
+            }
+          />
+        )}
       </>
     </AuthLayout>
   );

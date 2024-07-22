@@ -1,12 +1,14 @@
-import React from "react";
 import { Stack } from "@mui/material";
+import React from "react";
 
 import type { CatchmentAreaRoutingType } from "@/lib/validations/tools";
 import { CatchmentAreaRoutingTypeEnum } from "@/lib/validations/tools";
-import Selector from "@/components/map/panels/common/Selector";
+
 import type { SelectorItem } from "@/types/map/common";
-import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
+
+import Selector from "@/components/map/panels/common/Selector";
 import PTTimeSelectors from "@/components/map/panels/toolbox/common/PTTimeSelectors";
+import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 
 type CatchmentAreaTimeSelectorsProps = {
   routingType: CatchmentAreaRoutingType;
@@ -70,9 +72,7 @@ const CatchmentAreaTimeSelectors: React.FC<CatchmentAreaTimeSelectorsProps> = ({
         routingType !== CatchmentAreaRoutingTypeEnum.Enum.car && (
           <Selector
             selectedItems={speed}
-            setSelectedItems={(
-              item: SelectorItem[] | SelectorItem | undefined,
-            ) => {
+            setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
               setSpeed(item as SelectorItem);
             }}
             items={getTravelCostConfigValues(1, 25, "Km/h")}

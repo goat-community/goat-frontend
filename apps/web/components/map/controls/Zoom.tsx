@@ -1,6 +1,7 @@
 import { Fab, Stack, Tooltip, useTheme } from "@mui/material";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
 import { useMap } from "react-map-gl";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 type ZoomProps = {
   tooltipZoomIn?: string;
@@ -21,8 +22,7 @@ export function Zoom(props: ZoomProps) {
               alignItems: "flex-end",
               marginTop: theme.spacing(1),
               marginBottom: theme.spacing(1),
-            }}
-          >
+            }}>
             <Tooltip title={props.tooltipZoomIn || "Zoom In"} arrow placement="left">
               <Fab
                 onClick={() => map?.zoomIn()}
@@ -35,13 +35,8 @@ export function Zoom(props: ZoomProps) {
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
-                }}
-              >
-                <Icon
-                  iconName={ICON_NAME.PLUS}
-                  htmlColor="inherit"
-                  fontSize="small"
-                />
+                }}>
+                <Icon iconName={ICON_NAME.PLUS} htmlColor="inherit" fontSize="small" />
               </Fab>
             </Tooltip>
             <Tooltip title={props.tooltipZoomOut || "Zoom Out"} arrow placement="left">
@@ -56,13 +51,8 @@ export function Zoom(props: ZoomProps) {
                   "&:hover": {
                     backgroundColor: theme.palette.background.default,
                   },
-                }}
-              >
-                <Icon
-                  iconName={ICON_NAME.MINUS}
-                  htmlColor="inherit"
-                  fontSize="small"
-                />
+                }}>
+                <Icon iconName={ICON_NAME.MINUS} htmlColor="inherit" fontSize="small" />
               </Fab>
             </Tooltip>
           </Stack>

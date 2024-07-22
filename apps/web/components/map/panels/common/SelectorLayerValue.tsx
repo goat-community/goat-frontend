@@ -1,3 +1,4 @@
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   Checkbox,
@@ -10,12 +11,15 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
-import { useDatasetValueSelectorMethods } from "@/hooks/map/DatasetHooks";
 import { useState } from "react";
-import { useTranslation } from "@/i18n/client";
+
 import { Loading } from "@p4b/ui/components/Loading";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useDatasetValueSelectorMethods } from "@/hooks/map/DatasetHooks";
+
+import FormLabelHelper from "@/components/common/FormLabelHelper";
 import NoValuesFound from "@/components/map/common/NoValuesFound";
 
 export type SelectorProps = {
@@ -37,9 +41,7 @@ const SelectorLayerValue = (props: SelectorProps) => {
   const { t } = useTranslation("common");
   const { data, isLoading, searchText, setSearchText, debouncedSetSearchText } =
     useDatasetValueSelectorMethods({
-      selectedValues: props.multiple
-        ? (props.selectedValues as string[])
-        : [props.selectedValues as string],
+      selectedValues: props.multiple ? (props.selectedValues as string[]) : [props.selectedValues as string],
       onSelectedValuesChange: props.onSelectedValuesChange,
       fieldName: props.fieldName,
       datasetId: props.layerId,
@@ -51,11 +53,7 @@ const SelectorLayerValue = (props: SelectorProps) => {
         <FormLabelHelper
           label={props.label}
           color={
-            props.disabled
-              ? theme.palette.secondary.main
-              : focused
-                ? theme.palette.primary.main
-                : "inherit"
+            props.disabled ? theme.palette.secondary.main : focused ? theme.palette.primary.main : "inherit"
           }
           tooltip={props.tooltip}
         />
@@ -100,14 +98,8 @@ const SelectorLayerValue = (props: SelectorProps) => {
         renderValue={() => {
           if (!props.selectedValues && !props.multiple)
             return <Typography variant="body2">{t("select_value")}</Typography>;
-          if (
-            props.multiple &&
-            Array.isArray(props.selectedValues) &&
-            props.selectedValues.length === 0
-          )
-            return (
-              <Typography variant="body2">{t("select_values")}</Typography>
-            );
+          if (props.multiple && Array.isArray(props.selectedValues) && props.selectedValues.length === 0)
+            return <Typography variant="body2">{t("select_values")}</Typography>;
           return (
             <>
               {props.selectedValues && (
@@ -119,8 +111,7 @@ const SelectorLayerValue = (props: SelectorProps) => {
               )}
             </>
           );
-        }}
-      >
+        }}>
         <ListSubheader sx={{ px: 2, pt: 1 }}>
           <TextField
             size="small"
@@ -151,8 +142,7 @@ const SelectorLayerValue = (props: SelectorProps) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-            }}
-          >
+            }}>
             <Loading size={40} />
           </Box>
         )}
@@ -164,11 +154,7 @@ const SelectorLayerValue = (props: SelectorProps) => {
               <Checkbox
                 sx={{ mr: 2, p: 0 }}
                 size="small"
-                checked={
-                  props.selectedValues
-                    ? props.selectedValues.some((v) => v === value.value)
-                    : false
-                }
+                checked={props.selectedValues ? props.selectedValues.some((v) => v === value.value) : false}
               />
             )}
 

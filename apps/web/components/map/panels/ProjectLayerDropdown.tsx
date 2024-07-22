@@ -1,17 +1,14 @@
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
-import { useAppDispatch } from "@/hooks/store/ContextHooks";
+import { FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { useMemo } from "react";
+
 import { useTranslation } from "@/i18n/client";
+
 import { useProjectLayers } from "@/lib/api/projects";
 import { setActiveLayer } from "@/lib/store/layer/slice";
 import type { LayerType } from "@/lib/validations/common";
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
-import { useMemo } from "react";
+
+import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
 
 interface ProjectLayerDropdownProps {
   projectId: string;
@@ -19,11 +16,7 @@ interface ProjectLayerDropdownProps {
   onChange?: (id: number) => void;
 }
 
-const ProjectLayerDropdown = ({
-  projectId,
-  layerTypes,
-  onChange,
-}: ProjectLayerDropdownProps) => {
+const ProjectLayerDropdown = ({ projectId, layerTypes, onChange }: ProjectLayerDropdownProps) => {
   const { t } = useTranslation("common");
   const { layers: projectLayers } = useProjectLayers(projectId);
   const filteredLayers = useMemo(() => {
@@ -37,9 +30,7 @@ const ProjectLayerDropdown = ({
     <>
       {filteredLayers && filteredLayers.length > 0 && activeLayer && (
         <FormControl fullWidth sx={{ mb: 4 }}>
-          <InputLabel id="select-active-layer-title">
-            {t("active_layer")}
-          </InputLabel>
+          <InputLabel id="select-active-layer-title">{t("active_layer")}</InputLabel>
           <Select
             sx={{ width: "100%" }}
             labelId="select-active-layer"
@@ -59,8 +50,7 @@ const ProjectLayerDropdown = ({
                   maxWidth: "290px",
                 },
               },
-            }}
-          >
+            }}>
             {filteredLayers.map((layer) => {
               return (
                 <MenuItem key={layer.id} value={layer.id}>

@@ -1,13 +1,3 @@
-import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
-
-import { useTranslation } from "@/i18n/client";
-import { useCatalogLayers } from "@/lib/api/layers";
-import {
-  addProjectLayers,
-  useProject,
-  useProjectLayers,
-} from "@/lib/api/projects";
-import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -25,9 +15,18 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import type { PaginatedQueryParams } from "@/lib/validations/common";
-import CatalogDatasetCard from "@/components/dashboard/catalog/CatalogDatasetCard";
+
 import { Loading } from "@p4b/ui/components/Loading";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useCatalogLayers } from "@/lib/api/layers";
+import { addProjectLayers, useProject, useProjectLayers } from "@/lib/api/projects";
+import type { PaginatedQueryParams } from "@/lib/validations/common";
+import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
+
+import CatalogDatasetCard from "@/components/dashboard/catalog/CatalogDatasetCard";
+import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import NoValuesFound from "@/components/map/common/NoValuesFound";
 
 interface CatalogExplorerProps {
@@ -36,11 +35,7 @@ interface CatalogExplorerProps {
   projectId: string;
 }
 
-const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
-  open,
-  onClose,
-  projectId,
-}) => {
+const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({ open, onClose, projectId }) => {
   const { t } = useTranslation("common");
   const theme = useTheme();
 
@@ -55,10 +50,7 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
     in_catalog: true,
   });
 
-  const { layers: datasets, isLoading: isDatasetLoading } = useCatalogLayers(
-    queryParams,
-    datasetSchema,
-  );
+  const { layers: datasets, isLoading: isDatasetLoading } = useCatalogLayers(queryParams, datasetSchema);
 
   const { mutate: mutateProjectLayers } = useProjectLayers(projectId);
   const { mutate: mutateProject } = useProject(projectId);
@@ -106,9 +98,7 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
             debouncedSetSearchText(text);
           }}
         />
-        <DialogContent
-          sx={{ backgroundColor: theme.palette.background.default }}
-        >
+        <DialogContent sx={{ backgroundColor: theme.palette.background.default }}>
           {datasets && datasets?.items.length > 0 && (
             <Stack direction="row" sx={{ pb: 2 }}>
               <Typography variant="body1" fontWeight="bold">
@@ -119,8 +109,7 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
           <Box
             sx={{
               width: "100%",
-            }}
-          >
+            }}>
             <Grid container justifyContent="space-between" spacing={4}>
               <Grid item xs={12}>
                 <Stack direction="column" spacing={4}>
@@ -147,36 +136,28 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                      }}
-                    >
+                      }}>
                       <Loading size={40} />
                     </Box>
                   )}
                   {!isDatasetLoading && datasets?.items?.length === 0 && (
                     <NoValuesFound text={t("no_datasets_found")} />
                   )}
-                  {!isDatasetLoading &&
-                    datasets &&
-                    datasets?.items.length > 0 && (
-                      <Stack
-                        direction="row"
-                        justifyContent="center"
-                        alignItems="center"
-                        sx={{ p: 4 }}
-                      >
-                        <Pagination
-                          count={datasets.pages || 1}
-                          size="large"
-                          page={queryParams.page || 1}
-                          onChange={(_e, page) => {
-                            setQueryParams({
-                              ...queryParams,
-                              page,
-                            });
-                          }}
-                        />
-                      </Stack>
-                    )}
+                  {!isDatasetLoading && datasets && datasets?.items.length > 0 && (
+                    <Stack direction="row" justifyContent="center" alignItems="center" sx={{ p: 4 }}>
+                      <Pagination
+                        count={datasets.pages || 1}
+                        size="large"
+                        page={queryParams.page || 1}
+                        onChange={(_e, page) => {
+                          setQueryParams({
+                            ...queryParams,
+                            page,
+                          });
+                        }}
+                      />
+                    </Stack>
+                  )}
                 </Stack>
               </Grid>
             </Grid>
@@ -187,8 +168,7 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
           sx={{
             pb: 4,
             justifyContent: "flex-end",
-          }}
-        >
+          }}>
           <Stack direction="row" spacing={2} sx={{ pt: 3 }}>
             <Button onClick={handleOnClose} variant="text">
               <Typography variant="body2" fontWeight="bold">
@@ -200,8 +180,7 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({
               variant="contained"
               color="primary"
               onClick={handleOnAdd}
-              disabled={!selectedDataset || isDatasetLoading}
-            >
+              disabled={!selectedDataset || isDatasetLoading}>
               {t("add_layer")}
             </LoadingButton>
           </Stack>

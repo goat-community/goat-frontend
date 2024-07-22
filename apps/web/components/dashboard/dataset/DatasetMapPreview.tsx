@@ -1,15 +1,17 @@
-import "mapbox-gl/dist/mapbox-gl.css";
-import Layers from "@/components/map/Layers";
-import { MAPBOX_TOKEN } from "@/lib/constants";
-import type { Layer } from "@/lib/validations/layer";
 import { Box, Paper } from "@mui/material";
+import bbox from "@turf/bbox";
+import "mapbox-gl/dist/mapbox-gl.css";
 import React, { useMemo, useRef, useState } from "react";
 import type { MapRef } from "react-map-gl";
 import { Map, MapProvider } from "react-map-gl";
+
+import { MAPBOX_TOKEN } from "@/lib/constants";
 import { wktToGeoJSON } from "@/lib/utils/map/wkt";
-import bbox from "@turf/bbox";
-import { Legend } from "@/components/map/controls/Legend";
+import type { Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
+
+import Layers from "@/components/map/Layers";
+import { Legend } from "@/components/map/controls/Legend";
 import { Recenter } from "@/components/map/controls/Recenter";
 
 interface DatasetMapPreviewProps {
@@ -48,8 +50,7 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
             ".mapboxgl-ctrl-attrib a": {
               color: "rgba(0,0,0,.75)",
             },
-          }}
-        >
+          }}>
           <Map
             id="map"
             ref={mapRef}
@@ -76,8 +77,7 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
             mapStyle="mapbox://styles/mapbox/light-v11"
             mapboxAccessToken={MAPBOX_TOKEN}
             dragRotate={false}
-            touchZoomRotate={false}
-          >
+            touchZoomRotate={false}>
             <Layers layers={[dataset]} />
           </Map>
 
@@ -87,8 +87,7 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
                 position: "absolute",
                 left: 15,
                 top: 5,
-              }}
-            >
+              }}>
               <Recenter initialExtent={dataset.extent} />
             </Box>
           )}
@@ -103,13 +102,8 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
                 maxHeight: "300px",
                 minWidth: "220px",
                 overflow: "auto",
-              }}
-            >
-              <Legend
-                layers={[dataset] as unknown as ProjectLayer[]}
-                hideZoomLevel
-                hideLayerName
-              />
+              }}>
+              <Legend layers={[dataset] as unknown as ProjectLayer[]} hideZoomLevel hideLayerName />
             </Paper>
           </Box>
         </Box>

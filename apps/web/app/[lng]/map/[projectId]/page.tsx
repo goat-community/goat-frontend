@@ -1,41 +1,42 @@
 "use client";
 
-import { MAPBOX_TOKEN } from "@/lib/constants";
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Box, debounce, useTheme } from "@mui/material";
 import "mapbox-gl/dist/mapbox-gl.css";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import type {
-  MapGeoJSONFeature,
-  MapLayerMouseEvent,
-  MapRef,
-  ViewStateChangeEvent,
-} from "react-map-gl";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import type { MapLayerMouseEvent, MapRef, ViewStateChangeEvent } from "react-map-gl";
 import Map, { MapProvider } from "react-map-gl";
-import Layers from "@/components/map/Layers";
-import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
-import Header from "@/components/header/Header";
+import { v4 } from "uuid";
+
+import { useTranslation } from "@/i18n/client";
+
 import {
   updateProjectInitialViewState,
   useProject,
   useProjectInitialViewState,
   useProjectLayers,
+  useProjectScenarioFeatures,
 } from "@/lib/api/projects";
-import { LoadingPage } from "@/components/common/LoadingPage";
-import { useAppSelector } from "@/hooks/store/ContextHooks";
+import { MAPBOX_TOKEN } from "@/lib/constants";
+import { PATTERN_IMAGES } from "@/lib/constants/pattern-images";
+import { DrawProvider } from "@/lib/providers/DrawProvider";
 import { selectActiveBasemap } from "@/lib/store/map/selectors";
-import MapPopover from "@/components/map/controls/Popover";
-import { v4 } from "uuid";
-import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
+import { setHighlightedFeature, setPopupInfo } from "@/lib/store/map/slice";
+import { addOrUpdateMarkerImages, addPatternImages } from "@/lib/transformers/map-image";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
-import ToolboxLayers from "@/components/map/ToolboxLayers";
+
 import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
-import { useTranslation } from "@/i18n/client";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import { LoadingPage } from "@/components/common/LoadingPage";
+import Header from "@/components/header/Header";
+import Layers from "@/components/map/Layers";
+import ScenarioLayer from "@/components/map/ScenarioLayer";
+import ToolboxLayers from "@/components/map/ToolboxLayers";
+import MapPopoverEditor from "@/components/map/controls/PopoverEditor";
+import MapPopoverInfo from "@/components/map/controls/PopoverInfo";
+import { DrawControl } from "@/components/map/controls/draw/Draw";
+import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 
 const sidebarWidth = 52;
 const toolbarHeight = 52;
@@ -45,16 +46,15 @@ export default function MapPage({ params: { projectId } }) {
   const theme = useTheme();
   const { t } = useTranslation("common");
   const activeBasemap = useAppSelector(selectActiveBasemap);
-  const isGetInfoActive = useAppSelector(
-    (state) => state.map.isMapGetInfoActive,
-  );
+  const isGetInfoActive = useAppSelector((state) => state.map.isMapGetInfoActive);
+  const popupInfo = useAppSelector((state) => state.map.popupInfo);
+  const popupEditor = useAppSelector((state) => state.map.popupEditor);
   const mapCursor = useAppSelector((state) => state.map.mapCursor);
+  const highlightedFeature = useAppSelector((state) => state.map.highlightedFeature);
+  const dispatch = useAppDispatch();
   const mapRef = useRef<MapRef | null>(null);
-  const {
-    project,
-    isLoading: isProjectLoading,
-    isError: projectError,
-  } = useProject(projectId);
+  const { project, isLoading: isProjectLoading, isError: projectError } = useProject(projectId);
+
   const {
     initialView,
     isLoading: isInitialViewLoading,
@@ -67,21 +67,23 @@ export default function MapPage({ params: { projectId } }) {
     layers: projectLayers,
   } = useProjectLayers(projectId);
 
+  const { scenarioFeatures } = useProjectScenarioFeatures(projectId, project?.active_scenario_id);
+
   const sortedLayers = useSortedLayers(projectId, ["table"]);
 
   const isLoading = useMemo(
     () => isProjectLoading || isInitialViewLoading || areProjectLayersLoading,
-    [isProjectLoading, isInitialViewLoading, areProjectLayersLoading],
+    [isProjectLoading, isInitialViewLoading, areProjectLayersLoading]
   );
 
   const hasError = useMemo(
     () => projectError || projectInitialViewError || projectLayersError,
-    [projectError, projectInitialViewError, projectLayersError],
+    [projectError, projectInitialViewError, projectLayersError]
   );
 
   const interactiveLayerIds = useMemo(
     () => projectLayers?.map((layer) => layer.id.toString()),
-    [projectLayers],
+    [projectLayers]
   );
 
   const updateViewState = useMemo(
@@ -97,35 +99,19 @@ export default function MapPage({ params: { projectId } }) {
           max_zoom: initialView?.max_zoom ?? 24,
         });
       }, UPDATE_VIEW_STATE_DEBOUNCE_TIME),
-    [initialView?.max_zoom, initialView?.min_zoom, projectId],
+    [initialView?.max_zoom, initialView?.min_zoom, projectId]
   );
-
-  const [highlightedFeature, setHighlightedFeature] =
-    useState<MapGeoJSONFeature | null>(null);
-
-  const [popupInfo, setPopupInfo] = useState<{
-    lngLat: [number, number];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    properties: { [name: string]: any } | null;
-    jsonProperties: { [name: string]: unknown } | null;
-    title: string;
-  } | null>(null);
 
   const handleMapClick = (e: MapLayerMouseEvent) => {
     const features = e.features;
     const hiddenProperties = ["layer_id", "id"];
     if (features && features.length > 0 && isGetInfoActive) {
       const feature = features[0];
-      setHighlightedFeature(feature);
-      const layerName = projectLayers?.find(
-        (layer) => layer.id === Number(feature.layer.id),
-      )?.name;
+      dispatch(setHighlightedFeature(feature));
+      const layerName = projectLayers?.find((layer) => layer.id === Number(feature.layer.id))?.name;
       let lngLat = [e.lngLat.lng, e.lngLat.lat] as [number, number];
       if (feature.geometry.type === "Point" && feature.geometry.coordinates) {
-        lngLat = [
-          feature.geometry.coordinates[0],
-          feature.geometry.coordinates[1],
-        ];
+        lngLat = [feature.geometry.coordinates[0], feature.geometry.coordinates[1]];
       }
       const properties = feature.properties;
       const jsonProperties = {};
@@ -148,36 +134,34 @@ export default function MapPage({ params: { projectId } }) {
           }
         }
       }
-      // Now you can use jsonProperties for visualization
-      console.log(jsonProperties);
-      console.log(primitiveProperties);
 
-      setPopupInfo({
-        lngLat,
-        properties: primitiveProperties,
-        jsonProperties: jsonProperties,
-        title: layerName ?? "",
-        // jsonProperties,
-      });
+      dispatch(
+        setPopupInfo({
+          lngLat,
+          properties: primitiveProperties,
+          jsonProperties: jsonProperties,
+          title: layerName ?? "",
+          onClose: handlePopoverClose,
+        })
+      );
     } else {
       setHighlightedFeature(null);
-      setPopupInfo(null);
+      dispatch(setPopupInfo(undefined));
     }
   };
 
   const handleMapLoad = useCallback(() => {
-    // get all icon layers and add icons to map using addOrUpdateMarkerImages method
     if (mapRef.current) {
+      // get all icon layers and add icons to map using addOrUpdateMarkerImages method
       projectLayers?.forEach((layer) => {
-        if (
-          layer.type === "feature" &&
-          layer.feature_layer_geometry_type === "point"
-        ) {
-          const pointFeatureProperties =
-            layer.properties as FeatureLayerPointProperties;
+        if (layer.type === "feature" && layer.feature_layer_geometry_type === "point") {
+          const pointFeatureProperties = layer.properties as FeatureLayerPointProperties;
           addOrUpdateMarkerImages(pointFeatureProperties, mapRef.current);
         }
       });
+
+      // load pattern images
+      addPatternImages(PATTERN_IMAGES ?? [], mapRef.current);
     }
   }, [projectLayers]);
 
@@ -190,8 +174,8 @@ export default function MapPage({ params: { projectId } }) {
   }, [activeBasemap.url, handleMapLoad]);
 
   const handlePopoverClose = () => {
-    setPopupInfo(null);
-    setHighlightedFeature(null);
+    dispatch(setPopupInfo(undefined));
+    dispatch(setHighlightedFeature(undefined));
   };
 
   const handleMapOverImmediate = (e: MapLayerMouseEvent) => {
@@ -216,107 +200,110 @@ export default function MapPage({ params: { projectId } }) {
       {isLoading && <LoadingPage />}
       {!isLoading && !hasError && (
         <MapProvider>
-          <Header
-            title={`${t("project")} ${project?.name ?? ""}`}
-            showHambugerMenu={false}
-            tags={project?.tags}
-            lastSaved={project?.updated_at}
-          />
-          <Box
-            sx={{
-              display: "flex",
-              height: "100vh",
-              width: `calc(100% - ${2 * sidebarWidth}px)`,
-              marginLeft: `${sidebarWidth}px`,
-              [theme.breakpoints.down("sm")]: {
-                marginLeft: "0",
-                width: `100%`,
-              },
-            }}
-          >
-            <Box>
-              <ProjectNavigation projectId={projectId} />
-            </Box>
+          <DrawProvider>
+            <Header
+              title={`${t("project")} ${project?.name ?? ""}`}
+              showHambugerMenu={false}
+              tags={project?.tags}
+              lastSaved={project?.updated_at}
+            />
             <Box
               sx={{
-                width: "100%",
-                ".mapboxgl-ctrl .mapboxgl-ctrl-logo": {
-                  display: "none",
+                display: "flex",
+                height: "100vh",
+                width: `calc(100% - ${2 * sidebarWidth}px)`,
+                marginLeft: `${sidebarWidth}px`,
+                [theme.breakpoints.down("sm")]: {
+                  marginLeft: "0",
+                  width: `100%`,
                 },
-                height: `calc(100% - ${toolbarHeight}px)`,
-                ".mapboxgl-popup-content": {
-                  padding: 0,
-                  borderRadius: "6px",
-                  background: theme.palette.background.paper,
-                },
-                ".mapboxgl-popup-anchor-top .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip":
-                  {
-                    borderBottomColor: theme.palette.background.paper,
+              }}>
+              <Box>
+                <ProjectNavigation projectId={projectId} />
+              </Box>
+              <Box
+                sx={{
+                  width: "100%",
+                  ".mapboxgl-ctrl .mapboxgl-ctrl-logo": {
+                    display: "none",
                   },
-                ".mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip":
-                  {
-                    borderTopColor: theme.palette.background.paper,
+                  height: `calc(100% - ${toolbarHeight}px)`,
+                  ".mapboxgl-popup-content": {
+                    padding: 0,
+                    borderRadius: "6px",
+                    background: theme.palette.background.paper,
                   },
-                ".mapboxgl-popup-anchor-left .mapboxgl-popup-tip": {
-                  borderRightColor: theme.palette.background.paper,
-                },
-                ".mapboxgl-popup-anchor-right .mapboxgl-popup-tip": {
-                  borderLeftColor: theme.palette.background.paper,
-                },
-                ".mapbox-improve-map": {
-                  display: "none",
-                },
-                ".mapboxgl-ctrl-attrib a": {
-                  color: "rgba(0,0,0,.75)",
-                },
-              }}
-            >
-              <Map
-                id="map"
-                ref={mapRef}
-                style={{ width: "100%", height: "100%" }}
-                projection={{
-                  name: "mercator",
-                }}
-                initialViewState={{
-                  zoom: initialView?.zoom ?? 3,
-                  latitude: initialView?.latitude ?? 48.13,
-                  longitude: initialView?.longitude ?? 11.57,
-                  pitch: initialView?.pitch ?? 0,
-                  bearing: initialView?.bearing ?? 0,
-                  fitBoundsOptions: {
-                    minZoom: initialView?.min_zoom ?? 0,
-                    maxZoom: initialView?.max_zoom ?? 24,
+                  ".mapboxgl-popup-anchor-top .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip":
+                    {
+                      borderBottomColor: theme.palette.background.paper,
+                    },
+                  ".mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip":
+                    {
+                      borderTopColor: theme.palette.background.paper,
+                    },
+                  ".mapboxgl-popup-anchor-left .mapboxgl-popup-tip": {
+                    borderRightColor: theme.palette.background.paper,
                   },
-                }}
-                mapStyle={
-                  activeBasemap?.url ?? "mapbox://styles/mapbox/streets-v11"
-                }
-                mapboxAccessToken={MAPBOX_TOKEN}
-                interactiveLayerIds={interactiveLayerIds}
-                dragRotate={false}
-                touchZoomRotate={false}
-                onMoveEnd={updateViewState}
-                onClick={handleMapClick}
-                onMouseMove={handleMapOverImmediate}
-                onLoad={handleMapLoad}
-              >
-                <Layers
-                  layers={sortedLayers}
-                  highlightFeature={highlightedFeature}
-                />
-                <ToolboxLayers />
-
-                {popupInfo && (
-                  <MapPopover
-                    key={highlightedFeature?.id ?? v4()}
-                    {...popupInfo}
-                    onClose={handlePopoverClose}
+                  ".mapboxgl-popup-anchor-right .mapboxgl-popup-tip": {
+                    borderLeftColor: theme.palette.background.paper,
+                  },
+                  ".mapbox-improve-map": {
+                    display: "none",
+                  },
+                  ".mapboxgl-ctrl-attrib a": {
+                    color: "rgba(0,0,0,.75)",
+                  },
+                }}>
+                <Map
+                  id="map"
+                  ref={mapRef}
+                  style={{ width: "100%", height: "100%" }}
+                  projection={{
+                    name: "mercator",
+                  }}
+                  initialViewState={{
+                    zoom: initialView?.zoom ?? 3,
+                    latitude: initialView?.latitude ?? 48.13,
+                    longitude: initialView?.longitude ?? 11.57,
+                    pitch: initialView?.pitch ?? 0,
+                    bearing: initialView?.bearing ?? 0,
+                    fitBoundsOptions: {
+                      minZoom: initialView?.min_zoom ?? 0,
+                      maxZoom: initialView?.max_zoom ?? 24,
+                    },
+                  }}
+                  mapStyle={activeBasemap?.url ?? "mapbox://styles/mapbox/streets-v11"}
+                  mapboxAccessToken={MAPBOX_TOKEN}
+                  interactiveLayerIds={interactiveLayerIds}
+                  dragRotate={false}
+                  touchZoomRotate={false}
+                  onMoveEnd={updateViewState}
+                  onClick={handleMapClick}
+                  onMouseMove={handleMapOverImmediate}
+                  onLoad={handleMapLoad}>
+                  <DrawControl
+                    position="top-right"
+                    displayControlsDefault={false}
+                    defaultMode={MapboxDraw.constants.modes.SIMPLE_SELECT}
                   />
-                )}
-              </Map>
+                  <Layers
+                    layers={sortedLayers}
+                    highlightFeature={highlightedFeature}
+                    scenarioFeatures={scenarioFeatures}
+                  />
+                  <ScenarioLayer scenarioLayerData={scenarioFeatures} projectLayers={projectLayers} />
+                  <ToolboxLayers />
+                  {popupInfo && <MapPopoverInfo key={highlightedFeature?.id ?? v4()} {...popupInfo} />}
+                  {popupEditor && (
+                    <MapPopoverEditor
+                      key={popupEditor.feature?.id || popupEditor.feature?.properties?.id || v4()}
+                      {...popupEditor}
+                    />
+                  )}
+                </Map>
+              </Box>
             </Box>
-          </Box>
+          </DrawProvider>
         </MapProvider>
       )}
     </>

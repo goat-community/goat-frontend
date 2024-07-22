@@ -1,5 +1,4 @@
-import { useTranslation } from "@/i18n/client";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -13,18 +12,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import {
-  postScenarioSchema,
-  type PostScenario,
-  type Scenario,
-} from "@/lib/validations/scenario";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createProjectScenario,
-  updateProjectScenario,
-} from "@/lib/api/projects";
+import { toast } from "react-toastify";
+
+import { useTranslation } from "@/i18n/client";
+
+import { createProjectScenario, updateProjectScenario } from "@/lib/api/projects";
+import { type PostScenario, type Scenario, postScenarioSchema } from "@/lib/validations/scenario";
 
 interface ScenarioProps {
   open: boolean;
@@ -34,27 +28,25 @@ interface ScenarioProps {
   editType?: "edit" | "create";
 }
 
-const ScenarioModal: React.FC<ScenarioProps> = ({
-  open,
-  onClose,
-  projectId,
-  editType,
-  scenario,
-}) => {
+const ScenarioModal: React.FC<ScenarioProps> = ({ open, onClose, projectId, editType, scenario }) => {
   const { t } = useTranslation("common");
-  console.log(projectId);
-  console.log(scenario);
   const [isBusy, setIsBusy] = useState(false);
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isValid },
   } = useForm<PostScenario>({
     mode: "onChange",
     resolver: zodResolver(postScenarioSchema),
+    defaultValues: {
+      name: scenario?.name,
+    },
   });
 
   const handleOnClose = () => {
+    setIsBusy(false);
+    reset();
     onClose && onClose();
   };
 
@@ -76,23 +68,16 @@ const ScenarioModal: React.FC<ScenarioProps> = ({
         toast.error(t("error_creating_scenario"));
       }
     } finally {
-      setIsBusy(false);
-      onClose && onClose();
+      handleOnClose();
     }
   };
 
   return (
     <>
       <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth="sm">
-        <DialogTitle>
-          {editType === "edit" ? t("edit_scenario") : t("create_scenario")}
-        </DialogTitle>
+        <DialogTitle>{editType === "edit" ? t("edit_scenario") : t("create_scenario")}</DialogTitle>
         <DialogContent>
-          <Box
-            sx={{ mt: 1, maxHeight: "500px" }}
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <Box sx={{ mt: 1, maxHeight: "500px" }} component="form" onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <TextField
                 fullWidth
@@ -110,8 +95,7 @@ const ScenarioModal: React.FC<ScenarioProps> = ({
             pt: 6,
             pb: 2,
             justifyContent: "flex-end",
-          }}
-        >
+          }}>
           <Stack direction="row" spacing={2}>
             <Button onClick={handleOnClose} variant="text">
               <Typography variant="body2" fontWeight="bold">
@@ -123,8 +107,7 @@ const ScenarioModal: React.FC<ScenarioProps> = ({
               disabled={!isValid}
               variant="contained"
               color="primary"
-              onClick={handleSubmit(onSubmit)}
-            >
+              onClick={handleSubmit(onSubmit)}>
               {editType === "edit" ? t("update") : t("create")}
             </LoadingButton>
           </Stack>

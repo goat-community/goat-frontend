@@ -1,9 +1,13 @@
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { setActiveLeftPanel } from "@/lib/store/map/slice";
+
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
+
 import EmptySection from "@/components/common/EmptySection";
 import Container from "@/components/map/panels/Container";
-import { useAppDispatch } from "@/hooks/store/ContextHooks";
-import { useTranslation } from "@/i18n/client";
-import { setActiveLeftPanel } from "@/lib/store/map/slice";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
 
 const ChartsPanel = () => {
   const dispatch = useAppDispatch();

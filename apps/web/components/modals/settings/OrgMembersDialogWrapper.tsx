@@ -1,6 +1,7 @@
-import DeleteOrgMemberModal from "@/components/modals/settings/DeleteOrgMember";
 import { OrgMemberActions } from "@/types/common";
 import type { OrgMemberDialogBaseProps } from "@/types/dashboard/settings";
+
+import DeleteOrgMemberModal from "@/components/modals/settings/DeleteOrgMember";
 
 interface OrgMemberDialogProps extends Omit<OrgMemberDialogBaseProps, "open"> {
   action: OrgMemberActions;
@@ -11,16 +12,13 @@ export default function OrgMemberDialogWrapper(props: OrgMemberDialogProps) {
   const commonModalProps = {
     member: props.member,
     open: !!props.member,
-    onClose: props.onClose
+    onClose: props.onClose,
   };
 
   return (
     <>
       {props.action === OrgMemberActions.DELETE && (
-        <DeleteOrgMemberModal
-          onDelete={props.onMemberDelete}
-          {...commonModalProps}
-        />
+        <DeleteOrgMemberModal onDelete={props.onMemberDelete} {...commonModalProps} />
       )}
     </>
   );

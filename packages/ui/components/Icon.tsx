@@ -125,6 +125,9 @@ import {
   gondolaIcon,
   hexagonIcon,
   licenseIcon,
+  lineIcon,
+  pointIcon,
+  polygonIcon,
 } from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
@@ -248,6 +251,9 @@ export enum ICON_NAME {
   VERTICAL_BAR_CHART = "vertical-bar-chart",
   HORIZONTAL_BAR_CHART = "horizontal-bar-chart",
   BOUNDING_BOX = "bounding-box",
+  POINT_FEATURE = "point-feature",
+  LINE_FEATURE = "line-feature",
+  POLYGON_FEATURE = "polygon-feature",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -369,7 +375,10 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.LINE_CHART]: faChartLine,
   [ICON_NAME.VERTICAL_BAR_CHART]: faChartColumn,
   [ICON_NAME.HORIZONTAL_BAR_CHART]: faChartBar,
-  [ICON_NAME.BOUNDING_BOX]: boundingBoxIcon
+  [ICON_NAME.BOUNDING_BOX]: boundingBoxIcon,
+  [ICON_NAME.POINT_FEATURE]: pointIcon,
+  [ICON_NAME.LINE_FEATURE]: lineIcon,
+  [ICON_NAME.POLYGON_FEATURE]: polygonIcon,
 };
 
 interface BrandColors {

@@ -17,22 +17,24 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+import type { DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import { Box, IconButton, Stack, TextField, useTheme } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { v4 } from "uuid";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { isValidHex } from "@/lib/utils/helpers";
+import type { ColorRange } from "@/lib/validations/layer";
+
+import type { ColorItem } from "@/types/map/color";
 
 import ColorPalette from "@/components/map/panels/style/color/ColorPalette";
-import type { ColorRange } from "@/lib/validations/layer";
-import { Box, IconButton, Stack, TextField, useTheme } from "@mui/material";
-import { arrayMove } from "@dnd-kit/sortable";
-
-import React, { useMemo, useState } from "react";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { v4 } from "uuid";
-import { isValidHex } from "@/lib/utils/helpers";
-import SortableWrapper from "@/components/map/panels/style/other/SortableWrapper";
-import type { DragEndEvent } from "@dnd-kit/core";
-import { SortableItem } from "@/components/map/panels/style/other/SortableItem";
-import { SingleColorPopper } from "@/components/map/panels/style/other/SingleColorPopper";
-import type { ColorItem } from "@/types/map/color";
 import DropdownFooter from "@/components/map/panels/style/other/DropdownFooter";
+import { SingleColorPopper } from "@/components/map/panels/style/other/SingleColorPopper";
+import { SortableItem } from "@/components/map/panels/style/other/SortableItem";
+import SortableWrapper from "@/components/map/panels/style/other/SortableWrapper";
 
 type CustomPaletteProps = {
   customPalette: ColorRange;
@@ -40,11 +42,7 @@ type CustomPaletteProps = {
   onCancel: () => void;
 };
 
-const CustomPalette = ({
-  customPalette,
-  onApply,
-  onCancel,
-}: CustomPaletteProps) => {
+const CustomPalette = ({ customPalette, onApply, onCancel }: CustomPaletteProps) => {
   const theme = useTheme();
 
   const [colors, setColors] = useState(
@@ -53,7 +51,7 @@ const CustomPalette = ({
         id: v4(),
         color: color,
       };
-    }) || [],
+    }) || []
   );
 
   const areColorsValid = useMemo(() => {
@@ -122,29 +120,19 @@ const CustomPalette = ({
   const [editingItem, setEditingItem] = React.useState<ColorItem | null>(null);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
-  const handleColorPicker = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    item: ColorItem,
-  ) => {
+  const handleColorPicker = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, item: ColorItem) => {
     setEditingItem(item);
     setAnchorEl(event.currentTarget);
   };
 
   return (
     <>
-      <SingleColorPopper
-        editingItem={editingItem}
-        anchorEl={anchorEl}
-        onInputHexChange={onInputHexChange}
-      />
+      <SingleColorPopper editingItem={editingItem} anchorEl={anchorEl} onInputHexChange={onInputHexChange} />
 
       <Box sx={{ px: 2 }}>
         <ColorPalette colors={colors.map((color) => color.color)} />
       </Box>
-      <Box
-        onClick={() => setEditingItem(null)}
-        sx={{ maxHeight: "240px", overflowY: "auto" }}
-      >
+      <Box onClick={() => setEditingItem(null)} sx={{ maxHeight: "240px", overflowY: "auto" }}>
         <SortableWrapper handleDragEnd={handleDragEnd} items={colors}>
           {colors?.map((item) => (
             <SortableItem
@@ -192,8 +180,7 @@ const CustomPalette = ({
                     />
                   </IconButton>
                 </Stack>
-              }
-            >
+              }>
               <TextField
                 InputProps={{ sx: { height: "32px", ml: 0, mr: 2 } }}
                 sx={{
@@ -214,11 +201,7 @@ const CustomPalette = ({
           ))}
         </SortableWrapper>
       </Box>
-      <DropdownFooter
-        isValid={areColorsValid}
-        onCancel={_onCancel}
-        onApply={_onApply}
-      />
+      <DropdownFooter isValid={areColorsValid} onCancel={_onCancel} onApply={_onApply} />
     </>
   );
 };

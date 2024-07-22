@@ -1,5 +1,3 @@
-import { Wrap } from "@/components/common/ConditionalWrap";
-import { SkeletonImage } from "@/components/common/SkeletonImage";
 import {
   Box,
   Checkbox,
@@ -12,6 +10,9 @@ import {
   RadioGroup,
 } from "@mui/material";
 import { Fragment } from "react";
+
+import { Wrap } from "@/components/common/ConditionalWrap";
+import { SkeletonImage } from "@/components/common/SkeletonImage";
 
 interface Items {
   title: string;
@@ -89,8 +90,7 @@ function ListTileLabel({
         alignItems: "center",
         width: "100%",
         mr: 2,
-      }}
-    >
+      }}>
       <ListItemText
         sx={reverse ? { ml: 2, mr: 1 } : { mr: 2, ml: 1 }}
         primary={item.title}
@@ -134,12 +134,9 @@ function ButtonList({
       {items.map((item, index) => (
         <ListItemButton
           role={undefined}
-          selected={
-            !multiple && index === selected[0] && onChange !== undefined
-          }
+          selected={!multiple && index === selected[0] && onChange !== undefined}
           key={index}
-          sx={{ py: 0, px: 1 }}
-        >
+          sx={{ py: 0, px: 1 }}>
           {onChange && (
             <FormControlLabel
               value={index}
@@ -204,8 +201,7 @@ export function ListTile({
         pb: 0,
         pt: 0,
         m: 0,
-      }}
-    >
+      }}>
       <Wrap
         with={multiple ? FormGroup : RadioGroup}
         wrapperProps={
@@ -217,8 +213,7 @@ export function ListTile({
                   if (onChange) onChange([parseInt(e.target.value)]);
                 },
               }
-        }
-      >
+        }>
         <ButtonList
           items={items}
           selected={selected}

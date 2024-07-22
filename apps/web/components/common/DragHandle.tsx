@@ -19,7 +19,5 @@ export const DragHandle: React.FC<{
   listeners?: any;
   children?: React.ReactNode;
 }> = ({ listeners, children }) => (
-  <StyledDragHandle {...(listeners ? listeners : {})}>
-    {children}
-  </StyledDragHandle>
+  <StyledDragHandle {...(listeners ? listeners : {})}>{children}</StyledDragHandle>
 );

@@ -1,28 +1,11 @@
 import * as z from "zod";
 
 //**=== CATCHMENT AREA === */
-export const CatchmentAreaRoutingTypeEnum = z.enum([
-  "walking",
-  "bicycle",
-  "pedelec",
-  "car",
-  "pt",
-]);
+export const CatchmentAreaRoutingTypeEnum = z.enum(["walking", "bicycle", "pedelec", "car", "pt"]);
 
-export const HeatmapRoutingTypeEnum = z.enum([
-  "walking",
-  "bicycle",
-  "pedelec",
-  "car",
-  "public_transport",
-]);
+export const HeatmapRoutingTypeEnum = z.enum(["walking", "bicycle", "pedelec", "car", "public_transport"]);
 
-export const CatchmentAreaRoutingWithoutPT = z.enum([
-  "walking",
-  "bicycle",
-  "pedelec",
-  "car",
-]);
+export const CatchmentAreaRoutingWithoutPT = z.enum(["walking", "bicycle", "pedelec", "car"]);
 
 export const PTRoutingModes = z.enum([
   "bus",
@@ -35,11 +18,7 @@ export const PTRoutingModes = z.enum([
   "funicular",
 ]);
 
-export const catchmentAreaShapeEnum = z.enum([
-  "polygon",
-  "network",
-  "rectangular_grid",
-]);
+export const catchmentAreaShapeEnum = z.enum(["polygon", "network", "rectangular_grid"]);
 
 export const PTDay = z.enum(["weekday", "saturday", "sunday"]);
 
@@ -107,10 +86,7 @@ export const startingPointLayerSchema = z.object({
   layer_project_id: z.number().min(1),
 });
 
-export const startingPointSchema = z.union([
-  startingPointMapSchema,
-  startingPointLayerSchema,
-]);
+export const startingPointSchema = z.union([startingPointMapSchema, startingPointLayerSchema]);
 
 export const timeTravelCost = z.object({
   max_traveltime: z.number().min(1).max(90),
@@ -131,14 +107,13 @@ export const ptTimeWindow = z.object({
 export const catchmentAreaBaseSchema = z.object({
   catchment_area_type: catchmentAreaShapeEnum.default("polygon"),
   starting_points: startingPointSchema,
-  polygon_difference: z.boolean().optional()
+  polygon_difference: z.boolean().optional(),
 });
 
-export const activeMobilityAndCarCatchmentAreaSchema =
-  catchmentAreaBaseSchema.extend({
-    routing_type: CatchmentAreaRoutingWithoutPT,
-    travel_cost: z.union([timeTravelCost, distanceTravelCost]),
-  });
+export const activeMobilityAndCarCatchmentAreaSchema = catchmentAreaBaseSchema.extend({
+  routing_type: CatchmentAreaRoutingWithoutPT,
+  travel_cost: z.union([timeTravelCost, distanceTravelCost]),
+});
 
 export const ptCatchmentAreaSchema = catchmentAreaBaseSchema.extend({
   routing_type: PTRouting,
@@ -146,19 +121,13 @@ export const ptCatchmentAreaSchema = catchmentAreaBaseSchema.extend({
   time_window: ptTimeWindow,
 });
 
-export type CatchmentAreaRoutingType = z.infer<
-  typeof CatchmentAreaRoutingTypeEnum
->;
-export type CatchmentAreaRoutingWithoutPTType = z.infer<
-  typeof CatchmentAreaRoutingWithoutPT
->;
+export type CatchmentAreaRoutingType = z.infer<typeof CatchmentAreaRoutingTypeEnum>;
+export type CatchmentAreaRoutingWithoutPTType = z.infer<typeof CatchmentAreaRoutingWithoutPT>;
 export type PTRoutingModesType = z.infer<typeof PTRoutingModes>;
 export type PTRoutingEgressModesType = z.infer<typeof PTRoutingEgressModes>;
 export type PTRoutingAccessModesType = z.infer<typeof PTRoutingAccessModes>;
 export type PTRoutingType = z.infer<typeof PTRouting>;
-export type PostActiveMobilityAndCarCatchmentArea = z.infer<
-  typeof activeMobilityAndCarCatchmentAreaSchema
->;
+export type PostActiveMobilityAndCarCatchmentArea = z.infer<typeof activeMobilityAndCarCatchmentAreaSchema>;
 export type PostPTCatchmentArea = z.infer<typeof ptCatchmentAreaSchema>;
 
 //**=== OEV-GUETEKLASSEN + TRIP COUNT === */
@@ -181,14 +150,7 @@ export type PostTripCount = z.infer<typeof tripCountSchema>;
 export type PostOevGueteKlassen = z.infer<typeof oevGueteklassenSchema>;
 
 //**=== JOIN === */
-export const statisticOperationEnum = z.enum([
-  "count",
-  "sum",
-  "mean",
-  "median",
-  "min",
-  "max",
-]);
+export const statisticOperationEnum = z.enum(["count", "sum", "mean", "median", "min", "max"]);
 
 export const joinSchema = z.object({
   target_layer_project_id: z.number(),
@@ -256,16 +218,10 @@ export const originDestinationMatrixSchema = z.object({
   weight_column: z.string(),
 });
 
-export type PostOriginDestinationMatrix = z.infer<
-  typeof originDestinationMatrixSchema
->;
+export type PostOriginDestinationMatrix = z.infer<typeof originDestinationMatrixSchema>;
 
 //**=== NEARBY STATIONS === */
-export const nearbyStationsRoutingTypeEnum = z.enum([
-  "walking",
-  "bicycle",
-  "pedelec",
-]);
+export const nearbyStationsRoutingTypeEnum = z.enum(["walking", "bicycle", "pedelec"]);
 
 export const nearbyStationsSchema = z.object({
   starting_points: startingPointSchema,
@@ -278,17 +234,18 @@ export const nearbyStationsSchema = z.object({
 
 export type PostNearbyStations = z.infer<typeof nearbyStationsSchema>;
 
-
 //**=== HEATMAP GRAVITY === */
 export const heatmapImpedanceFunctionEnum = z.enum(["gaussian"]); // todo: add "linear", "exponential", "power"
 export const heatmapGravitySchema = z.object({
   impedance_function: heatmapImpedanceFunctionEnum,
-  opportunities: z.array(z.object({
-    opportunity_layer_project_id: z.number(),
-    max_traveltime: z.number().min(1).max(60),
-    sensitivity: z.number(),
-    destination_potential_column: z.string().optional(),
-  })),
+  opportunities: z.array(
+    z.object({
+      opportunity_layer_project_id: z.number(),
+      max_traveltime: z.number().min(1).max(60),
+      sensitivity: z.number(),
+      destination_potential_column: z.string().optional(),
+    })
+  ),
   routing_type: HeatmapRoutingTypeEnum,
 });
 
@@ -296,11 +253,13 @@ export type PostHeatmapGravity = z.infer<typeof heatmapGravitySchema>;
 
 //**=== HEATMAP CLOSEST AVERAGE === */
 export const heatmapClosestAverageSchema = z.object({
-  opportunities: z.array(z.object({
-    opportunity_layer_project_id: z.number(),
-    max_traveltime: z.number().min(1).max(60),
-    number_of_destinations: z.number().min(1).max(100),
-  })),
+  opportunities: z.array(
+    z.object({
+      opportunity_layer_project_id: z.number(),
+      max_traveltime: z.number().min(1).max(60),
+      number_of_destinations: z.number().min(1).max(100),
+    })
+  ),
   routing_type: HeatmapRoutingTypeEnum,
 });
 

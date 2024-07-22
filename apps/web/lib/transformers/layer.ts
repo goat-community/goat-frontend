@@ -1,11 +1,8 @@
-import { MARKER_IMAGE_PREFIX } from "@/lib/transformers/marker";
 import type { MapGeoJSONFeature } from "react-map-gl";
+
+import { MARKER_IMAGE_PREFIX } from "@/lib/transformers/map-image";
 import { rgbToHex } from "@/lib/utils/helpers";
-import type {
-  FeatureLayerLineProperties,
-  FeatureLayerPointProperties,
-  Layer,
-} from "@/lib/validations/layer";
+import type { FeatureLayerLineProperties, FeatureLayerPointProperties, Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
 
 import type { RGBColor } from "@/types/map/color";
@@ -35,22 +32,14 @@ export function removeColorMapsDuplicates(colorMaps) {
   return result.reverse();
 }
 
-export function getMapboxStyleColor(
-  data: ProjectLayer | Layer,
-  type: "color" | "stroke_color",
-) {
+export function getMapboxStyleColor(data: ProjectLayer | Layer, type: "color" | "stroke_color") {
   const colors = data.properties[`${type}_range`]?.colors;
   const fieldName = data.properties[`${type}_field`]?.name;
   const fieldType = data.properties[`${type}_field`]?.type;
   const colorScale = data.properties[`${type}_scale`];
   const colorMaps = data.properties[`${type}_range`]?.color_map;
 
-  if (
-    colorMaps &&
-    fieldName &&
-    Array.isArray(colorMaps) &&
-    colorScale === "ordinal"
-  ) {
+  if (colorMaps && fieldName && Array.isArray(colorMaps) && colorScale === "ordinal") {
     const valuesAndColors = [] as (string | number)[];
     colorMaps.forEach((colorMap) => {
       const colorMapValue = colorMap[0];
@@ -82,13 +71,10 @@ export function getMapboxStyleColor(
     (colorScale !== "custom_breaks" &&
       (!fieldName ||
         !colors ||
-        data.properties[`${type}_scale_breaks`]?.breaks.length !==
-        colors.length - 1)) ||
+        data.properties[`${type}_scale_breaks`]?.breaks.length !== colors.length - 1)) ||
     (colorScale === "custom_breaks" && (!colorMaps || !fieldName))
   ) {
-    return data.properties[type]
-      ? rgbToHex(data.properties[type] as RGBColor)
-      : "#AAAAAA";
+    return data.properties[type] ? rgbToHex(data.properties[type] as RGBColor) : "#AAAAAA";
   }
 
   if (colorScale === "custom_breaks" && colorMaps) {
@@ -99,25 +85,14 @@ export function getMapboxStyleColor(
     const colorMapsFiltered = removeColorMapsDuplicates(colorMaps);
     colorMapsFiltered.forEach((colorMap, index) => {
       if (index < colorMapsFiltered.length - 1) {
-        colorSteps.push(
-          colorMap[1],
-          Number(colorMapsFiltered[index + 1]?.[0]?.[0]) || 0,
-        );
+        colorSteps.push(colorMap[1], Number(colorMapsFiltered[index + 1]?.[0]?.[0]) || 0);
       } else if (
         index === colorMapsFiltered.length - 1 &&
         data?.properties?.[`${type}_scale_breaks`]?.max !== undefined
       ) {
         const maxValue = data?.properties?.[`${type}_scale_breaks`]?.max;
-        if (
-          maxValue &&
-          Number(colorMapsFiltered[index]?.[0]?.[0]) <
-          maxValue
-        ) {
-          colorSteps.push(
-            colorMap[1],
-            data.properties[`${type}_scale_breaks`]?.max,
-            colorMap[1],
-          );
+        if (maxValue && Number(colorMapsFiltered[index]?.[0]?.[0]) < maxValue) {
+          colorSteps.push(colorMap[1], data.properties[`${type}_scale_breaks`]?.max, colorMap[1]);
         } else {
           colorSteps.push(colorMap[1]);
         }
@@ -129,8 +104,7 @@ export function getMapboxStyleColor(
   const breakValues = data.properties[`${type}_scale_breaks`];
 
   let _breakValues = breakValues?.breaks ? [...breakValues?.breaks] : [];
-  if (_breakValues && breakValues?.max !== undefined)
-    _breakValues.push(breakValues?.max);
+  if (_breakValues && breakValues?.max !== undefined) _breakValues.push(breakValues?.max);
   let _colors = [...colors];
   if (_breakValues) {
     const combined = _breakValues.map((value, index) => [[value], colors[index]]);
@@ -217,9 +191,7 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer | Layer) {
         "circle-opacity": pointProperties.filled ? pointProperties.opacity : 0,
         "circle-radius": pointProperties.radius || 5,
         "circle-stroke-color": getMapboxStyleColor(data, "stroke_color"),
-        "circle-stroke-width": pointProperties.stroked
-          ? pointProperties.stroke_width || 1
-          : 0,
+        "circle-stroke-width": pointProperties.stroked ? pointProperties.stroke_width || 1 : 0,
       },
     };
   } else if (type === "polygon") {
@@ -231,9 +203,7 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer | Layer) {
       },
       paint: {
         "fill-color": getMapboxStyleColor(data, "color"),
-        "fill-opacity": polygonProperties.filled
-          ? polygonProperties.opacity
-          : 0,
+        "fill-opacity": polygonProperties.filled ? polygonProperties.opacity : 0,
         "fill-outline-color": getMapboxStyleColor(data, "stroke_color"),
         "fill-antialias": polygonProperties.stroked,
       },
@@ -267,8 +237,7 @@ export function getHightlightStyleSpec(highlightFeature: MapGeoJSONFeature) {
     case "symbol":
     case "circle":
       type = "circle";
-      const strokeWidth =
-        highlightFeature.layer.paint?.["circle-stroke-width"] ?? 0;
+      const strokeWidth = highlightFeature.layer.paint?.["circle-stroke-width"] ?? 0;
       let radius;
       if (highlightFeature.layer.type === "symbol") {
         radius = 5;
@@ -304,4 +273,70 @@ export function getHightlightStyleSpec(highlightFeature: MapGeoJSONFeature) {
       filter: ["in", "id", highlightFeature.properties.id],
     }),
   };
+}
+
+
+
+export const scenarioFeatureStateColor = ["match", ["get", "edit_type"], "n", "#007DC7", "m", "#FFC300", "d", "#C70039", "#000202"];
+export function scenarioLayerStyleSpec(data: ProjectLayer | Layer) {
+  const geometryType = data.feature_layer_geometry_type;
+
+
+  let style;
+  if (geometryType === "point") {
+    if (data.properties["custom_marker"]) {
+      style = {
+        type: "symbol",
+        layout: {
+          "icon-image": getMapboxStyleMarker(data),
+          'icon-allow-overlap': true,
+          "icon-size": 1,
+        },
+        paint: {
+          "icon-opacity": 1,
+          "icon-color": "white",
+        },
+      };
+    } else {
+      const circleRadius = data.properties["radius"] || 20;
+      style = {
+        type: "circle",
+        paint: {
+          "circle-opacity": 1,
+          "circle-blur": 0.2,
+          "circle-radius": circleRadius,
+          "circle-stroke-width": 2,
+        },
+      };
+    }
+  } else if (geometryType === "line") {
+    const width = data.properties["stroke_width"] || 2;
+    style = {
+      type: "line",
+      paint: {
+        "line-blur": 1,
+        "line-color": scenarioFeatureStateColor,
+        "line-width": width,
+        'line-dasharray': [3, 1],
+      },
+    };
+  } else if (geometryType === "polygon") {
+    style = {
+      type: "fill",
+      paint: {
+        "fill-opacity": 0,
+        "fill-color": scenarioFeatureStateColor,
+        "fill-outline-color": scenarioFeatureStateColor,
+      },
+    };
+  }
+
+  if (style) {
+    style.layout = {
+      ...style.layout || {},
+      visibility: data.properties.visibility ? "visible" : "none",
+    };
+  }
+
+  return style;
 }

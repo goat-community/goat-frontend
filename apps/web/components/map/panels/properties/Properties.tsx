@@ -1,12 +1,3 @@
-import { Legend } from "@/components/map/controls/Legend";
-import Container from "@/components/map/panels/Container";
-import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
-import { useAppDispatch } from "@/hooks/store/ContextHooks";
-import { useTranslation } from "@/i18n/client";
-import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
-import { setActiveRightPanel } from "@/lib/store/map/slice";
-import type { ProjectLayer } from "@/lib/validations/project";
 import {
   Accordion,
   AccordionDetails,
@@ -17,9 +8,23 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useMemo, type ReactNode, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import { v4 } from "uuid";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
+import { setActiveRightPanel } from "@/lib/store/map/slice";
+import type { ProjectLayer } from "@/lib/validations/project";
+
+import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+import { useAppDispatch } from "@/hooks/store/ContextHooks";
+
+import { Legend } from "@/components/map/controls/Legend";
+import Container from "@/components/map/panels/Container";
+import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 
 const AccordionHeader = ({ title }: { title: string }) => {
   return (
@@ -31,13 +36,7 @@ const AccordionHeader = ({ title }: { title: string }) => {
   );
 };
 
-const AccordionWrapper = ({
-  header,
-  body,
-}: {
-  header: ReactNode;
-  body: ReactNode;
-}) => {
+const AccordionWrapper = ({ header, body }: { header: ReactNode; body: ReactNode }) => {
   return (
     <Accordion square={false}>
       <AccordionSummary
@@ -45,14 +44,8 @@ const AccordionWrapper = ({
           my: 0,
           py: 0,
         }}
-        expandIcon={
-          <Icon
-            iconName={ICON_NAME.CHEVRON_DOWN}
-            style={{ fontSize: "15px" }}
-          />
-        }
-        aria-controls="panel1a-content"
-      >
+        expandIcon={<Icon iconName={ICON_NAME.CHEVRON_DOWN} style={{ fontSize: "15px" }} />}
+        aria-controls="panel1a-content">
         {header}
       </AccordionSummary>
       <Divider sx={{ mt: 0, pt: 0 }} />
@@ -67,14 +60,14 @@ const LayerInfo = ({ layer }: { layer: ProjectLayer }) => {
     <AccordionWrapper
       header={
         <>
-          <AccordionHeader title={t('layer_info')} />
+          <AccordionHeader title={t("layer_info")} />
         </>
       }
       body={
         <>
           <Stack spacing={2}>
             <Typography variant="body2" fontWeight="bold">
-              {t('dataset_source')}
+              {t("dataset_source")}
             </Typography>
             <Typography variant="body2">{layer.name}</Typography>
             <Typography variant="body2" fontWeight="bold">
@@ -88,16 +81,9 @@ const LayerInfo = ({ layer }: { layer: ProjectLayer }) => {
   );
 };
 
-const Visibility = ({
-  layer,
-  projectId,
-}: {
-  layer: ProjectLayer;
-  projectId: string;
-}) => {
+const Visibility = ({ layer, projectId }: { layer: ProjectLayer; projectId: string }) => {
   const { t } = useTranslation("common");
-  const { layers: projectLayers, mutate: mutateProjectLayers } =
-    useProjectLayers(projectId);
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useProjectLayers(projectId);
   const layerType = layer.type;
 
   const opacity = useMemo(() => {
@@ -112,8 +98,7 @@ const Visibility = ({
   }, [layer.properties.min_zoom, layer.properties.max_zoom]);
 
   const [opacityValue, setOpacityValue] = useState<number>(opacity);
-  const [visibilityRangeValue, setVisibilityRangeValue] =
-    useState<number[]>(visibilityRange);
+  const [visibilityRangeValue, setVisibilityRangeValue] = useState<number[]>(visibilityRange);
 
   const changeOpacity = async (value: number) => {
     const layers = JSON.parse(JSON.stringify(projectLayers));
@@ -156,7 +141,7 @@ const Visibility = ({
 
   return (
     <AccordionWrapper
-      header={<AccordionHeader title={t('visibility')} />}
+      header={<AccordionHeader title={t("visibility")} />}
       body={
         <Stack spacing={4}>
           <Box>
@@ -178,7 +163,7 @@ const Visibility = ({
             </Box>
           </Box>
           <Box>
-            <Typography variant="body2">{t('visibility_range')}</Typography>
+            <Typography variant="body2">{t("visibility_range")}</Typography>
             <Box sx={{ px: 2, mt: 2 }}>
               <Slider
                 getAriaLabel={() => "Visibility Range"}
@@ -206,7 +191,7 @@ const Symbology = ({ layer }: { layer: ProjectLayer }) => {
   const { t } = useTranslation("common");
   return (
     <AccordionWrapper
-      header={<AccordionHeader title={t('symbology')} />}
+      header={<AccordionHeader title={t("symbology")} />}
       body={<>{layer && <Legend layers={[layer]} />}</>}
     />
   );

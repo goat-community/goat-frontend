@@ -1,10 +1,11 @@
-import React from "react";
 import { Stack } from "@mui/material";
+import React from "react";
 
+import type { SelectorItem } from "@/types/map/common";
+
+import FormLabelHelper from "@/components/common/FormLabelHelper";
 import Selector from "@/components/map/panels/common/Selector";
 import SliderInput from "@/components/map/panels/common/SliderInput";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
-import type { SelectorItem } from "@/types/map/common";
 import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 
 type CatchmentAreaDistanceSelectorsProps = {
@@ -15,16 +16,17 @@ type CatchmentAreaDistanceSelectorsProps = {
   t: (key: string) => string;
 };
 
-const CatchmentAreaDistanceSelectors: React.FC<
-  CatchmentAreaDistanceSelectorsProps
-> = ({ distance, setDistance, t, steps, setSteps }) => {
+const CatchmentAreaDistanceSelectors: React.FC<CatchmentAreaDistanceSelectorsProps> = ({
+  distance,
+  setDistance,
+  t,
+  steps,
+  setSteps,
+}) => {
   return (
     <Stack spacing={2}>
       <Stack>
-        <FormLabelHelper
-          label={`${t("travel_time_distance")} (Meter)`}
-          color="inherit"
-        />
+        <FormLabelHelper label={`${t("travel_time_distance")} (Meter)`} color="inherit" />
         <SliderInput
           value={distance || 500}
           min={50}

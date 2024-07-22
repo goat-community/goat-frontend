@@ -1,9 +1,26 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
-import Container from "@/components/map/panels/Container";
-import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
-import { useTranslation } from "@/i18n/client";
+import { Box, Divider, Stack, Switch, Typography, useTheme } from "@mui/material";
 import { useParams } from "next/navigation";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import {
+  computeActiveMobilityCatchmentArea,
+  computeCarCatchmentArea,
+  computePTCatchmentArea,
+} from "@/lib/api/catchmentArea";
+import { useJobs } from "@/lib/api/jobs";
+import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import {
+  setIsMapGetInfoActive,
+  setMapCursor,
+  setMaskLayer,
+  setToolboxStartingPoints,
+} from "@/lib/store/map/slice";
+import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { CatchmentAreaRoutingType } from "@/lib/validations/tools";
 import {
   CatchmentAreaRoutingTypeEnum,
@@ -14,56 +31,36 @@ import {
   catchmentAreaShapeEnum,
   ptCatchmentAreaSchema,
 } from "@/lib/validations/tools";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
+
 import type { SelectorItem } from "@/types/map/common";
-import {
-  Box,
-  Divider,
-  Stack,
-  Switch,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import SectionHeader from "@/components/map/panels/common/SectionHeader";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
-import Selector from "@/components/map/panels/common/Selector";
-import CatchmentAreaTypeTab from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentAreaTabs";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
-import CatchmentAreaTimeSelectors from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentAreaTimeSelectors";
-import CatchmentAreaDistanceSelectors from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentAreaDistanceSelectors";
-import { getDefaultConfigValue } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
-import {
-  computeActiveMobilityCatchmentArea,
-  computeCarCatchmentArea,
-  computePTCatchmentArea,
-} from "@/lib/api/catchmentArea";
-import { toast } from "react-toastify";
-import { useJobs } from "@/lib/api/jobs";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
-import { setRunningJobIds } from "@/lib/store/jobs/slice";
-import {
-  setIsMapGetInfoActive,
-  setMapCursor,
-  setMaskLayer,
-  setToolboxStartingPoints,
-} from "@/lib/store/map/slice";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
+
 import {
   useCatchmentAreaShapeTypes,
   usePTTimeSelectorValues,
   useRoutingTypes,
   useStartingPointMethods,
 } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import FormLabelHelper from "@/components/common/FormLabelHelper";
+import Container from "@/components/map/panels/Container";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import Selector from "@/components/map/panels/common/Selector";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 import StartingPointSelectors from "@/components/map/panels/toolbox/common/StartingPointsSelectors";
-import { jobTypeEnum } from "@/lib/validations/jobs";
+import CatchmentAreaDistanceSelectors from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentAreaDistanceSelectors";
+import CatchmentAreaTypeTab from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentAreaTabs";
+import CatchmentAreaTimeSelectors from "@/components/map/panels/toolbox/tools/catchment-area/CatchmentAreaTimeSelectors";
+import { getDefaultConfigValue } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 
 const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
   const theme = useTheme();
   const { projectId } = useParams();
-  const startingPoints = useAppSelector(
-    (state) => state.map.toolboxStartingPoints,
-  );
+  const startingPoints = useAppSelector((state) => state.map.toolboxStartingPoints);
   const { mutate } = useJobs({
     read: false,
   });
@@ -72,8 +69,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const [isBusy, setIsBusy] = useState(false);
 
   // Routing
-  const { routingTypes, selectedRouting, setSelectedRouting } =
-    useRoutingTypes();
+  const { routingTypes, selectedRouting, setSelectedRouting } = useRoutingTypes();
 
   // PT Values
   const {
@@ -91,15 +87,12 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     resetPTConfiguration,
   } = usePTTimeSelectorValues();
 
-  const { catchmentAreaShapeTypes: allCatchmentShapeTypes } =
-    useCatchmentAreaShapeTypes();
+  const { catchmentAreaShapeTypes: allCatchmentShapeTypes } = useCatchmentAreaShapeTypes();
   const catchmentAreaShapeTypes = useMemo(() => {
     if (!allCatchmentShapeTypes) return [];
     // for pt routing only polygon shape is allowed
     if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt) {
-      return allCatchmentShapeTypes.filter(
-        (shape) => shape.value === catchmentAreaShapeEnum.Enum.polygon,
-      );
+      return allCatchmentShapeTypes.filter((shape) => shape.value === catchmentAreaShapeEnum.Enum.polygon);
     } else {
       return allCatchmentShapeTypes;
     }
@@ -110,31 +103,23 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const isRoutingValid = useMemo(() => {
     if (
       !selectedRouting ||
-      (selectedRouting.value === CatchmentAreaRoutingTypeEnum.Enum.pt &&
-        selectedPTModes?.length === 0)
+      (selectedRouting.value === CatchmentAreaRoutingTypeEnum.Enum.pt && selectedPTModes?.length === 0)
     )
       return false;
     return true;
   }, [selectedPTModes?.length, selectedRouting]);
 
-  const [catchmentAreaType, setCatchmentAreaType] = useState<
-    "time" | "distance"
-  >("time");
+  const [catchmentAreaType, setCatchmentAreaType] = useState<"time" | "distance">("time");
 
   // Configuration
   const [advanceConfig, setAdvanceConfig] = useState(true);
 
-  const handleCachmentAreaTypeChange = (
-    _event: React.SyntheticEvent,
-    newValue: "time" | "distance",
-  ) => {
+  const handleCachmentAreaTypeChange = (_event: React.SyntheticEvent, newValue: "time" | "distance") => {
     setCatchmentAreaType(newValue);
   };
 
   // Active catchment area configuration
-  const [maxTravelTime, setMaxTravelTime] = useState<SelectorItem | undefined>(
-    undefined,
-  );
+  const [maxTravelTime, setMaxTravelTime] = useState<SelectorItem | undefined>(undefined);
   const [speed, setSpeed] = useState<SelectorItem | undefined>(undefined);
   const [distance, setDistance] = useState<number | undefined>(undefined);
   const [steps, setSteps] = useState<SelectorItem | undefined>(undefined);
@@ -147,8 +132,9 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   }, [maxTravelTime, steps]);
 
   // Advanced settings
-  const [catchmentAreaShapeType, setCatchmentAreaShapeType] =
-    useState<SelectorItem>(catchmentAreaShapeTypes[0]);
+  const [catchmentAreaShapeType, setCatchmentAreaShapeType] = useState<SelectorItem>(
+    catchmentAreaShapeTypes[0]
+  );
 
   const [isPolygonDifference, setIsPolygonDifference] = useState(false);
   useEffect(() => {
@@ -167,25 +153,22 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     setMaxTravelTime(
       getDefaultConfigValue(
         (selectedRouting?.value as CatchmentAreaRoutingType) || "walking",
-        "max_travel_time",
-      ),
+        "max_travel_time"
+      )
     );
     if (selectedRouting?.value !== CatchmentAreaRoutingTypeEnum.Enum.pt) {
       setSpeed(
-        getDefaultConfigValue(
-          (selectedRouting?.value as CatchmentAreaRoutingType) || "walking",
-          "speed",
-        ),
+        getDefaultConfigValue((selectedRouting?.value as CatchmentAreaRoutingType) || "walking", "speed")
       );
     }
     const distance = getDefaultConfigValue(
       (selectedRouting?.value as CatchmentAreaRoutingType) || "walking",
-      "max_distance",
+      "max_distance"
     );
     setDistance(distance.value);
     const steps = getDefaultConfigValue(
       (selectedRouting?.value as CatchmentAreaRoutingType) || "walking",
-      "steps",
+      "steps"
     );
     setSteps(steps);
     setCatchmentAreaShapeType(catchmentAreaShapeTypes[0]);
@@ -194,45 +177,23 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     // Reset starting method
     setStartingPointMethod(startingPointMethods[0]);
     setStartingPointLayer(undefined);
-  }, [
-    catchmentAreaShapeTypes,
-    resetPTConfiguration,
-    selectedRouting?.value,
-    startingPointMethods,
-  ]);
+  }, [catchmentAreaShapeTypes, resetPTConfiguration, selectedRouting?.value, startingPointMethods]);
 
   useEffect(() => {
     handleConfigurationReset();
   }, [handleConfigurationReset, selectedRouting]);
 
   // Starting point
-  const [startingPointMethod, setStartingPointMethod] = useState<SelectorItem>(
-    startingPointMethods[0],
-  );
+  const [startingPointMethod, setStartingPointMethod] = useState<SelectorItem>(startingPointMethods[0]);
 
-  const [startingPointLayer, setStartingPointLayer] = useState<
-    SelectorItem | undefined
-  >(undefined);
+  const [startingPointLayer, setStartingPointLayer] = useState<SelectorItem | undefined>(undefined);
 
   const isValid = useMemo(() => {
-    if (!isRoutingValid || (!areStepsValid && catchmentAreaType === "time"))
-      return false;
-    if (
-      selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt &&
-      !isPTValid
-    )
-      return false;
-    if (
-      startingPointMethod.value === "browser_layer" &&
-      !startingPointLayer?.value
-    )
-      return false;
+    if (!isRoutingValid || (!areStepsValid && catchmentAreaType === "time")) return false;
+    if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt && !isPTValid) return false;
+    if (startingPointMethod.value === "browser_layer" && !startingPointLayer?.value) return false;
 
-    if (
-      startingPointMethod.value === "map" &&
-      (!startingPoints || startingPoints.length === 0)
-    )
-      return false;
+    if (startingPointMethod.value === "map" && (!startingPoints || startingPoints.length === 0)) return false;
 
     return true;
   }, [
@@ -264,10 +225,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
 
     // Set polygon difference to false if the shape is polygon
-    if (
-      !isPolygonDifference &&
-      catchmentAreaShapeType.value === catchmentAreaShapeEnum.Enum.polygon
-    ) {
+    if (!isPolygonDifference && catchmentAreaShapeType.value === catchmentAreaShapeEnum.Enum.polygon) {
       payload["polygon_difference"] = false;
     }
 
@@ -303,22 +261,15 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       try {
         setIsBusy(true);
         const parsedPayload = ptCatchmentAreaSchema.parse(payload);
-        const response = await computePTCatchmentArea(
-          parsedPayload,
-          projectId as string,
-        );
+        const response = await computePTCatchmentArea(parsedPayload, projectId as string);
         const { job_id } = response;
         if (job_id) {
-          toast.info(
-            `"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_started")}`,
-          );
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch {
-        toast.error(
-          `"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_failed")}`,
-        );
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_pt)}" ${t("job_failed")}`);
       } finally {
         setIsBusy(false);
         handleReset();
@@ -334,32 +285,23 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
       max_distance: distance,
       steps: steps?.value,
     };
-    payload["travel_cost"] =
-      catchmentAreaType === "time" ? travelTimeCost : distanceCost;
+    payload["travel_cost"] = catchmentAreaType === "time" ? travelTimeCost : distanceCost;
     payload["routing_type"] = selectedRouting?.value;
 
     if (selectedRouting?.value !== CatchmentAreaRoutingTypeEnum.Enum.car) {
       try {
         setIsBusy(true);
-        const parsedPayload =
-          activeMobilityAndCarCatchmentAreaSchema.parse(payload);
-        const response = await computeActiveMobilityCatchmentArea(
-          parsedPayload,
-          projectId as string,
-        );
+        const parsedPayload = activeMobilityAndCarCatchmentAreaSchema.parse(payload);
+        const response = await computeActiveMobilityCatchmentArea(parsedPayload, projectId as string);
         const { job_id } = response;
         if (job_id) {
-          toast.info(
-            `"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_started")}`,
-          );
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch (e) {
         console.log(e);
-        toast.error(
-          `"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_failed")}`,
-        );
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_failed")}`);
       } finally {
         setIsBusy(false);
         handleReset();
@@ -370,25 +312,17 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.car) {
       try {
         setIsBusy(true);
-        const parsedPayload =
-          activeMobilityAndCarCatchmentAreaSchema.parse(payload);
-        const response = await computeCarCatchmentArea(
-          parsedPayload,
-          projectId as string,
-        );
+        const parsedPayload = activeMobilityAndCarCatchmentAreaSchema.parse(payload);
+        const response = await computeCarCatchmentArea(parsedPayload, projectId as string);
         const { job_id } = response;
         if (job_id) {
-          toast.info(
-            `"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_started")}`,
-          );
+          toast.info(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_started")}`);
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
       } catch (e) {
         console.log(e);
-        toast.error(
-          `"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_failed")}`,
-        );
+        toast.error(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_failed")}`);
       } finally {
         setIsBusy(false);
         handleReset();
@@ -426,13 +360,9 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
             sx={{
               display: "flex",
               flexDirection: "column",
-            }}
-          >
+            }}>
             {/* DESCRIPTION */}
-            <Typography
-              variant="body2"
-              sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-            >
+            <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
               {t("catchment_area_description")}
             </Typography>
 
@@ -446,34 +376,22 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
             />
             <SectionOptions
               active={true}
-              collapsed={
-                selectedRouting?.value !== CatchmentAreaRoutingTypeEnum.Enum.pt
-              }
+              collapsed={selectedRouting?.value !== CatchmentAreaRoutingTypeEnum.Enum.pt}
               baseOptions={
                 <>
                   <Selector
                     selectedItems={selectedRouting}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       const routing = item as SelectorItem;
                       setSelectedRouting(routing);
-                      if (
-                        routing.value === CatchmentAreaRoutingTypeEnum.Enum.pt
-                      ) {
+                      if (routing.value === CatchmentAreaRoutingTypeEnum.Enum.pt) {
                         dispatch(setToolboxStartingPoints(undefined));
                         dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
                       }
-                      if (
-                        routing.value !== CatchmentAreaRoutingTypeEnum.Enum.pt
-                      ) {
+                      if (routing.value !== CatchmentAreaRoutingTypeEnum.Enum.pt) {
                         // same mask layer for active mobility and car.
                         // it can be changed in the future
-                        dispatch(
-                          setMaskLayer(
-                            catchmentAreaMaskLayerNames.active_mobility,
-                          ),
-                        );
+                        dispatch(setMaskLayer(catchmentAreaMaskLayerNames.active_mobility));
                       }
                     }}
                     items={routingTypes}
@@ -487,9 +405,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                 <>
                   <Selector
                     selectedItems={selectedPTModes}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       setSelectedPTModes(item as SelectorItem[]);
                     }}
                     items={ptModes}
@@ -517,22 +433,17 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
               collapsed={advanceConfig}
               baseOptions={
                 <>
-                  {selectedRouting?.value !==
-                    CatchmentAreaRoutingTypeEnum.Enum.pt && (
+                  {selectedRouting?.value !== CatchmentAreaRoutingTypeEnum.Enum.pt && (
                     <CatchmentAreaTypeTab
                       catchmentAreaType={catchmentAreaType}
-                      handleCachmentAreaTypeChange={
-                        handleCachmentAreaTypeChange
-                      }
+                      handleCachmentAreaTypeChange={handleCachmentAreaTypeChange}
                       tabPanels={[
                         {
                           value: "time",
                           children: (
                             <>
                               <CatchmentAreaTimeSelectors
-                                routingType={
-                                  selectedRouting?.value as CatchmentAreaRoutingType
-                                }
+                                routingType={selectedRouting?.value as CatchmentAreaRoutingType}
                                 {...travelTimeProps}
                                 t={t}
                               />
@@ -556,12 +467,9 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                       ]}
                     />
                   )}
-                  {selectedRouting?.value ===
-                    CatchmentAreaRoutingTypeEnum.Enum.pt && (
+                  {selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt && (
                     <CatchmentAreaTimeSelectors
-                      routingType={
-                        selectedRouting?.value as CatchmentAreaRoutingType
-                      }
+                      routingType={selectedRouting?.value as CatchmentAreaRoutingType}
                       {...travelTimeProps}
                       t={t}
                     />
@@ -574,9 +482,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                   <Stack spacing={4}>
                     <Selector
                       selectedItems={catchmentAreaShapeType}
-                      setSelectedItems={(
-                        item: SelectorItem[] | SelectorItem | undefined,
-                      ) => {
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         setCatchmentAreaShapeType(item as SelectorItem);
                       }}
                       items={catchmentAreaShapeTypes}
@@ -584,22 +490,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                       placeholder={t("select_catchment_area_shape")}
                       tooltip={t("catchment_area_shape_tooltip")}
                     />
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                    >
-                      <FormLabelHelper
-                        label={t("polygon_difference")}
-                        color="inherit"
-                      />
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
+                      <FormLabelHelper label={t("polygon_difference")} color="inherit" />
                       <Switch
                         disabled={catchmentAreaShapeType.value !== "polygon"}
                         size="small"
                         checked={isPolygonDifference}
-                        onChange={() =>
-                          setIsPolygonDifference(!isPolygonDifference)
-                        }
+                        onChange={() => setIsPolygonDifference(!isPolygonDifference)}
                       />
                     </Stack>
                   </Stack>
@@ -629,10 +526,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                     setStartingPointLayer={setStartingPointLayer}
                     // For PT routing only one starting point is allowed at the moment
                     maxStartingPoints={
-                      selectedRouting?.value ===
-                      CatchmentAreaRoutingTypeEnum.Enum.pt
-                        ? 1
-                        : undefined
+                      selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt ? 1 : undefined
                     }
                   />
                 </>

@@ -1,4 +1,6 @@
-import { useTranslation } from "@/i18n/client";
+import ClearIcon from "@mui/icons-material/Clear";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Accordion,
   AccordionDetails,
@@ -19,15 +21,17 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Clear";
 import { useMemo, useState } from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { type DatasetMetadataValue } from "@/lib/validations/layer";
-import NoValuesFound from "@/components/map/common/NoValuesFound";
-import { Loading } from "@p4b/ui/components/Loading";
+
 import type { ICON_NAME } from "@p4b/ui/components/Icon";
 import { Icon } from "@p4b/ui/components/Icon";
+import { Loading } from "@p4b/ui/components/Loading";
+
+import { useTranslation } from "@/i18n/client";
+
+import { type DatasetMetadataValue } from "@/lib/validations/layer";
+
+import NoValuesFound from "@/components/map/common/NoValuesFound";
 
 interface FilterPanelProps {
   filterType: string;
@@ -64,21 +68,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls={`${filterType}-panel-content`}
-        id={`${filterType}-panel-header`}
-      >
-        <Stack
-          direction="row"
-          sx={{ py: 0, pl: 1 }}
-          alignItems="center"
-          spacing={4}
-        >
+        id={`${filterType}-panel-header`}>
+        <Stack direction="row" sx={{ py: 0, pl: 1 }} alignItems="center" spacing={4}>
           {icon && (
-            <Icon
-              sx={{ ml: 2 }}
-              iconName={icon}
-              fontSize="small"
-              htmlColor={theme.palette.text.secondary}
-            />
+            <Icon sx={{ ml: 2 }} iconName={icon} fontSize="small" htmlColor={theme.palette.text.secondary} />
           )}
           <Typography variant="body1">
             {i18n.exists(`common:metadata.headings.${filterType}`)
@@ -132,8 +125,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             overflowY: "auto",
             overflowX: "hidden",
             py: 2,
-          }}
-        >
+          }}>
           {filteredValues.length > 0 && (
             <List sx={{ py: 0 }}>
               {filteredValues.map((item) => {
@@ -145,35 +137,19 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                       onClick={() => {
                         onToggle && onToggle(item.value);
                       }}
-                      selected={
-                        !!filterValues && filterValues.includes(item.value)
-                      }
-                      dense
-                    >
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        width="100%"
-                      >
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          sx={{ pl: 3 }}
-                        >
+                      selected={!!filterValues && filterValues.includes(item.value)}
+                      dense>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" width="100%">
+                        <Stack direction="row" alignItems="center" sx={{ pl: 3 }}>
                           <ListItemIcon
                             sx={{
                               minWidth: 35,
                               color: "inherit",
-                            }}
-                          >
+                            }}>
                             <Checkbox
                               edge="start"
                               size="small"
-                              checked={
-                                !!filterValues &&
-                                filterValues.includes(item.value)
-                              }
+                              checked={!!filterValues && filterValues.includes(item.value)}
                               tabIndex={-1}
                               disableRipple
                               inputProps={{ "aria-labelledby": labelId }}
@@ -190,15 +166,9 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                               <Typography
                                 variant="body2"
                                 fontWeight={
-                                  !!filterValues &&
-                                  filterValues.includes(item.value)
-                                    ? "bold"
-                                    : "regular"
-                                }
-                              >
-                                {i18n.exists(
-                                  `common:metadata.${filterType}.${item.value}`,
-                                )
+                                  !!filterValues && filterValues.includes(item.value) ? "bold" : "regular"
+                                }>
+                                {i18n.exists(`common:metadata.${filterType}.${item.value}`)
                                   ? t(`metadata.${filterType}.${item.value}`)
                                   : item.value}
                               </Typography>
@@ -209,8 +179,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                           sx={{
                             ml: 2,
                             backgroundColor:
-                              !!filterValues &&
-                              filterValues.includes(item.value)
+                              !!filterValues && filterValues.includes(item.value)
                                 ? theme.palette.primary.main
                                 : theme.palette.text.secondary,
                             color: theme.palette.background.paper,
@@ -234,8 +203,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Loading size={40} />
             </Box>
           )}

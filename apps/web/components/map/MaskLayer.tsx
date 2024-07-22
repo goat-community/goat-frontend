@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
+import { Layer, Source } from "react-map-gl";
+
 import type { GeoJSONFeature } from "@/lib/utils/map/mask";
 import createMask from "@/lib/utils/map/mask";
-import { useEffect, useState } from "react";
-import { Source, Layer } from "react-map-gl";
 
 type MaskLayerProps = {
   maskLayerUrl: string;
@@ -17,7 +18,7 @@ const MaskLayer = (props: MaskLayerProps) => {
     fetch(props.maskLayerUrl)
       .then((response) => response.json())
       .then((data) => {
-        const maskedData = createMask(data)
+        const maskedData = createMask(data);
         setMaskLayerData(maskedData);
       })
       .catch((error) => {

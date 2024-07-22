@@ -1,11 +1,4 @@
 import {
-  FOLDERS_API_BASE_URL,
-  createFolder,
-  updateFolder,
-  deleteFolder,
-} from "@/lib/api/folders";
-import type { DialogBaseProps } from "@/types/common/dialog";
-import {
   Button,
   Dialog,
   DialogActions,
@@ -15,11 +8,16 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useTranslation } from "@/i18n/client";
 import { useState } from "react";
+import { Trans } from "react-i18next";
 import { toast } from "react-toastify";
 import { mutate } from "swr";
-import { Trans } from "react-i18next";
+
+import { useTranslation } from "@/i18n/client";
+
+import { FOLDERS_API_BASE_URL, createFolder, deleteFolder, updateFolder } from "@/lib/api/folders";
+
+import type { DialogBaseProps } from "@/types/common/dialog";
 
 export interface SelectedFolderForEdit {
   id: string;
@@ -78,8 +76,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
       onClose={() => {
         setFolderName("");
         onClose?.();
-      }}
-    >
+      }}>
       <DialogTitle>
         {
           {
@@ -100,10 +97,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
             inputProps={{ maxLength: 30 }}
             label={t("folder_name")}
             variant="outlined"
-            error={
-              folderName.length > 29 ||
-              existingFolderNames?.includes(folderName)
-            }
+            error={folderName.length > 29 || existingFolderNames?.includes(folderName)}
             helperText={
               folderName.length > 29
                 ? t("folder_rule")
@@ -129,16 +123,14 @@ const FolderModal: React.FC<FolderDialogProps> = ({
         disableSpacing
         sx={{
           pb: 2,
-        }}
-      >
+        }}>
         <Button
           onClick={() => {
             setFolderName("");
             onClose?.();
           }}
           variant="text"
-          sx={{ borderRadius: 0 }}
-        >
+          sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold">
             {t("cancel")}
           </Typography>
@@ -148,8 +140,7 @@ const FolderModal: React.FC<FolderDialogProps> = ({
           onClick={handleFolderEdit}
           variant="text"
           color={type === "delete" ? "error" : "primary"}
-          sx={{ borderRadius: 0 }}
-        >
+          sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
             {
               {

@@ -1,20 +1,14 @@
+import { Badge, Box, Button, Divider, IconButton, Paper, Stack, Typography, styled } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { setJobsReadStatus, useJobs } from "@/lib/api/jobs";
+
 import { ArrowPopper as JobStatusMenu } from "@/components/ArrowPoper";
 import JobProgressItem from "@/components/jobs/JobProgressItem";
-import { useTranslation } from "@/i18n/client";
-import { setJobsReadStatus, useJobs } from "@/lib/api/jobs";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Paper,
-  Stack,
-  Typography,
-  styled,
-  Badge,
-} from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
-import { useEffect, useMemo, useState } from "react";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -113,14 +107,9 @@ export default function JobsPopper() {
                 overflow: "auto",
                 pt: 4,
                 pb: 2,
-              }}
-            >
+              }}>
               <Box>
-                <Typography
-                  variant="body1"
-                  fontWeight="bold"
-                  sx={{ px: 4, py: 1 }}
-                >
+                <Typography variant="body1" fontWeight="bold" sx={{ px: 4, py: 1 }}>
                   {t("job_status")}
                 </Typography>
                 <Divider sx={{ mb: 0, pb: 0 }} />
@@ -131,8 +120,7 @@ export default function JobsPopper() {
                   overflowY: "auto",
                   overflowX: "hidden",
                   py: 2,
-                }}
-              >
+                }}>
                 <Stack direction="column">
                   {jobs?.items?.map((job, index) => (
                     <Box key={job.id}>
@@ -149,22 +137,16 @@ export default function JobsPopper() {
                 </Stack>
               </Box>
               <Divider sx={{ mt: 0 }} />
-              <Stack
-                direction="row"
-                justifyContent="end"
-                alignItems="center"
-                sx={{ py: 1 }}
-              >
+              <Stack direction="row" justifyContent="end" alignItems="center" sx={{ py: 1 }}>
                 <Button
                   disabled={isBusy}
                   variant="text"
                   onClick={handleClearAll}
                   sx={{
                     mr: 4,
-                  }}
-                >
+                  }}>
                   <Typography variant="body2" fontWeight="bold" color="inherit">
-                    {t('clear_all')}
+                    {t("clear_all")}
                   </Typography>
                 </Button>
               </Stack>
@@ -172,8 +154,7 @@ export default function JobsPopper() {
           }
           open={open}
           placement="bottom"
-          onClose={() => setOpen(false)}
-        >
+          onClose={() => setOpen(false)}>
           {jobs?.items && jobs.items.length > 0 ? (
             <IconButton
               onClick={() => {
@@ -184,28 +165,18 @@ export default function JobsPopper() {
                 ...(open && {
                   color: "primary.main",
                 }),
-              }}
-            >
+              }}>
               {runningJobs && runningJobs?.length > 0 && (
                 <StyledBadge
                   overlap="circular"
                   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  variant="dot"
-                >
-                  <Icon
-                    fontSize="inherit"
-                    iconName={ICON_NAME.BARS_PROGRESS}
-                    htmlColor="inherit"
-                  />
+                  variant="dot">
+                  <Icon fontSize="inherit" iconName={ICON_NAME.BARS_PROGRESS} htmlColor="inherit" />
                 </StyledBadge>
               )}
               {!runningJobs ||
                 (runningJobs?.length === 0 && (
-                  <Icon
-                    fontSize="inherit"
-                    iconName={ICON_NAME.BARS_PROGRESS}
-                    htmlColor="inherit"
-                  />
+                  <Icon fontSize="inherit" iconName={ICON_NAME.BARS_PROGRESS} htmlColor="inherit" />
                 ))}
             </IconButton>
           ) : (

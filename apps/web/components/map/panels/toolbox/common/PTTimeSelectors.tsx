@@ -1,10 +1,14 @@
+import { Stack } from "@mui/material";
+import React from "react";
+
+import TimePicker from "@p4b/ui/components/TimePicker";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { SelectorItem } from "@/types/map/common";
+
 import FormLabelHelper from "@/components/common/FormLabelHelper";
 import Selector from "@/components/map/panels/common/Selector";
-import { useTranslation } from "@/i18n/client";
-import type { SelectorItem } from "@/types/map/common";
-import { Stack } from "@mui/material";
-import TimePicker from "@p4b/ui/components/TimePicker";
-import React from "react";
 
 interface PTTimeSelectorsProps {
   setPTDay: (item: SelectorItem) => void;
@@ -41,11 +45,7 @@ const PTTimeSelectors: React.FC<PTTimeSelectorsProps> = ({
         tooltip={t("pt_day_tooltip")}
       />
       <Stack>
-        <FormLabelHelper
-          label={t("pt_start_time")}
-          color="inherit"
-          tooltip={t("pt_start_time_tooltip")}
-        />
+        <FormLabelHelper label={t("pt_start_time")} color="inherit" tooltip={t("pt_start_time_tooltip")} />
         <TimePicker
           time={ptStartTime || 25200}
           onChange={(time) => {
@@ -55,11 +55,7 @@ const PTTimeSelectors: React.FC<PTTimeSelectorsProps> = ({
         />
       </Stack>
       <Stack>
-        <FormLabelHelper
-          label={t("pt_end_time")}
-          color="inherit"
-          tooltip={t("pt_end_time_tooltip")}
-        />
+        <FormLabelHelper label={t("pt_end_time")} color="inherit" tooltip={t("pt_end_time_tooltip")} />
         <TimePicker
           time={ptEndTime || 32400}
           onChange={(time) => {

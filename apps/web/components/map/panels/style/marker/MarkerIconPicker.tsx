@@ -1,16 +1,14 @@
-import { ArrowPopper } from "@/components/ArrowPoper";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
-import MarkerGallery from "@/components/map/panels/style/marker/MarkerGallery";
-import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
-import {
-  MAKI_ICON_SIZE,
-  MAKI_ICONS_BASE_URL,
-  NO_ICON_ICON,
-} from "@/lib/constants/icons";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IconButton, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useMemo, useState } from "react";
+
+import { MAKI_ICONS_BASE_URL, MAKI_ICON_SIZE, NO_ICON_ICON } from "@/lib/constants/icons";
+
+import { ArrowPopper } from "@/components/ArrowPoper";
+import FormLabelHelper from "@/components/common/FormLabelHelper";
+import MarkerGallery from "@/components/map/panels/style/marker/MarkerGallery";
+import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
 
 type SelectedMarker = {
   name: string;
@@ -36,12 +34,7 @@ const MarkerIconPicker = (props: MarkerIconPickerProps) => {
     } else {
       return theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF";
     }
-  }, [
-    open,
-    props.selectedMarker?.url,
-    theme.palette.mode,
-    theme.palette.primary.main,
-  ]);
+  }, [open, props.selectedMarker?.url, theme.palette.mode, theme.palette.primary.main]);
 
   return (
     <>
@@ -60,8 +53,7 @@ const MarkerIconPicker = (props: MarkerIconPickerProps) => {
               }}
             />
           </>
-        }
-      >
+        }>
         {/* {INPUT} */}
         <Stack spacing={1}>
           {props.label && (
@@ -81,8 +73,7 @@ const MarkerIconPicker = (props: MarkerIconPickerProps) => {
               borderRadius: theme.spacing(1.2),
               border: "1px solid",
               outline: "2px solid transparent",
-              borderColor:
-                theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
+              borderColor: theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
               ...(open && {
                 outline: `2px solid ${theme.palette.primary.main}`,
               }),
@@ -92,31 +83,18 @@ const MarkerIconPicker = (props: MarkerIconPickerProps) => {
               minHeight: "40px",
               "&:hover": {
                 ...(!open && {
-                  borderColor:
-                    theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF",
+                  borderColor: theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF",
                 }),
               },
-            }}
-          >
-            <Stack
-              direction="row"
-              spacing={2}
-              sx={{ p: 0, m: 0 }}
-              alignItems="center"
-            >
+            }}>
+            <Stack direction="row" spacing={2} sx={{ p: 0, m: 0 }} alignItems="center">
               <MaskedImageIcon
-                imageUrl={
-                  props.selectedMarker?.url ||
-                  `${MAKI_ICONS_BASE_URL}/${NO_ICON_ICON}.svg`
-                }
+                imageUrl={props.selectedMarker?.url || `${MAKI_ICONS_BASE_URL}/${NO_ICON_ICON}.svg`}
                 dimension={`${MAKI_ICON_SIZE}px`}
                 imgColor={imgColor}
               />
 
-              <Typography
-                variant="body2"
-                fontWeight={props.selectedMarker?.url ? "bold" : "normal"}
-              >
+              <Typography variant="body2" fontWeight={props.selectedMarker?.url ? "bold" : "normal"}>
                 {props.selectedMarker?.name}
               </Typography>
             </Stack>
@@ -127,8 +105,7 @@ const MarkerIconPicker = (props: MarkerIconPickerProps) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   props.onSelectMarker({ name: "", url: "" });
-                }}
-              >
+                }}>
                 <ClearIcon />
               </IconButton>
             )}

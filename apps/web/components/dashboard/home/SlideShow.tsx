@@ -32,8 +32,7 @@ const FeedSlideShow = () => {
             key={i}
             image={item.imgPath}
             title={item.label}
-            style={{ height: "300px", width: "100%", objectFit: "cover" }}
-          >
+            style={{ height: "300px", width: "100%", objectFit: "cover" }}>
             <Box
               sx={{
                 px: 8,
@@ -44,8 +43,7 @@ const FeedSlideShow = () => {
                 width: "100%",
                 bgcolor: "rgba(0, 0, 0, 0)",
                 color: "white",
-              }}
-            >
+              }}>
               <Typography variant="body1">{item.description}</Typography>
               <Typography variant="h5" sx={{ mt: 8 }}>
                 {item.label}

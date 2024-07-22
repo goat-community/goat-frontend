@@ -17,26 +17,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-import { hexToRgb, isValidHex, isValidRGB } from "@/lib/utils/helpers";
-import type { SingleColorSelectorProps } from "@/types/map/color";
-import {
-  Box,
-  debounce,
-  Divider,
-  Grid,
-  InputAdornment,
-  rgbToHex,
-  TextField,
-  useTheme,
-} from "@mui/material";
+import { Box, Divider, Grid, InputAdornment, TextField, debounce, rgbToHex, useTheme } from "@mui/material";
 import { useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
-function CustomColorPicker({
-  selectedColor,
-  onSelectColor,
-}: SingleColorSelectorProps) {
+import { hexToRgb, isValidHex, isValidRGB } from "@/lib/utils/helpers";
+
+import type { SingleColorSelectorProps } from "@/types/map/color";
+
+function CustomColorPicker({ selectedColor, onSelectColor }: SingleColorSelectorProps) {
   const theme = useTheme();
   const rgbColor = hexToRgb(selectedColor);
   const [inputHex, setInputHex] = useState(selectedColor.substring(1));
@@ -111,8 +100,7 @@ function CustomColorPicker({
           height: theme.spacing(3),
           width: theme.spacing(3),
         },
-      }}
-    >
+      }}>
       <Box style={{ position: "relative" }}>
         <HexColorPicker
           color={selectedColor?.length === 7 ? selectedColor : "#ffffff"}
@@ -145,10 +133,7 @@ function CustomColorPicker({
             }}
             InputProps={{
               startAdornment: (
-                <InputAdornment
-                  position="start"
-                  style={{ marginRight: theme.spacing(0.5) }}
-                >
+                <InputAdornment position="start" style={{ marginRight: theme.spacing(0.5) }}>
                   #
                 </InputAdornment>
               ),

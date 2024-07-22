@@ -1,28 +1,14 @@
-import { OverflowTypograpy } from "@/components/common/OverflowTypography";
-import { useTranslation } from "@/i18n/client";
-import {
-  Box,
-  Divider,
-  IconButton,
-  Link,
-  Paper,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { Box, Divider, IconButton, Link, Paper, Stack, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 import { Popup } from "react-map-gl";
 
-export type MapPopoverProps = {
-  title: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties: { [name: string]: any } | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  jsonProperties: { [name: string]: any } | null;
-  lngLat: [number, number];
-  onClose: () => void;
-};
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { MapPopoverInfoProps } from "@/types/map/popover";
+
+import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 
 interface RowProps {
   name: string;
@@ -32,12 +18,7 @@ interface RowProps {
 const Row: React.FC<RowProps> = ({ name, value }) => {
   // Set 'url' to 'value' if it looks like a url
   let url = "";
-  if (
-    !url &&
-    value &&
-    typeof value === "string" &&
-    value.match(/^(http|www)/)
-  ) {
+  if (!url && value && typeof value === "string" && value.match(/^(http|www)/)) {
     url = value;
   }
 
@@ -50,8 +31,7 @@ const Row: React.FC<RowProps> = ({ name, value }) => {
             placement: "top",
             arrow: true,
             enterDelay: 200,
-          }}
-        >
+          }}>
           {name}
         </OverflowTypograpy>
       </td>
@@ -63,8 +43,7 @@ const Row: React.FC<RowProps> = ({ name, value }) => {
             placement: "top",
             arrow: true,
             enterDelay: 200,
-          }}
-        >
+          }}>
           {url ? (
             <Link target="_blank" rel="noopener noreferrer" href={url}>
               {value}
@@ -95,8 +74,7 @@ const ViewTableRow: React.FC<ViewTableRowProps> = ({ name, onClick }) => {
             placement: "top",
             arrow: true,
             enterDelay: 200,
-          }}
-        >
+          }}>
           {name}
         </OverflowTypograpy>
       </td>
@@ -106,8 +84,7 @@ const ViewTableRow: React.FC<ViewTableRowProps> = ({ name, onClick }) => {
           arrow
           title={t("view_property_data", {
             property: name,
-          })}
-        >
+          })}>
           <IconButton size="small" onClick={onClick}>
             <Icon iconName={ICON_NAME.TABLE} style={{ fontSize: 16 }} />
           </IconButton>
@@ -122,16 +99,14 @@ interface DetailsViewType {
   data: Array<{ [key: string]: string }>;
 }
 
-const MapPopover: React.FC<MapPopoverProps> = ({
+const MapPopoverInfo: React.FC<MapPopoverInfoProps> = ({
   title,
   properties,
   jsonProperties,
   lngLat,
   onClose,
 }) => {
-  const [detailsView, setDetailsView] = useState<DetailsViewType | undefined>(
-    undefined,
-  );
+  const [detailsView, setDetailsView] = useState<DetailsViewType | undefined>(undefined);
 
   return (
     <Popup
@@ -139,22 +114,11 @@ const MapPopover: React.FC<MapPopoverProps> = ({
       longitude={lngLat[0]}
       latitude={lngLat[1]}
       closeButton={false}
-      maxWidth={detailsView ? "500px" : "300px"}
-    >
+      maxWidth={detailsView ? "500px" : "300px"}>
       <Box>
         <Paper elevation={0}>
-          <Stack
-            sx={{ px: 2, pt: 2 }}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Stack
-              direction="row"
-              spacing={2}
-              alignItems="center"
-              sx={{ width: "90%" }}
-            >
+          <Stack sx={{ px: 2, pt: 2 }} direction="row" alignItems="center" justifyContent="space-between">
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ width: "90%" }}>
               <Icon iconName={ICON_NAME.LAYERS} style={{ fontSize: 16 }} />
               <Typography variant="body2" fontWeight="bold">
                 {title}
@@ -172,8 +136,7 @@ const MapPopover: React.FC<MapPopoverProps> = ({
                   tableLayout: "fixed",
                   width: "100%",
                   padding: 5,
-                }}
-              >
+                }}>
                 <tbody>
                   {Object.entries(properties).map(([key, value]) => (
                     <Row key={key} name={key} value={value} />
@@ -194,7 +157,7 @@ const MapPopover: React.FC<MapPopoverProps> = ({
                               })
                             }
                           />
-                        ),
+                        )
                       )
                   }
                 </tbody>
@@ -202,21 +165,12 @@ const MapPopover: React.FC<MapPopoverProps> = ({
             )}
             {detailsView && (
               <Stack direction="column">
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  alignItems="center"
-                  sx={{ width: "90%" }}
-                >
+                <Stack direction="row" spacing={2} alignItems="center" sx={{ width: "90%" }}>
                   <IconButton
                     onClick={() => {
                       setDetailsView(undefined);
-                    }}
-                  >
-                    <Icon
-                      iconName={ICON_NAME.CHEVRON_LEFT}
-                      style={{ fontSize: 16 }}
-                    />
+                    }}>
+                    <Icon iconName={ICON_NAME.CHEVRON_LEFT} style={{ fontSize: 16 }} />
                   </IconButton>
                   <Typography variant="body2" fontWeight="bold">
                     {detailsView.property}
@@ -255,4 +209,4 @@ const MapPopover: React.FC<MapPopoverProps> = ({
   );
 };
 
-export default MapPopover;
+export default MapPopoverInfo;

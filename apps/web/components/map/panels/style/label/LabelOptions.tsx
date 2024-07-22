@@ -1,7 +1,9 @@
 import { useTranslation } from "@/i18n/client";
+
 import type { LayerFieldType } from "@/lib/validations/layer";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
+
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
 
 const LabelOptions = ({
   // layerStyle,
@@ -9,9 +11,8 @@ const LabelOptions = ({
   active,
   layerFields,
   selectedField,
-  collapsed,
-} // onStyleChange,
-: {
+  collapsed, // onStyleChange,
+}: {
   // layerStyle?: FeatureLayerProperties;
   // layerId: string;
   active: boolean;

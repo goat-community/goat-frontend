@@ -1,12 +1,11 @@
 import { useTranslation } from "@/i18n/client";
-import type {
-  FeatureLayerProperties,
-  LayerFieldType,
-} from "@/lib/validations/layer";
-import MarkerIconPicker from "@/components/map/panels/style/marker/MarkerIconPicker";
-import MarkerSelector from "@/components/map/panels/style/classification/MarkerSelector";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
+
+import type { FeatureLayerProperties, LayerFieldType } from "@/lib/validations/layer";
+
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import MarkerSelector from "@/components/map/panels/style/classification/MarkerSelector";
+import MarkerIconPicker from "@/components/map/panels/style/marker/MarkerIconPicker";
 
 const MarkerOptions = ({
   type,
@@ -79,9 +78,7 @@ const MarkerOptions = ({
               }}
               label={t("ordinal_marker")}
               activeLayerId={layerId}
-              activeLayerField={
-                layerStyle[`${type}_field`] || { name: "", type: "string" }
-              }
+              activeLayerField={layerStyle[`${type}_field`] || { name: "", type: "string" }}
             />
           )}
         </>

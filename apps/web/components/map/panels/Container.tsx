@@ -1,14 +1,8 @@
-import {
-  Divider,
-  Stack,
-  useTheme,
-  Box,
-  Typography,
-  IconButton,
-  Paper,
-} from "@mui/material";
+import { Box, Divider, IconButton, Paper, Stack, Typography, useTheme } from "@mui/material";
 import React from "react";
-import { Icon, ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import type { MapSidebarItem } from "@/types/map/sidebar";
 
 interface ContainerProps {
@@ -31,8 +25,7 @@ export default function Container(props: ContainerProps) {
       sx={{
         backgroundColor: theme.palette.background.default,
         height: "100%",
-      }}
-    >
+      }}>
       {(header || title) && (
         <>
           <Stack
@@ -43,8 +36,7 @@ export default function Container(props: ContainerProps) {
               justifyContent: "space-between",
               alignItems: "center",
             }}
-            direction="row"
-          >
+            direction="row">
             {header ? (
               <Box
                 sx={{
@@ -53,8 +45,7 @@ export default function Container(props: ContainerProps) {
                   justifyContent: "space-between",
                   gap: "20px",
                   width: "100%",
-                }}
-              >
+                }}>
                 {header}
                 <IconButton onClick={() => close(undefined)}>
                   <Icon iconName={ICON_NAME.CLOSE} fontSize="small" />
@@ -68,15 +59,13 @@ export default function Container(props: ContainerProps) {
                   justifyContent: "space-between",
                   gap: "20px",
                   width: "100%",
-                }}
-              >
+                }}>
                 <Typography
                   variant="body1"
                   fontWeight="bold"
                   sx={{
                     display: "flex",
-                  }}
-                >
+                  }}>
                   {title}
                 </Typography>
                 <IconButton onClick={() => close(undefined)}>
@@ -110,8 +99,7 @@ export default function Container(props: ContainerProps) {
                 background: "#28364880",
               },
             },
-          }}
-        >
+          }}>
           {body}
         </Stack>
       )}
@@ -121,8 +109,7 @@ export default function Container(props: ContainerProps) {
             borderRadius: "0",
             boxShadow: "0px -5px 10px -5px rgba(58, 53, 65, 0.1)",
           }}
-          elevation={6}
-        >
+          elevation={6}>
           <Stack
             direction="row"
             sx={{
@@ -142,8 +129,7 @@ export default function Container(props: ContainerProps) {
                   background: "#28364880",
                 },
               },
-            }}
-          >
+            }}>
             {action}
           </Stack>
         </Paper>

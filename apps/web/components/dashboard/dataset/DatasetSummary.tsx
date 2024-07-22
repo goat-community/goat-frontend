@@ -1,19 +1,17 @@
-import { METADATA_HEADER_ICONS } from "@/components/dashboard/catalog/CatalogDatasetCard";
-import { useGetMetadataValueTranslation } from "@/hooks/map/DatasetHooks";
-import { useTranslation } from "@/i18n/client";
-import { datasetMetadataAggregated, type Layer } from "@/lib/validations/layer";
-import type { ProjectLayer } from "@/lib/validations/project";
-import {
-  Divider,
-  Grid,
-  Link,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { Icon } from "@p4b/ui/components/Icon";
+import { Divider, Grid, Link, Stack, Typography, useTheme } from "@mui/material";
 import React from "react";
 import ReactMarkdown from "react-markdown";
+
+import { Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { type Layer, datasetMetadataAggregated } from "@/lib/validations/layer";
+import type { ProjectLayer } from "@/lib/validations/project";
+
+import { useGetMetadataValueTranslation } from "@/hooks/map/DatasetHooks";
+
+import { METADATA_HEADER_ICONS } from "@/components/dashboard/catalog/CatalogDatasetCard";
 
 interface DatasetSummaryProps {
   dataset: ProjectLayer | Layer;
@@ -33,9 +31,7 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
     {
       field: "data_reference_year",
       heading: t("metadata.headings.data_reference_year"),
-      noMetadataAvailable: t(
-        "metadata.no_metadata_available.data_reference_year",
-      ),
+      noMetadataAvailable: t("metadata.no_metadata_available.data_reference_year"),
       type: "text",
     },
     {
@@ -47,17 +43,13 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
     {
       field: "positional_accuracy",
       heading: t("metadata.headings.positional_accuracy"),
-      noMetadataAvailable: t(
-        "metadata.no_metadata_available.positional_accuracy",
-      ),
+      noMetadataAvailable: t("metadata.no_metadata_available.positional_accuracy"),
       type: "text",
     },
     {
       field: "attribute_accuracy",
       heading: t("metadata.headings.attribute_accuracy"),
-      noMetadataAvailable: t(
-        "metadata.no_metadata_available.attribute_accuracy",
-      ),
+      noMetadataAvailable: t("metadata.no_metadata_available.attribute_accuracy"),
       type: "text",
     },
     {
@@ -75,9 +67,7 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
     {
       field: "distributor_email",
       heading: t("metadata.headings.distributor_email"),
-      noMetadataAvailable: t(
-        "metadata.no_metadata_available.distributor_email",
-      ),
+      noMetadataAvailable: t("metadata.no_metadata_available.distributor_email"),
       type: "email",
     },
     {
@@ -99,66 +89,42 @@ const DatasetSummary: React.FC<DatasetSummaryProps> = ({ dataset }) => {
       <Grid container justifyContent="flex-start" spacing={4}>
         <Grid item xs={12} sm={12} md={8} lg={9}>
           <Stack spacing={6}>
-            {metadataSummaryFields.map(
-              ({ field, heading, noMetadataAvailable, type }) => (
-                <Stack key={field}>
-                  <Typography variant="caption">{heading}</Typography>
-                  <Divider />
-                  {!dataset[field] && (
-                    <Typography variant="body2" sx={{ fontStyle: "italic" }}>
-                      {noMetadataAvailable}
-                    </Typography>
-                  )}
-                  {type === "markdown" && dataset[field] && (
-                    <ReactMarkdown>{dataset[field]}</ReactMarkdown>
-                  )}
-                  {type === "email" && dataset[field] && (
-                    <Link
-                      href={`mailto:${dataset[field]}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {dataset[field]}
-                    </Link>
-                  )}
-                  {type === "url" && dataset[field] && (
-                    <Link
-                      href={dataset[field]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {dataset[field]}
-                    </Link>
-                  )}
-                  {type === "text" && dataset[field] && (
-                    <Typography>{dataset[field]}</Typography>
-                  )}
-                </Stack>
-              ),
-            )}
+            {metadataSummaryFields.map(({ field, heading, noMetadataAvailable, type }) => (
+              <Stack key={field}>
+                <Typography variant="caption">{heading}</Typography>
+                <Divider />
+                {!dataset[field] && (
+                  <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+                    {noMetadataAvailable}
+                  </Typography>
+                )}
+                {type === "markdown" && dataset[field] && <ReactMarkdown>{dataset[field]}</ReactMarkdown>}
+                {type === "email" && dataset[field] && (
+                  <Link href={`mailto:${dataset[field]}`} target="_blank" rel="noopener noreferrer">
+                    {dataset[field]}
+                  </Link>
+                )}
+                {type === "url" && dataset[field] && (
+                  <Link href={dataset[field]} target="_blank" rel="noopener noreferrer">
+                    {dataset[field]}
+                  </Link>
+                )}
+                {type === "text" && dataset[field] && <Typography>{dataset[field]}</Typography>}
+              </Stack>
+            ))}
           </Stack>
         </Grid>
         <Grid item xs={12} sm={12} md={4} lg={3} sx={{ pl: 0 }}>
           <Stack spacing={4}>
             {Object.keys(datasetMetadataAggregated.shape).map((key) => {
               return (
-                <Stack
-                  key={key}
-                  width="100%"
-                  alignItems="start"
-                  justifyContent="start"
-                >
+                <Stack key={key} width="100%" alignItems="start" justifyContent="start">
                   <Typography variant="caption">
                     {i18n.exists(`common:metadata.headings.${key}`)
                       ? t(`common:metadata.headings.${key}`)
                       : key}
                   </Typography>
-                  <Stack
-                    spacing={2}
-                    alignItems="center"
-                    justifyContent="start"
-                    direction="row"
-                  >
+                  <Stack spacing={2} alignItems="center" justifyContent="start" direction="row">
                     <Icon
                       iconName={METADATA_HEADER_ICONS[key]}
                       style={{ fontSize: 14 }}

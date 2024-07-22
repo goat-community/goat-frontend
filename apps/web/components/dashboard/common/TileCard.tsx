@@ -1,10 +1,5 @@
 "use client";
 
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
-import MoreMenu from "@/components/common/PopperMenu";
-import { useDateFnsLocale, useTranslation } from "@/i18n/client";
-import type { Layer } from "@/lib/validations/layer";
-import type { Project } from "@/lib/validations/project";
 import {
   Box,
   Card,
@@ -18,18 +13,24 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { formatDistance } from "date-fns";
 import { useState } from "react";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useDateFnsLocale, useTranslation } from "@/i18n/client";
+
+import type { Layer } from "@/lib/validations/layer";
+import type { Project } from "@/lib/validations/project";
+
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import MoreMenu from "@/components/common/PopperMenu";
 
 export interface TileCard {
   cardType: "list" | "grid";
   item: Project | Layer;
   moreMenuOptions?: PopperMenuItem[];
-  onMoreMenuSelect?: (
-    menuItem: PopperMenuItem,
-    contentItem: Project | Layer,
-  ) => void;
+  onMoreMenuSelect?: (menuItem: PopperMenuItem, contentItem: Project | Layer) => void;
   enableActions?: boolean;
   selected?: Project | Layer;
 }
@@ -54,22 +55,13 @@ const CardTags = ({ tags, maxTags = 5 }: CardTagsProps) => {
       {tags && (
         <Stack direction="row" spacing={2}>
           {visibleTags?.map((tag) => (
-            <Chip
-              key={tag}
-              size="small"
-              sx={{ px: 1, maxWidth: 100 }}
-              label={tag}
-            />
+            <Chip key={tag} size="small" sx={{ px: 1, maxWidth: 100 }} label={tag} />
           ))}
           {hiddenTags && hiddenTags.length > 0 && (
             <Grid item md="auto" key="show-more">
               <Tooltip title={hiddenTags.join(", ")} placement="top" arrow>
                 <div>
-                  <Chip
-                    size="small"
-                    sx={{ px: 1, maxWidth: 100 }}
-                    label={`+${hiddenTags.length}`}
-                  />
+                  <Chip size="small" sx={{ px: 1, maxWidth: 100 }} label={`+${hiddenTags.length}`} />
                 </div>
               </Tooltip>
             </Grid>
@@ -98,12 +90,9 @@ const TileCard = (props: TileCard) => {
           }}
           sx={{
             marginRight: "-12px",
-          }}
-        >
+          }}>
           <Icon
-            iconName={
-              cardType === "grid" ? ICON_NAME.MORE_VERT : ICON_NAME.MORE_HORIZ
-            }
+            iconName={cardType === "grid" ? ICON_NAME.MORE_VERT : ICON_NAME.MORE_HORIZ}
             fontSize="small"
           />
         </IconButton>
@@ -159,12 +148,7 @@ const TileCard = (props: TileCard) => {
 
   const gridContent = (
     <>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{ pb: theme.spacing(2) }}
-      >
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pb: theme.spacing(2) }}>
         {cardTitle}
         {moreMenu}
       </Stack>
@@ -205,15 +189,13 @@ const TileCard = (props: TileCard) => {
             fontWeight: "bold",
           }),
           flexDirection: cardType === "grid" ? "column" : "row",
-        }}
-      >
+        }}>
         {item?.thumbnail_url && cardType === "grid" && (
           <Box
             sx={{
               overflow: "hidden",
               height: 140,
-            }}
-          >
+            }}>
             <CardMedia
               component="img"
               sx={{
@@ -235,8 +217,7 @@ const TileCard = (props: TileCard) => {
               height: 56,
               width: 56,
               borderRadius: 1,
-            }}
-          >
+            }}>
             <CardMedia
               component="img"
               sx={{
@@ -259,8 +240,7 @@ const TileCard = (props: TileCard) => {
             ...(cardType === "list" && {
               "&:last-child": { pb: 0 },
             }),
-          }}
-        >
+          }}>
           {cardType === "grid" && gridContent}
           {cardType === "list" && (
             <Grid container alignItems="center" justifyContent="space-between">
@@ -275,8 +255,7 @@ const TileCard = (props: TileCard) => {
                     md={3}
                     sx={{
                       display: { xs: "none", sm: "block" },
-                    }}
-                  >
+                    }}>
                     <Box sx={{ px: 1, pb: 0 }} display="flex-start">
                       {updatedAtText}
                     </Box>
@@ -286,8 +265,7 @@ const TileCard = (props: TileCard) => {
                     md={3}
                     sx={{
                       display: { xs: "none", md: "block" },
-                    }}
-                  >
+                    }}>
                     <Box sx={{ px: 1, pb: 0 }} display="flex-start">
                       {createdAtText}
                     </Box>
@@ -298,8 +276,7 @@ const TileCard = (props: TileCard) => {
                     sm={2}
                     sx={{
                       display: { xs: "none", sm: "block" },
-                    }}
-                  >
+                    }}>
                     <Box display="flex-start">
                       <CardTags tags={item?.tags} maxTags={1} />
                     </Box>

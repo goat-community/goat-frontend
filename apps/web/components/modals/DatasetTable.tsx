@@ -1,22 +1,15 @@
-import useLayerFields from "@/hooks/map/CommonHooks";
-import { useDatasetCollectionItems } from "@/lib/api/layers";
 import { IconButton } from "@mui/material";
-
-import type {
-  GetCollectionItemsQueryParams,
-  Layer,
-} from "@/lib/validations/layer";
-import type { ProjectLayer } from "@/lib/validations/project";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  TablePagination,
-} from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Stack, TablePagination } from "@mui/material";
 import { useEffect, useState } from "react";
+
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useDatasetCollectionItems } from "@/lib/api/layers";
+import type { GetCollectionItemsQueryParams, Layer } from "@/lib/validations/layer";
+import type { ProjectLayer } from "@/lib/validations/project";
+
+import useLayerFields from "@/hooks/map/CommonHooks";
+
 import DatasetTable from "@/components/common/DatasetTable";
 
 interface DatasetTableDialogProps {
@@ -26,14 +19,10 @@ interface DatasetTableDialogProps {
   dataset: ProjectLayer | Layer;
 }
 
-const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
-  open,
-  onClose,
-  dataset,
-}) => {
+const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({ open, onClose, dataset }) => {
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(
     dataset["layer_id"] || dataset["id"] || "",
-    undefined,
+    undefined
   );
   const defaultParams = {
     limit: 50,
@@ -42,12 +31,8 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
   if (dataset["query"]) {
     defaultParams["filter"] = JSON.stringify(dataset["query"]);
   }
-  const [dataQueryParams, setDataQueryParams] =
-    useState<GetCollectionItemsQueryParams>(defaultParams);
-  const { data } = useDatasetCollectionItems(
-    dataset["layer_id"] || dataset["id"] || "",
-    dataQueryParams,
-  );
+  const [dataQueryParams, setDataQueryParams] = useState<GetCollectionItemsQueryParams>(defaultParams);
+  const { data } = useDatasetCollectionItems(dataset["layer_id"] || dataset["id"] || "", dataQueryParams);
 
   const [displayData, setDisplayData] = useState(data);
   useEffect(() => {
@@ -63,9 +48,7 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
     }));
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDataQueryParams({
       limit: parseInt(event.target.value, 10),
       offset: 0,
@@ -78,20 +61,12 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
         <Stack direction="row" spacing={1} justifyContent="space-between">
           {`${dataset.name}`}
           <IconButton onClick={() => onClose && onClose()}>
-            <Icon
-              iconName={ICON_NAME.CLOSE}
-              htmlColor="inherit"
-              fontSize="small"
-            />
+            <Icon iconName={ICON_NAME.CLOSE} htmlColor="inherit" fontSize="small" />
           </IconButton>
         </Stack>
       </DialogTitle>
       <DialogContent sx={{ px: 0, mx: 0, pb: 0, minHeight: "250px" }}>
-        <DatasetTable
-          areFieldsLoading={areFieldsLoading}
-          displayData={displayData}
-          fields={fields}
-        />
+        <DatasetTable areFieldsLoading={areFieldsLoading} displayData={displayData} fields={fields} />
       </DialogContent>
       <DialogActions sx={{ pb: 0 }}>
         {displayData && (
@@ -100,11 +75,7 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({
             component="div"
             count={displayData.numberMatched}
             rowsPerPage={dataQueryParams.limit}
-            page={
-              dataQueryParams.offset
-                ? dataQueryParams.offset / dataQueryParams.limit
-                : 0
-            }
+            page={dataQueryParams.offset ? dataQueryParams.offset / dataQueryParams.limit : 0}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />

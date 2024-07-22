@@ -1,50 +1,35 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Divider,
-  Skeleton,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingButton } from "@mui/lab";
+import { Box, Divider, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import { useTheme } from "@mui/material";
-import { useTranslation } from "@/i18n/client";
+import Cookies from "js-cookie";
+import { signOut } from "next-auth/react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Trans } from "react-i18next";
+import { toast } from "react-toastify";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { deleteOrganization, updateOrganization } from "@/lib/api/organizations";
+import { useOrganization } from "@/lib/api/users";
 import type { OrganizationUpdate } from "@/lib/validations/organization";
 import { organizationUpdateSchema } from "@/lib/validations/organization";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { LoadingButton } from "@mui/lab";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { RhfAvatar } from "@/components/common/form-inputs/AvatarUpload";
-import { toast } from "react-toastify";
 import ConfirmModal from "@/components/modals/Confirm";
-import { signOut } from "next-auth/react";
-import { useOrganization } from "@/lib/api/users";
-import {
-  deleteOrganization,
-  updateOrganization,
-} from "@/lib/api/organizations";
-import Cookies from "js-cookie";
 
 const OrganizationProfile = () => {
   const theme = useTheme();
   const { t } = useTranslation("common");
-  const {
-    organization,
-    mutate: mutateOrganization,
-    isLoading,
-  } = useOrganization();
-  const [isOrganizationUpdateBusy, setIsOrganizationUpdateBusy] =
-    useState<boolean>(false);
-  const [isDeleteOrganizationBusy, setIsDeleteOrganizationBusy] =
-    useState<boolean>(false);
-  const [
-    confirmDeleteOrganizationDialogOpen,
-    setConfirmDeleteOrganizationDialogOpen,
-  ] = useState(false);
+  const { organization, mutate: mutateOrganization, isLoading } = useOrganization();
+  const [isOrganizationUpdateBusy, setIsOrganizationUpdateBusy] = useState<boolean>(false);
+  const [isDeleteOrganizationBusy, setIsDeleteOrganizationBusy] = useState<boolean>(false);
+  const [confirmDeleteOrganizationDialogOpen, setConfirmDeleteOrganizationDialogOpen] = useState(false);
   const {
     register: registerOrganizationUpdate,
     handleSubmit: handleOrganizationUpdateSubmit,
@@ -107,19 +92,14 @@ const OrganizationProfile = () => {
   }
   return (
     <Box sx={{ p: 4 }}>
-      <Box
-        component="form"
-        onSubmit={handleOrganizationUpdateSubmit(onOrganizationUpdateSubmit)}
-      >
+      <Box component="form" onSubmit={handleOrganizationUpdateSubmit(onOrganizationUpdateSubmit)}>
         <Stack spacing={theme.spacing(6)}>
           <Divider />
           <Box>
             <Typography variant="body1" fontWeight="bold">
               {t("organization_information")}
             </Typography>
-            <Typography variant="caption">
-              {t("update_organization_information")}
-            </Typography>
+            <Typography variant="caption">{t("update_organization_information")}</Typography>
           </Box>
           <Divider />
 
@@ -146,22 +126,15 @@ const OrganizationProfile = () => {
                 error={errors.name ? true : false}
               />
 
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="flex-end"
-              >
+              <Stack direction="row" alignItems="center" justifyContent="flex-end">
                 <LoadingButton
                   loading={isOrganizationUpdateBusy}
                   variant="contained"
-                  startIcon={
-                    <Icon fontSize="small" iconName={ICON_NAME.SAVE} />
-                  }
+                  startIcon={<Icon fontSize="small" iconName={ICON_NAME.SAVE} />}
                   aria-label="update-profile"
                   name="update-profile"
                   disabled={isOrganizationUpdateBusy || !isDirty || !isValid}
-                  type="submit"
-                >
+                  type="submit">
                   {t("update")}
                 </LoadingButton>
               </Stack>
@@ -199,24 +172,15 @@ const OrganizationProfile = () => {
           />
 
           <Box>
-            <Typography
-              variant="body1"
-              fontWeight="bold"
-              color={theme.palette.error.main}
-            >
+            <Typography variant="body1" fontWeight="bold" color={theme.palette.error.main}>
               {t("danger_zone")}
             </Typography>
-            <Typography variant="caption">
-              {t("danger_zone_organization_description")}
-            </Typography>
+            <Typography variant="caption">{t("danger_zone_organization_description")}</Typography>
           </Box>
           <Divider />
           <Stack>
             <Typography variant="body1">
-              <Trans
-                i18nKey="common:danger_zone_organization_body"
-                components={{ b: <b /> }}
-              />
+              <Trans i18nKey="common:danger_zone_organization_body" components={{ b: <b /> }} />
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" justifyContent="flex-end">
@@ -231,8 +195,7 @@ const OrganizationProfile = () => {
               onClick={() => {
                 setConfirmDeleteOrganizationDialogOpen(true);
               }}
-              disabled={isOrganizationUpdateBusy}
-            >
+              disabled={isOrganizationUpdateBusy}>
               <Typography variant="body1" fontWeight="bold" color="inherit">
                 {t("delete_organization")}
               </Typography>

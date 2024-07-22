@@ -1,12 +1,9 @@
 import type { CatchmentAreaRoutingType } from "@/lib/validations/tools";
 import { catchmentAreaConfigDefaults } from "@/lib/validations/tools";
+
 import type { SelectorItem } from "@/types/map/common";
 
-export const getTravelCostConfigValues = (
-  min: number,
-  max: number,
-  ext?: string,
-) => {
+export const getTravelCostConfigValues = (min: number, max: number, ext?: string) => {
   const items = [] as SelectorItem[];
   for (let i = min; i <= max; i++) {
     items.push({
@@ -19,7 +16,7 @@ export const getTravelCostConfigValues = (
 
 export const getDefaultConfigValue = (
   routingType: CatchmentAreaRoutingType,
-  configType: "speed" | "max_travel_time" | "max_distance" | "steps",
+  configType: "speed" | "max_travel_time" | "max_distance" | "steps"
 ) => {
   const units: { [key: string]: string } = {
     speed: " km/h",

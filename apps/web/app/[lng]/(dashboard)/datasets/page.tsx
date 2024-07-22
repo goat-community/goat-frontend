@@ -1,27 +1,23 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Pagination,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { Box, Button, Container, Grid, Pagination, Paper, Stack, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useLayers } from "@/lib/api/layers";
-import TileGrid from "@/components/dashboard/common/TileGrid";
-import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
-import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
-import DatasetUploadModal from "@/components/modals/DatasetUpload";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
-import { useJobStatus } from "@/hooks/jobs/JobStatus";
+
+import { useLayers } from "@/lib/api/layers";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type { GetDatasetSchema } from "@/lib/validations/layer";
-import { useRouter } from "next/navigation";
+
+import { useJobStatus } from "@/hooks/jobs/JobStatus";
+
+import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
+import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
+import TileGrid from "@/components/dashboard/common/TileGrid";
+import DatasetUploadModal from "@/components/modals/DatasetUpload";
 
 const Datasets = () => {
   const router = useRouter();
@@ -47,26 +43,19 @@ const Datasets = () => {
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
-      <DatasetUploadModal
-        open={openDatasetUploadModal}
-        onClose={() => setOpenDatasetUploadModal(false)}
-      />
+      <DatasetUploadModal open={openDatasetUploadModal} onClose={() => setOpenDatasetUploadModal(false)} />
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           mb: 8,
-        }}
-      >
+        }}>
         <Typography variant="h6">{t("datasets")}</Typography>
         <Button
           disableElevation={true}
-          startIcon={
-            <Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />
-          }
-          onClick={() => setOpenDatasetUploadModal(true)}
-        >
+          startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />}
+          onClick={() => setOpenDatasetUploadModal(true)}>
           {t("add_dataset")}
         </Button>
       </Box>
@@ -84,10 +73,7 @@ const Datasets = () => {
         </Grid>
         <Grid item xs={3}>
           <Paper elevation={3} sx={{ backgroundImage: "none" }}>
-            <FoldersTreeView
-              queryParams={datasetSchema}
-              setQueryParams={setDatasetSchema}
-            />
+            <FoldersTreeView queryParams={datasetSchema} setQueryParams={setDatasetSchema} />
           </Paper>
         </Grid>
         <Grid item xs={9}>
@@ -103,12 +89,7 @@ const Datasets = () => {
             }}
           />
           {!isDatasetLoading && datasets && datasets?.items.length > 0 && (
-            <Stack
-              direction="row"
-              justifyContent="center"
-              alignItems="center"
-              sx={{ p: 4 }}
-            >
+            <Stack direction="row" justifyContent="center" alignItems="center" sx={{ p: 4 }}>
               <Pagination
                 count={datasets.pages || 1}
                 size="large"

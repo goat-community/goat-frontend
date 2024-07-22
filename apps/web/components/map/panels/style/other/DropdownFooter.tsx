@@ -1,5 +1,6 @@
-import { useTranslation } from "@/i18n/client";
 import { Box, Button, Stack, Typography } from "@mui/material";
+
+import { useTranslation } from "@/i18n/client";
 
 type DropdownFooterProps = {
   isValid: boolean;
@@ -14,19 +15,8 @@ const DropdownFooter = (props: DropdownFooterProps) => {
   return (
     <>
       <Box sx={{ px: 1 }}>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-end"
-          sx={{ px: 2 }}
-          spacing={1}
-        >
-          <Button
-            variant="text"
-            size="small"
-            sx={{ borderRadius: 0 }}
-            onClick={props.onCancel}
-          >
+        <Stack direction="row" alignItems="center" justifyContent="flex-end" sx={{ px: 2 }} spacing={1}>
+          <Button variant="text" size="small" sx={{ borderRadius: 0 }} onClick={props.onCancel}>
             <Typography variant="body2" fontWeight="bold">
               {props.cancelLabel || t("common:cancel")}
             </Typography>
@@ -37,8 +27,7 @@ const DropdownFooter = (props: DropdownFooterProps) => {
             color="primary"
             disabled={!props.isValid}
             sx={{ borderRadius: 0 }}
-            onClick={props.onApply}
-          >
+            onClick={props.onApply}>
             <Typography variant="body2" fontWeight="bold" color="inherit">
               {props.applyLabel || t("common:apply")}
             </Typography>

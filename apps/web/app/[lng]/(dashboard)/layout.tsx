@@ -1,10 +1,11 @@
 "use client";
 
-import DashboardSidebar from "@/components/dashboard/Sidebar";
-import Header from "@/components/header/Header";
 import type { Theme } from "@mui/material";
 import { Box, Stack, useMediaQuery } from "@mui/material";
 import { useState } from "react";
+
+import DashboardSidebar from "@/components/dashboard/Sidebar";
+import Header from "@/components/header/Header";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
@@ -35,8 +36,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             display: "flex",
             flexDirection: "column",
             overflowY: "auto",
-          }}
-        >
+          }}>
           {children}
         </Box>
       </Stack>

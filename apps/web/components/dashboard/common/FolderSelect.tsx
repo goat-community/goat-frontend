@@ -1,12 +1,14 @@
-import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InputAdornment from "@mui/material/InputAdornment";
-import { useTranslation } from "@/i18n/client";
+import TextField from "@mui/material/TextField";
+import React from "react";
+
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
 
 const FolderSelect = ({ folders, selectedFolder, setSelectedFolder }) => {
   const { t } = useTranslation("common");
@@ -52,11 +54,7 @@ const FolderSelect = ({ folders, selectedFolder, setSelectedFolder }) => {
             startAdornment: (
               <InputAdornment position="start">
                 <Icon
-                  iconName={
-                    selectedFolder?.id === "0"
-                      ? ICON_NAME.HOUSE
-                      : ICON_NAME.FOLDER
-                  }
+                  iconName={selectedFolder?.id === "0" ? ICON_NAME.HOUSE : ICON_NAME.FOLDER}
                   style={{ marginLeft: 2 }}
                   fontSize="small"
                 />

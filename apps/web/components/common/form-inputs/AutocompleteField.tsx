@@ -1,15 +1,11 @@
-import * as React from "react";
-import type { Control, Path, FieldValues } from "react-hook-form";
-import { Controller } from "react-hook-form";
-import TextField from "@mui/material/TextField";
+import { Box, InputAdornment, ListItemIcon, Typography } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import {
-  Box,
-  InputAdornment,
-  ListItemIcon,
-  Typography,
-} from "@mui/material";
-import { Icon, type ICON_NAME } from "@p4b/ui/components/Icon";
+import TextField from "@mui/material/TextField";
+import * as React from "react";
+import type { Control, FieldValues, Path } from "react-hook-form";
+import { Controller } from "react-hook-form";
+
+import { type ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 interface RhfAutocompleteFieldProps<
   O extends { value: string; label: string; icon?: React.ReactNode },
@@ -27,7 +23,7 @@ export const RhfAutocompleteField = <
   O extends { value: string; label: string; icon?: React.ReactNode },
   TField extends FieldValues,
 >(
-  props: RhfAutocompleteFieldProps<O, TField>,
+  props: RhfAutocompleteFieldProps<O, TField>
 ) => {
   const { control, options, name } = props;
   return (
@@ -62,14 +58,8 @@ export const RhfAutocompleteField = <
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                  }}
-                >
-                  {props.startIcon && (
-                    <Icon
-                      iconName={props.startIcon}
-                      style={{ marginRight: 10 }}
-                    />
-                  )}
+                  }}>
+                  {props.startIcon && <Icon iconName={props.startIcon} style={{ marginRight: 10 }} />}
                   <TextField
                     {...params}
                     disabled={props.disabled}
@@ -79,9 +69,7 @@ export const RhfAutocompleteField = <
                     InputProps={{
                       ...params.InputProps,
                       startAdornment: selectedOption?.icon && (
-                        <InputAdornment position="start">
-                          {selectedOption.icon}
-                        </InputAdornment>
+                        <InputAdornment position="start">{selectedOption.icon}</InputAdornment>
                       ),
                     }}
                     helperText={error ? error.message : null}
@@ -95,8 +83,7 @@ export const RhfAutocompleteField = <
                     <ListItemIcon
                       sx={{
                         minWidth: 35,
-                      }}
-                    >
+                      }}>
                       {option.icon}
                     </ListItemIcon>
                   )}

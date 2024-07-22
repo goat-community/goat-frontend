@@ -1,9 +1,14 @@
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
-import { useTranslation } from "@/i18n/client";
-import type { OrganizationMember } from "@/lib/validations/organization";
-import { OrgMemberActions } from "@/types/common";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useState } from "react";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { OrganizationMember } from "@/lib/validations/organization";
+
+import { OrgMemberActions } from "@/types/common";
+
+import type { PopperMenuItem } from "@/components/common/PopperMenu";
 
 export const useOrgMemberSettingsMoreMenu = () => {
   const { t } = useTranslation("common");
@@ -43,10 +48,7 @@ export const useOrgMemberSettingsMoreMenu = () => {
     setMoreMenuState(undefined);
   };
 
-  const openMoreMenu = (
-    menuItem: PopperMenuItem,
-    memberItem: OrganizationMember,
-  ) => {
+  const openMoreMenu = (menuItem: PopperMenuItem, memberItem: OrganizationMember) => {
     setActiveMember(memberItem);
     setMoreMenuState(menuItem);
   };

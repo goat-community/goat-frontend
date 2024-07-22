@@ -1,14 +1,13 @@
-import { useLayerQueryables } from "@/lib/api/layers";
 import { useMemo } from "react";
+
+import { useLayerQueryables } from "@/lib/api/layers";
 
 const useLayerFields = (
   dataset_id: string,
   filterType?: "string" | "number" | undefined,
-  hiddenFields: string[] = ["layer_id", "id"],
+  hiddenFields: string[] = ["layer_id", "id"]
 ) => {
-  const { queryables, isLoading, isError } = useLayerQueryables(
-    dataset_id || "",
-  );
+  const { queryables, isLoading, isError } = useLayerQueryables(dataset_id || "");
 
   const layerFields = useMemo(() => {
     if (!queryables || !dataset_id) return [];

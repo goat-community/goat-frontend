@@ -1,11 +1,14 @@
 "use client";
 
-import { useTranslation } from "@/i18n/client";
-import type { NavItem } from "@/types/common/navigation";
 import { Box, Tab, Tabs } from "@mui/material";
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { NavItem } from "@/types/common/navigation";
 
 interface OrganizationLayoutProps {
   children: React.ReactNode;
@@ -31,11 +34,7 @@ const OrganizationLayout = (props: OrganizationLayoutProps) => {
   ];
   return (
     <>
-      <Tabs
-        value={navigation.find((item) => item.current)?.link || false}
-        variant="fullWidth"
-        scrollButtons
-      >
+      <Tabs value={navigation.find((item) => item.current)?.link || false} variant="fullWidth" scrollButtons>
         {navigation.map((item) => (
           <Tab
             LinkComponent={NextLink}
@@ -43,11 +42,7 @@ const OrganizationLayout = (props: OrganizationLayoutProps) => {
             href={`/settings/organization${item.link}`}
             icon={
               <Box sx={{ pr: 2 }}>
-                <Icon
-                  iconName={item.icon}
-                  htmlColor="inherit"
-                  style={{ fontSize: 15 }}
-                />
+                <Icon iconName={item.icon} htmlColor="inherit" style={{ fontSize: 15 }} />
               </Box>
             }
             iconPosition="start"

@@ -1,4 +1,3 @@
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import {
   Collapse,
   IconButton,
@@ -10,15 +9,20 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useFolders } from "@/lib/api/folders";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { SelectedFolderForEdit } from "@/components/modals/Folder";
+
+import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+
+import { useTranslation } from "@/i18n/client";
+
+import { useFolders } from "@/lib/api/folders";
+import type { GetDatasetSchema } from "@/lib/validations/layer";
+import type { GetProjectsQueryParams } from "@/lib/validations/project";
+
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
-import type { GetProjectsQueryParams } from "@/lib/validations/project";
+import type { SelectedFolderForEdit } from "@/components/modals/Folder";
 import FolderModal from "@/components/modals/Folder";
-import { useTranslation } from "@/i18n/client";
-import type { GetDatasetSchema } from "@/lib/validations/layer";
 
 type EditModal = {
   type: "create" | "update" | "delete";
@@ -102,15 +106,10 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
       color: theme.palette.error.main,
     },
   ];
-  const [selectedFolder, setSelectedFolder] = useState<
-    SelectedFolder | undefined
-  >(undefined);
+  const [selectedFolder, setSelectedFolder] = useState<SelectedFolder | undefined>(undefined);
 
   const handleListItemClick = useCallback(
-    (
-      _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-      item: SelectedFolder,
-    ) => {
+    (_event: React.MouseEvent<HTMLDivElement, MouseEvent>, item: SelectedFolder) => {
       setSelectedFolder(item);
       if (item.id !== "0" && item.type === "folder") {
         setQueryParams({
@@ -122,15 +121,12 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
         setQueryParams(rest);
       }
     },
-    [queryParams, setQueryParams],
+    [queryParams, setQueryParams]
   );
 
   useEffect(() => {
     if (!selectedFolder && folders && homeFolder) {
-      handleListItemClick(
-        {} as React.MouseEvent<HTMLDivElement, MouseEvent>,
-        homeFolder,
-      );
+      handleListItemClick({} as React.MouseEvent<HTMLDivElement, MouseEvent>, homeFolder);
     }
   }, [folders, handleListItemClick, homeFolder, selectedFolder]);
 
@@ -155,179 +151,134 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
         selectedFolder={editModal?.selectedFolder}
       />
 
-      <List
-        sx={{ width: "100%", maxWidth: 360 }}
-        component="nav"
-        aria-labelledby="content-tree-view"
-      >
-        {[folders ?? [], teams ?? [], organizations ?? []].map(
-          (folder, typeIndex) => (
-            <div key={typeIndex}>
-              <ListItemButton
-                disableRipple
-                selected={
-                  selectedFolder?.type === folderTypes[typeIndex] &&
-                  !open[typeIndex]
-                }
-                onClick={() => {
-                  setOpen((prevOpen) => {
-                    const newOpen = [...prevOpen];
-                    newOpen[typeIndex] = !prevOpen[typeIndex];
-                    return newOpen;
-                  });
-                }}
-              >
-                {open[typeIndex] ? (
-                  <Icon
-                    iconName={ICON_NAME.CHEVRON_DOWN}
-                    style={{ fontSize: "15px" }}
-                  />
-                ) : (
-                  <Icon
-                    iconName={ICON_NAME.CHEVRON_RIGHT}
-                    style={{ fontSize: "15px" }}
-                  />
-                )}
+      <List sx={{ width: "100%", maxWidth: 360 }} component="nav" aria-labelledby="content-tree-view">
+        {[folders ?? [], teams ?? [], organizations ?? []].map((folder, typeIndex) => (
+          <div key={typeIndex}>
+            <ListItemButton
+              disableRipple
+              selected={selectedFolder?.type === folderTypes[typeIndex] && !open[typeIndex]}
+              onClick={() => {
+                setOpen((prevOpen) => {
+                  const newOpen = [...prevOpen];
+                  newOpen[typeIndex] = !prevOpen[typeIndex];
+                  return newOpen;
+                });
+              }}>
+              {open[typeIndex] ? (
+                <Icon iconName={ICON_NAME.CHEVRON_DOWN} style={{ fontSize: "15px" }} />
+              ) : (
+                <Icon iconName={ICON_NAME.CHEVRON_RIGHT} style={{ fontSize: "15px" }} />
+              )}
 
-                <ListItemIcon sx={{ ml: 3, minWidth: "40px" }}>
-                  <Icon
-                    iconName={getIconName(
-                      folderTypes[typeIndex],
-                      selectedFolder?.id ?? "",
-                    )}
-                    fontSize="small"
-                    htmlColor={
-                      selectedFolder?.type === folderTypes[typeIndex] &&
-                      !open[typeIndex]
-                        ? theme.palette.primary.main
-                        : "inherit"
-                    }
-                  />
-                </ListItemIcon>
-                <ListItemText
-                  sx={{
-                    "& .MuiTypography-root": {
-                      ...(selectedFolder?.type === folderTypes[typeIndex] &&
-                        !open[typeIndex] && {
-                          color: theme.palette.primary.main,
-                          fontWeight: 700,
-                        }),
-                    },
-                  }}
-                  primary={
-                    <Typography variant="body1">
-                      {selectedFolder?.type === folderTypes[typeIndex] &&
-                      !open[typeIndex]
-                        ? `${folderTypeTitles[typeIndex]} / ${selectedFolder?.name}`
-                        : `${folderTypeTitles[typeIndex]}`}
-                    </Typography>
+              <ListItemIcon sx={{ ml: 3, minWidth: "40px" }}>
+                <Icon
+                  iconName={getIconName(folderTypes[typeIndex], selectedFolder?.id ?? "")}
+                  fontSize="small"
+                  htmlColor={
+                    selectedFolder?.type === folderTypes[typeIndex] && !open[typeIndex]
+                      ? theme.palette.primary.main
+                      : "inherit"
                   }
                 />
-                {typeIndex === 0 && enableActions && (
-                  <Tooltip title={t("new_folder")} placement="top">
-                    <IconButton
-                      size="small"
-                      onClick={(event) => {
-                        setEditModal({
-                          type: "create",
-                          open: true,
-                        });
-                        event.stopPropagation();
-                      }}
-                    >
+              </ListItemIcon>
+              <ListItemText
+                sx={{
+                  "& .MuiTypography-root": {
+                    ...(selectedFolder?.type === folderTypes[typeIndex] &&
+                      !open[typeIndex] && {
+                        color: theme.palette.primary.main,
+                        fontWeight: 700,
+                      }),
+                  },
+                }}
+                primary={
+                  <Typography variant="body1">
+                    {selectedFolder?.type === folderTypes[typeIndex] && !open[typeIndex]
+                      ? `${folderTypeTitles[typeIndex]} / ${selectedFolder?.name}`
+                      : `${folderTypeTitles[typeIndex]}`}
+                  </Typography>
+                }
+              />
+              {typeIndex === 0 && enableActions && (
+                <Tooltip title={t("new_folder")} placement="top">
+                  <IconButton
+                    size="small"
+                    onClick={(event) => {
+                      setEditModal({
+                        type: "create",
+                        open: true,
+                      });
+                      event.stopPropagation();
+                    }}>
+                    <Icon iconName={ICON_NAME.FOLDER_NEW} fontSize="small" htmlColor="inherit" />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </ListItemButton>
+            <Collapse in={open[typeIndex]} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {folder.map((item) => (
+                  <ListItemButton
+                    disableRipple
+                    selected={selectedFolder?.id === item.id}
+                    onClick={(event) =>
+                      handleListItemClick(event, {
+                        type: folderTypes[typeIndex] as "folder" | "team" | "organization",
+                        id: item.id,
+                        name: item.name,
+                      })
+                    }
+                    sx={{
+                      pl: 10,
+                      ...(selectedFolder?.id === item.id && {
+                        color: theme.palette.primary.main,
+                      }),
+                    }}
+                    key={item.id}>
+                    <ListItemIcon sx={{ ml: 4, minWidth: "40px" }}>
                       <Icon
-                        iconName={ICON_NAME.FOLDER_NEW}
+                        iconName={getIconName(folderTypes[typeIndex], item.id)}
                         fontSize="small"
-                        htmlColor="inherit"
+                        htmlColor={selectedFolder?.id === item.id ? theme.palette.primary.main : "inherit"}
                       />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </ListItemButton>
-              <Collapse in={open[typeIndex]} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {folder.map((item) => (
-                    <ListItemButton
-                      disableRipple
-                      selected={selectedFolder?.id === item.id}
-                      onClick={(event) =>
-                        handleListItemClick(event, {
-                          type: folderTypes[typeIndex] as
-                            | "folder"
-                            | "team"
-                            | "organization",
-                          id: item.id,
-                          name: item.name,
-                        })
-                      }
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.name}
                       sx={{
-                        pl: 10,
-                        ...(selectedFolder?.id === item.id && {
-                          color: theme.palette.primary.main,
-                        }),
+                        "& .MuiTypography-root": {
+                          ...(selectedFolder?.id === item.id && {
+                            color: theme.palette.primary.main,
+                            fontWeight: 700,
+                          }),
+                        },
                       }}
-                      key={item.id}
-                    >
-                      <ListItemIcon sx={{ ml: 4, minWidth: "40px" }}>
-                        <Icon
-                          iconName={getIconName(
-                            folderTypes[typeIndex],
-                            item.id,
-                          )}
-                          fontSize="small"
-                          htmlColor={
-                            selectedFolder?.id === item.id
-                              ? theme.palette.primary.main
-                              : "inherit"
-                          }
-                        />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item.name}
-                        sx={{
-                          "& .MuiTypography-root": {
-                            ...(selectedFolder?.id === item.id && {
-                              color: theme.palette.primary.main,
-                              fontWeight: 700,
-                            }),
-                          },
+                    />
+                    {folderTypes[typeIndex] === "folder" && item?.name !== "home" && enableActions && (
+                      <MoreMenu
+                        menuItems={moreMenuItems}
+                        menuButton={
+                          <IconButton size="medium">
+                            <Icon iconName={ICON_NAME.MORE_VERT} fontSize="small" />
+                          </IconButton>
+                        }
+                        onSelect={(menuItem: PopperMenuItem) => {
+                          setEditModal({
+                            type: menuItem.id === "rename" ? "update" : "delete",
+                            selectedFolder: {
+                              id: item.id,
+                              name: item.name,
+                            },
+                            open: true,
+                          });
                         }}
                       />
-                      {folderTypes[typeIndex] === "folder" &&
-                        item?.name !== "home" &&
-                        enableActions && (
-                          <MoreMenu
-                            menuItems={moreMenuItems}
-                            menuButton={
-                              <IconButton size="medium">
-                                <Icon
-                                  iconName={ICON_NAME.MORE_VERT}
-                                  fontSize="small"
-                                />
-                              </IconButton>
-                            }
-                            onSelect={(menuItem: PopperMenuItem) => {
-                              setEditModal({
-                                type:
-                                  menuItem.id === "rename"
-                                    ? "update"
-                                    : "delete",
-                                selectedFolder: {
-                                  id: item.id,
-                                  name: item.name,
-                                },
-                                open: true,
-                              });
-                            }}
-                          />
-                        )}
-                    </ListItemButton>
-                  ))}
-                </List>
-              </Collapse>
-            </div>
-          ),
-        )}
+                    )}
+                  </ListItemButton>
+                ))}
+              </List>
+            </Collapse>
+          </div>
+        ))}
       </List>
     </>
   );

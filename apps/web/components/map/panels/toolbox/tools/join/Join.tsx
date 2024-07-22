@@ -1,31 +1,33 @@
-import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
-import Container from "@/components/map/panels/Container";
-import SectionHeader from "@/components/map/panels/common/SectionHeader";
-import SectionOptions from "@/components/map/panels/common/SectionOptions";
-import Selector from "@/components/map/panels/common/Selector";
-import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
-import ToolsHeader from "@/components/map/panels/toolbox/common/ToolsHeader";
-import useLayerFields from "@/hooks/map/CommonHooks";
-import {
-  useLayerByGeomType,
-  useLayerDatasetId,
-  useStatisticValues,
-} from "@/hooks/map/ToolsHooks";
-import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+import { Box, Typography, useTheme } from "@mui/material";
+import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
 import { useJobs } from "@/lib/api/jobs";
 import { computeJoin } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import { joinSchema, statisticOperationEnum } from "@/lib/validations/tools";
+
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
-import { Box, Typography, useTheme } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+
+import useLayerFields from "@/hooks/map/CommonHooks";
+import { useLayerByGeomType, useLayerDatasetId, useStatisticValues } from "@/hooks/map/ToolsHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
+import Container from "@/components/map/panels/Container";
+import SectionHeader from "@/components/map/panels/common/SectionHeader";
+import SectionOptions from "@/components/map/panels/common/SectionOptions";
+import Selector from "@/components/map/panels/common/Selector";
+import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
+import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
 
 const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { projectId } = useParams();
@@ -37,32 +39,20 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
   });
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
-  const { filteredLayers } = useLayerByGeomType(
-    ["feature", "table"],
-    undefined,
-    projectId as string,
-  );
+  const { filteredLayers } = useLayerByGeomType(["feature", "table"], undefined, projectId as string);
 
   // Target
-  const [targetLayer, setTargetLayer] = useState<SelectorItem | undefined>(
-    undefined,
-  );
-  const [targetSelectedField, setTargetSelectedField] = useState<
-    LayerFieldType | undefined
-  >(undefined);
+  const [targetLayer, setTargetLayer] = useState<SelectorItem | undefined>(undefined);
+  const [targetSelectedField, setTargetSelectedField] = useState<LayerFieldType | undefined>(undefined);
 
   const targetLayerDatasetId = useLayerDatasetId(
     targetLayer?.value as number | undefined,
-    projectId as string,
+    projectId as string
   );
 
   // Join
-  const [joinLayer, setJoinLayer] = useState<SelectorItem | undefined>(
-    undefined,
-  );
-  const [joinSelectedField, setJoinSelectedField] = useState<
-    LayerFieldType | undefined
-  >(undefined);
+  const [joinLayer, setJoinLayer] = useState<SelectorItem | undefined>(undefined);
+  const [joinSelectedField, setJoinSelectedField] = useState<LayerFieldType | undefined>(undefined);
 
   useEffect(() => {
     if (targetLayer) {
@@ -85,23 +75,18 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
   }, [joinLayer, setStatisticField]);
 
-  const joinLayerDatasetId = useLayerDatasetId(
-    joinLayer?.value as number | undefined,
-    projectId as string,
-  );
+  const joinLayerDatasetId = useLayerDatasetId(joinLayer?.value as number | undefined, projectId as string);
 
   // Fields have to be the same type
   const { layerFields: targetFields } = useLayerFields(
-    targetLayerDatasetId || "",
+    targetLayerDatasetId || ""
     // joinSelectedField?.type,
   );
   const { layerFields: joinFields } = useLayerFields(
-    joinLayerDatasetId || "",
+    joinLayerDatasetId || ""
     // targetSelectedField?.type,
   );
-  const { layerFields: allJoinFields } = useLayerFields(
-    joinLayerDatasetId || "",
-  );
+  const { layerFields: allJoinFields } = useLayerFields(joinLayerDatasetId || "");
 
   // List of target and join layer
   const targetLayers = useMemo(() => {
@@ -121,9 +106,7 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
   // Filters the join layer fields based on the selected statistic method
   const filteredStatisticFields = useMemo(() => {
     return allJoinFields.filter((field) => {
-      if (
-        statisticMethodSelected?.value === statisticOperationEnum.Enum.count
-      ) {
+      if (statisticMethodSelected?.value === statisticOperationEnum.Enum.count) {
         return field.type === "number" || field.type === "string";
       }
       return field.type === "number";
@@ -142,13 +125,7 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
       return false;
     }
     return true;
-  }, [
-    targetLayer,
-    joinLayer,
-    targetSelectedField,
-    joinSelectedField,
-    statisticMethodSelected,
-  ]);
+  }, [targetLayer, joinLayer, targetSelectedField, joinSelectedField, statisticMethodSelected]);
 
   const handleRun = async () => {
     const payload = {
@@ -198,13 +175,9 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
             sx={{
               display: "flex",
               flexDirection: "column",
-            }}
-          >
+            }}>
             {/* DESCRIPTION */}
-            <Typography
-              variant="body2"
-              sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}
-            >
+            <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
               {t("join_description")}
             </Typography>
             <SectionHeader
@@ -220,9 +193,7 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
                 <>
                   <Selector
                     selectedItems={targetLayer}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       setTargetLayer(item as SelectorItem);
                     }}
                     items={targetLayers}
@@ -235,9 +206,7 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
 
                   <Selector
                     selectedItems={joinLayer}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       setJoinLayer(item as SelectorItem);
                     }}
                     items={joinLayers}
@@ -302,9 +271,7 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
                 <>
                   <Selector
                     selectedItems={statisticMethodSelected}
-                    setSelectedItems={(
-                      item: SelectorItem[] | SelectorItem | undefined,
-                    ) => {
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       setStatisticMethodSelected(item as SelectorItem);
                     }}
                     items={statisticMethods}

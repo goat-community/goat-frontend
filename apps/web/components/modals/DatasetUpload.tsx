@@ -1,8 +1,5 @@
-import { MuiFileInput } from "@/components/common/FileInput";
-import { useFolders } from "@/lib/api/folders";
-import type { GetContentQueryParams } from "@/lib/validations/common";
-import type { Folder } from "@/lib/validations/folder";
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
   Box,
   Button,
@@ -17,23 +14,25 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import LoadingButton from "@mui/lab/LoadingButton";
-
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import type { LayerMetadata } from "@/lib/validations/layer";
-import {
-  createFeatureLayerSchema,
-  layerMetadataSchema,
-} from "@/lib/validations/layer";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createInternalLayer, layerFileUpload } from "@/lib/api/layers";
 import { toast } from "react-toastify";
-import { useJobs } from "@/lib/api/jobs";
+
 import { useTranslation } from "@/i18n/client";
-import FolderSelect from "@/components/dashboard/common/FolderSelect";
+
+import { useFolders } from "@/lib/api/folders";
+import { useJobs } from "@/lib/api/jobs";
+import { createInternalLayer, layerFileUpload } from "@/lib/api/layers";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import type { GetContentQueryParams } from "@/lib/validations/common";
+import type { Folder } from "@/lib/validations/folder";
+import type { LayerMetadata } from "@/lib/validations/layer";
+import { createFeatureLayerSchema, layerMetadataSchema } from "@/lib/validations/layer";
+
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
+
+import { MuiFileInput } from "@/components/common/FileInput";
+import FolderSelect from "@/components/dashboard/common/FolderSelect";
 
 interface DatasetUploadDialogProps {
   open: boolean;
@@ -41,20 +40,12 @@ interface DatasetUploadDialogProps {
   projectId?: string;
 }
 
-const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
-  open,
-  onClose,
-  projectId,
-}) => {
+const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({ open, onClose, projectId }) => {
   const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
 
-  const steps = [
-    t("select_file"),
-    t("destination_and_metadata"),
-    t("confirmation"),
-  ];
+  const steps = [t("select_file"), t("destination_and_metadata"), t("confirmation")];
   const { mutate } = useJobs({
     read: false,
   });
@@ -67,9 +58,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   const [fileValue, setFileValue] = useState<File>();
   const [fileUploadError, setFileUploadError] = useState<string>();
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>();
-  const [datasetType, setDatasetType] = useState<"feature_layer" | "table">(
-    "feature_layer",
-  );
+  const [datasetType, setDatasetType] = useState<"feature_layer" | "table">("feature_layer");
   const [isBusy, setIsBusy] = useState(false);
   useEffect(() => {
     const homeFolder = folders?.find((folder) => folder.name === "home");
@@ -104,9 +93,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
     setFileUploadError(undefined);
     setFileValue(undefined);
     if (file && file.name) {
-      const isAcceptedType = acceptedFileTypes.some((type) =>
-        file.name.endsWith(type),
-      );
+      const isAcceptedType = acceptedFileTypes.some((type) => file.name.endsWith(type));
       if (!isAcceptedType) {
         setFileUploadError("Invalid file type. Please select a file of type");
         return;
@@ -152,10 +139,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
   const handleUpload = async () => {
     try {
       setIsBusy(true);
-      if (
-        (datasetType === "feature_layer" || datasetType === "table") &&
-        fileValue !== undefined
-      ) {
+      if ((datasetType === "feature_layer" || datasetType === "table") && fileValue !== undefined) {
         const uploadResponse = await layerFileUpload(fileValue);
         const datasetId = uploadResponse?.dataset_id;
         const payload = createFeatureLayerSchema.parse({
@@ -171,7 +155,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         }
       }
     } catch (error) {
-      toast.error(t('error_uploading_dataset'));
+      toast.error(t("error_uploading_dataset"));
       console.error("error", error);
     } finally {
       handleOnClose();
@@ -195,9 +179,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
       <Box sx={{ px: 4 }}>
         {activeStep === 0 && (
           <>
-            <Typography variant="caption">
-              {t("select_file_to_upload")}
-            </Typography>
+            <Typography variant="caption">{t("select_file_to_upload")}</Typography>
 
             <MuiFileInput
               sx={{
@@ -212,14 +194,11 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
               value={fileValue}
               multiple={false}
               onChange={handleChange}
-              placeholder={`${t(
-                "eg",
-              )} file.gpkg, file.geojson, shapefile.zip`}
+              placeholder={`${t("eg")} file.gpkg, file.geojson, shapefile.zip`}
             />
             <Typography variant="caption">
-              {t("supported")} <b>GeoPackage</b>,{" "}
-              <b>GeoJSON</b>, <b>Shapefile (.zip)</b>, <b>KML</b>, <b>CSV</b>,{" "}
-              <b>XLSX</b>
+              {t("supported")} <b>GeoPackage</b>, <b>GeoJSON</b>, <b>Shapefile (.zip)</b>, <b>KML</b>,{" "}
+              <b>CSV</b>, <b>XLSX</b>
             </Typography>
           </>
         )}
@@ -255,9 +234,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
         )}
         {activeStep === 2 && (
           <Stack direction="column" spacing={4}>
-            <Typography variant="caption">
-              {t("review")}
-            </Typography>
+            <Typography variant="caption">{t("review")}</Typography>
             <Typography variant="body2">
               <b>{t("file")}:</b> {fileValue?.name}
             </Typography>
@@ -268,8 +245,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
               <b>{t("name")}:</b> {getValues("name")}
             </Typography>
             <Typography variant="body2">
-              <b>{t("description")}:</b>{" "}
-              {getValues("description")}
+              <b>{t("description")}:</b> {getValues("description")}
             </Typography>
           </Stack>
         )}
@@ -280,8 +256,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
           pt: 6,
           pb: 2,
           justifyContent: "space-between",
-        }}
-      >
+        }}>
         <Stack direction="row" spacing={2} justifyContent="flex-start">
           {activeStep > 0 && (
             <Button variant="text" onClick={handledBack}>
@@ -301,13 +276,11 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
             <Button
               disabled={
                 (activeStep === 0 && fileValue === null) ||
-                (activeStep === 1 &&
-                  (isValid !== true || selectedFolder === null))
+                (activeStep === 1 && (isValid !== true || selectedFolder === null))
               }
               onClick={handleNext}
               variant="outlined"
-              color="primary"
-            >
+              color="primary">
               <Typography variant="body2" fontWeight="bold" color="inherit">
                 {t("next")}
               </Typography>
@@ -319,8 +292,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({
               disabled={isBusy}
               loading={isBusy}
               variant="contained"
-              color="primary"
-            >
+              color="primary">
               <Typography variant="body2" fontWeight="bold" color="inherit">
                 {t("upload")}
               </Typography>

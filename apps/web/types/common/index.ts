@@ -22,7 +22,7 @@ export enum MapLayerActions {
 
 export enum ScenarioActions {
   EDIT = "edit",
-  RENAME = "rename",
+  EDIT_METADATA = "editMetadata",
   DELETE = "delete",
 }
 

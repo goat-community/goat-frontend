@@ -1,7 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+
+import { jobsReduces } from "@/lib/store/jobs/slice";
+
 import { layerReducer } from "./layer/slice";
 import { mapReducer } from "./map/slice";
-import { jobsReduces } from "@/lib/store/jobs/slice";
 
 const store = configureStore({
   reducer: {

@@ -1,18 +1,12 @@
-import { useTranslation } from "@/i18n/client";
-import { useMemo } from "react";
-import getUnicodeFlagIcon from "country-flag-icons/unicode";
 import { countries } from "country-flag-icons";
+import getUnicodeFlagIcon from "country-flag-icons/unicode";
+import { useMemo } from "react";
+
+import { useTranslation } from "@/i18n/client";
 
 const regions = ["EU"];
 
-const orgTypes = [
-  "",
-  "government",
-  "private",
-  "non_profit",
-  "education",
-  "other",
-];
+const orgTypes = ["", "government", "private", "non_profit", "education", "other"];
 
 const orgIndustry = [
   "",
@@ -72,9 +66,7 @@ export const useOrganizationSetup = () => {
 
   const countriesOptions = useMemo(() => {
     const filtered = ["EU"];
-    const filteredCountries = countries.filter(
-      (code) => !filtered.includes(code),
-    );
+    const filteredCountries = countries.filter((code) => !filtered.includes(code));
     return filteredCountries.map((countryCode) => {
       return {
         value: countryCode,

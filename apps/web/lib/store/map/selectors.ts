@@ -7,5 +7,5 @@ export const selectActiveBasemap = createSelector(
   [selectBasemaps, selectActiveBasemapValue],
   (basemaps, activeBasemapValue) => {
     return basemaps.find((basemap) => basemap.value === activeBasemapValue);
-  },
+  }
 );

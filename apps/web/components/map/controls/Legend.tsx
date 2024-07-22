@@ -1,6 +1,10 @@
-import EmptySection from "@/components/common/EmptySection";
-import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
+import { Stack, Tooltip, Typography } from "@mui/material";
+import { useMemo } from "react";
+
+import { ICON_NAME } from "@p4b/ui/components/Icon";
+
 import { useTranslation } from "@/i18n/client";
+
 import { formatNumber, rgbToHex } from "@/lib/utils/helpers";
 import type {
   FeatureLayerPointProperties,
@@ -8,10 +12,11 @@ import type {
   LayerClassBreaks,
 } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
+
 import type { RGBColor } from "@/types/map/color";
-import { Stack, Tooltip, Typography } from "@mui/material";
-import { ICON_NAME } from "@p4b/ui/components/Icon";
-import { useMemo } from "react";
+
+import EmptySection from "@/components/common/EmptySection";
+import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
 
 const DEFAULT_COLOR = "#000000";
 export interface LegendProps {
@@ -39,7 +44,7 @@ const createRangeAndColor = (
   rangeEnd: number,
   color: string,
   isFirst?: boolean,
-  isLast?: boolean,
+  isLast?: boolean
 ): void => {
   const range = `${isFirst ? "<" : ""}${formatNumber(rangeStart, 2)} -
     ${isLast ? ">" : ""}${formatNumber(rangeEnd, 2)}`;
@@ -49,10 +54,7 @@ const createRangeAndColor = (
   });
 };
 
-function getLegendColorMap(
-  properties: FeatureLayerProperties,
-  type: "color" | "stroke_color",
-) {
+function getLegendColorMap(properties: FeatureLayerProperties, type: "color" | "stroke_color") {
   const colorMap = [] as ColorMapItem[];
   if (properties?.[`${type}_field`]) {
     if (["ordinal"].includes(properties[`${type}_scale`])) {
@@ -64,9 +66,7 @@ function getLegendColorMap(
       });
     } else {
       const scaleType = properties[`${type}_scale`] as string;
-      let classBreaksValues = properties[
-        `${type}_scale_breaks`
-      ] as LayerClassBreaks;
+      let classBreaksValues = properties[`${type}_scale_breaks`] as LayerClassBreaks;
       let colors = properties[`${type}_range`]?.colors;
       if (scaleType === "custom_breaks") {
         const colorMapValues = properties[`${type}_range`]?.color_map;
@@ -75,7 +75,7 @@ function getLegendColorMap(
         const _colors = [] as string[];
         colorMapValues?.forEach((value, index) => {
           _colors.push(value[1]);
-          if (index === 0) return
+          if (index === 0) return;
           if (value[0] !== null && value[0] !== undefined)
             _customClassBreaks.breaks.push(Number(value[0][0]));
         });
@@ -83,25 +83,15 @@ function getLegendColorMap(
         colors = _colors;
       }
 
-      if (
-        classBreaksValues &&
-        Array.isArray(classBreaksValues.breaks) &&
-        colors
-      ) {
+      if (classBreaksValues && Array.isArray(classBreaksValues.breaks) && colors) {
         classBreaksValues.breaks.forEach((value, index) => {
           if (index === 0) {
-            createRangeAndColor(
-              colorMap,
-              classBreaksValues.min,
-              value,
-              getColor(colors, index),
-              true,
-            );
+            createRangeAndColor(colorMap, classBreaksValues.min, value, getColor(colors, index), true);
             createRangeAndColor(
               colorMap,
               value,
               classBreaksValues.breaks[index + 1],
-              getColor(colors, index + 1),
+              getColor(colors, index + 1)
             );
           } else if (index === classBreaksValues.breaks.length - 1) {
             createRangeAndColor(
@@ -110,14 +100,14 @@ function getLegendColorMap(
               classBreaksValues.max,
               getColor(colors, index + 1),
               false,
-              true,
+              true
             );
           } else {
             createRangeAndColor(
               colorMap,
               value,
               classBreaksValues.breaks[index + 1],
-              getColor(colors, index + 1),
+              getColor(colors, index + 1)
             );
           }
         });
@@ -177,14 +167,12 @@ function LegendRow({
         display: "flex",
         alignItems: "center",
         marginBottom: "5px",
-      }}
-    >
+      }}>
       <div
         style={{
           display: "flex",
           alignItems: "center",
-        }}
-      >
+        }}>
         {type !== "marker" && (
           <svg height="20" width="20">
             {type === "point" && (
@@ -199,16 +187,7 @@ function LegendRow({
               />
             )}
 
-            {type === "line" && (
-              <line
-                x1="0"
-                y1="10"
-                x2="20"
-                y2="10"
-                stroke={strokeColor}
-                strokeWidth="2"
-              />
-            )}
+            {type === "line" && <line x1="0" y1="10" x2="20" y2="10" stroke={strokeColor} strokeWidth="2" />}
 
             {type === "polygon" && (
               <rect
@@ -226,11 +205,7 @@ function LegendRow({
           <MaskedImageIcon imageUrl={`${markerImageUrl}`} dimension="19px" />
         )}
       </div>
-      <Typography
-        variant="caption"
-        fontWeight="bold"
-        style={{ marginLeft: "10px" }}
-      >
+      <Typography variant="caption" fontWeight="bold" style={{ marginLeft: "10px" }}>
         {label}
       </Typography>
     </div>
@@ -251,7 +226,7 @@ export function LegendRows({
       colorMap: getLegendColorMap(properties, "color"),
       strokeColorMap: getLegendColorMap(properties, "stroke_color"),
     }),
-    [properties],
+    [properties]
   );
 
   const markerMap = useMemo(() => {
@@ -277,9 +252,7 @@ export function LegendRows({
   const isStrokeEnabled = useMemo(() => {
     return (
       type === "line" ||
-      (["polygon", "point"].includes(type) &&
-        strokeColorMap.length > 1 &&
-        properties.stroked)
+      (["polygon", "point"].includes(type) && strokeColorMap.length > 1 && properties.stroked)
     );
   }, [properties.stroked, strokeColorMap, type]);
 
@@ -305,9 +278,7 @@ export function LegendRows({
       )}
       {isSimpleColor && (
         <Stack sx={{ pb: 2 }}>
-          <Typography variant="caption">
-            {type === "line" ? t("stroke_color") : t("fill_color")}
-          </Typography>
+          <Typography variant="caption">{type === "line" ? t("stroke_color") : t("fill_color")}</Typography>
         </Stack>
       )}
 
@@ -321,13 +292,11 @@ export function LegendRows({
                 type={type}
                 fillColor={item.color}
                 strokeColor={
-                  strokeColorMap.length === 1 && properties.stroked
-                    ? strokeColorMap[0].color
-                    : undefined
+                  strokeColorMap.length === 1 && properties.stroked ? strokeColorMap[0].color : undefined
                 }
                 label={value}
               />
-            )),
+            ))
         )}
 
       {/* LINE COLOR OR STROKE COLOR WHEN ATTRIBUTE STYLING */}
@@ -338,11 +307,8 @@ export function LegendRows({
               sx={{
                 pb: 2,
                 ...(type !== "line" && properties.filled && { pt: 2 }),
-              }}
-            >
-              <Typography variant="caption">
-                {t("stroke_color_based_on")}
-              </Typography>
+              }}>
+              <Typography variant="caption">{t("stroke_color_based_on")}</Typography>
               <Typography variant="caption" fontWeight="bold">
                 {properties.stroke_color_field.name}
               </Typography>
@@ -362,7 +328,7 @@ export function LegendRows({
                     strokeColor={item.color}
                     label={value}
                   />
-                )),
+                ))
             )}
         </>
       )}
@@ -378,12 +344,9 @@ export function LegendRows({
             <Stack
               sx={{
                 ...(properties.filled && { pt: 2, pb: 2 }),
-              }}
-            >
+              }}>
               <Typography variant="caption">
-                {properties["marker_field"]
-                  ? t("marker_based_on")
-                  : t("marker")}
+                {properties["marker_field"] ? t("marker_based_on") : t("marker")}
               </Typography>
               {properties["marker_field"] && (
                 <Typography variant="caption" fontWeight="bold">
@@ -402,7 +365,7 @@ export function LegendRows({
                     markerImageUrl={item.marker}
                     label={value}
                   />
-                )),
+                ))
             )}
           </>
         )}
@@ -418,28 +381,16 @@ export function Legend(props: LegendProps) {
     props.layers && (
       <>
         {props.layers.map((layer) => (
-          <Stack
-            key={layer.id}
-            spacing={1}
-            direction="column"
-            sx={{ my: 3 }}
-            style={{ cursor: "default" }}
-          >
+          <Stack key={layer.id} spacing={1} direction="column" sx={{ my: 3 }} style={{ cursor: "default" }}>
             {!props.hideLayerName && (
               <Typography variant="body2" fontWeight="bold">
                 {layer.name}
               </Typography>
             )}
             {!props.hideZoomLevel && (
-              <Tooltip
-                title={t("zoom_level_legend_tooltip")}
-                placement="top"
-                arrow
-              >
+              <Tooltip title={t("zoom_level_legend_tooltip")} placement="top" arrow>
                 <Typography variant="caption">
-                  {`${t("zoom_level")} ${layer.properties.min_zoom} - ${
-                    layer.properties.max_zoom
-                  }`}
+                  {`${t("zoom_level")} ${layer.properties.min_zoom} - ${layer.properties.max_zoom}`}
                 </Typography>
               </Tooltip>
             )}
@@ -449,13 +400,7 @@ export function Legend(props: LegendProps) {
                   {geometryTypes.map(
                     (type) =>
                       layer.feature_layer_geometry_type === type &&
-                      layer.properties && (
-                        <LegendRows
-                          key={type}
-                          properties={layer.properties}
-                          type={type}
-                        />
-                      ),
+                      layer.properties && <LegendRows key={type} properties={layer.properties} type={type} />
                   )}
                 </>
               )}
@@ -463,9 +408,7 @@ export function Legend(props: LegendProps) {
           </Stack>
         ))}
 
-        {props.layers?.length === 0 && (
-          <EmptySection label={t("no_active_layers")} icon={ICON_NAME.LAYERS} />
-        )}
+        {props.layers?.length === 0 && <EmptySection label={t("no_active_layers")} icon={ICON_NAME.LAYERS} />}
       </>
     )
   );

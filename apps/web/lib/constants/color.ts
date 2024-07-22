@@ -17,10 +17,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+import colorbrewer from "colorbrewer";
 
 import { VizColorPalette } from "@/lib/constants/custom-color-ranges";
 import type { ColorRange } from "@/lib/validations/layer";
-import colorbrewer from "colorbrewer";
 
 /* eslint-disable quote-props */
 const COLORS = {
@@ -568,10 +568,10 @@ const colorBrewerMap = Object.entries(colorbrewer.schemeGroups).reduce(
         ...group,
         [name]: type,
       }),
-      {},
+      {}
     ),
   }),
-  {},
+  {}
 );
 
 const colorRanges: ColorRange[] = [...VizColorPalette];
@@ -594,9 +594,7 @@ export const COLOR_RANGES = colorRanges;
 
 export const DEFAULT_COLOR = [225, 49, 106];
 
-export const DEFAULT_COLOR_RANGE = colorRanges.find(
-  ({ name }) => name === "Global Warming",
-) || {
+export const DEFAULT_COLOR_RANGE = colorRanges.find(({ name }) => name === "Global Warming") || {
   name: "Global Warming",
   type: "SEQ",
   category: "Uber",

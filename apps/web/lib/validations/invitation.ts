@@ -1,12 +1,8 @@
 import * as z from "zod";
+
 import { responseSchema } from "@/lib/validations/response";
 
-export const invitationStatusEnum = z.enum([
-  "pending",
-  "canceled",
-  "accepted",
-  "rejected",
-]);
+export const invitationStatusEnum = z.enum(["pending", "canceled", "accepted", "rejected"]);
 export const invitationTypeEnum = z.enum(["organization", "group"]);
 
 export const invitationSchema = z.object({
@@ -24,12 +20,11 @@ export const invitationSchema = z.object({
 });
 
 export const inviationQueryParams = z.object({
-    status: invitationStatusEnum.optional(),
-    type: invitationTypeEnum.optional(),
-    invitation_id: z.string().uuid().optional(),
-    search: z.string().optional(),
+  status: invitationStatusEnum.optional(),
+  type: invitationTypeEnum.optional(),
+  invitation_id: z.string().uuid().optional(),
+  search: z.string().optional(),
 });
-
 
 export const invitationResponseSchema = responseSchema(invitationSchema);
 

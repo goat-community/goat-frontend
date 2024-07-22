@@ -1,11 +1,14 @@
-import { ArrowPopper } from "@/components/ArrowPoper";
-import FormLabelHelper from "@/components/common/FormLabelHelper";
-import OrdinalMarker from "@/components/map/panels/style/classification/OrdinalMarker";
-import { useTranslation } from "@/i18n/client";
-import type { OrdinalMarkerSelectorProps } from "@/types/map/marker";
 import { Paper, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useState } from "react";
+
+import { useTranslation } from "@/i18n/client";
+
+import type { OrdinalMarkerSelectorProps } from "@/types/map/marker";
+
+import { ArrowPopper } from "@/components/ArrowPoper";
+import FormLabelHelper from "@/components/common/FormLabelHelper";
+import OrdinalMarker from "@/components/map/panels/style/classification/OrdinalMarker";
 
 const MarkerSelector = (props: OrdinalMarkerSelectorProps) => {
   const theme = useTheme();
@@ -29,22 +32,19 @@ const MarkerSelector = (props: OrdinalMarkerSelectorProps) => {
                 boxShadow: "rgba(0, 0, 0, 0.16) 0px 6px 12px 0px",
                 width: "235px",
                 maxHeight: "500px",
-              }}
-            >
+              }}>
               <OrdinalMarker
                 {...props}
                 onCancel={() => setOpen(false)}
                 onCustomApply={(colorMaps) => {
-                  props.onCustomApply &&
-                    props.onCustomApply(colorMaps);
+                  props.onCustomApply && props.onCustomApply(colorMaps);
                   setOpen(false);
                 }}
                 setIsClickAwayEnabled={setIsClickAwayEnabled}
               />
             </Paper>
           </>
-        }
-      >
+        }>
         {/* {INPUT} */}
         <Stack spacing={1}>
           {props.label && (
@@ -63,8 +63,7 @@ const MarkerSelector = (props: OrdinalMarkerSelectorProps) => {
               border: "1px solid",
               outline: "2px solid transparent",
               minHeight: "40px",
-              borderColor:
-                theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
+              borderColor: theme.palette.mode === "dark" ? "#464B59" : "#CBCBD1",
               ...(open && {
                 outline: `2px solid ${theme.palette.primary.main}`,
               }),
@@ -72,12 +71,10 @@ const MarkerSelector = (props: OrdinalMarkerSelectorProps) => {
               p: 1.7,
               "&:hover": {
                 ...(!open && {
-                  borderColor:
-                    theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF",
+                  borderColor: theme.palette.mode === "dark" ? "#5B5F6E" : "#B8B7BF",
                 }),
               },
-            }}
-          >
+            }}>
             <Typography variant="body2" fontWeight="bold">
               {t(`ordinal_marker`)}
             </Typography>

@@ -1,8 +1,10 @@
 "use client";
 
+import { de, enUS } from "date-fns/locale";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import resourcesToBackend from "i18next-resources-to-backend";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { UseTranslationOptions } from "react-i18next";
 import { initReactI18next, useTranslation as useTranslationOrg } from "react-i18next";
@@ -10,17 +12,15 @@ import { initReactI18next, useTranslation as useTranslationOrg } from "react-i18
 import { getOptions, languages } from "./settings";
 
 const runsOnServerSide = typeof window === "undefined";
-import { useParams } from "next/navigation";
-import { de, enUS } from "date-fns/locale";
-
-
 
 //
 i18next
   .use(initReactI18next)
   .use(LanguageDetector)
   .use(
-    resourcesToBackend((language: string, namespace: string) => import(`./locales/${language}/${namespace}.json`))
+    resourcesToBackend(
+      (language: string, namespace: string) => import(`./locales/${language}/${namespace}.json`)
+    )
   )
   .init({
     ...getOptions(),
@@ -33,7 +33,6 @@ i18next
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useTranslation(ns?: string | string[], options?: UseTranslationOptions<any>) {
-
   const params = useParams();
   const lng = typeof params.lng === "string" ? params.lng : "en";
 
