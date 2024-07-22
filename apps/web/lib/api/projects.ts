@@ -9,7 +9,13 @@ import type {
   ProjectPaginated,
   ProjectViewState,
 } from "@/lib/validations/project";
-import type { PostScenario, ScenarioFeatures, ScenarioResponse } from "@/lib/validations/scenario";
+import type {
+  PostScenario,
+  ScenarioFeaturePost,
+  ScenarioFeatures,
+  ScenarioFeatureUpdate,
+  ScenarioResponse,
+} from "@/lib/validations/scenario";
 
 export const PROJECTS_API_BASE_URL = new URL("api/v2/project", process.env.NEXT_PUBLIC_API_URL).href;
 
@@ -250,3 +256,58 @@ export const deleteProjectScenario = async (projectId: string, scenarioId: strin
     throw Error(`deleteProjectScenario: unable to delete scenario with id ${scenarioId}`);
   }
 };
+
+export const deleteProjectScenarioFeature = async (
+  projectId: string,
+  project_layer_id: number,
+  scenarioId: string,
+  featureId: string | number
+) => {
+  const response = await fetchWithAuth(
+    `${PROJECTS_API_BASE_URL}/${projectId}/layer/${project_layer_id}/scenario/${scenarioId}/features/${featureId}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  if (!response.ok) throw await response.json();
+  return response;
+};
+
+export const updateProjectScenarioFeatures = async (
+  projectId: string,
+  project_layer_id: number,
+  scenarioId: string,
+  payload: ScenarioFeatureUpdate[]
+) => {
+  const response = await fetchWithAuth(`${PROJECTS_API_BASE_URL}/${projectId}/layer/${project_layer_id}/scenario/${scenarioId}/features`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to update project scenario features");
+  }
+  return await response.json();
+}
+
+export const createProjectScenarioFeatures = async (
+  projectId: string,
+  project_layer_id: number,
+  scenarioId: string,
+  payload: ScenarioFeaturePost[]
+) => {
+  const response = await fetchWithAuth(`${PROJECTS_API_BASE_URL}/${projectId}/layer/${project_layer_id}/scenario/${scenarioId}/features`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to create project scenario features");
+  }
+  return await response.json();
+}

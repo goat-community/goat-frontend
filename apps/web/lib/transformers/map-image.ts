@@ -1,10 +1,12 @@
 import type { MapRef } from "react-map-gl";
 
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
+import { PatternImage } from "@/lib/constants/pattern-images";
 
 // Image prefix for marker images is needed to avoid
 // name conflicts with other images from mapbox basemaps
 export const MARKER_IMAGE_PREFIX = "goat-marker-";
+export const PATTERN_IMAGE_PREFIX = "goat-pattern-";
 
 /**
  * Load image from url and adds or updates the map with the image
@@ -17,7 +19,6 @@ export const MARKER_IMAGE_PREFIX = "goat-marker-";
  */
 export const loadImage = (map: MapRef, url: string, marker_name: string, width?: number, height?: number) => {
   const extension = url.split(".").pop()?.toLowerCase();
-  const name = `${MARKER_IMAGE_PREFIX}${marker_name}`;
   const addOrUpdateImage = (
     image:
       | HTMLImageElement
@@ -26,11 +27,11 @@ export const loadImage = (map: MapRef, url: string, marker_name: string, width?:
       | ImageData
       | ImageBitmap
   ) => {
-    if (map?.hasImage(name)) {
+    if (map?.hasImage(marker_name)) {
       // We can't use `updateImage` because size of the image can't be changed
-      map?.removeImage(name);
+      map?.removeImage(marker_name);
     }
-    map?.addImage(name, image, { sdf: true });
+    map?.addImage(marker_name, image, { sdf: true });
   };
 
   if (extension === "svg") {
@@ -81,8 +82,24 @@ export function addOrUpdateMarkerImages(properties: FeatureLayerPointProperties,
     });
     markers.forEach((marker) => {
       if (marker && marker.url && marker.name) {
-        loadImage(map, marker.url, marker.name, size, size);
+        const name = `${MARKER_IMAGE_PREFIX}${marker.name}`;
+        loadImage(map, marker.url, name, size, size);
       }
+    });
+  }
+}
+
+
+/**
+ * Add pattern images on the map
+ * @param patterns PatternImage[]
+ * @param map MapRef
+ */
+export function addPatternImages(patterns: PatternImage[], map: MapRef | null) {
+  if (map && patterns) {
+    patterns.forEach((pattern) => {
+      const name = `${PATTERN_IMAGE_PREFIX}${pattern.name}`;
+      loadImage(map, pattern.url, name, pattern.width, pattern.height);
     });
   }
 }

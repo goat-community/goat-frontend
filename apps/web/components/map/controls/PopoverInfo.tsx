@@ -6,17 +6,9 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
-import { OverflowTypograpy } from "@/components/common/OverflowTypography";
+import { MapPopoverInfoProps } from "@/types/map/popover";
 
-export type MapPopoverProps = {
-  title: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  properties: { [name: string]: any } | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  jsonProperties: { [name: string]: any } | null;
-  lngLat: [number, number];
-  onClose: () => void;
-};
+import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 
 interface RowProps {
   name: string;
@@ -107,7 +99,13 @@ interface DetailsViewType {
   data: Array<{ [key: string]: string }>;
 }
 
-const MapPopover: React.FC<MapPopoverProps> = ({ title, properties, jsonProperties, lngLat, onClose }) => {
+const MapPopoverInfo: React.FC<MapPopoverInfoProps> = ({
+  title,
+  properties,
+  jsonProperties,
+  lngLat,
+  onClose,
+}) => {
   const [detailsView, setDetailsView] = useState<DetailsViewType | undefined>(undefined);
 
   return (
@@ -211,4 +209,4 @@ const MapPopover: React.FC<MapPopoverProps> = ({ title, properties, jsonProperti
   );
 };
 
-export default MapPopover;
+export default MapPopoverInfo;

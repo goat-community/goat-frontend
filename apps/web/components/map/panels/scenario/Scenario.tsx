@@ -8,12 +8,12 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 
 import { deleteProjectScenario, updateProject, useProject, useProjectScenarios } from "@/lib/api/projects";
-import { setActiveRightPanel } from "@/lib/store/map/slice";
+import { setActiveRightPanel, setEditingScenario } from "@/lib/store/map/slice";
 import type { Scenario } from "@/lib/validations/scenario";
 
 import { ScenarioActions } from "@/types/common";
 
-import { useAppDispatch } from "@/hooks/store/ContextHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import EmptySection from "@/components/common/EmptySection";
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
@@ -67,14 +67,12 @@ const CreateScenarioAction = ({
 const ScenarioPanel = ({ projectId }: { projectId: string }) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation("common");
-
   const { scenarios, mutate, isLoading } = useProjectScenarios(projectId);
   const [confirmDeleteScenarioDialogOpen, setConfirmDeleteScenarioDialogOpen] = useState(false);
   const [isEditScenarioMetadataModalOpen, setIsEditScenarioMetadataModalOpen] = useState(false);
+  const editingScenario = useAppSelector((state) => state.map.editingScenario);
 
   const [selectedScenario, setSelectedScenario] = useState<Scenario | undefined>(undefined);
-
-  const [editingScenario, setEditingScenario] = useState<Scenario | undefined>(undefined);
 
   const { project, mutate: mutateProject } = useProject(projectId);
 
@@ -130,7 +128,7 @@ const ScenarioPanel = ({ projectId }: { projectId: string }) => {
           <ToolsHeader
             title={`${t("scenario")} ${activeScenario?.name || ""}`}
             onBack={() => {
-              setEditingScenario(undefined);
+              dispatch(setEditingScenario(undefined));
             }}
           />
         )
@@ -183,8 +181,8 @@ const ScenarioPanel = ({ projectId }: { projectId: string }) => {
                   key={scenario.id}
                   id={scenario.id}
                   active={activeScenario?.id === scenario.id}
-                  onClick={() => {
-                    setActiveScenario(scenario);
+                  onClick={async () => {
+                    await setActiveScenario(scenario);
                   }}
                   body={
                     <>
@@ -213,8 +211,10 @@ const ScenarioPanel = ({ projectId }: { projectId: string }) => {
                             setSelectedScenario(scenario);
                             setIsEditScenarioMetadataModalOpen(true);
                           } else if (menuItem.id === ScenarioActions.EDIT) {
-                            setEditingScenario(scenario);
-                            setActiveScenario(scenario);
+                            dispatch(setEditingScenario(scenario));
+                            if (activeScenario?.id !== scenario.id) {
+                              await setActiveScenario(scenario);
+                            }
                           }
                         }}
                         menuButton={

@@ -12,6 +12,7 @@ type TextFieldInputProps = {
   tooltip?: string;
   onFocus?: () => void;
   type?: "text" | "number";
+  clearable?: boolean;
 };
 
 const TextFieldInput: React.FC<TextFieldInputProps> = ({
@@ -22,6 +23,7 @@ const TextFieldInput: React.FC<TextFieldInputProps> = ({
   tooltip,
   onFocus,
   type,
+  clearable = true,
 }) => {
   const theme = useTheme();
   const [focused, setFocused] = useState(false);
@@ -55,7 +57,8 @@ const TextFieldInput: React.FC<TextFieldInputProps> = ({
           },
         }}
         endAdornment={
-          !!value && (
+          !!value &&
+          clearable && (
             <InputAdornment position="end" sx={{ mr: 2 }}>
               <IconButton size="small" aria-label="clear input" onClick={() => onChange("")} edge="end">
                 <ClearIcon />

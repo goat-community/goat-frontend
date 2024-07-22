@@ -11,7 +11,7 @@ import { useTranslation } from "@/i18n/client";
 import { getLayerClassBreaks, getLayerUniqueValues, updateDataset, useDataset } from "@/lib/api/layers";
 import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
-import { addOrUpdateMarkerImages } from "@/lib/transformers/marker";
+import { addOrUpdateMarkerImages } from "@/lib/transformers/map-image";
 import {
   type ColorMap,
   type FeatureLayerPointProperties,

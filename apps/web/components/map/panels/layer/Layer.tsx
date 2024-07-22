@@ -21,7 +21,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import React from "react";
 import { useMap } from "react-map-gl";
 import { toast } from "react-toastify";
@@ -37,9 +37,16 @@ import {
   updateProjectLayer,
   useProject,
   useProjectLayers,
+  useProjectScenarioFeatures,
+  useProjectScenarios,
 } from "@/lib/api/projects";
 import { setActiveLayer } from "@/lib/store/layer/slice";
-import { setActiveLeftPanel, setActiveRightPanel } from "@/lib/store/map/slice";
+import {
+  setActiveLeftPanel,
+  setActiveRightPanel,
+  setEditingScenario,
+  setSelectedScenarioLayer,
+} from "@/lib/store/map/slice";
 import { zoomToLayer } from "@/lib/utils/map/navigate";
 import type { ProjectLayer } from "@/lib/validations/project";
 
@@ -257,12 +264,27 @@ const LayerPanel = ({ projectId }: PanelProps) => {
 
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
   const activeRightPanel = useAppSelector((state) => state.map.activeRightPanel);
+  const selectedScenarioLayer = useAppSelector((state) => state.map.selectedScenarioLayer);
+  const { scenarios } = useProjectScenarios(projectId);
   const { project, mutate: mutateProject } = useProject(projectId);
   const sortedLayers = useSortedLayers(projectId);
   useJobStatus(() => {
     mutateProjectLayers();
     mutateProject();
   });
+
+  const { scenarioFeatures } = useProjectScenarioFeatures(projectId, project?.active_scenario_id);
+
+  const scenarioFeaturesCount = useMemo(() => {
+    const count = {};
+    scenarioFeatures?.features.forEach((feature) => {
+      if (!count[feature.properties.layer_project_id]) {
+        count[feature.properties.layer_project_id] = 0;
+      }
+      count[feature.properties.layer_project_id]++;
+    });
+    return count;
+  }, [scenarioFeatures]);
 
   const [renameLayer, setRenameLayer] = useState<ProjectLayer | undefined>(undefined);
   const [newLayerName, setNewLayerName] = useState<string>("");
@@ -364,6 +386,20 @@ const LayerPanel = ({ projectId }: PanelProps) => {
     dispatch(setActiveRightPanel(MapSidebarItemID.PROPERTIES));
   }
 
+  function getActionLayerWidthOffset(layer: ProjectLayer) {
+    // todo: find a better way to calculate the width offset without hardcoding the values (maybe using the ref of the action section and get the width)
+    let width = 0;
+    const offset = 24;
+    if (layer.query?.cql && layer.query?.cql["args"]?.length) {
+      width += offset;
+    }
+    if (scenarioFeaturesCount && scenarioFeaturesCount[layer.id]) {
+      width += offset;
+    }
+
+    return width;
+  }
+
   return (
     <Container
       title={t("layers")}
@@ -447,6 +483,11 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               autoFocus
                               variant="standard"
                               size="small"
+                              sx={{
+                                width: `calc(100% - ${
+                                  getActionLayerWidthOffset(layer) ? getActionLayerWidthOffset(layer) : 0
+                                }px)`,
+                              }}
                               inputProps={{
                                 style: {
                                   fontSize: "0.875rem",
@@ -467,15 +508,23 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               }}
                             />
                           ) : (
-                            <OverflowTypograpy
-                              variant="body2"
-                              fontWeight="bold"
-                              tooltipProps={{
-                                placement: "bottom",
-                                arrow: true,
+                            <Stack
+                              direction="row"
+                              sx={{
+                                width: `calc(100% - ${
+                                  getActionLayerWidthOffset(layer) ? getActionLayerWidthOffset(layer) : 0
+                                }px)`,
                               }}>
-                              {layer.name}
-                            </OverflowTypograpy>
+                              <OverflowTypograpy
+                                variant="body2"
+                                fontWeight="bold"
+                                tooltipProps={{
+                                  placement: "bottom",
+                                  arrow: true,
+                                }}>
+                                {layer.name}
+                              </OverflowTypograpy>
+                            </Stack>
                           )}
                         </>
                       }
@@ -510,6 +559,66 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                               </IconButton>
                             </Tooltip>
                           )}
+
+                          {scenarioFeaturesCount && scenarioFeaturesCount[layer.id] && (
+                            <Tooltip
+                              key={layer.id + "_scenario"}
+                              title={
+                                selectedScenarioLayer && selectedScenarioLayer.value === layer.id
+                                  ? t("hide_scenario_features")
+                                  : t("show_scenario_features")
+                              }
+                              arrow
+                              placement="top">
+                              <IconButton
+                                size="small"
+                                sx={{ pr: 2 }}
+                                color={
+                                  selectedScenarioLayer && selectedScenarioLayer.value === layer.id
+                                    ? "primary"
+                                    : "default"
+                                }
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  if (selectedScenarioLayer?.value === layer.id) {
+                                    dispatch(setSelectedScenarioLayer(undefined));
+                                  } else {
+                                    const _scenario = scenarios?.items?.find(
+                                      (scenario) => scenario.id === project?.active_scenario_id
+                                    );
+                                    dispatch(setActiveRightPanel(MapSidebarItemID.SCENARIO));
+                                    dispatch(setEditingScenario(_scenario));
+                                    dispatch(
+                                      setSelectedScenarioLayer({
+                                        label: layer.name,
+                                        value: layer.id,
+                                        icon: getLayerIcon(layer),
+                                      })
+                                    );
+                                  }
+                                }}>
+                                <Badge
+                                  badgeContent={scenarioFeaturesCount[layer.id]}
+                                  color="primary"
+                                  sx={{
+                                    "& .MuiBadge-badge": {
+                                      fontSize: 9,
+                                      height: 15,
+                                      minWidth: 15,
+                                    },
+                                  }}>
+                                  <Icon
+                                    htmlColor="inherit"
+                                    iconName={ICON_NAME.SCENARIO}
+                                    style={{
+                                      fontSize: 15,
+                                    }}
+                                  />
+                                </Badge>
+                              </IconButton>
+                            </Tooltip>
+                          )}
+
                           {layer.query?.cql && layer.query?.cql["args"]?.length && (
                             <Tooltip
                               key={layer.id + "_filter"}

@@ -23,39 +23,46 @@ export const scenarioEditTypeEnum = z.enum(["n", "m", "d"]);
 export const scenarioFeaturesPropertiesSchema = z
   .object({
     id: z.string(),
-    layer_id: z.string(),
-    feature_id: z.number(),
+    layer_project_id: z.number(),
+    feature_id: z.string(),
     edit_type: scenarioEditTypeEnum,
   })
   .catchall(z.unknown());
-
-export const scenarioFeatureSchema = z.object({
-  type: z.string(),
-  properties: scenarioFeaturesPropertiesSchema,
-});
 
 export const geometrySchema = z.object({
   type: z.string(),
   coordinates: z.array(z.unknown()),
 });
+export const scenarioFeatureSchema = z.object({
+  type: z.string(),
+  geometry: geometrySchema,
+  id: z.string().nullable(),
+  properties: scenarioFeaturesPropertiesSchema,
+});
+
 
 export const scenarioFeatures = z.object({
   type: z.string(),
   id: z.string(),
-  geometry: geometrySchema,
   features: z.array(scenarioFeatureSchema),
 });
 
-export const postScenarioFeatureSchema = z.object({
-  id: z.number(),
-  layer_id: z.string(),
+export const scenarioFeaturePost = z.object({
+  id: z.string().optional(),
+  feature_id: z.string().optional(),
+  layer_project_id: z.number(),
   edit_type: z.string(),
-  created_at: z.string(),
-  updated_at: z.string(),
-});
+  geom: z.string(),
+}).passthrough();
 
+export const scenarioFeatureUpdate = scenarioFeaturePost.partial()
+
+export type ScenarioEditType = z.infer<typeof scenarioEditTypeEnum>;
 export type Scenario = z.infer<typeof scenarioSchema>;
 export type ScenarioResponse = z.infer<typeof scenarioResponseSchema>;
 export type ScenarioFeatures = z.infer<typeof scenarioFeatures>;
+export type ScenarioFeature = z.infer<typeof scenarioFeatureSchema>;
 export type PostScenario = z.infer<typeof postScenarioSchema>;
-export type PostScenarioFeature = z.infer<typeof postScenarioFeatureSchema>;
+
+export type ScenarioFeaturePost = z.infer<typeof scenarioFeaturePost>;
+export type ScenarioFeatureUpdate = z.infer<typeof scenarioFeatureUpdate>;

@@ -5,7 +5,8 @@ import { Layer as MapLayer, Source } from "react-map-gl";
 import { GEOAPI_BASE_URL } from "@/lib/constants";
 import { excludes as excludeOp } from "@/lib/transformers/filter";
 import { getHightlightStyleSpec, transformToMapboxLayerStyleSpec } from "@/lib/transformers/layer";
-import type { FeatureLayerPointProperties, Layer } from "@/lib/validations/layer";
+import { getLayerKey } from "@/lib/utils/map/layer";
+import type { Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
 import { type ScenarioFeatures, scenarioEditTypeEnum } from "@/lib/validations/scenario";
 
@@ -17,18 +18,20 @@ interface LayersProps {
 
 const Layers = (props: LayersProps) => {
   const scenarioFeaturesToExclude = useMemo(() => {
-    const featuresToExclude: { [key: string]: number[] } = {};
+    const featuresToExclude: { [key: string]: string[] } = {};
     props.scenarioFeatures?.features.forEach((feature) => {
       // Exclude deleted and modified features
       if (
         feature.properties?.edit_type === scenarioEditTypeEnum.Enum.d ||
         feature.properties?.edit_type === scenarioEditTypeEnum.Enum.m
       ) {
-        if (!featuresToExclude[feature.properties.layer_id])
-          featuresToExclude[feature.properties.layer_id] = [];
+        const projectLayerId = feature.properties.layer_project_id;
+        if (!projectLayerId || !feature.properties?.feature_id) return;
+
+        if (!featuresToExclude[projectLayerId]) featuresToExclude[projectLayerId] = [];
 
         if (feature.properties?.feature_id)
-          featuresToExclude[feature.properties.layer_id].push(feature.properties?.feature_id);
+          featuresToExclude[projectLayerId].push(feature.properties?.feature_id);
       }
     });
 
@@ -40,11 +43,8 @@ const Layers = (props: LayersProps) => {
     if (!layer["layer_id"] || !Object.keys(scenarioFeaturesToExclude).length) return cqlFilter;
 
     const extendedFilter = JSON.parse(JSON.stringify(cqlFilter || {}));
-    if (scenarioFeaturesToExclude[layer["layer_id"].toString()]) {
-      const scenarioFeaturesExcludeFilter = excludeOp(
-        "id",
-        scenarioFeaturesToExclude[layer["layer_id"].toString()]
-      );
+    if (scenarioFeaturesToExclude[layer.id]?.length) {
+      const scenarioFeaturesExcludeFilter = excludeOp("id", scenarioFeaturesToExclude[layer.id]);
       const parsedScenarioFeaturesExcludeFilter = JSON.parse(scenarioFeaturesExcludeFilter);
       // Append the filter to the existing filters
       if (extendedFilter["op"] === "and" && extendedFilter["args"]) {
@@ -57,22 +57,6 @@ const Layers = (props: LayersProps) => {
     }
 
     return extendedFilter;
-  };
-
-  const getLayerKey = (layer: ProjectLayer | Layer) => {
-    let id = layer.id.toString();
-    if (layer.type === "feature") {
-      const geometry_type = layer.feature_layer_geometry_type;
-      if (geometry_type === "point") {
-        const pointFeature = layer.properties as FeatureLayerPointProperties;
-        const renderAs =
-          pointFeature.custom_marker && (pointFeature.marker?.name || pointFeature.marker_field)
-            ? "marker"
-            : "circle";
-        id = `${id}-${renderAs}`;
-      }
-    }
-    return id;
   };
 
   const getTileUrl = (layer: ProjectLayer | Layer) => {

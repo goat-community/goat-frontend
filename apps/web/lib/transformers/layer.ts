@@ -1,6 +1,6 @@
 import type { MapGeoJSONFeature } from "react-map-gl";
 
-import { MARKER_IMAGE_PREFIX } from "@/lib/transformers/marker";
+import { MARKER_IMAGE_PREFIX } from "@/lib/transformers/map-image";
 import { rgbToHex } from "@/lib/utils/helpers";
 import type { FeatureLayerLineProperties, FeatureLayerPointProperties, Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
@@ -273,4 +273,70 @@ export function getHightlightStyleSpec(highlightFeature: MapGeoJSONFeature) {
       filter: ["in", "id", highlightFeature.properties.id],
     }),
   };
+}
+
+
+
+export const scenarioFeatureStateColor = ["match", ["get", "edit_type"], "n", "#007DC7", "m", "#FFC300", "d", "#C70039", "#000202"];
+export function scenarioLayerStyleSpec(data: ProjectLayer | Layer) {
+  const geometryType = data.feature_layer_geometry_type;
+
+
+  let style;
+  if (geometryType === "point") {
+    if (data.properties["custom_marker"]) {
+      style = {
+        type: "symbol",
+        layout: {
+          "icon-image": getMapboxStyleMarker(data),
+          'icon-allow-overlap': true,
+          "icon-size": 1,
+        },
+        paint: {
+          "icon-opacity": 1,
+          "icon-color": "white",
+        },
+      };
+    } else {
+      const circleRadius = data.properties["radius"] || 20;
+      style = {
+        type: "circle",
+        paint: {
+          "circle-opacity": 1,
+          "circle-blur": 0.2,
+          "circle-radius": circleRadius,
+          "circle-stroke-width": 2,
+        },
+      };
+    }
+  } else if (geometryType === "line") {
+    let width = data.properties["stroke_width"] || 2;
+    style = {
+      type: "line",
+      paint: {
+        "line-blur": 1,
+        "line-color": scenarioFeatureStateColor,
+        "line-width": width,
+        'line-dasharray': [3, 1],
+      },
+    };
+  } else if (geometryType === "polygon") {
+    style = {
+      type: "fill",
+      paint: {
+        "fill-opacity": 0,
+        "fill-color": scenarioFeatureStateColor,
+        "fill-outline-color": scenarioFeatureStateColor,
+      },
+    };
+  }
+
+  if (style) {
+    style.layout = {
+      ...style.layout || {},
+      visibility: data.properties.visibility ? "visible" : "none",
+    };
+  }
+
+  return style;
 }
