@@ -310,7 +310,7 @@ export function scenarioLayerStyleSpec(data: ProjectLayer | Layer) {
       };
     }
   } else if (geometryType === "line") {
-    let width = data.properties["stroke_width"] || 2;
+    const width = data.properties["stroke_width"] || 2;
     style = {
       type: "line",
       paint: {

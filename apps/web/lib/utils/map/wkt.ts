@@ -20,6 +20,7 @@ export function wktToGeoJSON(wkt: string) {
  * @param geojson
  * @returns Array of GeoJSON objects
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function geoJSONToWKT(geojson: any) {
   const wkt = encodeSync(geojson, WKTWriter);
   return wkt;
@@ -31,6 +32,7 @@ export function geoJSONToWKT(geojson: any) {
  * @param geoJSON
  * @returns WKT string
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function stringify(geoJSON: any) {
   if (geoJSON.type === 'Feature') {
     geoJSON = geoJSON.geometry;
@@ -54,7 +56,7 @@ export function stringify(geoJSON: any) {
 
   function wrapParens(s) { return '(' + s + ')'; }
 
-  let gJ = geoJSON;
+  const gJ = geoJSON;
   switch (gJ.type) {
     case 'Point':
       if (gJ.coordinates && gJ.coordinates.length === 3)

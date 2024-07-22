@@ -5,7 +5,8 @@ import { Popup } from "react-map-gl";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
-import { EditorModes, MapPopoverEditorProps } from "@/types/map/popover";
+import type { MapPopoverEditorProps } from "@/types/map/popover";
+import { EditorModes } from "@/types/map/popover";
 
 import useLayerFields from "@/hooks/map/CommonHooks";
 
@@ -44,7 +45,7 @@ const MapPopoverEditor: React.FC<MapPopoverEditorProps> = ({
         confirmColor: "primary",
       };
     }
-  }, []);
+  }, [editMode, t]);
 
   const { layerFields } = useLayerFields(projectLayer?.layer_id || "");
   const filteredLayerFields = useMemo(() => {
@@ -123,6 +124,7 @@ const MapPopoverEditor: React.FC<MapPopoverEditorProps> = ({
                 onConfirm(featureProperties);
               }}
               variant="text"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               color={(popup?.confirmColor as any) || "primary"}
               sx={{ borderRadius: 0 }}>
               <Typography variant="body2" fontWeight="bold" color="inherit">

@@ -6,7 +6,7 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
-import { MapPopoverInfoProps } from "@/types/map/popover";
+import type { MapPopoverInfoProps } from "@/types/map/popover";
 
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 

@@ -1,7 +1,7 @@
 import type { MapRef } from "react-map-gl";
 
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
-import { PatternImage } from "@/lib/constants/pattern-images";
+import type { PatternImage } from "@/lib/constants/pattern-images";
 
 // Image prefix for marker images is needed to avoid
 // name conflicts with other images from mapbox basemaps

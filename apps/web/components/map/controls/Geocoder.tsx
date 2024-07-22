@@ -106,7 +106,7 @@ export default function Geocoder({
           language
         );
       }, 400),
-    [accessToken, autocomplete, bbox, country, endpoint, language, limit, map, source, types]
+    [accessToken, autocomplete, bbox, country, endpoint, language, limit, map, proximity, source, types]
   );
 
   useEffect(() => {

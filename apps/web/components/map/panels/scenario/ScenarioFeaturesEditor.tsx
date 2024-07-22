@@ -147,91 +147,94 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
     }
   }, [selectedScenarioEditLayer, projectLayers]);
 
-  const handleSubmit = useCallback(async (payload) => {
-    dispatch(setPopupEditor(undefined));
-    if (popupEditorRef.current) {
-      const type = popupEditorRef.current.editMode;
-      const properties = popupEditorRef.current.feature?.properties;
-      if (
-        type === EditorModes.DELETE &&
-        popupEditorRef.current.feature &&
-        properties &&
-        popupEditorRef.current.projectLayer
-      ) {
-        try {
-          await deleteProjectScenarioFeature(
-            projectId,
-            popupEditorRef.current.projectLayer?.id,
-            scenario.id,
-            properties.id
-          );
-          toast.success(t("feature_deleted_success"));
-        } catch (error) {
-          console.error(error);
-          toast.error(t("feature_delete_error"));
-        } finally {
-          mutateScenarioFeatures();
-        }
-      } else if (
-        (type === EditorModes.MODIFY_ATTRIBUTES || type === EditorModes.MODIFY_GEOMETRY) &&
-        payload
-      ) {
-        try {
-          const { layer_id, ...updatedPayload } = payload;
-          const updateFeature = scenarioFeatureUpdate.parse({
-            ...updatedPayload,
-            edit_type: properties?.edit_type || scenarioEditTypeEnum.Enum.m,
-            layer_project_id: popupEditorRef.current.projectLayer?.id,
-          });
-          await updateProjectScenarioFeatures(
-            projectId,
-            popupEditorRef.current.projectLayer?.id,
-            scenario.id,
-            [updateFeature]
-          );
-          toast.success(t("feature_updated_success"));
-        } catch (error) {
-          if (error instanceof ZodError) {
-            console.error("Parse error details:", error.errors);
-          } else {
-            console.error("Unexpected error:", error);
+  const handleSubmit = useCallback(
+    async (payload) => {
+      dispatch(setPopupEditor(undefined));
+      if (popupEditorRef.current) {
+        const type = popupEditorRef.current.editMode;
+        const properties = popupEditorRef.current.feature?.properties;
+        if (
+          type === EditorModes.DELETE &&
+          popupEditorRef.current.feature &&
+          properties &&
+          popupEditorRef.current.projectLayer
+        ) {
+          try {
+            await deleteProjectScenarioFeature(
+              projectId,
+              popupEditorRef.current.projectLayer?.id,
+              scenario.id,
+              properties.id
+            );
+            toast.success(t("feature_deleted_success"));
+          } catch (error) {
+            console.error(error);
+            toast.error(t("feature_delete_error"));
+          } finally {
+            mutateScenarioFeatures();
           }
-          toast.error(t("feature_update_error"));
-        } finally {
-          mutateScenarioFeatures();
-        }
-      } else if (type === EditorModes.DRAW && payload) {
-        try {
-          const geom = popupEditorRef.current.feature?.geometry;
-          if (!geom) {
-            throw new Error("Feature geometry is missing");
+        } else if (
+          (type === EditorModes.MODIFY_ATTRIBUTES || type === EditorModes.MODIFY_GEOMETRY) &&
+          payload
+        ) {
+          try {
+            const { layer_id: _, ...updatedPayload } = payload;
+            const updateFeature = scenarioFeatureUpdate.parse({
+              ...updatedPayload,
+              edit_type: properties?.edit_type || scenarioEditTypeEnum.Enum.m,
+              layer_project_id: popupEditorRef.current.projectLayer?.id,
+            });
+            await updateProjectScenarioFeatures(
+              projectId,
+              popupEditorRef.current.projectLayer?.id,
+              scenario.id,
+              [updateFeature]
+            );
+            toast.success(t("feature_updated_success"));
+          } catch (error) {
+            if (error instanceof ZodError) {
+              console.error("Parse error details:", error.errors);
+            } else {
+              console.error("Unexpected error:", error);
+            }
+            toast.error(t("feature_update_error"));
+          } finally {
+            mutateScenarioFeatures();
           }
-          const createFeature = scenarioFeaturePost.parse({
-            ...payload,
-            edit_type: scenarioEditTypeEnum.Enum.n,
-            layer_project_id: popupEditorRef.current.projectLayer?.id,
-            geom: stringifyToWKT(geom),
-          });
-          await createProjectScenarioFeatures(
-            projectId,
-            popupEditorRef.current.projectLayer?.id,
-            scenario.id,
-            [createFeature]
-          );
-          toast.success(t("feature_created_success"));
-        } catch (error) {
-          if (error instanceof ZodError) {
-            console.error("Parse error details:", error.errors);
-          } else {
-            console.error("Unexpected error:", error);
+        } else if (type === EditorModes.DRAW && payload) {
+          try {
+            const geom = popupEditorRef.current.feature?.geometry;
+            if (!geom) {
+              throw new Error("Feature geometry is missing");
+            }
+            const createFeature = scenarioFeaturePost.parse({
+              ...payload,
+              edit_type: scenarioEditTypeEnum.Enum.n,
+              layer_project_id: popupEditorRef.current.projectLayer?.id,
+              geom: stringifyToWKT(geom),
+            });
+            await createProjectScenarioFeatures(
+              projectId,
+              popupEditorRef.current.projectLayer?.id,
+              scenario.id,
+              [createFeature]
+            );
+            toast.success(t("feature_created_success"));
+          } catch (error) {
+            if (error instanceof ZodError) {
+              console.error("Parse error details:", error.errors);
+            } else {
+              console.error("Unexpected error:", error);
+            }
+            toast.error(t("feature_create_error"));
+          } finally {
+            mutateScenarioFeatures();
           }
-          toast.error(t("feature_create_error"));
-        } finally {
-          mutateScenarioFeatures();
         }
       }
-    }
-  }, []);
+    },
+    [dispatch, mutateScenarioFeatures, projectId, scenario.id, t]
+  );
 
   return (
     <Box

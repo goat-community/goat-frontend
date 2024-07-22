@@ -3,9 +3,9 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import type { Basemap, SelectorItem } from "@/types/map/common";
 import { MapSidebarItemID } from "@/types/map/common";
-import { Scenario } from "@/lib/validations/scenario";
-import { MapPopoverEditorProps, MapPopoverInfoProps } from "@/types/map/popover";
-import { MapGeoJSONFeature } from "react-map-gl";
+import type { Scenario } from "@/lib/validations/scenario";
+import type { MapPopoverEditorProps, MapPopoverInfoProps } from "@/types/map/popover";
+import type { MapGeoJSONFeature } from "react-map-gl";
 
 export interface MapState {
   basemaps: Basemap[];

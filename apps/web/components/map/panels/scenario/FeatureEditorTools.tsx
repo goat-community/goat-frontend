@@ -1,7 +1,8 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Stack, ToggleButton, ToggleButtonGroup, Tooltip, useTheme } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { MapGeoJSONFeature, MapLayerMouseEvent, useMap } from "react-map-gl";
+import type { MapGeoJSONFeature, MapLayerMouseEvent } from "react-map-gl";
+import { useMap } from "react-map-gl";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
@@ -22,6 +23,7 @@ import { CustomDrawModes } from "@/components/map/controls/draw/Draw";
 export type FeatureEditorToolsProps = {
   projectLayer: ProjectLayer;
   scenarioFeatures?: ScenarioFeatures;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onFinish?: (payload?: any) => void;
   disabled?: boolean;
 };
@@ -83,7 +85,7 @@ const FeatureEditorTools = ({
     dispatch(setIsMapGetInfoActive(true));
     drawControl?.deleteAll();
     drawControl?.changeMode(MapboxDraw.constants.modes.SIMPLE_SELECT);
-  }, [drawControl]);
+  }, [dispatch, drawControl]);
 
   useEffect(() => {
     if (projectLayer && projectLayer?.id !== _projectLayer.id) {
@@ -92,87 +94,95 @@ const FeatureEditorTools = ({
     }
   }, [_projectLayer, clean, editType, projectLayer, projectLayer?.id, selectType]);
 
-  const handleFeatureClick = (e: MapLayerMouseEvent) => {
-    const features = map?.queryRenderedFeatures(e.point);
-    const layerId = projectLayer?.id.toString();
-    if (!features || !layerId) {
-      return;
-    }
-    const selectedEditFeatures = features?.filter(
-      (feature) =>
-        feature.layer.id &&
-        (feature.layer.id === layerId ||
-          feature.layer.id === `scenario-layer-${layerId}` ||
-          feature.layer.id === `highlight-scenario-point-layer-${layerId}` ||
-          feature.layer.id === `highlight-scenario-pattern-layer-${layerId}`)
-    );
-    if (selectedEditFeatures?.length && editType) {
-      dispatch(
-        setPopupEditor({
-          lngLat: [e.lngLat.lng, e.lngLat.lat],
-          editMode: editType,
-          projectLayer: projectLayer as ProjectLayer,
-          feature: selectedEditFeatures[0] as MapGeoJSONFeature,
-          onClose: () => {
-            dispatch(setPopupEditor(undefined));
-          },
-          onConfirm: (payload) => {
-            onFinish && onFinish(payload);
-          },
-        })
-      );
-    }
-  };
-
-  const handleFeatureCreate = (e: { features: object[] }) => {
-    const feature = e.features[0] as MapGeoJSONFeature;
-    if (feature) {
-      let lngLat = map?.getCenter();
-      const coordinates = feature.geometry["coordinates"];
-      if (projectLayer?.feature_layer_geometry_type === "point") {
-        lngLat = coordinates;
-      } else if (projectLayer?.feature_layer_geometry_type === "line") {
-        const lastCoordinate = coordinates[coordinates.length - 1];
-        lngLat = lastCoordinate;
-      } else if (projectLayer?.feature_layer_geometry_type === "polygon") {
-        const lastCoordinate = coordinates[0][coordinates[0].length - 1];
-        lngLat = lastCoordinate;
+  const reenableDraw = useCallback(
+    (drawControl: MapboxDraw | null, newEditType: EditorModes | null) => {
+      drawControl?.deleteAll();
+      const geomType = projectLayer?.feature_layer_geometry_type;
+      if (!geomType) {
+        return;
       }
-      setTimeout(() => {
+      if (newEditType === EditorModes.DRAW) {
+        const mapboxDrawMode = `DRAW_${toMapDrawModeGeometryType[geomType]}`;
+        drawControl?.changeMode(MapboxDraw.constants.modes[mapboxDrawMode]);
+      }
+    },
+    [projectLayer?.feature_layer_geometry_type]
+  );
+
+  const handleFeatureClick = useCallback(
+    (e: MapLayerMouseEvent) => {
+      const features = map?.queryRenderedFeatures(e.point);
+      const layerId = projectLayer?.id.toString();
+      if (!features || !layerId) {
+        return;
+      }
+      const selectedEditFeatures = features?.filter(
+        (feature) =>
+          feature.layer.id &&
+          (feature.layer.id === layerId ||
+            feature.layer.id === `scenario-layer-${layerId}` ||
+            feature.layer.id === `highlight-scenario-point-layer-${layerId}` ||
+            feature.layer.id === `highlight-scenario-pattern-layer-${layerId}`)
+      );
+      if (selectedEditFeatures?.length && editType) {
         dispatch(
           setPopupEditor({
-            lngLat: lngLat,
+            lngLat: [e.lngLat.lng, e.lngLat.lat],
             editMode: editType,
             projectLayer: projectLayer as ProjectLayer,
-            feature: feature,
+            feature: selectedEditFeatures[0] as MapGeoJSONFeature,
             onClose: () => {
-              drawControl?.deleteAll();
               dispatch(setPopupEditor(undefined));
-              reenableDraw(drawControl, editType);
             },
             onConfirm: (payload) => {
-              drawControl?.deleteAll();
               onFinish && onFinish(payload);
-              reenableDraw(drawControl, editType);
             },
           })
         );
-      }, 100);
-    }
-  };
+      }
+    },
+    [map, projectLayer, editType, dispatch, onFinish]
+  );
 
-  const reenableDraw = (drawControl: MapboxDraw | null, newEditType: EditorModes | null) => {
-    drawControl?.deleteAll();
-    projectLayer?.feature_layer_geometry_type;
-    const geomType = projectLayer?.feature_layer_geometry_type;
-    if (!geomType) {
-      return;
-    }
-    if (newEditType === EditorModes.DRAW) {
-      const mapboxDrawMode = `DRAW_${toMapDrawModeGeometryType[geomType]}`;
-      drawControl?.changeMode(MapboxDraw.constants.modes[mapboxDrawMode]);
-    }
-  };
+  const handleFeatureCreate = useCallback(
+    (e: { features: object[] }) => {
+      const feature = e.features[0] as MapGeoJSONFeature;
+      if (feature) {
+        let lngLat = map?.getCenter();
+        const coordinates = feature.geometry["coordinates"];
+        if (projectLayer?.feature_layer_geometry_type === "point") {
+          lngLat = coordinates;
+        } else if (projectLayer?.feature_layer_geometry_type === "line") {
+          const lastCoordinate = coordinates[coordinates.length - 1];
+          lngLat = lastCoordinate;
+        } else if (projectLayer?.feature_layer_geometry_type === "polygon") {
+          const lastCoordinate = coordinates[0][coordinates[0].length - 1];
+          lngLat = lastCoordinate;
+        }
+        setTimeout(() => {
+          dispatch(
+            setPopupEditor({
+              lngLat: lngLat,
+              editMode: editType,
+              projectLayer: projectLayer as ProjectLayer,
+              feature: feature,
+              onClose: () => {
+                drawControl?.deleteAll();
+                dispatch(setPopupEditor(undefined));
+                reenableDraw(drawControl, editType);
+              },
+              onConfirm: (payload) => {
+                drawControl?.deleteAll();
+                onFinish && onFinish(payload);
+                reenableDraw(drawControl, editType);
+              },
+            })
+          );
+        }, 100);
+      }
+    },
+    [map, projectLayer, editType, dispatch, drawControl, onFinish, reenableDraw]
+  );
 
   useEffect(() => {
     if (!map) {
@@ -192,7 +202,7 @@ const FeatureEditorTools = ({
         map.off(MapboxDraw.constants.events.CREATE, handleFeatureCreate);
       };
     }
-  }, [map, editType]);
+  }, [map, editType, handleFeatureClick, dispatch, handleFeatureCreate]);
 
   return (
     <Stack spacing={4}>

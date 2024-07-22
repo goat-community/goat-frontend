@@ -1,6 +1,6 @@
 module.exports = {
   extends: [
-    "next/babel",
+    "next",
     "next/core-web-vitals",
     "plugin:playwright/playwright-test",
     "next",

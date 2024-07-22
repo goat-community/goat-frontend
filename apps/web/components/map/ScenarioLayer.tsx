@@ -1,10 +1,11 @@
 import { useMemo } from "react";
-import { Layer, LayerProps, Source } from "react-map-gl";
+import type { LayerProps } from "react-map-gl";
+import { Layer, Source } from "react-map-gl";
 
 import { scenarioFeatureStateColor, scenarioLayerStyleSpec } from "@/lib/transformers/layer";
 import { getLayerKey } from "@/lib/utils/map/layer";
-import { ProjectLayer } from "@/lib/validations/project";
-import { ScenarioFeature, ScenarioFeatures } from "@/lib/validations/scenario";
+import type { ProjectLayer } from "@/lib/validations/project";
+import type { ScenarioFeature, ScenarioFeatures } from "@/lib/validations/scenario";
 
 type ScenarioLayerProps = {
   scenarioLayerData: ScenarioFeatures | undefined;
@@ -49,6 +50,7 @@ const ScenarioLayer = ({ scenarioLayerData, projectLayers }: ScenarioLayerProps)
           const { layer, features } = scenarioLayerMapping;
           const highlightStyle = scenarioLayerStyleSpec(layer) as LayerProps;
           return (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <Source key={`source-scenario-layer-${layer.updated_at}`} type="geojson" data={features as any}>
               {highlightStyle && (
                 <Layer
@@ -86,6 +88,7 @@ const ScenarioLayer = ({ scenarioLayerData, projectLayers }: ScenarioLayerProps)
                   type="circle"
                   beforeId={`scenario-layer-${layer.id}`}
                   paint={{
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     "circle-color": scenarioFeatureStateColor as any,
                     "circle-radius":
                       (layer.properties["custom_marker"]
