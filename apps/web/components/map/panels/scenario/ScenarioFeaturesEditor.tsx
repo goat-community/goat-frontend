@@ -243,8 +243,7 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
         flexDirection: "column",
       }}>
       <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
-        GOAT allows the development of custom scenarios which can later be used for computing indicators to
-        assess the impact of the interventions.
+        {t("scenario_features_editor_description")}
       </Typography>
       <SectionHeader
         active={true}

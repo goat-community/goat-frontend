@@ -718,6 +718,7 @@
   "scenario_created_successfully": "Scenario created successfully",
   "scenario_deleted_success": "Scenario delete successfully",
   "scenario_features": "Scenario Features",
+  "scenario_features_editor_description": "Scenarios allow the modification of layer data, which can later be applied when  calculating indicators for assessing the impact of interventions.     ",
   "scenario_tools": "Scenario Tools",
   "scenario_updated_successfully": "Scenario updated successfully",
   "scenarios": "Scenarios",
