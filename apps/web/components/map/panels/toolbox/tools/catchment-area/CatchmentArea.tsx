@@ -299,8 +299,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
-      } catch (e) {
-        console.log(e);
+      } catch {
         toast.error(`"${t(jobTypeEnum.Enum.catchment_area_active_mobility)}" - ${t("job_failed")}`);
       } finally {
         setIsBusy(false);
@@ -320,8 +319,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
           mutate();
           dispatch(setRunningJobIds([...runningJobIds, job_id]));
         }
-      } catch (e) {
-        console.log(e);
+      } catch {
         toast.error(`"${t(jobTypeEnum.Enum.catchment_area_car)}" - ${t("job_failed")}`);
       } finally {
         setIsBusy(false);

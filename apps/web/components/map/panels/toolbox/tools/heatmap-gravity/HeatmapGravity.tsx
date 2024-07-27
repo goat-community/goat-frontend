@@ -3,13 +3,14 @@ import { useMemo, useState } from "react";
 
 import { useTranslation } from "@/i18n/client";
 
-import { useProjectLayers } from "@/lib/api/projects";
 import { computeHeatmapGravity } from "@/lib/api/tools";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import { heatmapGravitySchema, heatmapImpedanceFunctionEnum } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
+
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 
 import Selector from "@/components/map/panels/common/Selector";
 import HeatmapContainer from "@/components/map/panels/toolbox/common/HeatmapContainer";
@@ -25,7 +26,7 @@ type Opportunity = {
 const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
   const { projectId } = useParams();
-  const { layers } = useProjectLayers(projectId as string);
+  const { layers } = useFilteredProjectLayers(projectId as string);
   const defaultImpedanceFunction = {
     value: heatmapImpedanceFunctionEnum.Enum.gaussian,
     label: t(heatmapImpedanceFunctionEnum.Enum.gaussian),

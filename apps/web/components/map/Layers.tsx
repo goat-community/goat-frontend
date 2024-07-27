@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import type { LayerProps, MapGeoJSONFeature } from "react-map-gl";
 import { Layer as MapLayer, Source } from "react-map-gl";
 
-import { GEOAPI_BASE_URL } from "@/lib/constants";
+import { GEOAPI_BASE_URL, SYSTEM_LAYERS_IDS } from "@/lib/constants";
 import { excludes as excludeOp } from "@/lib/transformers/filter";
 import { getHightlightStyleSpec, transformToMapboxLayerStyleSpec } from "@/lib/transformers/layer";
 import { getLayerKey } from "@/lib/utils/map/layer";
@@ -12,6 +12,7 @@ import { type ScenarioFeatures, scenarioEditTypeEnum } from "@/lib/validations/s
 
 interface LayersProps {
   layers?: ProjectLayer[] | Layer[];
+  selectedScenarioLayer?: ProjectLayer | null;
   highlightFeature?: MapGeoJSONFeature | null;
   scenarioFeatures?: ScenarioFeatures | null;
 }
@@ -76,10 +77,26 @@ const Layers = (props: LayersProps) => {
     )}/tiles/{z}/{x}/{y}${query}`;
   };
 
+  const useDataLayers = useMemo(() => {
+    return props.layers?.filter((layer) => {
+      const layerId = layer["layer_id"] ?? layer.id;
+      return (
+        ["feature", "external_vector_tile"].includes(layer.type) && SYSTEM_LAYERS_IDS.indexOf(layerId) === -1
+      );
+    });
+  }, [props.layers]);
+
+  const systemLayers = useMemo(() => {
+    return props.layers?.filter((layer) => {
+      const layerId = layer["layer_id"] ?? layer.id;
+      return ["feature"].includes(layer.type) && SYSTEM_LAYERS_IDS.indexOf(layerId) !== -1;
+    });
+  }, [props.layers]);
+
   return (
     <>
-      {props.layers?.length
-        ? props.layers.map((layer: ProjectLayer | Layer, index: number) =>
+      {useDataLayers?.length
+        ? useDataLayers.map((layer: ProjectLayer | Layer, index: number) =>
             (() => {
               if (["feature", "external_vector_tile"].includes(layer.type)) {
                 return (
@@ -89,7 +106,7 @@ const Layers = (props: LayersProps) => {
                       id={layer.id.toString()}
                       {...(transformToMapboxLayerStyleSpec(layer) as LayerProps)}
                       beforeId={
-                        index === 0 || !props.layers ? undefined : props.layers[index - 1].id.toString()
+                        index === 0 || !useDataLayers ? undefined : useDataLayers[index - 1].id.toString()
                       }
                       source-layer="default"
                     />
@@ -106,16 +123,31 @@ const Layers = (props: LayersProps) => {
                       )}
                   </Source>
                 );
-              } else if (layer.type === "external_imagery") {
-                return (
-                  <Source key={layer.updated_at} type="raster" tileSize={256} tiles={[layer.url ?? ""]}>
-                    <MapLayer type="raster" />
-                  </Source>
-                );
               } else {
                 return null;
               }
             })()
+          )
+        : null}
+      {systemLayers?.length
+        ? systemLayers.map((layer: ProjectLayer | Layer) =>
+            props.selectedScenarioLayer?.id === layer.id ? (
+              <Source
+                key={layer.updated_at}
+                type="vector"
+                tiles={[getTileUrl(layer)]}
+                minzoom={14}
+                maxzoom={22}>
+                <MapLayer
+                  key={getLayerKey(layer)}
+                  id={layer.id.toString()}
+                  {...(transformToMapboxLayerStyleSpec(layer) as LayerProps)}
+                  source-layer="default"
+                  minzoom={14}
+                  maxzoom={22}
+                />
+              </Source>
+            ) : null
           )
         : null}
     </>

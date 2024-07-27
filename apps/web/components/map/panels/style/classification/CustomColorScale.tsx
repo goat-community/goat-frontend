@@ -284,7 +284,6 @@ const CustomColorScale = (props: CustomColorScaleProps) => {
   }, [valueMaps]);
 
   const handleValueSelectorChange = (values: string[] | null) => {
-    console.log(values);
     const updatedValues = [] as ColorMapItem[];
     valueMaps.forEach((value) => {
       if (value.id === editingValues?.id) {

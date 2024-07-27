@@ -53,6 +53,7 @@ export const scenarioFeaturePost = z.object({
   layer_project_id: z.number(),
   edit_type: z.string(),
   geom: z.string(),
+  h3_3: z.number().optional(),
 }).passthrough();
 
 export const scenarioFeatureUpdate = scenarioFeaturePost.partial()

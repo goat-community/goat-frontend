@@ -3,11 +3,10 @@ import { useMemo } from "react";
 
 import { useTranslation } from "@/i18n/client";
 
-import { useProjectLayers } from "@/lib/api/projects";
 import { setActiveLayer } from "@/lib/store/layer/slice";
 import type { LayerType } from "@/lib/validations/common";
 
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+import { useActiveLayer, useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
 
 interface ProjectLayerDropdownProps {
@@ -18,7 +17,7 @@ interface ProjectLayerDropdownProps {
 
 const ProjectLayerDropdown = ({ projectId, layerTypes, onChange }: ProjectLayerDropdownProps) => {
   const { t } = useTranslation("common");
-  const { layers: projectLayers } = useProjectLayers(projectId);
+  const { layers: projectLayers } = useFilteredProjectLayers(projectId);
   const filteredLayers = useMemo(() => {
     if (!layerTypes) return projectLayers;
     return projectLayers?.filter((layer) => layerTypes.includes(layer.type));

@@ -14,7 +14,6 @@ import {
   updateProjectInitialViewState,
   useProject,
   useProjectInitialViewState,
-  useProjectLayers,
   useProjectScenarioFeatures,
 } from "@/lib/api/projects";
 import { MAPBOX_TOKEN } from "@/lib/constants";
@@ -25,7 +24,7 @@ import { setHighlightedFeature, setPopupInfo } from "@/lib/store/map/slice";
 import { addOrUpdateMarkerImages, addPatternImages } from "@/lib/transformers/map-image";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 
-import { useSortedLayers } from "@/hooks/map/LayerPanelHooks";
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import { LoadingPage } from "@/components/common/LoadingPage";
@@ -65,11 +64,15 @@ export default function MapPage({ params: { projectId } }) {
     isLoading: areProjectLayersLoading,
     isError: projectLayersError,
     layers: projectLayers,
-  } = useProjectLayers(projectId);
+  } = useFilteredProjectLayers(projectId, ["table"], []);
+
+  //todo: fix this. Should save selectedScenarioEditLayer as ProjectLayer type instead
+  const _selectedScenarioEditLayer = useAppSelector((state) => state.map.selectedScenarioLayer);
+  const selectedScenarioEditLayer = useMemo(() => {
+    return projectLayers?.find((layer) => layer.id === _selectedScenarioEditLayer?.value);
+  }, [_selectedScenarioEditLayer, projectLayers]);
 
   const { scenarioFeatures } = useProjectScenarioFeatures(projectId, project?.active_scenario_id);
-
-  const sortedLayers = useSortedLayers(projectId, ["table"]);
 
   const isLoading = useMemo(
     () => isProjectLoading || isInitialViewLoading || areProjectLayersLoading,
@@ -104,7 +107,7 @@ export default function MapPage({ params: { projectId } }) {
 
   const handleMapClick = (e: MapLayerMouseEvent) => {
     const features = e.features;
-    const hiddenProperties = ["layer_id", "id"];
+    const hiddenProperties = ["layer_id", "id", "h3_3", "h3_6"];
     if (features && features.length > 0 && isGetInfoActive) {
       const feature = features[0];
       dispatch(setHighlightedFeature(feature));
@@ -287,9 +290,10 @@ export default function MapPage({ params: { projectId } }) {
                     defaultMode={MapboxDraw.constants.modes.SIMPLE_SELECT}
                   />
                   <Layers
-                    layers={sortedLayers}
+                    layers={projectLayers}
                     highlightFeature={highlightedFeature}
                     scenarioFeatures={scenarioFeatures}
+                    selectedScenarioLayer={selectedScenarioEditLayer}
                   />
                   <ScenarioLayer scenarioLayerData={scenarioFeatures} projectLayers={projectLayers} />
                   <ToolboxLayers />

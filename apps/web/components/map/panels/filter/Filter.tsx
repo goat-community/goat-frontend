@@ -19,7 +19,7 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
-import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
+import { updateProjectLayer } from "@/lib/api/projects";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { createTheCQLBasedOnExpression, parseCQLQueryToObject } from "@/lib/transformers/filter";
 import { type Expression as ExpressionType, FilterType } from "@/lib/validations/filter";
@@ -27,7 +27,7 @@ import { type Expression as ExpressionType, FilterType } from "@/lib/validations
 import type { SelectorItem } from "@/types/map/common";
 
 import useLayerFields from "@/hooks/map/CommonHooks";
-import { useFilterQueries } from "@/hooks/map/LayerPanelHooks";
+import { useFilterQueries, useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 
 import Container from "@/components/map/panels/Container";
 import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
@@ -41,7 +41,7 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
   const { activeLayer } = useFilterQueries(projectId);
   const [previousLayerId, setPreviousLayerId] = useState<string | null>(null);
   const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
-  const { layers: projectLayers, mutate: mutateProjectLayers } = useProjectLayers(projectId);
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
 
   // Add filter expression
   const [addExpressionAnchorEl, setAddExpressionAnchorEl] = React.useState<null | HTMLElement>(null);

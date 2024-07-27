@@ -17,7 +17,7 @@ const MapPopoverEditor: React.FC<MapPopoverEditorProps> = ({
   lngLat,
   onClose,
   onConfirm,
-  projectLayer,
+  layer,
   feature,
   editMode,
 }) => {
@@ -47,7 +47,7 @@ const MapPopoverEditor: React.FC<MapPopoverEditorProps> = ({
     }
   }, [editMode, t]);
 
-  const { layerFields } = useLayerFields(projectLayer?.layer_id || "");
+  const { layerFields } = useLayerFields(layer?.id || "");
   const filteredLayerFields = useMemo(() => {
     return layerFields.filter((field) => field.type === "string" || field.type === "number");
   }, [layerFields]);
@@ -72,7 +72,7 @@ const MapPopoverEditor: React.FC<MapPopoverEditorProps> = ({
             </IconButton>
           </Stack>
           <Divider sx={{ mb: 0 }} />
-          <Box sx={{ overflowY: "auto" }}>
+          <Box sx={{ maxHeight: "280px", overflowY: "auto", overflowX: "hidden" }}>
             {editMode === EditorModes.DELETE && (
               <Stack
                 sx={{ pt: 2, px: 2 }}

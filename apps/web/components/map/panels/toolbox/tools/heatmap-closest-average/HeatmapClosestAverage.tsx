@@ -3,11 +3,12 @@ import { useState } from "react";
 
 import { useTranslation } from "@/i18n/client";
 
-import { useProjectLayers } from "@/lib/api/projects";
 import { computeHeatmapClosestAverage } from "@/lib/api/tools";
 import { heatmapClosestAverageSchema } from "@/lib/validations/tools";
 
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
+
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 
 import HeatmapContainer from "@/components/map/panels/toolbox/common/HeatmapContainer";
 import type { Opportunity } from "@/components/map/panels/toolbox/common/HeatmapOpportunitiesSelector";
@@ -16,7 +17,7 @@ import HeatmapOpportunitiesSelector from "@/components/map/panels/toolbox/common
 const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
   const { projectId } = useParams();
-  const { layers } = useProjectLayers(projectId as string);
+  const { layers } = useFilteredProjectLayers(projectId as string);
 
   const defaultOpportunities: Opportunity[] = [
     {

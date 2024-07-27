@@ -36,7 +36,6 @@ import {
   updateProject,
   updateProjectLayer,
   useProject,
-  useProjectLayers,
   useProjectScenarioFeatures,
   useProjectScenarios,
 } from "@/lib/api/projects";
@@ -48,6 +47,7 @@ import {
   setSelectedScenarioLayer,
 } from "@/lib/store/map/slice";
 import { zoomToLayer } from "@/lib/utils/map/navigate";
+import type { Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
 
 import { ContentActions, MapLayerActions } from "@/types/common";
@@ -55,7 +55,7 @@ import { MapSidebarItemID } from "@/types/map/common";
 import type { PanelProps } from "@/types/map/sidebar";
 
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
-import { useLayerSettingsMoreMenu, useSortedLayers } from "@/hooks/map/LayerPanelHooks";
+import { useFilteredProjectLayers, useLayerSettingsMoreMenu } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import { DragHandle } from "@/components/common/DragHandle";
@@ -84,12 +84,18 @@ export const iconMapping = {
   line: ICON_NAME.LINE_FEATURE,
   polygon: ICON_NAME.POLYGON_FEATURE,
   table: ICON_NAME.TABLE,
+  streetNetwork: ICON_NAME.STREET_NETWORK,
 };
 
-export function getLayerIcon(layer: ProjectLayer) {
+export function getLayerIcon(layer: ProjectLayer | Layer) {
   if (layer.type === "table") {
     return iconMapping.table;
   }
+
+  if (layer.type === "feature" && layer.feature_layer_type === "street_network") {
+    return iconMapping.streetNetwork;
+  }
+
   if (layer.type === "feature" && layer.feature_layer_geometry_type) {
     return iconMapping[layer.feature_layer_geometry_type];
   }
@@ -260,14 +266,13 @@ const LayerPanel = ({ projectId }: PanelProps) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const [previousRightPanel, setPreviousRightPanel] = useState<MapSidebarItemID | undefined>(undefined);
-  const { layers: projectLayers, mutate: mutateProjectLayers } = useProjectLayers(projectId);
 
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
   const activeRightPanel = useAppSelector((state) => state.map.activeRightPanel);
   const selectedScenarioLayer = useAppSelector((state) => state.map.selectedScenarioLayer);
   const { scenarios } = useProjectScenarios(projectId);
   const { project, mutate: mutateProject } = useProject(projectId);
-  const sortedLayers = useSortedLayers(projectId);
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
   useJobStatus(() => {
     mutateProjectLayers();
     mutateProject();
@@ -428,16 +433,16 @@ const LayerPanel = ({ projectId }: PanelProps) => {
             />
           )}
           <Box>
-            {sortedLayers && sortedLayers?.length > 0 && (
+            {projectLayers && projectLayers?.length > 0 && (
               <DndContext
                 collisionDetection={closestCenter}
                 modifiers={[restrictToVerticalAxis]}
                 onDragEnd={handleDragEnd}
                 autoScroll={false}>
                 <SortableContext
-                  items={sortedLayers.map((layer) => layer.id)}
+                  items={projectLayers.map((layer) => layer.id)}
                   strategy={verticalListSortingStrategy}>
-                  {sortedLayers?.map((layer) => (
+                  {projectLayers?.map((layer) => (
                     <SortableLayerTile
                       key={layer.id}
                       id={layer.id}
@@ -707,7 +712,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
               </DndContext>
             )}
           </Box>
-          {sortedLayers?.length === 0 && (
+          {projectLayers?.length === 0 && (
             <EmptySection label={t("no_layers_added")} icon={ICON_NAME.LAYERS} />
           )}
         </>

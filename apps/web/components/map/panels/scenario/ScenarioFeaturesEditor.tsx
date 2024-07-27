@@ -16,17 +16,17 @@ import { ICON_NAME } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
+import { useDataset } from "@/lib/api/layers";
 import {
   createProjectScenarioFeatures,
   deleteProjectScenarioFeature,
   updateProjectScenarioFeatures,
-  useProjectLayers,
   useProjectScenarioFeatures,
 } from "@/lib/api/projects";
 import { setPopupEditor, setSelectedScenarioLayer } from "@/lib/store/map/slice";
 import { stringify as stringifyToWKT } from "@/lib/utils/map/wkt";
 import {
-  type Scenario, // type ScenarioFeatures,
+  type Scenario,
   scenarioEditTypeEnum,
   scenarioFeaturePost,
   scenarioFeatureUpdate,
@@ -35,6 +35,7 @@ import {
 import type { SelectorItem } from "@/types/map/common";
 import { EditorModes } from "@/types/map/popover";
 
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import SectionHeader from "@/components/map/panels/common/SectionHeader";
@@ -110,8 +111,8 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
   const theme = useTheme();
   const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
-  const { layers: projectLayers } = useProjectLayers(projectId);
-  const { scenarioFeatures, mutate: mutateScenarioFeatures } = useProjectScenarioFeatures(
+  const { layers: projectLayers } = useFilteredProjectLayers(projectId, ["table"], []);
+  const { scenarioFeatures: _, mutate: mutateScenarioFeatures } = useProjectScenarioFeatures(
     projectId,
     scenario.id
   );
@@ -137,7 +138,6 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
         }
       });
     }
-
     return scenarioLayers;
   }, [projectLayers]);
 
@@ -147,24 +147,33 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
     }
   }, [selectedScenarioEditLayer, projectLayers]);
 
+  const { dataset: layer } = useDataset(selectedScenarioLayer?.layer_id || "");
+
+  const validateProperties = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (properties: any) => {
+      if (!properties.id) {
+        throw new Error("Feature ID is missing");
+      }
+    },
+    []
+  );
+
   const handleSubmit = useCallback(
     async (payload) => {
       dispatch(setPopupEditor(undefined));
-      if (popupEditorRef.current) {
+      if (popupEditorRef.current && selectedScenarioLayer) {
         const type = popupEditorRef.current.editMode;
         const properties = popupEditorRef.current.feature?.properties;
-        if (
-          type === EditorModes.DELETE &&
-          popupEditorRef.current.feature &&
-          properties &&
-          popupEditorRef.current.projectLayer
-        ) {
+        if (type === EditorModes.DELETE && popupEditorRef.current.feature && properties) {
           try {
+            validateProperties(properties);
             await deleteProjectScenarioFeature(
               projectId,
-              popupEditorRef.current.projectLayer?.id,
+              selectedScenarioLayer?.id,
               scenario.id,
-              properties.id
+              properties.id,
+              properties.h3_3
             );
             toast.success(t("feature_deleted_success"));
           } catch (error) {
@@ -178,18 +187,16 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
           payload
         ) {
           try {
+            validateProperties(properties);
             const { layer_id: _, ...updatedPayload } = payload;
             const updateFeature = scenarioFeatureUpdate.parse({
               ...updatedPayload,
               edit_type: properties?.edit_type || scenarioEditTypeEnum.Enum.m,
-              layer_project_id: popupEditorRef.current.projectLayer?.id,
+              layer_project_id: selectedScenarioLayer?.id,
             });
-            await updateProjectScenarioFeatures(
-              projectId,
-              popupEditorRef.current.projectLayer?.id,
-              scenario.id,
-              [updateFeature]
-            );
+            await updateProjectScenarioFeatures(projectId, selectedScenarioLayer?.id, scenario.id, [
+              updateFeature,
+            ]);
             toast.success(t("feature_updated_success"));
           } catch (error) {
             if (error instanceof ZodError) {
@@ -210,15 +217,12 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
             const createFeature = scenarioFeaturePost.parse({
               ...payload,
               edit_type: scenarioEditTypeEnum.Enum.n,
-              layer_project_id: popupEditorRef.current.projectLayer?.id,
+              layer_project_id: selectedScenarioLayer?.id,
               geom: stringifyToWKT(geom),
             });
-            await createProjectScenarioFeatures(
-              projectId,
-              popupEditorRef.current.projectLayer?.id,
-              scenario.id,
-              [createFeature]
-            );
+            await createProjectScenarioFeatures(projectId, selectedScenarioLayer?.id, scenario.id, [
+              createFeature,
+            ]);
             toast.success(t("feature_created_success"));
           } catch (error) {
             if (error instanceof ZodError) {
@@ -233,7 +237,7 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
         }
       }
     },
-    [dispatch, mutateScenarioFeatures, projectId, scenario.id, t]
+    [dispatch, mutateScenarioFeatures, projectId, scenario.id, selectedScenarioLayer, t, validateProperties]
   );
 
   return (
@@ -279,14 +283,14 @@ const ScenarioFeaturesEditor = ({ scenario, projectId }: { scenario: Scenario; p
         disableAdvanceOptions={true}
       />
       <SectionOptions
-        active={selectedScenarioEditLayer !== undefined}
+        active={layer !== undefined}
         baseOptions={
           <>
-            {selectedScenarioLayer !== undefined && (
+            {layer !== undefined && (
               <FeatureEditorTools
-                projectLayer={selectedScenarioLayer}
-                scenarioFeatures={scenarioFeatures}
+                layer={layer}
                 onFinish={handleSubmit}
+                projectLayerId={selectedScenarioLayer?.id}
               />
             )}
           </>

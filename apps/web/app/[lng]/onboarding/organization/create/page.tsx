@@ -117,7 +117,6 @@ export default function OrganizationOnBoarding() {
   }, [watchFormValues]);
 
   async function onSubmit(data: FormData) {
-    console.log(data);
     setResponseResult({ message: "", status: undefined });
     setIsBusy(true);
     try {

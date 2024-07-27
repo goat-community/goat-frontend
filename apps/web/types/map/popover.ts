@@ -1,4 +1,4 @@
-import type { ProjectLayer } from "@/lib/validations/project";
+import type { Layer } from "@/lib/validations/layer";
 import type { MapGeoJSONFeature } from "react-map-gl";
 
 
@@ -14,7 +14,7 @@ export type MapPopoverEditorProps = {
   lngLat: [number, number];
   feature?: MapGeoJSONFeature | undefined;
   editMode: EditorModes;
-  projectLayer: ProjectLayer;
+  layer: Layer;
   onClose: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onConfirm: (payload: any) => void;

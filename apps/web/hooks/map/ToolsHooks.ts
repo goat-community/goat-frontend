@@ -4,7 +4,6 @@ import { ICON_NAME } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
-import { useProjectLayers } from "@/lib/api/projects";
 import type { LayerFieldType } from "@/lib/validations/layer";
 import {
   CatchmentAreaRoutingTypeEnum,
@@ -17,6 +16,8 @@ import {
 } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
+import { useProjectLayers } from "@/lib/api/projects";
 
 export const usePTTimeSelectorValues = () => {
   const { t } = useTranslation("common");
@@ -249,7 +250,7 @@ export const useLayerByGeomType = (
   featureGeomTypes: ("point" | "line" | "polygon" | undefined)[] | undefined,
   projectId: string
 ) => {
-  const { layers } = useProjectLayers(projectId as string);
+  const { layers } = useFilteredProjectLayers(projectId as string);
   const filteredLayers: SelectorItem[] = useMemo(() => {
     if (!layers) return [];
     const layersByType = layers.filter((layer) => {

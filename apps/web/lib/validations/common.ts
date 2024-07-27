@@ -49,7 +49,7 @@ export const dataCategory = z.enum([
 
 export const layerType = z.enum(["feature", "external_imagery", "external_vector_tile", "table"]);
 
-export const featureLayerType = z.enum(["standard", "tool", "scenario"]);
+export const featureLayerType = z.enum(["standard", "tool", "street_network"]);
 
 export const tableDataExchangeType = z.enum(["csv", "xlsx"]);
 export const featureDataExchangeType = z.enum(["csv", "xlsx", "geojson", "gpkg", "kml", "shp"]);

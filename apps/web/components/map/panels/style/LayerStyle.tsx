@@ -9,7 +9,7 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 
 import { getLayerClassBreaks, getLayerUniqueValues, updateDataset, useDataset } from "@/lib/api/layers";
-import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
+import { updateProjectLayer } from "@/lib/api/projects";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { addOrUpdateMarkerImages } from "@/lib/transformers/map-image";
 import {
@@ -25,7 +25,7 @@ import type { ProjectLayer } from "@/lib/validations/project";
 import { LayerStyleActions } from "@/types/common";
 
 import useLayerFields from "@/hooks/map/CommonHooks";
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+import { useActiveLayer, useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
@@ -42,7 +42,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const dispatch = useDispatch();
   const { activeLayer } = useActiveLayer(projectId);
   const { dataset, mutate: mutateDataset } = useDataset(activeLayer?.layer_id || "");
-  const { layers: projectLayers, mutate: mutateProjectLayers } = useProjectLayers(projectId);
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
 
   const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
 

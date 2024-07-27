@@ -121,9 +121,7 @@ const OrganizationMembers = () => {
       <OrgMemberInviteModal
         open={openInviteModal}
         onClose={() => setOpenInviteModal(false)}
-        onInvite={() => {
-          console.log("invite");
-        }}
+        onInvite={() => {}}
       />
       <Box>
         {members && (

@@ -261,14 +261,19 @@ export const deleteProjectScenarioFeature = async (
   projectId: string,
   project_layer_id: number,
   scenarioId: string,
-  featureId: string | number
+  featureId: string | number,
+  h33?: number
 ) => {
-  const response = await fetchWithAuth(
-    `${PROJECTS_API_BASE_URL}/${projectId}/layer/${project_layer_id}/scenario/${scenarioId}/features/${featureId}`,
-    {
-      method: "DELETE",
-    }
-  );
+  let url = `${PROJECTS_API_BASE_URL}/${projectId}/layer/${project_layer_id}/scenario/${scenarioId}/features/${featureId}`;
+
+  // H33 is mandatory for user data. It can be undefined for new features only.
+  if (h33 !== undefined) {
+    url += `?h3_3=${h33}`;
+  }
+
+  const response = await fetchWithAuth(url, {
+    method: "DELETE",
+  });
 
   if (!response.ok) throw await response.json();
   return response;

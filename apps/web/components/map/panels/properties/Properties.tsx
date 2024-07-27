@@ -15,11 +15,11 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
-import { updateProjectLayer, useProjectLayers } from "@/lib/api/projects";
+import { updateProjectLayer } from "@/lib/api/projects";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import type { ProjectLayer } from "@/lib/validations/project";
 
-import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
+import { useActiveLayer, useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
 
 import { Legend } from "@/components/map/controls/Legend";
@@ -83,7 +83,7 @@ const LayerInfo = ({ layer }: { layer: ProjectLayer }) => {
 
 const Visibility = ({ layer, projectId }: { layer: ProjectLayer; projectId: string }) => {
   const { t } = useTranslation("common");
-  const { layers: projectLayers, mutate: mutateProjectLayers } = useProjectLayers(projectId);
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
   const layerType = layer.type;
 
   const opacity = useMemo(() => {

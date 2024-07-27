@@ -21,8 +21,6 @@ type DrawControlProps = ConstructorParameters<typeof MapboxDraw>[0] & {
   onDelete?: (evt: { features: object[] }) => void;
 };
 
-console.log();
-
 // eslint-disable-next-line react/display-name
 export const DrawControl = (props: DrawControlProps) => {
   const { setDrawControl } = useDraw();

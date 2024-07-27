@@ -30,9 +30,7 @@ const LabelOptions = ({
         <LayerFieldSelector
           fields={layerFields}
           selectedField={selectedField}
-          setSelectedField={(field) => {
-            console.log(field);
-          }}
+          setSelectedField={() => {}}
           label={t("color_based_on")}
           tooltip={t("color_based_on_desc")}
         />

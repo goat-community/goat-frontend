@@ -5,6 +5,7 @@ import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 
 import { useProject, useProjectLayers } from "@/lib/api/projects";
+import { SYSTEM_LAYERS_IDS } from "@/lib/constants";
 import type { LayerType } from "@/lib/validations/layer";
 import {
   featureLayerLinePropertiesSchema,
@@ -46,12 +47,12 @@ export const useLayerSettingsMoreMenu = () => {
         },
         ...(viewChart
           ? [
-              {
-                id: MapLayerActions.CHART,
-                label: t("view_chart"),
-                icon: ICON_NAME.CHART,
-              },
-            ]
+            {
+              id: MapLayerActions.CHART,
+              label: t("view_chart"),
+              icon: ICON_NAME.CHART,
+            },
+          ]
           : []),
         {
           id: MapLayerActions.DUPLICATE,
@@ -66,12 +67,12 @@ export const useLayerSettingsMoreMenu = () => {
         ...(inCatalog
           ? []
           : [
-              {
-                id: ContentActions.DOWNLOAD,
-                label: t("download"),
-                icon: ICON_NAME.DOWNLOAD,
-              },
-            ]),
+            {
+              id: ContentActions.DOWNLOAD,
+              label: t("download"),
+              icon: ICON_NAME.DOWNLOAD,
+            },
+          ]),
         {
           id: ContentActions.DELETE,
           label: t("remove"),
@@ -95,12 +96,12 @@ export const useLayerSettingsMoreMenu = () => {
         },
         ...(viewChart
           ? [
-              {
-                id: MapLayerActions.CHART,
-                label: t("view_chart"),
-                icon: ICON_NAME.CHART,
-              },
-            ]
+            {
+              id: MapLayerActions.CHART,
+              label: t("view_chart"),
+              icon: ICON_NAME.CHART,
+            },
+          ]
           : []),
         {
           id: MapLayerActions.RENAME,
@@ -181,17 +182,23 @@ export const useFilterQueries = (projectId: string) => {
   return { activeLayer, mutate };
 };
 
-export const useSortedLayers = (projectId: string, excludeLayerTypes: LayerType[] = []) => {
-  const { layers: projectLayers } = useProjectLayers(projectId);
+export const useFilteredProjectLayers = (
+  projectId: string,
+  excludeLayerTypes: LayerType[] = [],
+  excludeLayerIds: string[] = [...SYSTEM_LAYERS_IDS]
+) => {
+  const { layers: projectLayers, mutate, isLoading, isError, isValidating } = useProjectLayers(projectId);
   const { project } = useProject(projectId);
   const sortedLayers = useMemo(() => {
     if (!projectLayers || !project) return [];
     if (!project.layer_order) return projectLayers;
-    const filteredLayers = projectLayers.filter((layer) => !excludeLayerTypes.includes(layer.type));
+    const filteredLayers = projectLayers.filter(
+      (layer) => !excludeLayerTypes.includes(layer.type) && !excludeLayerIds.includes(layer.layer_id)
+    );
 
     return filteredLayers.sort(
       (a, b) => project?.layer_order.indexOf(a.id) - project.layer_order.indexOf(b.id)
     );
-  }, [projectLayers, project, excludeLayerTypes]);
-  return sortedLayers;
+  }, [projectLayers, project, excludeLayerTypes, excludeLayerIds]);
+  return { layers: sortedLayers, mutate, isLoading, isError, isValidating };
 };

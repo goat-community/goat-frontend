@@ -5,7 +5,7 @@ import { useLayerQueryables } from "@/lib/api/layers";
 const useLayerFields = (
   dataset_id: string,
   filterType?: "string" | "number" | undefined,
-  hiddenFields: string[] = ["layer_id", "id"]
+  hiddenFields: string[] = ["layer_id", "id", "h3_3", "h3_6"]
 ) => {
   const { queryables, isLoading, isError } = useLayerQueryables(dataset_id || "");
 

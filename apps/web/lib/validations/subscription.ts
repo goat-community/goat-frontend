@@ -1,8 +1,6 @@
 import * as z from "zod";
 
 const appSubscriptionType = z.enum(["starter", "analyst", "professional"]);
-const dataSubscriptionType = z.enum(["data"]);
-console.log(dataSubscriptionType);
 
 export const subscriptionBaseSchema = z.object({
   id: z.string(),

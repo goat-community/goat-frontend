@@ -21,9 +21,11 @@ import { Loading } from "@p4b/ui/components/Loading";
 import { useTranslation } from "@/i18n/client";
 
 import { useCatalogLayers } from "@/lib/api/layers";
-import { addProjectLayers, useProject, useProjectLayers } from "@/lib/api/projects";
+import { addProjectLayers, useProject } from "@/lib/api/projects";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type { GetDatasetSchema, Layer } from "@/lib/validations/layer";
+
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 
 import CatalogDatasetCard from "@/components/dashboard/catalog/CatalogDatasetCard";
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
@@ -52,7 +54,7 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({ open, onClose, p
 
   const { layers: datasets, isLoading: isDatasetLoading } = useCatalogLayers(queryParams, datasetSchema);
 
-  const { mutate: mutateProjectLayers } = useProjectLayers(projectId);
+  const { mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
   const { mutate: mutateProject } = useProject(projectId);
   const [searchText, setSearchText] = useState<string>("");
   const [isBusy, setIsBusy] = useState<boolean>(false);
