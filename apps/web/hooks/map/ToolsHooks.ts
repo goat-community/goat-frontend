@@ -17,7 +17,7 @@ import {
 
 import type { SelectorItem } from "@/types/map/common";
 import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
-import { useProjectLayers } from "@/lib/api/projects";
+import { useProjectLayers, useProjectScenarios } from "@/lib/api/projects";
 
 export const usePTTimeSelectorValues = () => {
   const { t } = useTranslation("common");
@@ -340,3 +340,21 @@ export const useStatisticValues = () => {
     setStatisticField,
   };
 };
+
+export const useScenarioItems = (projectId: string) => {
+  const { scenarios } = useProjectScenarios(projectId as string);
+  const scenarioItems: SelectorItem[] = useMemo(() => {
+    if (!scenarios) return [];
+    return scenarios?.items.map((scenario) => {
+      return {
+        value: scenario.id,
+        label: scenario.name,
+        icon: ICON_NAME.SCENARIO,
+      };
+    });
+  }, [scenarios]);
+
+  return {
+    scenarioItems,
+  };
+}

@@ -273,6 +273,7 @@ const FeatureEditorTools = ({
         map.off("click", handleFeatureClick);
         dispatch(setIsMapGetInfoActive(true));
         hideToast();
+        console.log(editType);
       };
     }
     if (editType === EditorModes.DRAW) {
@@ -282,6 +283,7 @@ const FeatureEditorTools = ({
         map.off(MapboxDraw.constants.events.CREATE, handleFeatureCreate);
         map.off("click", handleFeatureCreateTooltipUpdates);
         hideToast();
+        console.log(editType);
       };
     }
   }, [

@@ -39,6 +39,7 @@ import {
   useCatchmentAreaShapeTypes,
   usePTTimeSelectorValues,
   useRoutingTypes,
+  useScenarioItems,
   useStartingPointMethods,
 } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
@@ -177,6 +178,9 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     // Reset starting method
     setStartingPointMethod(startingPointMethods[0]);
     setStartingPointLayer(undefined);
+
+    // Reset scenario
+    setSelectedScenario(undefined);
   }, [catchmentAreaShapeTypes, resetPTConfiguration, selectedRouting?.value, startingPointMethods]);
 
   useEffect(() => {
@@ -207,6 +211,10 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     startingPoints,
   ]);
 
+  // Scenario
+  const { scenarioItems } = useScenarioItems(projectId as string);
+  const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
+
   const handleReset = () => {
     dispatch(setMaskLayer(undefined));
     dispatch(setToolboxStartingPoints(undefined));
@@ -220,6 +228,11 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     const payload = {
       catchment_area_type: catchmentAreaShapeType.value,
     };
+
+    if (selectedScenario?.value) {
+      payload["scenario_id"] = selectedScenario?.value;
+    }
+
     if (isPolygonDifference) {
       payload["polygon_difference"] = true;
     }
@@ -526,6 +539,31 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                     maxStartingPoints={
                       selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt ? 1 : undefined
                     }
+                  />
+                </>
+              }
+            />
+            {/* SCENARIO */}
+            <SectionHeader
+              active={isRoutingValid}
+              alwaysActive={true}
+              label={t("scenario")}
+              icon={ICON_NAME.SCENARIO}
+              disableAdvanceOptions={true}
+            />
+            <SectionOptions
+              active={isRoutingValid}
+              baseOptions={
+                <>
+                  <Selector
+                    selectedItems={selectedScenario}
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
+                      setSelectedScenario(item as SelectorItem);
+                    }}
+                    items={scenarioItems}
+                    label={t("scenario")}
+                    placeholder={t("select_scenario")}
+                    tooltip={t("choose_scenario")}
                   />
                 </>
               }
