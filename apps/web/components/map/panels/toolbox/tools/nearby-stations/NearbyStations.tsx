@@ -18,7 +18,12 @@ import { catchmentAreaMaskLayerNames, nearbyStationsSchema } from "@/lib/validat
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
-import { usePTTimeSelectorValues, useRoutingTypes, useStartingPointMethods } from "@/hooks/map/ToolsHooks";
+import {
+  usePTTimeSelectorValues,
+  useRoutingTypes,
+  useScenarioItems,
+  useStartingPointMethods,
+} from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import Container from "@/components/map/panels/Container";
@@ -111,6 +116,10 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     return isRoutingValid;
   }, [isRoutingValid, startingPointLayer?.value, startingPointMethod.value, startingPoints]);
 
+  // Scenario
+  const { scenarioItems } = useScenarioItems(projectId as string);
+  const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
+
   const handleRun = async () => {
     const payload = {
       access_mode: selectedRouting?.value,
@@ -123,6 +132,9 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
       max_traveltime: maxTravelTime?.value,
       mode: selectedPTModes?.map((mode) => mode.value),
     };
+    if (selectedScenario) {
+      payload["scenario_id"] = selectedScenario.value;
+    }
     if (startingPointMethod.value === "map") {
       const longitude = startingPoints?.map((point) => point[0]);
       const latitude = startingPoints?.map((point) => point[1]);
@@ -160,6 +172,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     setSpeed(undefined);
     setStartingPointMethod(startingPointMethods[0]);
     setStartingPointLayer(undefined);
+    setSelectedScenario(undefined);
     dispatch(setToolboxStartingPoints(undefined));
     dispatch(setIsMapGetInfoActive(true));
   };
@@ -292,6 +305,32 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
                       startingPointMethods={startingPointMethods}
                       startingPointLayer={startingPointLayer}
                       setStartingPointLayer={setStartingPointLayer}
+                    />
+                  </>
+                }
+              />
+
+              {/* SCENARIO */}
+              <SectionHeader
+                active={isValid}
+                alwaysActive={true}
+                label={t("scenario")}
+                icon={ICON_NAME.SCENARIO}
+                disableAdvanceOptions={true}
+              />
+              <SectionOptions
+                active={isValid}
+                baseOptions={
+                  <>
+                    <Selector
+                      selectedItems={selectedScenario}
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
+                        setSelectedScenario(item as SelectorItem);
+                      }}
+                      items={scenarioItems}
+                      label={t("scenario")}
+                      placeholder={t("select_scenario")}
+                      tooltip={t("choose_scenario")}
                     />
                   </>
                 }

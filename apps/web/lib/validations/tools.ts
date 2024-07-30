@@ -143,6 +143,7 @@ export const tripCountSchema = z.object({
   time_window: ptTimeWindow,
   reference_area_layer_project_id: z.number(),
   station_config: stationConfigSchema,
+  scenario_id: z.string().optional(),
 });
 
 export const oevGueteklassenSchema = tripCountSchema.extend({});
