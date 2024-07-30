@@ -231,6 +231,7 @@ export const nearbyStationsSchema = z.object({
   max_traveltime: z.number().min(1).max(15),
   mode: z.array(PTRoutingModes),
   time_window: ptTimeWindow,
+  scenario_id: z.string().optional(),
 });
 
 export type PostNearbyStations = z.infer<typeof nearbyStationsSchema>;
@@ -248,6 +249,7 @@ export const heatmapGravitySchema = z.object({
     })
   ),
   routing_type: HeatmapRoutingTypeEnum,
+  scenario_id: z.string().optional(),
 });
 
 export type PostHeatmapGravity = z.infer<typeof heatmapGravitySchema>;
@@ -262,6 +264,7 @@ export const heatmapClosestAverageSchema = z.object({
     })
   ),
   routing_type: HeatmapRoutingTypeEnum,
+  scenario_id: z.string().optional()
 });
 
 export type PostHeatmapClosestAverage = z.infer<typeof heatmapClosestAverageSchema>;
@@ -271,6 +274,7 @@ export const heatmapConnectivitySchema = z.object({
   reference_area_layer_project_id: z.number(),
   max_traveltime: z.number().min(1).max(60),
   routing_type: HeatmapRoutingTypeEnum,
+  scenario_id: z.string().optional()
 });
 
 export type PostHeatmapConnectivity = z.infer<typeof heatmapConnectivitySchema>;

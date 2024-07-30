@@ -16,7 +16,7 @@ import { HeatmapRoutingTypeEnum, catchmentAreaMaskLayerNames } from "@/lib/valid
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
-import { useRoutingTypes } from "@/hooks/map/ToolsHooks";
+import { useRoutingTypes, useScenarioItems } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import Container from "@/components/map/panels/Container";
@@ -78,6 +78,8 @@ const HeatmapContainer = ({
     return isValid;
   }, [isValid, selectedRouting]);
 
+  // const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
+
   const { mutate } = useJobs({
     read: false,
   });
@@ -85,9 +87,14 @@ const HeatmapContainer = ({
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const { projectId } = useParams();
 
+  // Scenario
+  const { scenarioItems } = useScenarioItems(projectId as string);
+  const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
+
   const _handleReset = () => {
     dispatch(setMaskLayer(undefined));
     setSelectedRouting(undefined);
+    setSelectedScenario(undefined);
     handleConfigurationReset && handleConfigurationReset();
     handleReset && handleReset();
   };
@@ -102,6 +109,10 @@ const HeatmapContainer = ({
       routing_type: selectedRouting?.value,
       ...payload,
     };
+    if (selectedScenario) {
+      _payload.scenario_id = selectedScenario.value;
+    }
+
     let heatmap_type = `${type}_active_mobility`;
     if (selectedRouting?.value === HeatmapRoutingTypeEnum.Enum.public_transport) {
       heatmap_type = `${type}_pt`;
@@ -203,6 +214,32 @@ const HeatmapContainer = ({
                 <SectionOptions active={_isValid} baseOptions={<>{opportunitiesChildren}</>} />
               </>
             )}
+
+            {/* SCENARIO */}
+            <SectionHeader
+              active={_isValid}
+              alwaysActive={true}
+              label={t("scenario")}
+              icon={ICON_NAME.SCENARIO}
+              disableAdvanceOptions={true}
+            />
+            <SectionOptions
+              active={_isValid}
+              baseOptions={
+                <>
+                  <Selector
+                    selectedItems={selectedScenario}
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
+                      setSelectedScenario(item as SelectorItem);
+                    }}
+                    items={scenarioItems}
+                    label={t("scenario")}
+                    placeholder={t("select_scenario")}
+                    tooltip={t("choose_scenario")}
+                  />
+                </>
+              }
+            />
           </Box>
         </>
       }
