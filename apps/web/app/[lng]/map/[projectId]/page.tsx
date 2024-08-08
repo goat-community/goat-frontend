@@ -24,6 +24,7 @@ import { setHighlightedFeature, setPopupInfo } from "@/lib/store/map/slice";
 import { addOrUpdateMarkerImages, addPatternImages } from "@/lib/transformers/map-image";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 
+import { useJobStatus } from "@/hooks/jobs/JobStatus";
 import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
@@ -52,7 +53,12 @@ export default function MapPage({ params: { projectId } }) {
   const highlightedFeature = useAppSelector((state) => state.map.highlightedFeature);
   const dispatch = useAppDispatch();
   const mapRef = useRef<MapRef | null>(null);
-  const { project, isLoading: isProjectLoading, isError: projectError } = useProject(projectId);
+  const {
+    project,
+    isLoading: isProjectLoading,
+    isError: projectError,
+    mutate: mutateProject,
+  } = useProject(projectId);
 
   const {
     initialView,
@@ -64,6 +70,7 @@ export default function MapPage({ params: { projectId } }) {
     isLoading: areProjectLayersLoading,
     isError: projectLayersError,
     layers: projectLayers,
+    mutate: mutateProjectLayers,
   } = useFilteredProjectLayers(projectId, ["table"], []);
 
   //todo: fix this. Should save selectedScenarioEditLayer as ProjectLayer type instead
@@ -197,6 +204,11 @@ export default function MapPage({ params: { projectId } }) {
       }
     }
   };
+
+  useJobStatus(() => {
+    mutateProjectLayers();
+    mutateProject();
+  });
 
   return (
     <>

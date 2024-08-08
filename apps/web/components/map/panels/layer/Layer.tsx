@@ -54,7 +54,6 @@ import { ContentActions, MapLayerActions } from "@/types/common";
 import { MapSidebarItemID } from "@/types/map/common";
 import type { PanelProps } from "@/types/map/sidebar";
 
-import { useJobStatus } from "@/hooks/jobs/JobStatus";
 import { useFilteredProjectLayers, useLayerSettingsMoreMenu } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
@@ -266,20 +265,13 @@ const LayerPanel = ({ projectId }: PanelProps) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const [previousRightPanel, setPreviousRightPanel] = useState<MapSidebarItemID | undefined>(undefined);
-
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
   const activeRightPanel = useAppSelector((state) => state.map.activeRightPanel);
   const selectedScenarioLayer = useAppSelector((state) => state.map.selectedScenarioLayer);
   const { scenarios } = useProjectScenarios(projectId);
   const { project, mutate: mutateProject } = useProject(projectId);
   const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
-  useJobStatus(() => {
-    mutateProjectLayers();
-    mutateProject();
-  });
-
   const { scenarioFeatures } = useProjectScenarioFeatures(projectId, project?.active_scenario_id);
-
   const scenarioFeaturesCount = useMemo(() => {
     const count = {};
     scenarioFeatures?.features.forEach((feature) => {
