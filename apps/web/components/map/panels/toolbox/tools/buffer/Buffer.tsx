@@ -15,7 +15,7 @@ import { bufferDefaults, bufferSchema } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
-import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
+import { useLayerByGeomType, useScenarioItems } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import FormLabelHelper from "@/components/common/FormLabelHelper";
@@ -51,6 +51,10 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
   const [isPolygonUnion, setIsPolygonUnion] = useState<boolean>(true);
   const [isPolygonDifference, setIsPolygonDifference] = useState<boolean>(false);
 
+  // Scenario
+  const { scenarioItems } = useScenarioItems(projectId as string);
+  const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
+
   useEffect(() => {
     if (!isPolygonUnion) {
       setIsPolygonDifference(false);
@@ -67,6 +71,11 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
       polygon_union: isPolygonUnion,
       polygon_difference: isPolygonDifference,
     };
+
+    if (selectedScenario) {
+      payload["scenario_id"] = selectedScenario.value;
+    }
+
     try {
       setIsBusy(true);
       const parsedPayload = bufferSchema.parse(payload);
@@ -93,6 +102,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
       value: bufferDefaults.default_steps,
       label: bufferDefaults.default_steps.toString(),
     });
+    setSelectedScenario(undefined);
   };
   return (
     <Container
@@ -189,6 +199,32 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
                       />
                     </Stack>
                   </Stack>
+                </>
+              }
+            />
+
+            {/* SCENARIO */}
+            <SectionHeader
+              active={isValid && !!bufferLayer}
+              alwaysActive={true}
+              label={t("scenario")}
+              icon={ICON_NAME.SCENARIO}
+              disableAdvanceOptions={true}
+            />
+            <SectionOptions
+              active={isValid && !!bufferLayer}
+              baseOptions={
+                <>
+                  <Selector
+                    selectedItems={selectedScenario}
+                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
+                      setSelectedScenario(item as SelectorItem);
+                    }}
+                    items={scenarioItems}
+                    label={t("scenario")}
+                    placeholder={t("select_scenario")}
+                    tooltip={t("choose_scenario")}
+                  />
                 </>
               }
             />
