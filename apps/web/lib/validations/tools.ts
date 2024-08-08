@@ -184,6 +184,7 @@ export const bufferSchema = z.object({
   distance_step: z.number(),
   polygon_union: z.boolean(),
   polygon_difference: z.boolean(),
+  scenario_id: z.string().optional(),
 });
 
 export type PostBuffer = z.infer<typeof bufferSchema>;
@@ -201,6 +202,7 @@ export const aggregatePointSchema = z.object({
     field: z.string(),
   }),
   source_group_by_field: z.string().array().optional(),
+  scenario_id: z.string().optional(),
 });
 
 export const aggregatePolygonSchema = aggregatePointSchema.extend({
