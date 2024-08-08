@@ -17,7 +17,7 @@ import { tripCountSchema } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
-import { useLayerByGeomType, usePTTimeSelectorValues, useScenarioItems } from "@/hooks/map/ToolsHooks";
+import { useLayerByGeomType, usePTTimeSelectorValues } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import Container from "@/components/map/panels/Container";
@@ -54,10 +54,6 @@ const TripCount = ({ onBack, onClose }: IndicatorBaseProps) => {
     resetPTConfiguration,
   } = usePTTimeSelectorValues();
 
-  // Scenario
-  const { scenarioItems } = useScenarioItems(projectId as string);
-  const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
-
   const isValid = useMemo(() => {
     if (!referenceLayer || !isPTValid) {
       return false;
@@ -75,9 +71,6 @@ const TripCount = ({ onBack, onClose }: IndicatorBaseProps) => {
       reference_area_layer_project_id: referenceLayer?.value,
       station_config: accessibilityIndicatorsStaticPayload,
     };
-    if (selectedScenario) {
-      payload["scenario_id"] = selectedScenario?.value;
-    }
     try {
       setIsBusy(true);
       const parsedPayload = tripCountSchema.parse(payload);
@@ -98,7 +91,6 @@ const TripCount = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   const handleReset = () => {
     setReferenceLayer(undefined);
-    setSelectedScenario(undefined);
     resetPTConfiguration();
   };
 
@@ -169,32 +161,6 @@ const TripCount = ({ onBack, onClose }: IndicatorBaseProps) => {
                       label={t("select_reference_layer")}
                       placeholder={t("select_reference_layer_placeholder")}
                       tooltip={t("select_reference_layer_tooltip")}
-                    />
-                  </>
-                }
-              />
-
-              {/* SCENARIO */}
-              <SectionHeader
-                active={isValid}
-                alwaysActive={true}
-                label={t("scenario")}
-                icon={ICON_NAME.SCENARIO}
-                disableAdvanceOptions={true}
-              />
-              <SectionOptions
-                active={isValid}
-                baseOptions={
-                  <>
-                    <Selector
-                      selectedItems={selectedScenario}
-                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
-                        setSelectedScenario(item as SelectorItem);
-                      }}
-                      items={scenarioItems}
-                      label={t("scenario")}
-                      placeholder={t("select_scenario")}
-                      tooltip={t("choose_scenario")}
                     />
                   </>
                 }
