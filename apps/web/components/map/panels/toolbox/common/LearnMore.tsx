@@ -26,6 +26,8 @@ const LearnMore: React.FC<LearnMoreProps> = ({ docsPath }) => {
   const { t, i18n } = useTranslation("common");
 
   const lng = i18n.language === "de" ? "de/" : "";
+
+  //TODO: Get this dynamically
   const docsVersion = "2.0beta";
 
   return (
