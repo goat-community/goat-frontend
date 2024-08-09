@@ -1,9 +1,9 @@
-import { Box, Divider, Stack, Switch, Tooltip, Typography, useTheme } from "@mui/material";
+import { Box, Divider, Stack, Switch, Typography, useTheme } from "@mui/material";
 import { useParams } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
-import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
+import { ICON_NAME } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
@@ -13,7 +13,6 @@ import {
   computePTCatchmentArea,
 } from "@/lib/api/catchmentArea";
 import { useJobs } from "@/lib/api/jobs";
-import { DOCS_URL } from "@/lib/constants";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import {
   setIsMapGetInfoActive,
