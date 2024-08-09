@@ -33,6 +33,7 @@ import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import LearnMore from "@/components/map/panels/toolbox/common/LearnMore";
 
 type AggregateProps = IndicatorBaseProps & {
   type: "point" | "polygon";
@@ -186,7 +187,17 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
               }}>
               {/* DESCRIPTION */}
               <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
-                {type === "point" ? t("aggregate_point_description") : t("aggregate_polygon_description")}
+                {type === "point" ? (
+                  <>
+                    {t("aggregate_point_description")}
+                    <LearnMore docsPath="/toolbox/geoanalysis/aggregate_points" />
+                  </>
+                ) : (
+                  <>
+                    {t("aggregate_polygon_description")}
+                    <LearnMore docsPath="/toolbox/geoanalysis/aggregate_polygons" />
+                  </>
+                )}
               </Typography>
 
               {/* SELECT LAYERS */}

@@ -63,6 +63,7 @@ const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
     <HeatmapContainer
       title={t("heatmap_closest_average")}
       description={t("heatmap_closest_average_description")}
+      docsPath="/toolbox/accessibility_indicators/closest_average"
       onBack={onBack}
       onClose={onClose}
       handleReset={handleReset}

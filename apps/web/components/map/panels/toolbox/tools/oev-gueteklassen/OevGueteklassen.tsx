@@ -26,6 +26,7 @@ import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import LearnMore from "@/components/map/panels/toolbox/common/LearnMore";
 import PTTimeSelectors from "@/components/map/panels/toolbox/common/PTTimeSelectors";
 
 const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
@@ -111,6 +112,7 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
               {/* DESCRIPTION */}
               <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
                 {t("oev_gueteklasse_description")}
+                <LearnMore docsPath="/toolbox/accessibility_indicators/oev_gueteklassen" />
               </Typography>
 
               {/* CALCULATION TIME */}

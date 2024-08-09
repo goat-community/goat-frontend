@@ -91,6 +91,7 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
     <HeatmapContainer
       title={t("heatmap_gravity")}
       description={t("heatmap_gravity_description")}
+      docsPath="/toolbox/accessibility_indicators/gravity"
       onBack={onBack}
       onClose={onClose}
       handleReset={handleReset}

@@ -25,6 +25,7 @@ import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import LearnMore from "@/components/map/panels/toolbox/common/LearnMore";
 
 type HeatmapContainerProps = IndicatorBaseProps & {
   handleConfigurationReset?: () => void;
@@ -41,6 +42,7 @@ type HeatmapContainerProps = IndicatorBaseProps & {
   isValid: boolean;
   title: string;
   description: string;
+  docsPath?: string;
   configChildren?: React.ReactNode;
   opportunitiesChildren?: React.ReactNode;
 };
@@ -54,6 +56,7 @@ const HeatmapContainer = ({
   isValid,
   title,
   description,
+  docsPath,
   configChildren,
   opportunitiesChildren,
 }: HeatmapContainerProps) => {
@@ -149,6 +152,7 @@ const HeatmapContainer = ({
             }}>
             <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
               {description}
+              {docsPath && <LearnMore docsPath={docsPath} />}
             </Typography>
 
             {/* ROUTING */}

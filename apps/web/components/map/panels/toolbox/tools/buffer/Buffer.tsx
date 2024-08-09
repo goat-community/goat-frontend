@@ -26,6 +26,7 @@ import Selector from "@/components/map/panels/common/Selector";
 import SliderInput from "@/components/map/panels/common/SliderInput";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import LearnMore from "@/components/map/panels/toolbox/common/LearnMore";
 import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 
 const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
@@ -118,6 +119,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
             }}>
             <Typography variant="body2" sx={{ fontStyle: "italic", marginBottom: theme.spacing(4) }}>
               {t("buffer_description")}
+              <LearnMore docsPath="/toolbox/geoprocessing/buffer" />
             </Typography>
             <SectionHeader
               active={true}

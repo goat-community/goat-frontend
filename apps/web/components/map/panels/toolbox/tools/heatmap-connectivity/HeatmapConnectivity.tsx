@@ -52,6 +52,7 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
     <HeatmapContainer
       title={t("heatmap_connectivity")}
       description={t("heatmap_connectivity_description")}
+      docsPath="/toolbox/accessibility_indicators/connectivity"
       onBack={onBack}
       onClose={onClose}
       handleReset={handleReset}
