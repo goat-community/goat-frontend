@@ -1,25 +1,14 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Divider,
-  Slider,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { type ReactNode, useMemo, useState } from "react";
-import { v4 } from "uuid";
+import { Accordion, AccordionDetails, AccordionSummary, Divider, Stack, Typography } from "@mui/material";
+import { type ReactNode } from "react";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
-import { updateProjectLayer } from "@/lib/api/projects";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import type { ProjectLayer } from "@/lib/validations/project";
 
-import { useActiveLayer, useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
+import { useActiveLayer } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
 
 import { Legend } from "@/components/map/controls/Legend";
@@ -81,112 +70,6 @@ const LayerInfo = ({ layer }: { layer: ProjectLayer }) => {
   );
 };
 
-const Visibility = ({ layer, projectId }: { layer: ProjectLayer; projectId: string }) => {
-  const { t } = useTranslation("common");
-  const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
-  const layerType = layer.type;
-
-  const opacity = useMemo(() => {
-    if (!layer.properties.opacity) return 80;
-    return layer.properties.opacity * 100;
-  }, [layer.properties.opacity]);
-
-  const visibilityRange = useMemo(() => {
-    const minZoom = layer.properties.min_zoom || 0;
-    const maxZoom = layer.properties.max_zoom || 22;
-    return [minZoom, maxZoom];
-  }, [layer.properties.min_zoom, layer.properties.max_zoom]);
-
-  const [opacityValue, setOpacityValue] = useState<number>(opacity);
-  const [visibilityRangeValue, setVisibilityRangeValue] = useState<number[]>(visibilityRange);
-
-  const changeOpacity = async (value: number) => {
-    const layers = JSON.parse(JSON.stringify(projectLayers));
-    const index = layers.findIndex((l) => l.id === layer.id);
-    const layerToUpdate = layers[index];
-    layerToUpdate.updated_at = v4(); // temporary key until update_at is
-    if (!layerToUpdate.properties.paint) {
-      layerToUpdate.properties.paint = {};
-    }
-    layerToUpdate.properties.paint[`${layerType}-opacity`] = value / 100;
-    await mutateProjectLayers(layers, false);
-    await updateProjectLayer(projectId, layer.id, layerToUpdate);
-  };
-
-  const changeVisibilityRangeValue = async (value: number[]) => {
-    const layers = JSON.parse(JSON.stringify(projectLayers));
-    const index = layers.findIndex((l) => l.id === layer.id);
-    const layerToUpdate = layers[index];
-    layerToUpdate.updated_at = v4(); // temporary key until update_at is
-    layerToUpdate.properties.minzoom = value[0];
-    layerToUpdate.properties.maxzoom = value[1];
-    await mutateProjectLayers(layers, false);
-    await updateProjectLayer(projectId, layer.id, layerToUpdate);
-  };
-
-  const marks = [
-    {
-      value: 25,
-      label: "25%",
-    },
-    {
-      value: 50,
-      label: "50%",
-    },
-    {
-      value: 75,
-      label: "75%",
-    },
-  ];
-
-  return (
-    <AccordionWrapper
-      header={<AccordionHeader title={t("visibility")} />}
-      body={
-        <Stack spacing={4}>
-          <Box>
-            <Typography variant="body2">{t("opacity")}</Typography>
-            <Box sx={{ px: 2, mt: 2 }}>
-              <Slider
-                aria-label="Layer Opacity"
-                value={opacityValue}
-                onChange={(_event: Event, newValue: number | number[]) => {
-                  setOpacityValue(newValue as number);
-                }}
-                onChangeCommitted={(_event: Event, value: number | number[]) =>
-                  changeOpacity(value as number)
-                }
-                step={1}
-                valueLabelDisplay="auto"
-                marks={marks}
-              />
-            </Box>
-          </Box>
-          <Box>
-            <Typography variant="body2">{t("visibility_range")}</Typography>
-            <Box sx={{ px: 2, mt: 2 }}>
-              <Slider
-                getAriaLabel={() => "Visibility Range"}
-                value={visibilityRangeValue}
-                min={0}
-                max={22}
-                onChange={(_event: Event, newValue: number | number[]) => {
-                  setVisibilityRangeValue(newValue as number[]);
-                }}
-                onChangeCommitted={(_event: Event, value: number | number[]) =>
-                  changeVisibilityRangeValue(value as number[])
-                }
-                step={1}
-                valueLabelDisplay="auto"
-              />
-            </Box>
-          </Box>
-        </Stack>
-      }
-    />
-  );
-};
-
 const Symbology = ({ layer }: { layer: ProjectLayer }) => {
   const { t } = useTranslation("common");
   return (
@@ -214,7 +97,6 @@ const PropertiesPanel = ({ projectId }: { projectId: string }) => {
               <ProjectLayerDropdown projectId={projectId} />
               <LayerInfo layer={activeLayer} />
               <Symbology layer={activeLayer} />
-              <Visibility layer={activeLayer} projectId={projectId} />
             </>
           )}
         </>
