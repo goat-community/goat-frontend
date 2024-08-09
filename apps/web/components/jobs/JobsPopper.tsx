@@ -130,6 +130,7 @@ export default function JobsPopper() {
                         status={job.status_simple}
                         name={job.id}
                         date={job.updated_at}
+                        errorMessage={job.status_simple === "failed" ? job.msg_simple : undefined}
                       />
                       {index < jobs.items.length - 1 && <Divider />}
                     </Box>

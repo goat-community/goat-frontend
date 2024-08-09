@@ -1,5 +1,6 @@
-import { Box, IconButton, LinearProgress, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Collapse, IconButton, LinearProgress, Stack, Typography, useTheme } from "@mui/material";
 import { format, parseISO } from "date-fns";
+import { useState } from "react";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
@@ -13,6 +14,7 @@ interface JobProgressItemProps {
   id: string;
   type: JobType;
   status: JobStatusType;
+  errorMessage?: string;
   name: string;
   date: string;
 }
@@ -30,6 +32,7 @@ export default function JobProgressItem(props: JobProgressItemProps) {
   const { t } = useTranslation("common");
   const theme = useTheme();
   const { type, status, name, date } = props;
+  const [showDetails, setShowDetails] = useState(false);
 
   const statusColors: Record<JobStatusType, string> = {
     killed: theme.palette.error.main,
@@ -81,17 +84,38 @@ export default function JobProgressItem(props: JobProgressItemProps) {
               },
             }}
           />
-          <Typography variant="caption" fontWeight="bold">
-            {
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Typography variant="caption" fontWeight="bold">
               {
-                running: t("running"),
-                finished: t("finished_successfully"),
-                pending: t("pending"),
-                failed: t("failed"),
-                killed: t("terminated"),
-              }[status]
-            }
-          </Typography>
+                {
+                  running: t("running"),
+                  finished: t("finished_successfully"),
+                  pending: t("pending"),
+                  failed: t("failed"),
+                  killed: t("terminated"),
+                }[status]
+              }
+            </Typography>
+            {props.errorMessage && (
+              <Typography
+                variant="caption"
+                fontWeight="bold"
+                color="primary"
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowDetails(!showDetails)}>
+                {t("details")}
+              </Typography>
+            )}
+          </Stack>
+          {props.errorMessage && (
+            <Collapse in={showDetails}>
+              <Box>
+                <Typography variant="caption" fontWeight="bold" fontStyle="italic">
+                  {props.errorMessage}
+                </Typography>
+              </Box>
+            </Collapse>
+          )}
         </Stack>
       </Box>
       <IconButton
