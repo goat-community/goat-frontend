@@ -1,4 +1,15 @@
-import { Badge, Box, Button, Divider, IconButton, Paper, Stack, Typography, styled } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Paper,
+  Stack,
+  Tooltip,
+  Typography,
+  styled,
+} from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
@@ -157,29 +168,31 @@ export default function JobsPopper() {
           placement="bottom"
           onClose={() => setOpen(false)}>
           {jobs?.items && jobs.items.length > 0 ? (
-            <IconButton
-              onClick={() => {
-                setOpen(!open);
-              }}
-              size="small"
-              sx={{
-                ...(open && {
-                  color: "primary.main",
-                }),
-              }}>
-              {runningJobs && runningJobs?.length > 0 && (
-                <StyledBadge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  variant="dot">
-                  <Icon fontSize="inherit" iconName={ICON_NAME.BARS_PROGRESS} htmlColor="inherit" />
-                </StyledBadge>
-              )}
-              {!runningJobs ||
-                (runningJobs?.length === 0 && (
-                  <Icon fontSize="inherit" iconName={ICON_NAME.BARS_PROGRESS} htmlColor="inherit" />
-                ))}
-            </IconButton>
+            <Tooltip title={t("job_status")}>
+              <IconButton
+                onClick={() => {
+                  setOpen(!open);
+                }}
+                size="small"
+                sx={{
+                  ...(open && {
+                    color: "primary.main",
+                  }),
+                }}>
+                {runningJobs && runningJobs?.length > 0 && (
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot">
+                    <Icon fontSize="inherit" iconName={ICON_NAME.BARS_PROGRESS} htmlColor="inherit" />
+                  </StyledBadge>
+                )}
+                {!runningJobs ||
+                  (runningJobs?.length === 0 && (
+                    <Icon fontSize="inherit" iconName={ICON_NAME.BARS_PROGRESS} htmlColor="inherit" />
+                  ))}
+              </IconButton>
+            </Tooltip>
           ) : (
             <></>
           )}
