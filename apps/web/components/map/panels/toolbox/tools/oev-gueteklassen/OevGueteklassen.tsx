@@ -11,8 +11,9 @@ import { useJobs } from "@/lib/api/jobs";
 import { computeOevGueteKlassen } from "@/lib/api/tools";
 import { accessibilityIndicatorsStaticPayload } from "@/lib/constants/payloads";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import { setMaskLayer } from "@/lib/store/map/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
-import { oevGueteklassenSchema } from "@/lib/validations/tools";
+import { catchmentAreaMaskLayerNames, oevGueteklassenSchema } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
@@ -41,6 +42,8 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { projectId } = useParams();
   const { filteredLayers } = useLayerByGeomType(["feature"], ["polygon"], projectId as string);
   const [referenceLayer, setReferenceLayer] = useState<SelectorItem | undefined>(undefined);
+
+  dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
 
   const {
     // ptModes,
