@@ -7,6 +7,7 @@ import {
   Link,
   Paper,
   Stack,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -136,24 +137,26 @@ export default function FilterContentMenu(props: FilterContentMenuProps) {
           </Grid>
         </Paper>
       }>
-      <IconButton
-        onClick={(event) => {
-          event.stopPropagation();
-          setFilterContentMenuOpen(!filterContentMenuOpen);
-        }}
-        disabled={tags.length === 0 && props.type === "project"}
-        sx={{
-          mx: 2,
-          p: 2,
-          borderRadius: 1,
-          ...(layerTypes.length > 0 && {
-            color: theme.palette.primary.main,
-          }),
-        }}>
-        <Badge badgeContent={layerTypes.length} color="primary">
-          <Icon iconName={ICON_NAME.FILTER} fontSize="small" htmlColor="inherit" />
-        </Badge>
-      </IconButton>
+      <Tooltip title={t("filter")}>
+        <IconButton
+          onClick={(event) => {
+            event.stopPropagation();
+            setFilterContentMenuOpen(!filterContentMenuOpen);
+          }}
+          disabled={tags.length === 0 && props.type === "project"}
+          sx={{
+            mx: 2,
+            p: 2,
+            borderRadius: 1,
+            ...(layerTypes.length > 0 && {
+              color: theme.palette.primary.main,
+            }),
+          }}>
+          <Badge badgeContent={layerTypes.length} color="primary">
+            <Icon iconName={ICON_NAME.FILTER} fontSize="small" htmlColor="inherit" />
+          </Badge>
+        </IconButton>
+      </Tooltip>
     </ArrowPopper>
   );
 }
