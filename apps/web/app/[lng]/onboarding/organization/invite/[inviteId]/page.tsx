@@ -13,6 +13,7 @@ import { Loading } from "@p4b/ui/components/Loading";
 import { useTranslation } from "@/i18n/client";
 
 import { acceptInvitation, declineInvitation, useInvitations } from "@/lib/api/users";
+import { createRegistrationUrl } from "@/lib/utils/auth";
 import type { GetInvitationsQueryParams } from "@/lib/validations/user";
 
 import type { ResponseResult } from "@/types/common";
@@ -24,7 +25,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
     type: "organization",
     invitation_id: inviteId,
   });
-  const { invitations, isLoading: isInvitationLoading } = useInvitations(queryParams);
+  const { invitations, isLoading: isInvitationLoading, isError } = useInvitations(queryParams);
   const { status, data: session, update } = useSession();
   const router = useRouter();
   const [isBusy, setIsBusy] = useState(false);
@@ -44,9 +45,12 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
   }, [invitations, session]);
 
   useEffect(() => {
-    if (!invitations && !isLoading) return;
-    if (invitations?.items?.length === 0) {
-      signOut({ callbackUrl: "/" });
+    if (!invitations && !isLoading && !isError) return;
+    if (invitations?.items?.length === 0 || isError) {
+      const redirectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback/keycloak`;
+      signOut({ redirect: false });
+      const registrationUrl = createRegistrationUrl(redirectUrl as string);
+      router.replace(registrationUrl);
     }
   }, [invitations, isLoading, router]);
 

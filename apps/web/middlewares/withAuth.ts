@@ -6,7 +6,7 @@ import { cookieName, fallbackLng } from "@/i18n/settings";
 
 import type { MiddlewareFactory } from "@/middlewares/types";
 
-const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map", "/onboarding"];
+const protectedPaths = ["/home", "/projects", "datasets", "/settings", "/map", "/onboarding/organization/create", "/onboarding/organization/suspended"];
 
 export const withAuth: MiddlewareFactory = (next: NextMiddleware) => {
   return async (request: NextRequest, _next: NextFetchEvent) => {
@@ -36,6 +36,7 @@ export const withAuth: MiddlewareFactory = (next: NextMiddleware) => {
       secret: nextAuthSecret,
     });
     const isAuthorized = !!token && token.error !== "RefreshAccessTokenError";
+
 
     // the user is authorized, let the middleware handle the rest
     if (isAuthorized) return await next(request, _next);

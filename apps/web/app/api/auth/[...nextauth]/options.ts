@@ -4,9 +4,9 @@ import KeycloakProvider from "next-auth/providers/keycloak";
 
 const keycloak = KeycloakProvider({
   id: "keycloak",
-  clientId: process.env.KEYCLOAK_CLIENT_ID as string,
+  clientId: process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID as string,
   clientSecret: process.env.KEYCLOAK_CLIENT_SECRET as string,
-  issuer: process.env.KEYCLOAK_ISSUER,
+  issuer: process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER,
   authorization: { params: { scope: "openid email profile offline_access" } },
 });
 

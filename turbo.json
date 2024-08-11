@@ -1,9 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env"],
+  "globalDependencies": [
+    "**/.env"
+  ],
   "pipeline": {
     "build": {
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": [
+        "dist/**",
+        ".next/**"
+      ]
     },
     "dev": {
       "cache": false,
@@ -13,11 +18,16 @@
       "outputs": []
     },
     "test": {
-      "dependsOn": ["^lint", "^build"],
+      "dependsOn": [
+        "^lint",
+        "^build"
+      ],
       "outputs": []
     },
     "generate": {
-      "dependsOn": ["^generate"]
+      "dependsOn": [
+        "^generate"
+      ]
     },
     "lint": {
       "cache": false
@@ -27,7 +37,9 @@
     },
     "lint:report": {
       "cache": false,
-      "outputs": ["lint-results"]
+      "outputs": [
+        "lint-results"
+      ]
     },
     "clean": {},
     "typecheck": {
@@ -46,8 +58,8 @@
     "NEXTAUTH_URL",
     "NEXTAUTH_SECRET",
     "KEYCLOAK_CLIENT_SECRET",
-    "KEYCLOAK_CLIENT_ID",
-    "KEYCLOAK_ISSUER",
+    "NEXT_PUBLIC_KEYCLOAK_CLIENT_ID",
+    "NEXT_PUBLIC_KEYCLOAK_ISSUER",
     "NODE_ENV"
   ]
 }
