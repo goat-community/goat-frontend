@@ -45,6 +45,7 @@ type HeatmapContainerProps = IndicatorBaseProps & {
   docsPath?: string;
   configChildren?: React.ReactNode;
   opportunitiesChildren?: React.ReactNode;
+  disableScenario?: boolean;
 };
 
 const HeatmapContainer = ({
@@ -59,6 +60,7 @@ const HeatmapContainer = ({
   docsPath,
   configChildren,
   opportunitiesChildren,
+  disableScenario = false,
 }: HeatmapContainerProps) => {
   const { t } = useTranslation("common");
   const theme = useTheme();
@@ -112,7 +114,7 @@ const HeatmapContainer = ({
       routing_type: selectedRouting?.value,
       ...payload,
     };
-    if (selectedScenario) {
+    if (selectedScenario && selectedScenario.value && !disableScenario) {
       _payload.scenario_id = selectedScenario.value;
     }
 
@@ -220,30 +222,34 @@ const HeatmapContainer = ({
             )}
 
             {/* SCENARIO */}
-            <SectionHeader
-              active={_isValid}
-              alwaysActive={true}
-              label={t("scenario")}
-              icon={ICON_NAME.SCENARIO}
-              disableAdvanceOptions={true}
-            />
-            <SectionOptions
-              active={_isValid}
-              baseOptions={
-                <>
-                  <Selector
-                    selectedItems={selectedScenario}
-                    setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
-                      setSelectedScenario(item as SelectorItem);
-                    }}
-                    items={scenarioItems}
-                    label={t("scenario")}
-                    placeholder={t("select_scenario")}
-                    tooltip={t("choose_scenario")}
-                  />
-                </>
-              }
-            />
+            {!disableScenario && (
+              <>
+                <SectionHeader
+                  active={_isValid}
+                  alwaysActive={true}
+                  label={t("scenario")}
+                  icon={ICON_NAME.SCENARIO}
+                  disableAdvanceOptions={true}
+                />
+                <SectionOptions
+                  active={_isValid}
+                  baseOptions={
+                    <>
+                      <Selector
+                        selectedItems={selectedScenario}
+                        setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
+                          setSelectedScenario(item as SelectorItem);
+                        }}
+                        items={scenarioItems}
+                        label={t("scenario")}
+                        placeholder={t("select_scenario")}
+                        tooltip={t("choose_scenario")}
+                      />
+                    </>
+                  }
+                />
+              </>
+            )}
           </Box>
         </>
       }

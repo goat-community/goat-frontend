@@ -58,6 +58,7 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
       handleReset={handleReset}
       handleRun={handleRun}
       isValid={isValid}
+      disableScenario
       configChildren={
         <>
           {/* MAX TRAVEL TIME */}
