@@ -1,6 +1,6 @@
 import { Box, IconButton, Stack, Tooltip } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 

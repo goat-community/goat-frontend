@@ -47,7 +47,7 @@ export const dataCategory = z.enum([
   "places",
 ]);
 
-export const layerType = z.enum(["feature", "external_imagery", "external_vector_tile", "table"]);
+export const layerType = z.enum(["feature", "raster", "table"]);
 
 export const featureLayerType = z.enum(["standard", "tool", "street_network"]);
 
@@ -58,7 +58,9 @@ export const featureDataExchangeCRS = z.enum(["4326", "3857", "4258", "27700", "
 
 export const featureLayerGeometryType = z.enum(["point", "line", "polygon"]);
 
-export const data_type = z.enum(["wms", "mvt"]);
+export const vectorDataType = z.enum(["mvt", "wfs"]);
+export const imageryDataType = z.enum(["xyz", "wms", "wmts"]);
+export const dataType = z.union([vectorDataType, imageryDataType]);
 
 export type LayerType = z.infer<typeof layerType>;
 export type DataLicense = z.infer<typeof dataLicense>;
@@ -68,3 +70,4 @@ export type TableDataExchangeType = z.infer<typeof tableDataExchangeType>;
 export type FeatureDataExchangeType = z.infer<typeof featureDataExchangeType>;
 export type PaginatedQueryParams = z.infer<typeof paginatedSchema>;
 export type GetContentQueryParams = z.infer<typeof getContentQueryParamsSchema>;
+export type DataType = z.infer<typeof dataType>;

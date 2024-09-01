@@ -16,15 +16,66 @@ import {
 } from "@mui/material";
 import type { FeatureCollection } from "geojson";
 import { useEffect, useMemo, useState } from "react";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import search from "@/lib/services/geocoder";
 import { match } from "@/lib/utils/match";
-import parse from "@/lib/utils/parse";
 
 import type { Result } from "@/types/map/controllers";
+
+interface Match {
+  0: number;
+  1: number;
+}
+
+interface TextResult {
+  text: string;
+  highlight: boolean;
+}
+
+function parse(text: string, matches: Match[]): TextResult[] {
+  const result: TextResult[] = [];
+
+  if (matches.length === 0) {
+    result.push({
+      text,
+      highlight: false,
+    });
+  } else if (matches[0][0] > 0) {
+    result.push({
+      text: text.slice(0, matches[0][0]),
+      highlight: false,
+    });
+  }
+
+  matches.forEach((match, i) => {
+    const startIndex = match[0];
+    const endIndex = match[1];
+
+    result.push({
+      text: text.slice(startIndex, endIndex),
+      highlight: true,
+    });
+
+    if (i === matches.length - 1) {
+      if (endIndex < text.length) {
+        result.push({
+          text: text.slice(endIndex, text.length),
+          highlight: false,
+        });
+      }
+    } else if (endIndex < matches[i + 1][0]) {
+      result.push({
+        text: text.slice(endIndex, matches[i + 1][0]),
+        highlight: false,
+      });
+    }
+  });
+
+  return result;
+}
 
 type Props = {
   endpoint?: string;

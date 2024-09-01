@@ -117,10 +117,12 @@ import type { SvgIconProps } from "@mui/material";
 import {
   addImageIcon,
   aggregateIcon,
+  arcgisFeatureServiceIcon,
   boundingBoxIcon,
   comingSoonIcon,
   dataCategoryIcon,
   funicularIcon,
+  geojsonIcon,
   gondolaIcon,
   hexagonIcon,
   licenseIcon,
@@ -128,6 +130,9 @@ import {
   pointIcon,
   polygonIcon,
   streetNetworkIcon,
+  wfsIcon,
+  wmsIcon,
+  wmtsIcon,
 } from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
@@ -255,6 +260,11 @@ export enum ICON_NAME {
   LINE_FEATURE = "line-feature",
   POLYGON_FEATURE = "polygon-feature",
   STREET_NETWORK = "street-network",
+  WMTS = "wmts",
+  WMS = "wms",
+  WFS = "wfs",
+  ARCGIS_FEATURE_SERVICE = "arcgis-feature-service",
+  GEOJSON = "geojson",
 }
 
 const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
@@ -381,6 +391,11 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.LINE_FEATURE]: lineIcon,
   [ICON_NAME.POLYGON_FEATURE]: polygonIcon,
   [ICON_NAME.STREET_NETWORK]: streetNetworkIcon,
+  [ICON_NAME.WMTS]: wmtsIcon,
+  [ICON_NAME.WMS]: wmsIcon,
+  [ICON_NAME.WFS]: wfsIcon,
+  [ICON_NAME.ARCGIS_FEATURE_SERVICE]: arcgisFeatureServiceIcon,
+  [ICON_NAME.GEOJSON]: geojsonIcon,
 };
 
 interface BrandColors {

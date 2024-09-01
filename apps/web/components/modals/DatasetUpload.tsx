@@ -22,12 +22,12 @@ import { useTranslation } from "@/i18n/client";
 
 import { useFolders } from "@/lib/api/folders";
 import { useJobs } from "@/lib/api/jobs";
-import { createInternalLayer, layerFileUpload } from "@/lib/api/layers";
+import { createFeatureLayer, createTableLayer, layerFileUpload } from "@/lib/api/layers";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import type { GetContentQueryParams } from "@/lib/validations/common";
 import type { Folder } from "@/lib/validations/folder";
 import type { LayerMetadata } from "@/lib/validations/layer";
-import { createFeatureLayerSchema, layerMetadataSchema } from "@/lib/validations/layer";
+import { createLayerFromDatasetSchema, layerMetadataSchema } from "@/lib/validations/layer";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
@@ -138,21 +138,25 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({ open, onClose,
 
   const handleUpload = async () => {
     try {
+      if (!fileValue) return;
       setIsBusy(true);
-      if ((datasetType === "feature_layer" || datasetType === "table") && fileValue !== undefined) {
-        const uploadResponse = await layerFileUpload(fileValue);
-        const datasetId = uploadResponse?.dataset_id;
-        const payload = createFeatureLayerSchema.parse({
-          ...getValues(),
-          folder_id: selectedFolder?.id,
-          dataset_id: datasetId,
-        });
-        const response = await createInternalLayer(payload, projectId);
-        const jobId = response?.job_id;
-        if (jobId) {
-          mutate();
-          dispatch(setRunningJobIds([...runningJobIds, jobId]));
-        }
+      const uploadResponse = await layerFileUpload(fileValue);
+      const datasetId = uploadResponse?.dataset_id;
+      const payload = createLayerFromDatasetSchema.parse({
+        ...getValues(),
+        folder_id: selectedFolder?.id,
+        dataset_id: datasetId,
+      });
+      let response;
+      if (datasetType === "table") {
+        response = await createTableLayer(payload, projectId);
+       } else if (datasetType === "feature_layer") {
+        response = await createFeatureLayer(payload, projectId);
+      }
+      const jobId = response?.job_id;
+      if (jobId) {
+        mutate();
+        dispatch(setRunningJobIds([...runningJobIds, jobId]));
       }
     } catch (error) {
       toast.error(t("error_uploading_dataset"));

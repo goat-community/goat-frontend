@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import { useMemo, useState } from "react";
 import React from "react";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 import { toast } from "react-toastify";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
@@ -50,7 +50,7 @@ import { zoomToLayer } from "@/lib/utils/map/navigate";
 import type { Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
 
-import { ContentActions, MapLayerActions } from "@/types/common";
+import { AddLayerSourceType, ContentActions, MapLayerActions } from "@/types/common";
 import { MapSidebarItemID } from "@/types/map/common";
 import type { PanelProps } from "@/types/map/sidebar";
 
@@ -149,13 +149,6 @@ export function SortableLayerTile(props: SortableLayerTileProps) {
       </Grid>
     </Card>
   );
-}
-
-enum AddLayerSourceType {
-  DatasourceExplorer,
-  DatasourceUpload,
-  DataSourceExternal,
-  CatalogExplorer,
 }
 
 const AddLayerSection = ({ projectId }: { projectId: string }) => {

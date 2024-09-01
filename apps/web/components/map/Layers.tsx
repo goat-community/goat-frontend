@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import type { LayerProps, MapGeoJSONFeature } from "react-map-gl";
-import { Layer as MapLayer, Source } from "react-map-gl";
+import type { LayerProps, MapGeoJSONFeature } from "react-map-gl/maplibre";
+import { Layer as MapLayer, Source } from "react-map-gl/maplibre";
 
 import { GEOAPI_BASE_URL, SYSTEM_LAYERS_IDS } from "@/lib/constants";
 import { excludes as excludeOp } from "@/lib/transformers/filter";
@@ -60,12 +60,8 @@ const Layers = (props: LayersProps) => {
     return extendedFilter;
   };
 
-  const getTileUrl = (layer: ProjectLayer | Layer) => {
-    if (layer.type === "external_vector_tile") {
-      return layer.url ?? "";
-    }
+  const getFeatureTileUrl = (layer: ProjectLayer | Layer) => {
     let query = "";
-
     const extendedQuery = getLayerQueryFilter(layer);
     if (extendedQuery && Object.keys(extendedQuery).length > 0) {
       query = `?filter=${encodeURIComponent(JSON.stringify(extendedQuery))}`;
@@ -76,21 +72,19 @@ const Layers = (props: LayersProps) => {
       ""
     )}/tiles/{z}/{x}/{y}${query}`;
   };
+  const { useDataLayers, systemLayers } = useMemo(() => {
+    const dataLayers = [] as ProjectLayer[] | Layer[];
+    const sysLayers = [] as ProjectLayer[] | Layer[];
 
-  const useDataLayers = useMemo(() => {
-    return props.layers?.filter((layer) => {
+    props.layers?.forEach((layer) => {
       const layerId = layer["layer_id"] ?? layer.id;
-      return (
-        ["feature", "external_vector_tile"].includes(layer.type) && SYSTEM_LAYERS_IDS.indexOf(layerId) === -1
-      );
+      if (SYSTEM_LAYERS_IDS.indexOf(layerId) === -1) {
+        dataLayers.push(layer);
+      } else {
+        sysLayers.push(layer);
+      }
     });
-  }, [props.layers]);
-
-  const systemLayers = useMemo(() => {
-    return props.layers?.filter((layer) => {
-      const layerId = layer["layer_id"] ?? layer.id;
-      return ["feature"].includes(layer.type) && SYSTEM_LAYERS_IDS.indexOf(layerId) !== -1;
-    });
+    return { useDataLayers: dataLayers, systemLayers: sysLayers };
   }, [props.layers]);
 
   return (
@@ -98,9 +92,9 @@ const Layers = (props: LayersProps) => {
       {useDataLayers?.length
         ? useDataLayers.map((layer: ProjectLayer | Layer, index: number) =>
             (() => {
-              if (["feature", "external_vector_tile"].includes(layer.type)) {
+              if (layer.type === "feature") {
                 return (
-                  <Source key={layer.updated_at} type="vector" tiles={[getTileUrl(layer)]}>
+                  <Source key={layer.updated_at} type="vector" tiles={[getFeatureTileUrl(layer)]}>
                     <MapLayer
                       key={getLayerKey(layer)}
                       id={layer.id.toString()}
@@ -123,6 +117,21 @@ const Layers = (props: LayersProps) => {
                       )}
                   </Source>
                 );
+              } else if (layer.type === "raster" && layer.url) {
+                return (
+                  <Source
+                    key={layer.updated_at}
+                    type="raster"
+                    tiles={[layer.url]}
+                    tileSize={layer.other_properties?.tile_size || 256}>
+                    <MapLayer
+                      key={getLayerKey(layer)}
+                      id={layer.id.toString()}
+                      type="raster"
+                      source-layer="default"
+                    />
+                  </Source>
+                );
               } else {
                 return null;
               }
@@ -135,7 +144,7 @@ const Layers = (props: LayersProps) => {
               <Source
                 key={layer.updated_at}
                 type="vector"
-                tiles={[getTileUrl(layer)]}
+                tiles={[getFeatureTileUrl(layer)]}
                 minzoom={14}
                 maxzoom={22}>
                 <MapLayer

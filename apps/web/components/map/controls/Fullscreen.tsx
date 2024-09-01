@@ -1,6 +1,6 @@
 import { Fab, Stack, Tooltip, useTheme } from "@mui/material";
 import { useState } from "react";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 import screenfull from "screenfull";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";

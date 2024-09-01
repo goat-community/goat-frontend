@@ -104,7 +104,8 @@ CircleDrawMode.onStop = function (state) {
     });
     circleGeojson.id = state.line.id;
 
-    this.map.fire(Constants.events.CREATE, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.map.fire(Constants.events.CREATE as any, {
       features: [state.line.toGeoJSON(), circleGeojson],
     });
   }

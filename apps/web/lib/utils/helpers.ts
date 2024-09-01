@@ -297,3 +297,14 @@ export function generateSeries(x: number, max: number) {
   }
   return series;
 }
+
+
+export function getBaseUrl(url: string): string | null {
+  try {
+    const parsedUrl = new URL(url);
+    return `${parsedUrl.protocol}//${parsedUrl.hostname}${parsedUrl.pathname}`;
+  } catch (error) {
+    console.error("Invalid URL", error);
+    return null;
+  }
+}

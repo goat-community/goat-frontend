@@ -4,10 +4,12 @@ import { fetchWithAuth, fetcher } from "@/lib/api/fetcher";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type {
   ClassBreaks,
-  CreateFeatureLayer,
+  CreateLayerFromDataset,
+  CreateRasterLayer,
   DatasetCollectionItems,
   DatasetDownloadRequest,
   DatasetMetadataAggregated,
+  ExternalDatasetFeatureUrl,
   GetCollectionItemsQueryParams,
   GetDatasetSchema,
   GetLayerUniqueValuesQueryParams,
@@ -20,7 +22,6 @@ import type {
 } from "@/lib/validations/layer";
 
 export const LAYERS_API_BASE_URL = new URL("api/v2/layer", process.env.NEXT_PUBLIC_API_URL).href;
-
 export const COLLECTIONS_API_BASE_URL = new URL("collections", process.env.NEXT_PUBLIC_GEOAPI_URL).href;
 
 export const useLayers = (queryParams?: PaginatedQueryParams, payload: GetDatasetSchema = {}) => {
@@ -136,8 +137,8 @@ export const deleteLayer = async (id: string) => {
   }
 };
 
-export const createInternalLayer = async (payload: CreateFeatureLayer, projectId?: string) => {
-  const url = new URL(`${LAYERS_API_BASE_URL}/internal`);
+export const createFeatureLayer = async (payload: CreateLayerFromDataset, projectId?: string) => {
+  const url = new URL(`${LAYERS_API_BASE_URL}/feature-standard`);
   if (projectId) {
     url.searchParams.append("project_id", projectId);
   }
@@ -149,10 +150,47 @@ export const createInternalLayer = async (payload: CreateFeatureLayer, projectId
     },
   });
   if (!response.ok) {
-    throw new Error("Failed to create internal layer");
+    throw new Error("Failed to create feature layer");
   }
   return await response.json();
 };
+
+export const createTableLayer = async (payload: CreateLayerFromDataset, projectId?: string) => {
+  const url = new URL(`${LAYERS_API_BASE_URL}/table`);
+  if (projectId) {
+    url.searchParams.append("project_id", projectId);
+  }
+  const response = await fetchWithAuth(url.toString(), {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to create table layer");
+  }
+  return await response.json();
+};
+
+export const createRasterLayer = async (payload: CreateRasterLayer, projectId?: string) => {
+  const url = new URL(`${LAYERS_API_BASE_URL}/raster`);
+  if (projectId) {
+    url.searchParams.append("project_id", projectId);
+  }
+  const response = await fetchWithAuth(url.toString(), {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to create raster layer");
+  }
+  return await response.json();
+}
+
 
 export const layerFileUpload = async (file: File) => {
   const formData = new FormData();
@@ -163,6 +201,20 @@ export const layerFileUpload = async (file: File) => {
   });
   if (!response.ok) {
     throw new Error("Failed to upload folder");
+  }
+  return await response.json();
+};
+
+export const layerFeatureUrlUpload = async (payload: ExternalDatasetFeatureUrl) => {
+  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/file-upload-external-service`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to upload external dataset feature url");
   }
   return await response.json();
 };

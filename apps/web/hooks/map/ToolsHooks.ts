@@ -246,7 +246,7 @@ export const useRoutingTypes = () => {
 };
 
 export const useLayerByGeomType = (
-  types: ("feature" | "table" | "external_imagery" | "external_vector_tile")[] | undefined,
+  types: ("feature" | "table" | "raster")[] | undefined,
   featureGeomTypes: ("point" | "line" | "polygon" | undefined)[] | undefined,
   projectId: string
 ) => {
@@ -303,14 +303,6 @@ export const useStatisticValues = () => {
         value: statisticOperationEnum.Enum.sum,
         label: t("sum"),
       },
-      // {
-      //   value: statisticOperationEnum.Enum.mean,
-      //   label: t("mean"),
-      // },
-      // {
-      //   value: statisticOperationEnum.Enum.median,
-      //   label: t("median"),
-      // },
       {
         value: statisticOperationEnum.Enum.min,
         label: t("min"),

@@ -1,8 +1,8 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Stack, ToggleButton, ToggleButtonGroup, Tooltip, useTheme } from "@mui/material";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { MapGeoJSONFeature, MapLayerMouseEvent } from "react-map-gl";
-import { useMap } from "react-map-gl";
+import type { MapGeoJSONFeature, MapLayerMouseEvent } from "react-map-gl/maplibre";
+import { useMap } from "react-map-gl/maplibre";
 import { toast } from "react-toastify";
 import type { Id as ToastId, TypeOptions } from "react-toastify";
 

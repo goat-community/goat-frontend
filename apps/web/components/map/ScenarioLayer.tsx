@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import type { LayerProps } from "react-map-gl";
-import { Layer, Source } from "react-map-gl";
+import type { LayerProps } from "react-map-gl/maplibre";
+import { Layer, Source } from "react-map-gl/maplibre";
 
 import { scenarioFeatureStateColor, scenarioLayerStyleSpec } from "@/lib/transformers/layer";
 import { getLayerKey } from "@/lib/utils/map/layer";

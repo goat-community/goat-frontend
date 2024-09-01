@@ -404,6 +404,16 @@ export function Legend(props: LegendProps) {
                   )}
                 </>
               )}
+              {layer.type === "raster" && (
+                <>
+                  {layer.other_properties?.legend_urls &&
+                    layer.other_properties?.legend_urls.map((url: string) => (
+                      <Stack key={url} spacing={1} sx={{ mt: 2 }} direction="column">
+                        <img src={url} alt={url} style={{ width: "100%" }} />
+                      </Stack>
+                    ))}
+                </>
+              )}
             </Stack>
           </Stack>
         ))}

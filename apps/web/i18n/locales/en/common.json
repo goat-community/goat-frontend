@@ -56,23 +56,35 @@
   "back": "Back",
   "back_to_application": "Back to application",
   "basemap_types": {
-    "mapbox_dark": {
+    "basemap_de_col": {
+      "subtitle": "Color",
+      "title": "BKG (Germany)"
+    },
+    "basemap_de_gry": {
+      "subtitle": "Grayscale",
+      "title": "BKG (Germany)"
+    },
+    "basemap_de_top": {
+      "subtitle": "Relief",
+      "title": "BKG (Germany)"
+    },
+    "dark": {
       "subtitle": "For highlighting data overlays",
       "title": "Dark"
     },
-    "mapbox_light": {
+    "light": {
       "subtitle": "For highlighting data overlays",
       "title": "Light"
     },
-    "mapbox_navigation": {
+    "navigation": {
       "subtitle": "Live traffic data",
       "title": "Traffic"
     },
-    "mapbox_satellite": {
+    "satellite": {
       "subtitle": "As seen from space",
-      "title": "Satellite Streets"
+      "title": "Satellite"
     },
-    "mapbox_streets": {
+    "streets": {
       "subtitle": "Great for public presentations",
       "title": "High Fidelity"
     }
@@ -112,6 +124,7 @@
   "choose_pt_mode": "Choose a mode for the public transport",
   "choose_routing": "Choose a routing type for the catchment area",
   "choose_scenario": "Choose a scenario to patch base data",
+  "choose_service_type": "Choose a service type",
   "clear": "Clear",
   "clear_all": "Clear all",
   "clear_filter": "Clear Filter",
@@ -164,6 +177,7 @@
   "data_management": "Data Management",
   "data_reference_year": "Data Reference Year",
   "dataset_explorer": "Dataset Explorer",
+  "dataset_external": "Dataset External",
   "dataset_imported_failed": "Dataset import failed",
   "dataset_imported_success": "Dataset imported successfully",
   "dataset_source": "Dataset Source",
@@ -225,9 +239,12 @@
   "email_change_warning": "You have to logout in order to reflect changes for email.",
   "en": "English",
   "enter_an_address": "Enter an address or coordinates",
+  "enter_the_url": "Enter the url",
+  "enter_url": "Enter Url",
   "enter_value": "Enter value",
   "equal_interval": "Equal Interval",
   "error": "Error",
+  "error_adding_external_dataset": "Error adding external dataset",
   "error_adding_layer": "Error adding layer",
   "error_creating_project": "Error creating project",
   "error_creating_scenario": "Error creating scenario",
@@ -235,6 +252,7 @@
   "error_downloading": "Error downloading",
   "error_duplicating_layer": "Error duplicating layer",
   "error_loading_chart_data": "Error loading chart data",
+  "error_loading_external_dataset": "Error loading external dataset",
   "error_moving_content": "Error moving content",
   "error_removing_layer_from_project": "Error removing layer from project",
   "error_renaming_layer": "Error renaming layer",
@@ -255,7 +273,7 @@
   "exponential": "Exponential",
   "expression": "Expression",
   "external_imagery": "External Image",
-  "external_vector_tile": "External Vector Tile",
+  "external_vector": "External Vector",
   "failed": "Failed",
   "failed_to_compute_catchment_area": "Failed to compute catchment area",
   "failed_to_update_preferences": "Failed to update system settings",
@@ -703,6 +721,7 @@
   "result": "Result",
   "reversed": "Reversed",
   "review": "Please review the details below before uploading the dataset.",
+  "review_dataset_external": "Please review the details before adding the external dataset",
   "role": "Role",
   "roles": "Roles",
   "routing": "Routing",
@@ -759,6 +778,7 @@
   "select_buffer_layer_tooltip": "Select the feature layer you want to buffer, the layer can be a point, line or polygon",
   "select_catchment_area_shape": "Select shape",
   "select_chart_type": "Select chart type",
+  "select_dataset": "Select Dataset",
   "select_features_to_edit": "Select features",
   "select_features_to_edit_tools": "Select features to edit tools",
   "select_field": "Select field",
@@ -855,11 +875,13 @@
   "subscribe_to_newsletter": "Subscribe to newsletter",
   "subscription": "Subscription",
   "subscriptions": "Subscriptions",
+  "success_adding_external_dataset": "External dataset added successfully ",
   "sum": "Sum",
   "summary": "Summary",
   "summary_areas": "Summary Areas",
   "sunday": "Sunday",
   "supported": "Supported files are:",
+  "supported_services": "Supported services are:",
   "symbology": "Symbology",
   "table": "Table",
   "target_field": "Target field",
@@ -900,6 +922,7 @@
   "updated_successfully": "Folder updated successfully",
   "upload": "Upload",
   "upload_dataset": "Upload Dataset",
+  "url": "URL",
   "use_current_map_extent": "Use current map extent",
   "user": "User",
   "user_avatar": "Profile Avatar",

@@ -1,6 +1,6 @@
 import { useTheme } from "@mui/material";
 import { useMemo } from "react";
-import { Marker } from "react-map-gl";
+import { Marker } from "react-map-gl/maplibre";
 import { v4 } from "uuid";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";

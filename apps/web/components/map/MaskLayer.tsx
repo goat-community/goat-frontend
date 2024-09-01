@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Layer, Source } from "react-map-gl";
+import { Layer, Source } from "react-map-gl/maplibre";
 
 import type { GeoJSONFeature } from "@/lib/utils/map/mask";
 import createMask from "@/lib/utils/map/mask";

@@ -2,7 +2,7 @@
 import { Box, IconButton, Paper, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import Fab from "@mui/material/Fab";
 import { useMemo, useState } from "react";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 

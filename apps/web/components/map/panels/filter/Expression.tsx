@@ -4,7 +4,7 @@ import bboxPolygon from "@turf/bbox-polygon";
 import type { BBox } from "@turf/helpers";
 import { useParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 

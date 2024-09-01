@@ -1,7 +1,7 @@
 import { Box, Button, Divider, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Popup } from "react-map-gl";
+import { Popup } from "react-map-gl/maplibre";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 

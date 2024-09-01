@@ -83,8 +83,6 @@ const HeatmapContainer = ({
     return isValid;
   }, [isValid, selectedRouting]);
 
-  // const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
-
   const { mutate } = useJobs({
     read: false,
   });

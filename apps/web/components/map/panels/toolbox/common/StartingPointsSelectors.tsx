@@ -7,7 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 import { v4 } from "uuid";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";

@@ -1,4 +1,4 @@
-import type { MapGeoJSONFeature } from "react-map-gl";
+import type { MapGeoJSONFeature } from "react-map-gl/maplibre";
 
 import { MARKER_IMAGE_PREFIX } from "@/lib/transformers/map-image";
 import { rgbToHex } from "@/lib/utils/helpers";

@@ -56,23 +56,35 @@
   "back": "Zurück",
   "back_to_application": "Zurück zur Anwendung",
   "basemap_types": {
-    "mapbox_dark": {
+    "basemap_de_col": {
+      "subtitle": "Farbe",
+      "title": "BKG (DE)"
+    },
+    "basemap_de_gry": {
+      "subtitle": "Grau",
+      "title": "BKG (DE)"
+    },
+    "basemap_de_top": {
+      "subtitle": "Relief",
+      "title": "BKG (DE)"
+    },
+    "dark": {
       "subtitle": "Zum Hervorheben von Datenüberlagerungen",
       "title": "Dunkel"
     },
-    "mapbox_light": {
+    "light": {
       "subtitle": "Zum Hervorheben von Datenüberlagerungen",
       "title": "Hell"
     },
-    "mapbox_navigation": {
+    "navigation": {
       "subtitle": "Live-Verkehrsdaten",
       "title": "Verkehr"
     },
-    "mapbox_satellite": {
+    "satellite": {
       "subtitle": "Vom Weltraum aus gesehen",
       "title": "Satellit"
     },
-    "mapbox_streets": {
+    "streets": {
       "subtitle": "Ideal für öffentliche Präsentationen",
       "title": "Hohe Wiedergabetreue"
     }
@@ -112,6 +124,7 @@
   "choose_pt_mode": "Wählen Sie einen Verkehrsmittel für den öffentlichen Verkehr",
   "choose_routing": "Wählen Sie einen Verkehrsmittel für das Einzugsgebiet",
   "choose_scenario": "Wählen Sie ein Szenario zum Patchen der Basisdaten",
+  "choose_service_type": "Wählen Sie einen Servicetyp",
   "clear": "Löschen",
   "clear_all": "Alles löschen",
   "clear_filter": "Filter löschen",
@@ -164,6 +177,7 @@
   "data_management": "Datenmanagement",
   "data_reference_year": "Daten Bezugsjahr",
   "dataset_explorer": "Datensatz-Explorer",
+  "dataset_external": "Datensatz extern",
   "dataset_imported_failed": "Dataset-Import fehlgeschlagen",
   "dataset_imported_success": "Datensatz erfolgreich importiert",
   "dataset_source": "Datensatzquelle",
@@ -225,9 +239,12 @@
   "email_change_warning": "Sie müssen sich abmelden, um die Änderungen für E-Mails zu übernehmen.",
   "en": "Englisch",
   "enter_an_address": "Geben Sie eine Adresse oder Koordinaten ein",
+  "enter_the_url": "Geben Sie die URL ein",
+  "enter_url": "",
   "enter_value": "Wert eingeben",
   "equal_interval": "Gleiches Intervall",
   "error": "Fehler",
+  "error_adding_external_dataset": "",
   "error_adding_layer": "Fehler beim Hinzufügen des Layers",
   "error_creating_project": "Fehler beim Erstellen des Projekts",
   "error_creating_scenario": "Fehler beim Erstellen des Szenarios",
@@ -235,6 +252,7 @@
   "error_downloading": "Fehler beim Herunterladen",
   "error_duplicating_layer": "Fehler beim Duplizieren der Ebene",
   "error_loading_chart_data": "Fehler beim Laden der Diagrammdaten",
+  "error_loading_external_dataset": "Fehler beim Laden des externen Datensatzes",
   "error_moving_content": "Fehler beim Verschieben des Inhalts",
   "error_removing_layer_from_project": "Fehler beim Entfernen des Layers aus dem Projekt",
   "error_renaming_layer": "Fehler beim Umbenennen des Layers",
@@ -255,7 +273,7 @@
   "exponential": "Exponentiell",
   "expression": "Ausdruck",
   "external_imagery": "Externe Imagery",
-  "external_vector_tile": "Externe Vector Tiles",
+  "external_vector": "Externe Vector",
   "failed": "Fehlgeschlagen",
   "failed_to_compute_catchment_area": "Einzugsgebiet konnte nicht berechnet werden",
   "failed_to_update_preferences": "Aktualisierung der Systemeinstellungen fehlgeschlagen",
@@ -703,6 +721,7 @@
   "result": "Ergebnis",
   "reversed": "Umgekehrt",
   "review": "Bitte überprüfen Sie die folgenden Details, bevor Sie den Datensatz hochladen.",
+  "review_dataset_external": "",
   "role": "Rolle",
   "roles": "Rollen",
   "routing": "Routing",
@@ -759,6 +778,7 @@
   "select_buffer_layer_tooltip": "Wähle Sie den Layer der gepuffert werden soll. Es können Punkte, Linien oder Polygone gepuffert werden.",
   "select_catchment_area_shape": "Wähle Form",
   "select_chart_type": "Diagrammtyp auswählen",
+  "select_dataset": "",
   "select_features_to_edit": "Wählen Sie Funktionen aus",
   "select_features_to_edit_tools": "Wählen Sie Features aus, um Werkzeuge zu bearbeiten",
   "select_field": "Feld auswählen",
@@ -855,11 +875,13 @@
   "subscribe_to_newsletter": "Für den Newsletter anmelden",
   "subscription": "Abonnement",
   "subscriptions": "Abonnements",
+  "success_adding_external_dataset": "",
   "sum": "Summe",
   "summary": "Zusammenfassung",
   "summary_areas": "Aggregierungspolygone",
   "sunday": "Sonntag",
   "supported": "Unterstützte Dateiformate sind:",
+  "supported_services": "",
   "symbology": "Symbologie",
   "table": "Tabelle",
   "target_field": "Ziel-Feld",
@@ -900,6 +922,7 @@
   "updated_successfully": "Ordner erfolgreich aktualisiert",
   "upload": "Hochladen",
   "upload_dataset": "Datensatz hochladen",
+  "url": "",
   "use_current_map_extent": "Aktuelle Kartenausdehnung verwenden",
   "user": "Benutzer",
   "user_avatar": "Profile Avatar",

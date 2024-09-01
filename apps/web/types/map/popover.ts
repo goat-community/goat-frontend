@@ -1,5 +1,5 @@
 import type { Layer } from "@/lib/validations/layer";
-import type { MapGeoJSONFeature } from "react-map-gl";
+import type { MapGeoJSONFeature } from "react-map-gl/maplibre";
 
 
 export enum EditorModes {

@@ -5,7 +5,7 @@ import {
   contentMetadataSchema,
   dataCategory,
   dataLicense,
-  data_type,
+  dataType,
   featureDataExchangeType,
   featureLayerGeometryType,
   featureLayerType,
@@ -164,6 +164,17 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
   in_catalog: z.boolean().optional().default(false),
 });
 
+export const otherPropertiesSchmea = z.object({
+  layers: z.array(z.string()),
+  srs: z.string().optional(),
+  width: z.number().optional(), // width of the image (only for external imagery)
+  height: z.number().optional(), // height of the image (only for external imagery)
+  legend_urls: z.array(z.string()).optional(),
+  version: z.string().optional(),
+  dpi: z.number().optional(),
+  tile_size: z.number().optional(),
+});
+
 export const layerSchema = layerMetadataSchema.extend({
   id: z.string(),
   properties: featureLayerProperties,
@@ -173,13 +184,13 @@ export const layerSchema = layerMetadataSchema.extend({
   user_id: z.string().uuid(),
   type: layerType,
   size: z.number().optional(),
-  other_properties: z.object({}).optional(),
+  other_properties: otherPropertiesSchmea.optional(),
   url: z.string().optional(),
   feature_layer_type: featureLayerType.optional(),
   feature_layer_geometry_type: featureLayerGeometryType.optional(),
   tool_type: z.string().optional(),
   job_id: z.string().optional(),
-  data_type: data_type.optional(),
+  data_type: dataType.optional(),
   legend_urls: z.array(z.string()).optional(),
   attribute_mapping: z.object({}).optional(),
   updated_at: z.string(),
@@ -196,32 +207,24 @@ export const createLayerBaseSchema = layerMetadataSchema.extend({
   folder_id: z.string().uuid(),
 });
 
-export const createFeatureLayerSchema = createLayerBaseSchema.extend({
+export const createLayerFromDatasetSchema = createLayerBaseSchema.extend({
   dataset_id: z.string().uuid(),
   project_id: z.string().uuid().optional(),
 });
 
-export const createNewScenarioLayerSchema = createLayerBaseSchema.extend({
-  type: z.literal("feature_layer"),
-  feature_layer_type: featureLayerType.optional(),
-  scenario_id: z.string().uuid(),
-  scenario_type: z.enum(["point", "area"]),
+export const externalDatasetFeatureUrlSchema = z.object({
+  url: z.string().url(),
+  data_type: dataType,
+  other_properties: otherPropertiesSchmea,
 });
 
-export const createNewExternalImageryLayerSchema = createLayerBaseSchema.extend({
-  type: z.literal("imagery_layer"),
+export const createRasterLayerSchema = createLayerBaseSchema.extend({
+  type: z.literal("raster"),
   url: z.string().url(),
-  data_type: data_type,
-  legend_urls: z.array(z.string().url()).optional(),
+  data_type: dataType,
   extent: z.string().optional(),
-});
-
-export const createNewExternalTileLayerSchema = createLayerBaseSchema.extend({
-  type: z.literal("tile_layer"),
-  url: z.string().url(),
-  data_type: data_type,
-  extent: z.string().optional(),
-});
+  other_properties: otherPropertiesSchmea,
+})
 
 export const layerQueryables = z.object({
   title: z.string(),
@@ -351,8 +354,6 @@ export type LayerFieldType = z.infer<typeof layerFieldType>;
 export type LayerMetadata = z.infer<typeof layerMetadataSchema>;
 export type FeatureLayerType = z.infer<typeof featureLayerType>;
 export type GetLayerUniqueValuesQueryParams = z.infer<typeof getLayerUniqueValuesQueryParamsSchema>;
-
-export type CreateFeatureLayer = z.infer<typeof createFeatureLayerSchema>;
-export type CreateNewScenarioLayer = z.infer<typeof createNewScenarioLayerSchema>;
-export type CreateNewExternalImageryLayer = z.infer<typeof createNewExternalImageryLayerSchema>;
-export type CreateNewExternalTileLayer = z.infer<typeof createNewExternalTileLayerSchema>;
+export type ExternalDatasetFeatureUrl = z.infer<typeof externalDatasetFeatureUrlSchema>;
+export type CreateLayerFromDataset = z.infer<typeof createLayerFromDatasetSchema>;
+export type CreateRasterLayer = z.infer<typeof createRasterLayerSchema>;

@@ -1,4 +1,4 @@
-import type { MapRef } from "react-map-gl";
+import type { MapRef } from "react-map-gl/maplibre";
 
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 import type { PatternImage } from "@/lib/constants/pattern-images";
@@ -22,7 +22,6 @@ export const loadImage = (map: MapRef, url: string, marker_name: string, width?:
   const addOrUpdateImage = (
     image:
       | HTMLImageElement
-      | ArrayBufferView
       | { width: number; height: number; data: Uint8Array | Uint8ClampedArray }
       | ImageData
       | ImageBitmap
@@ -58,9 +57,10 @@ export const loadImage = (map: MapRef, url: string, marker_name: string, width?:
       }
     };
   } else if (extension === "png") {
-    map?.loadImage(url, (error, image) => {
-      if (error) throw error;
-      if (image) addOrUpdateImage(image);
+    map?.loadImage(url).then((image) => {
+      addOrUpdateImage(image.data);
+    }).catch((error) => {
+      console.error(error);
     });
   } else {
     console.error("Unsupported image format");

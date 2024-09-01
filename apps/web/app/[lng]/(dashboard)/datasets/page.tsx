@@ -1,6 +1,20 @@
 "use client";
 
-import { Box, Button, Container, Grid, Pagination, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  ClickAwayListener,
+  Container,
+  Grid,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  MenuList,
+  Pagination,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -12,11 +26,14 @@ import { useLayers } from "@/lib/api/layers";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type { GetDatasetSchema } from "@/lib/validations/layer";
 
+import { AddLayerSourceType } from "@/types/common";
+
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
 
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import TileGrid from "@/components/dashboard/common/TileGrid";
+import DatasetExternal from "@/components/modals/DatasetExternal";
 import DatasetUploadModal from "@/components/modals/DatasetUpload";
 
 const Datasets = () => {
@@ -30,7 +47,6 @@ const Datasets = () => {
   });
   const [datasetSchema, setDatasetSchema] = useState<GetDatasetSchema>({});
   const [view, setView] = useState<"list" | "grid">("grid");
-  const [openDatasetUploadModal, setOpenDatasetUploadModal] = useState(false);
 
   const {
     mutate,
@@ -41,9 +57,48 @@ const Datasets = () => {
 
   useJobStatus(mutate);
 
+  const [addDatasetModal, setAddDatasetModal] = useState<AddLayerSourceType | null>(null);
+
+  const [addDatasetAnchorEl, setAddDatasetAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(addDatasetAnchorEl);
+  const handleAddDatasetClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAddDatasetAnchorEl(event.currentTarget);
+  };
+  const handleAddDatasetClose = () => {
+    setAddDatasetAnchorEl(null);
+  };
+
+  const openAddDatasetModal = (sourceType: AddLayerSourceType) => {
+    handleAddDatasetClose();
+    setAddDatasetModal(sourceType);
+  };
+
+  const closeAddDatasetModal = () => {
+    setAddDatasetModal(null);
+    mutate();
+  };
+
+  const addDatasetMenuItems = [
+    {
+      sourceType: AddLayerSourceType.DatasourceUpload,
+      iconName: ICON_NAME.UPLOAD,
+      label: t("dataset_upload"),
+    },
+    {
+      sourceType: AddLayerSourceType.DataSourceExternal,
+      iconName: ICON_NAME.GLOBE,
+      label: t("dataset_external"),
+    },
+  ];
+
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
-      <DatasetUploadModal open={openDatasetUploadModal} onClose={() => setOpenDatasetUploadModal(false)} />
+      {addDatasetModal === AddLayerSourceType.DatasourceUpload && (
+        <DatasetUploadModal open={true} onClose={closeAddDatasetModal} />
+      )}
+      {addDatasetModal === AddLayerSourceType.DataSourceExternal && (
+        <DatasetExternal open={true} onClose={closeAddDatasetModal} />
+      )}
       <Box
         sx={{
           display: "flex",
@@ -55,9 +110,39 @@ const Datasets = () => {
         <Button
           disableElevation={true}
           startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />}
-          onClick={() => setOpenDatasetUploadModal(true)}>
+          onClick={handleAddDatasetClick}>
           {t("add_dataset")}
         </Button>
+        <Menu
+          anchorEl={addDatasetAnchorEl}
+          sx={{
+            "& .MuiPaper-root": {
+              boxShadow: "0px 0px 10px 0px rgba(58, 53, 65, 0.1)",
+            },
+          }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          transformOrigin={{ vertical: -5, horizontal: "center" }}
+          open={open}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+            sx: { p: 0 },
+          }}
+          onClose={handleAddDatasetClose}>
+          <Box>
+            <ClickAwayListener onClickAway={handleAddDatasetClose}>
+              <MenuList>
+                {addDatasetMenuItems.map((item, index) => (
+                  <MenuItem key={index} onClick={() => openAddDatasetModal(item.sourceType)}>
+                    <ListItemIcon>
+                      <Icon iconName={item.iconName} style={{ fontSize: "15px" }} />
+                    </ListItemIcon>
+                    <Typography variant="body2">{item.label}</Typography>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </ClickAwayListener>
+          </Box>
+        </Menu>
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>
         <Grid item xs={12}>

@@ -31,7 +31,9 @@ const FolderSelect = ({ folders, selectedFolder, setSelectedFolder }) => {
         return option.name;
       }}
       renderOption={(props, option) => (
-        <ListItem {...props}>
+        <ListItem
+          key={option.id}
+          {...props}>
           <ListItemIcon>
             <Icon
               iconName={option?.id === "0" ? ICON_NAME.HOUSE : ICON_NAME.FOLDER}

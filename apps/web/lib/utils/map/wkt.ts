@@ -96,3 +96,6 @@ export function stringify(geoJSON: any) {
       throw new Error('stringify requires a valid GeoJSON Feature or geometry object as input');
   }
 };
+
+export const globalExtent = 'POLYGON((-180 -90, 180 -90, 180 90, -180 90, -180 -90))';
+

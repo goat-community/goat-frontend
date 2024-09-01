@@ -47,3 +47,10 @@ export type ResponseResult = {
   message: string;
   status?: "error" | "success";
 };
+
+export enum AddLayerSourceType {
+  DatasourceExplorer,
+  DatasourceUpload,
+  DataSourceExternal,
+  CatalogExplorer,
+}

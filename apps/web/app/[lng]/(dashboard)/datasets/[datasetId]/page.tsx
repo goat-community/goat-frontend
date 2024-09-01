@@ -14,10 +14,10 @@ import DatasetMapPreview from "@/components/dashboard/dataset/DatasetMapPreview"
 import DatasetSummary from "@/components/dashboard/dataset/DatasetSummary";
 import DatasetTable from "@/components/dashboard/dataset/DatasetTable";
 
-function a11yProps(index: number) {
+function a11yProps(value: string) {
   return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
+    id: `simple-tab-${value}`,
+    "aria-controls": `simple-tabpanel-${value}`,
   };
 }
 
@@ -51,14 +51,15 @@ export default function DatasetDetailPage({ params: { datasetId } }) {
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
   const tabItems = useMemo(() => {
-    const dataItems = [
-      { label: t("summary"), value: 0 },
-      { label: t("data"), value: 1 },
-    ];
-    if (dataset?.type !== "table") {
-      dataItems.push({ label: t("map"), value: 2 });
+    const dataItems = [{ label: t("summary"), value: "summary" }];
+
+    if (dataset?.type === "table" || dataset?.type === "feature") {
+      dataItems.push({ label: t("data"), value: "data" });
+    }
+
+    if (dataset?.type === "feature" || dataset?.type === "raster") {
+      dataItems.push({ label: t("map"), value: "map" });
     }
 
     return dataItems;
@@ -101,10 +102,10 @@ export default function DatasetDetailPage({ params: { datasetId } }) {
                 </Tabs>
               </Box>
               {tabItems.map((item) => (
-                <CustomTabPanel key={item.value} value={value} index={item.value}>
-                  {item.value === 0 && <DatasetSummary dataset={dataset} />}
-                  {item.value === 1 && <DatasetTable dataset={dataset} />}
-                  {item.value === 2 && <DatasetMapPreview dataset={dataset} />}
+                <CustomTabPanel key={item.value} value={value} index={tabItems.findIndex(tab => tab.value === item.value)}>
+                  {item.value === "summary" && <DatasetSummary dataset={dataset} />}
+                  {item.value === "data" && <DatasetTable dataset={dataset} />}
+                  {item.value === "map" && <DatasetMapPreview dataset={dataset} />}
                 </CustomTabPanel>
               ))}
             </Box>

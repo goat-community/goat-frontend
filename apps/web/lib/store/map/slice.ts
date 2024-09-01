@@ -5,7 +5,8 @@ import type { Basemap, SelectorItem } from "@/types/map/common";
 import { MapSidebarItemID } from "@/types/map/common";
 import type { Scenario } from "@/lib/validations/scenario";
 import type { MapPopoverEditorProps, MapPopoverInfoProps } from "@/types/map/popover";
-import type { MapGeoJSONFeature } from "react-map-gl";
+import type { MapGeoJSONFeature } from "react-map-gl/maplibre";
+import { MAPTILER_KEY } from "@/lib/constants";
 
 export interface MapState {
   basemaps: Basemap[];
@@ -26,43 +27,57 @@ export interface MapState {
 const initialState = {
   basemaps: [
     {
-      value: "mapbox_streets",
-      url: "mapbox://styles/mapbox/streets-v12",
+      value: "streets",
+      url: `https://api.maptiler.com/maps/streets-v2/style.json?key=${MAPTILER_KEY}`,
       title: "High Fidelity",
       subtitle: "Great for public presentations",
-      thumbnail: "https://i.imgur.com/aVDMUKAm.png",
+      thumbnail: `https://cloud.maptiler.com/static/img/maps/streets-v2.png`,
     },
     {
-      value: "mapbox_satellite",
-      url: "mapbox://styles/mapbox/satellite-streets-v12",
-      title: "Satellite Streets",
+      value: "satellite",
+      url: `https://api.maptiler.com/maps/hybrid/style.json?key=${MAPTILER_KEY}`,
+      title: "Satellite",
       subtitle: "As seen from space",
-      thumbnail: "https://i.imgur.com/JoMGuUOm.png",
+      thumbnail: "https://cloud.maptiler.com/static/img/maps/satellite.png",
     },
     {
-      value: "mapbox_light",
-      url: "mapbox://styles/mapbox/light-v11",
+      value: "light",
+      url: `https://api.maptiler.com/maps/dataviz-light/style.json?key=${MAPTILER_KEY}`,
       title: "Light",
       subtitle: "For highlighting data overlays",
-      thumbnail: "https://i.imgur.com/jHFGEEQm.png",
+      thumbnail: "https://media.maptiler.com/old/img/cloud/slider/streets-v2-light.png",
     },
     {
-      value: "mapbox_dark",
-      url: "mapbox://styles/mapbox/dark-v11",
+      value: "dark",
+      url: `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${MAPTILER_KEY}`,
       title: "Dark",
       subtitle: "For highlighting data overlays",
-      thumbnail: "https://i.imgur.com/PaYV5Gjm.png",
+      thumbnail: "https://media.maptiler.com/old/img/cloud/slider/streets-v2-dark.png",
     },
     {
-      value: "mapbox_navigation",
-      url: "mapbox://styles/mapbox/navigation-day-v1",
-      title: "Traffic",
-      subtitle: "Live traffic data",
-      thumbnail: "https://i.imgur.com/lfcARxZm.png",
+      value: "basemap_de_col",
+      url: `https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json`,
+      title: "BKG Basemap",
+      subtitle: "Colored",
+      thumbnail: "https://basemap.de/viewer/assets/basemap_colour.png",
     },
+    {
+      value: "basemap_de_gry",
+      url: `https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_gry.json`,
+      title: "BKG Basemap",
+      subtitle: "Grayscale",
+      thumbnail: "https://basemap.de/viewer/assets/basemap_greyscale.png",
+    },
+    {
+      value: "basemap_de_top",
+      url: `https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_top.json`,
+      title: "BKG Basemap",
+      subtitle: "Topographic",
+      thumbnail: "https://basemap.de/viewer/assets/basemap_hillshade.png",
+    }
   ],
   maskLayer: undefined,
-  activeBasemap: "mapbox_streets",
+  activeBasemap: "streets",
   activeLeftPanel: MapSidebarItemID.LAYERS,
   toolboxStartingPoints: undefined,
   activeRightPanel: undefined,

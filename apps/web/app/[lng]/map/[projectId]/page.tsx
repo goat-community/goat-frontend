@@ -2,10 +2,10 @@
 
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { Box, debounce, useTheme } from "@mui/material";
-import "mapbox-gl/dist/mapbox-gl.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import type { MapLayerMouseEvent, MapRef, ViewStateChangeEvent } from "react-map-gl";
-import Map, { MapProvider } from "react-map-gl";
+import type { MapLayerMouseEvent, MapRef, ViewStateChangeEvent } from "react-map-gl/maplibre";
+import Map, { MapProvider } from "react-map-gl/maplibre";
 import { v4 } from "uuid";
 
 import { useTranslation } from "@/i18n/client";
@@ -16,7 +16,6 @@ import {
   useProjectInitialViewState,
   useProjectScenarioFeatures,
 } from "@/lib/api/projects";
-import { MAPBOX_TOKEN } from "@/lib/constants";
 import { PATTERN_IMAGES } from "@/lib/constants/pattern-images";
 import { DrawProvider } from "@/lib/providers/DrawProvider";
 import { selectActiveBasemap } from "@/lib/store/map/selectors";
@@ -239,43 +238,34 @@ export default function MapPage({ params: { projectId } }) {
               <Box
                 sx={{
                   width: "100%",
-                  ".mapboxgl-ctrl .mapboxgl-ctrl-logo": {
+                  ".maplibregl-ctrl .maplibregl-ctrl-logo": {
                     display: "none",
                   },
                   height: `calc(100% - ${toolbarHeight}px)`,
-                  ".mapboxgl-popup-content": {
+                  ".maplibregl-popup-content": {
                     padding: 0,
                     borderRadius: "6px",
                     background: theme.palette.background.paper,
                   },
-                  ".mapboxgl-popup-anchor-top .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip, .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip":
+                  ".maplibregl-popup-anchor-top .maplibregl-popup-tip, .maplibregl-popup-anchor-top-left .maplibregl-popup-tip, .maplibregl-popup-anchor-top-right .maplibregl-popup-tip":
                     {
                       borderBottomColor: theme.palette.background.paper,
                     },
-                  ".mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip, .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip":
+                  ".maplibregl-popup-anchor-bottom .maplibregl-popup-tip, .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip, .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip":
                     {
                       borderTopColor: theme.palette.background.paper,
                     },
-                  ".mapboxgl-popup-anchor-left .mapboxgl-popup-tip": {
+                  ".maplibregl-popup-anchor-left .maplibregl-popup-tip": {
                     borderRightColor: theme.palette.background.paper,
                   },
-                  ".mapboxgl-popup-anchor-right .mapboxgl-popup-tip": {
+                  ".maplibregl-popup-anchor-right .maplibregl-popup-tip": {
                     borderLeftColor: theme.palette.background.paper,
-                  },
-                  ".mapbox-improve-map": {
-                    display: "none",
-                  },
-                  ".mapboxgl-ctrl-attrib a": {
-                    color: "rgba(0,0,0,.75)",
                   },
                 }}>
                 <Map
                   id="map"
                   ref={mapRef}
                   style={{ width: "100%", height: "100%" }}
-                  projection={{
-                    name: "mercator",
-                  }}
                   initialViewState={{
                     zoom: initialView?.zoom ?? 3,
                     latitude: initialView?.latitude ?? 48.13,
@@ -287,8 +277,7 @@ export default function MapPage({ params: { projectId } }) {
                       maxZoom: initialView?.max_zoom ?? 24,
                     },
                   }}
-                  mapStyle={activeBasemap?.url ?? "mapbox://styles/mapbox/streets-v11"}
-                  mapboxAccessToken={MAPBOX_TOKEN}
+                  mapStyle={activeBasemap?.url}
                   interactiveLayerIds={interactiveLayerIds}
                   dragRotate={false}
                   touchZoomRotate={false}

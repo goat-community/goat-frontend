@@ -1,5 +1,5 @@
 import bbox from "@turf/bbox";
-import type { MapRef } from "react-map-gl";
+import type { MapRef } from "react-map-gl/maplibre";
 
 import { wktToGeoJSON } from "@/lib/utils/map/wkt";
 

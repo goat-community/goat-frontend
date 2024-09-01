@@ -1,12 +1,12 @@
 import { Box, Paper } from "@mui/material";
 import bbox from "@turf/bbox";
-import "mapbox-gl/dist/mapbox-gl.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import React, { useMemo, useRef, useState } from "react";
-import type { MapRef } from "react-map-gl";
-import { Map, MapProvider } from "react-map-gl";
+import type { MapRef } from "react-map-gl/maplibre";
+import { Map, MapProvider } from "react-map-gl/maplibre";
 
-import { MAPBOX_TOKEN } from "@/lib/constants";
-import { wktToGeoJSON } from "@/lib/utils/map/wkt";
+import { MAPTILER_KEY } from "@/lib/constants";
+import { globalExtent, wktToGeoJSON } from "@/lib/utils/map/wkt";
 import type { Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
 
@@ -20,12 +20,11 @@ interface DatasetMapPreviewProps {
 
 const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
   const mapRef = useRef<MapRef | null>(null);
-  const geojson = wktToGeoJSON(dataset.extent);
+  const geojson = wktToGeoJSON(dataset.extent || globalExtent);
   const boundingBox = bbox(geojson);
   const [initialViewState, setInitialViewState] = useState({});
 
   const [currentViewState, setCurrentViewState] = useState({});
-
   const hasMoved = useMemo(() => {
     return (
       Object.keys(currentViewState).length &&
@@ -44,12 +43,6 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
             width: "100%",
             height: `calc(100vh - 380px)`,
             overflow: "hidden",
-            ".mapbox-improve-map": {
-              display: "none",
-            },
-            ".mapboxgl-ctrl-attrib a": {
-              color: "rgba(0,0,0,.75)",
-            },
           }}>
           <Map
             id="map"
@@ -74,8 +67,7 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
               }
             }}
             style={{ width: "100%", height: "100%" }}
-            mapStyle="mapbox://styles/mapbox/light-v11"
-            mapboxAccessToken={MAPBOX_TOKEN}
+            mapStyle={`https://api.maptiler.com/maps/dataviz-light/style.json?key=${MAPTILER_KEY}`}
             dragRotate={false}
             touchZoomRotate={false}>
             <Layers layers={[dataset]} />

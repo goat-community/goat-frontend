@@ -1,5 +1,5 @@
 import { Fab, Stack, Tooltip, useTheme } from "@mui/material";
-import { useMap } from "react-map-gl";
+import { useMap } from "react-map-gl/maplibre";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 

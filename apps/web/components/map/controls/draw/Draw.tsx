@@ -1,7 +1,7 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { useEffect } from "react";
-import type { ControlPosition } from "react-map-gl";
-import { useControl } from "react-map-gl";
+import type { ControlPosition } from "react-map-gl/maplibre";
+import { useControl } from "react-map-gl/maplibre";
 
 import { useDraw } from "@/lib/providers/DrawProvider";
 
@@ -28,6 +28,8 @@ export const DrawControl = (props: DrawControlProps) => {
   const modes = MapboxDraw.modes;
   modes[CustomDrawModes.DRAW_CIRCLE] = CircleMode;
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const drawControl = useControl<MapboxDraw>(
     () => new MapboxDraw(props),
     ({ map }) => {
