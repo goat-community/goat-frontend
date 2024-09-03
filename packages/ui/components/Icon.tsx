@@ -133,6 +133,7 @@ import {
   wfsIcon,
   wmsIcon,
   wmtsIcon,
+  xyzIcon,
 } from "../assets/svg/OtherIcons";
 
 export enum ICON_NAME {
@@ -263,6 +264,7 @@ export enum ICON_NAME {
   WMTS = "wmts",
   WMS = "wms",
   WFS = "wfs",
+  XYZ = "xyz",
   ARCGIS_FEATURE_SERVICE = "arcgis-feature-service",
   GEOJSON = "geojson",
 }
@@ -394,6 +396,7 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.WMTS]: wmtsIcon,
   [ICON_NAME.WMS]: wmsIcon,
   [ICON_NAME.WFS]: wfsIcon,
+  [ICON_NAME.XYZ]: xyzIcon,
   [ICON_NAME.ARCGIS_FEATURE_SERVICE]: arcgisFeatureServiceIcon,
   [ICON_NAME.GEOJSON]: geojsonIcon,
 };

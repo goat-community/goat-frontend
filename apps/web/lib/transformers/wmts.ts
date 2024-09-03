@@ -17,6 +17,43 @@ export const convertWmtsToXYZUrl = (resourceUrl: string, style: string, tileMatr
 
 
 /**
+ * Identifies a Google-compatible TileMatrixSet from the provided tileMatrixSets.
+ *
+ * @param {Array} tileMatrixSets - The array of TileMatrixSets.
+ * @returns {Object|null} - The identified Google-compatible TileMatrixSet or null if not found.
+ */
+export const getGoogleCompatibleTileMatrixSet = (tileMatrixSets) => {
+  // Google Web Mercator ScaleDenominator values (integer part) for levels 0 to 2
+  const googleScaleDenominators = [
+    559082264, 279541132, 139770566
+  ];
+
+  // Try to Identify Google-compatible TileMatrixSets from WellKnownScaleSet
+  const googleCompatibleTileMatrixSets = tileMatrixSets.filter((tms) =>
+    tms.SupportedCRS?.includes("EPSG:3857") && tms?.WellKnownScaleSet?.includes("GoogleMapsCompatible")
+  );
+
+  // If no Google-compatible TileMatrixSets found, try using ScaleDenominator
+  if (googleCompatibleTileMatrixSets.length === 0) {
+    tileMatrixSets.forEach((tms) => {
+      if (tms.SupportedCRS?.includes("EPSG:3857")) {
+        const hasGoogleScaleDenominator = tms.TileMatrix?.some((tm) => {
+          const scaleDenominatorInt = Math.floor(tm.ScaleDenominator);
+          return googleScaleDenominators.includes(scaleDenominatorInt);
+        });
+
+        if (hasGoogleScaleDenominator) {
+          googleCompatibleTileMatrixSets.push(tms);
+        }
+      }
+    });
+  }
+
+  // Return the identified Google-compatible TileMatrixSet or null if not found
+  return googleCompatibleTileMatrixSets?.[0] ?? null;
+};
+
+/**
  * Extracts the WMTS layers from the capabilities document.
  *
  * @param {object} capabilities - The WMTS capabilities document.
@@ -25,7 +62,9 @@ export const convertWmtsToXYZUrl = (resourceUrl: string, style: string, tileMatr
 export const getWmtsFlatLayers = (capabilities) => {
   const datasets = capabilities?.Contents?.Layer;
   const tileMatrixSets = capabilities?.Contents?.TileMatrixSet;
-  const webMercator = tileMatrixSets.find((tms) => tms.SupportedCRS.includes("EPSG:3857"));
+
+  // Fallback to any TileMatrixSet with EPSG:3857 if no Google-compatible TileMatrixSet is found
+  const webMercator = getGoogleCompatibleTileMatrixSet(tileMatrixSets)
   if (!webMercator) return [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const options = [] as any[];

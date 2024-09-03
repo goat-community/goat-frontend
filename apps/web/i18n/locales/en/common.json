@@ -938,6 +938,8 @@
   "weight_field": "Weight Field",
   "weight_field_tooltip": "The field containing the weight of the origin-destination pair",
   "weighted_by_intersecting_area": "Weigthed by intersecting area",
+  "wms_supports_only_epsg_3857": "GOAT only supports imagery in the EPSG:3857 (Web Mercator) and will filter out any layers that don't use this projection.",
+  "wmts_supports_only_epsg_3857": "GOAT only supports tilesets in the EPSG:3857 (Web Mercator) that are GoogleMapsCompatible and will exclude all other tilesets.",
   "xlsx": "XLSX",
   "zoom_in": "Zoom In",
   "zoom_level": "Zoom level",

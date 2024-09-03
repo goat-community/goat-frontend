@@ -165,7 +165,7 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
 });
 
 export const otherPropertiesSchmea = z.object({
-  layers: z.array(z.string()),
+  layers: z.array(z.string()).optional(),
   srs: z.string().optional(),
   width: z.number().optional(), // width of the image (only for external imagery)
   height: z.number().optional(), // height of the image (only for external imagery)

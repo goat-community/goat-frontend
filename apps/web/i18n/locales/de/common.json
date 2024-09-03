@@ -938,6 +938,8 @@
   "weight_field": "Feld Gewichtung",
   "weight_field_tooltip": "Das Feld, das das Gewicht des Ursprungs-Ziel-Paares enthält",
   "weighted_by_intersecting_area": "Gewichtet nach Schnittfläche",
+  "wms_supports_only_epsg_3857": "",
+  "wmts_supports_only_epsg_3857": "",
   "xlsx": "XLSX",
   "zoom_in": "Hineinzoomen",
   "zoom_level": "Zoomstufe",

@@ -53,6 +53,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import { OverflowTypograpy } from "@/components/common/OverflowTypography";
 import FolderSelect from "@/components/dashboard/common/FolderSelect";
+import NoValuesFound from "@/components/map/common/NoValuesFound";
 
 interface DatasetExternalProps {
   open: boolean;
@@ -69,7 +70,8 @@ interface ExternalDatasetType {
 
 interface CapabilitiesType {
   type: DataType;
-  capabilities: any;
+  directUrl?: string;
+  capabilities?: any;
 }
 
 const externalDatasetTypes: ExternalDatasetType[] = [
@@ -91,7 +93,36 @@ const externalDatasetTypes: ExternalDatasetType[] = [
     urlPlaceholder: "https://serviceurl.com",
     icon: ICON_NAME.WFS,
   },
+  {
+    name: "XYZ Tiles",
+    value: "xyz",
+    urlPlaceholder: "https://serviceurl.com/{z}/{x}/{y}",
+    icon: ICON_NAME.XYZ,
+  },
 ];
+
+const findExternalDatasetType = (url: string): CapabilitiesType | null => {
+  // XYZ pattern (Should contain {x}, {y}, {z} and shouldn't contain {TileRow} and {TileCol})
+  const xyzPattern = /^(?=.*\{z\})(?=.*\{x\})(?=.*\{y\})(?!.*\{TileRow\})(?!.*\{TileCol\}).*$/;
+  const wmtsPattern =
+    /^(?=.*\{TileRow\})(?=.*\{TileCol\})(?=.*\{TileMatrix\})(?!.*\{x\})(?!.*\{y\})(?!.*\{z\})(?!.*\{Style\})(?!.*\{TileMatrixSet\}).*$/;
+  // Check if the URL matches the xyz pattern
+  if (xyzPattern.test(url)) {
+    // Return the capabilities object for xyz
+    return {
+      type: "xyz",
+      directUrl: url,
+    };
+  } else if (wmtsPattern.test(url)) {
+    // Return the capabilities object for wmts
+    return {
+      type: "wmts",
+      directUrl: url,
+    };
+  }
+
+  return null;
+};
 
 const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatasets }) => {
   const { t } = useTranslation("common");
@@ -99,6 +130,7 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
     wfs: ["Title", "Name", "Abstract"],
     wms: ["Title", "Name", "Abstract"],
     wmts: ["Title", "Identifier", "Style", "Abstract"],
+    xyz: ["Title", "Identifier"],
   };
 
   const handleSelectDataset = (dataset) => {
@@ -174,8 +206,20 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
               ))}
             </TableRow>
           ))}
+          {options.length === 0 && (
+            <Stack sx={{ mt: 4 }}>
+              <NoValuesFound text={t("no_datasets_found")} />
+            </Stack>
+          )}
         </TableBody>
       </Table>
+      <Stack sx={{ mt: 4 }}>
+        <Typography variant="caption" color="textSecondary">
+          <b>{t("info")}: </b>
+          {type === imageryDataType.Enum.wms ? t("wms_supports_only_epsg_3857") : ""}
+          {type === imageryDataType.Enum.wmts ? t("wmts_supports_only_epsg_3857") : ""}
+        </Typography>
+      </Stack>
     </>
   );
 };
@@ -202,7 +246,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
   const datasetOptions = useMemo(() => {
     const options = [] as any[];
     const _capabilities = capabilities?.capabilities;
-    if (capabilities?.type === vectorDataType.Enum.wfs) {
+    if (capabilities?.type === vectorDataType.Enum.wfs && _capabilities) {
       const version = _capabilities?.version;
       const datasets =
         version === "2.0.0" ? _capabilities?.FeatureTypeList : _capabilities?.FeatureTypeList?.FeatureType;
@@ -218,7 +262,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
           options.push(dataset);
         });
       }
-    } else if (capabilities?.type === imageryDataType.Enum.wmts) {
+    } else if (capabilities?.type === imageryDataType.Enum.wmts && _capabilities) {
       const datasets = getWmtsFlatLayers(_capabilities);
       options.push(...datasets);
     }
@@ -254,8 +298,20 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
     // STEP 0: Parse URL.
     if (activeStep === 0) {
       if (!externalUrl) return;
+      const urlCapabilities = findExternalDatasetType(externalUrl);
+      console.log(urlCapabilities);
+      if (urlCapabilities) {
+        setCapabilities(urlCapabilities);
+        const homeFolder = folders?.find((folder) => folder.name === "home");
+        if (homeFolder) {
+          setSelectedFolder(homeFolder);
+        }
+        // Skip dataset selection step if it's a direct link and go to destination and metadata step
+        setActiveStep((prevActiveStep) => prevActiveStep + 2);
+        return;
+      }
+
       setIsBusy(true);
-      // todo: in future we should allows geojson, mvt or other formats. So it doesn't always have to fetch capabilities.
       // Assuming this is a capabilities ogc service
       fetch(externalUrl)
         .then((response) => {
@@ -321,7 +377,12 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
     }
   };
   const handledBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    if (activeStep === 2 && capabilities?.directUrl) {
+      // Skip dataset selection step if it's a direct link
+      setActiveStep((prevActiveStep) => prevActiveStep - 2);
+    } else {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
   };
   const handleSave = async () => {
     const layerPayload = {
@@ -341,7 +402,6 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
         });
         const uploadResponse = await layerFeatureUrlUpload(featureUrlPayload);
         const datasetId = uploadResponse?.dataset_id;
-        console.log(datasetId);
         const payload = createLayerFromDatasetSchema.parse({
           ...layerPayload,
           dataset_id: datasetId,
@@ -354,37 +414,37 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
         }
       } else if (
         capabilities?.type === imageryDataType.Enum.wms ||
-        capabilities?.type === imageryDataType.Enum.wmts
+        capabilities?.type === imageryDataType.Enum.wmts ||
+        (capabilities?.type === imageryDataType.Enum.xyz && capabilities.directUrl)
       ) {
         let layers;
         let url = externalUrl;
         if (capabilities.type === imageryDataType.Enum.wms) {
           layers = selectedDatasets.map((d) => d.Name);
         } else if (capabilities.type === imageryDataType.Enum.wmts) {
-          layers = selectedDatasets.map((d) => d.Identifier);
-          url = convertWmtsToXYZUrl(
-            selectedDatasets[0].ResourceURL,
-            selectedDatasets[0].Style,
-            selectedDatasets[0].TileMatrixSet
-          );
+          if (capabilities.directUrl) {
+            url = capabilities.directUrl;
+          } else {
+            layers = selectedDatasets.map((d) => d.Identifier);
+            url = convertWmtsToXYZUrl(
+              selectedDatasets[0].ResourceURL,
+              selectedDatasets[0].Style,
+              selectedDatasets[0].TileMatrixSet
+            );
+          }
+        } else if (capabilities.type === imageryDataType.Enum.xyz && capabilities.directUrl) {
+          url = capabilities.directUrl;
         }
-        if (!layers.length) {
-          throw new Error("No layers selected");
-        }
-
-        console.log(selectedDatasets);
         const payload = createRasterLayerSchema.parse({
           ...layerPayload,
           type: "raster",
           data_type: capabilities.type,
           url,
           other_properties: {
-            layers,
+            ...(layers && { layers }),
           },
         });
-        console.log(payload);
-        const rasterLayerResponse = await createRasterLayer(payload);
-        console.log(rasterLayerResponse);
+        await createRasterLayer(payload);
       }
 
       toast.success(t("success_adding_external_dataset"));
