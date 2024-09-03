@@ -6,13 +6,21 @@
  * @param {string} tileMatrixSet - The tile matrix set to be used in the URL.
  * @returns {string} - The converted Maplibre-compatible URL.
  */
-export const convertWmtsToXYZUrl = (resourceUrl: string, style: string, tileMatrixSet: string) => {
-  return resourceUrl
-    .replace("{Style}", style)
-    .replace("{TileMatrixSet}", tileMatrixSet)
+export const convertWmtsToXYZUrl = (resourceUrl: string, style?: string, tileMatrixSet?: string) => {
+  let url = resourceUrl
     .replace("{TileMatrix}", "{z}")
     .replace("{TileRow}", "{y}")
     .replace("{TileCol}", "{x}");
+
+  if (style) {
+    url = url.replace("{Style}", style);
+  }
+
+  if (tileMatrixSet) {
+    url = url.replace("{TileMatrixSet}", tileMatrixSet);
+  }
+
+  return url;
 };
 
 

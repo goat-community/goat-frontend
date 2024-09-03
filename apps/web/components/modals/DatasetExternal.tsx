@@ -423,7 +423,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
           layers = selectedDatasets.map((d) => d.Name);
         } else if (capabilities.type === imageryDataType.Enum.wmts) {
           if (capabilities.directUrl) {
-            url = capabilities.directUrl;
+            url = convertWmtsToXYZUrl(capabilities.directUrl);
           } else {
             layers = selectedDatasets.map((d) => d.Identifier);
             url = convertWmtsToXYZUrl(
