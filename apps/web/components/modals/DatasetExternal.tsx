@@ -213,13 +213,15 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
           )}
         </TableBody>
       </Table>
-      <Stack sx={{ mt: 4 }}>
-        <Typography variant="caption" color="textSecondary">
-          <b>{t("info")}: </b>
-          {type === imageryDataType.Enum.wms ? t("wms_supports_only_epsg_3857") : ""}
-          {type === imageryDataType.Enum.wmts ? t("wmts_supports_only_epsg_3857") : ""}
-        </Typography>
-      </Stack>
+      {(type === imageryDataType.Enum.wms || type === imageryDataType.Enum.wmts) && (
+        <Stack sx={{ mt: 4 }}>
+          <Typography variant="caption" color="textSecondary">
+            <b>{t("info")}: </b>
+            {type === imageryDataType.Enum.wms ? t("wms_supports_only_epsg_3857") : ""}
+            {type === imageryDataType.Enum.wmts ? t("wmts_supports_only_epsg_3857") : ""}
+          </Typography>
+        </Stack>
+      )}
     </>
   );
 };
