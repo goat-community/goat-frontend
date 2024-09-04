@@ -523,7 +523,7 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                           {layer.type === "table" ? null : (
                             <Tooltip
                               key={layer.id}
-                              title={layer.properties.visibility ? t("show_layer") : t("hide_layer")}
+                              title={layer.properties?.visibility ? t("show_layer") : t("hide_layer")}
                               arrow
                               placement="top">
                               <IconButton
@@ -536,11 +536,11 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                                   transition: theme.transitions.create(["opacity"], {
                                     duration: theme.transitions.duration.standard,
                                   }),
-                                  opacity: !layer.properties.visibility ? 1 : 0,
+                                  opacity: !layer.properties?.visibility ? 1 : 0,
                                 }}>
                                 <Icon
                                   iconName={
-                                    !layer.properties.visibility ? ICON_NAME.EYE_SLASH : ICON_NAME.EYE
+                                    !layer.properties?.visibility ? ICON_NAME.EYE_SLASH : ICON_NAME.EYE
                                   }
                                   style={{
                                     fontSize: 15,

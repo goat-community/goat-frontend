@@ -76,6 +76,12 @@ interface CapabilitiesType {
 
 const externalDatasetTypes: ExternalDatasetType[] = [
   {
+    name: "Web Feature Service (WFS)",
+    value: vectorDataType.Enum.wfs,
+    urlPlaceholder: "https://serviceurl.com",
+    icon: ICON_NAME.WFS,
+  },
+  {
     name: "Web Map Service (WMS)",
     value: imageryDataType.Enum.wms,
     urlPlaceholder: "https://serviceurl.com",
@@ -86,12 +92,6 @@ const externalDatasetTypes: ExternalDatasetType[] = [
     value: imageryDataType.Enum.wmts,
     urlPlaceholder: "https://serviceurl.com",
     icon: ICON_NAME.WMTS,
-  },
-  {
-    name: "Web Feature Service (WFS)",
-    value: vectorDataType.Enum.wfs,
-    urlPlaceholder: "https://serviceurl.com",
-    icon: ICON_NAME.WFS,
   },
   {
     name: "XYZ Tiles",
@@ -129,9 +129,11 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
   const columnsMap = {
     wfs: ["Title", "Name", "Abstract"],
     wms: ["Title", "Name", "Abstract"],
-    wmts: ["Title", "Identifier", "Style", "Abstract"],
+    wmts: ["Title", "Identifier", "Style", "Format", "Abstract"],
     xyz: ["Title", "Identifier"],
   };
+
+  console.log(selectedDatasets);
 
   const handleSelectDataset = (dataset) => {
     setSelectedDatasets((prevSelectedDatasets) => {
@@ -167,7 +169,7 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
         <TableBody>
           {options.map((dataset) => (
             <TableRow
-              key={dataset.Name}
+              key={dataset.Name || dataset.Identifier || dataset.Title}
               sx={{
                 cursor: "pointer",
               }}
@@ -206,13 +208,13 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
               ))}
             </TableRow>
           ))}
-          {options.length === 0 && (
-            <Stack sx={{ mt: 4 }}>
-              <NoValuesFound text={t("no_datasets_found")} />
-            </Stack>
-          )}
         </TableBody>
       </Table>
+      {options.length === 0 && (
+        <Stack sx={{ mt: 4 }}>
+          <NoValuesFound text={t("no_datasets_found")} />
+        </Stack>
+      )}
       {(type === imageryDataType.Enum.wms || type === imageryDataType.Enum.wmts) && (
         <Stack sx={{ mt: 4 }}>
           <Typography variant="caption" color="textSecondary">
@@ -240,7 +242,6 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
   const [capabilities, setCapabilities] = useState<CapabilitiesType | null>(null);
 
   // Step 1: Select Layer
-
   // The reason why this is an array is because WMS can have multiple layers.
   // Technically, WFS can have multiple layers too but we only support one layer to be able to use features for analytics.
   const [selectedDatasets, setSelectedDatasets] = useState<any[]>([]);
@@ -258,11 +259,9 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
         });
       }
     } else if (capabilities?.type === imageryDataType.Enum.wms) {
-      const datasets = _capabilities?.Capability?.Layer;
-      if (datasets?.length) {
-        datasets.forEach((dataset: any) => {
-          options.push(dataset);
-        });
+      const dataset = _capabilities?.Capability?.Layer;
+      if (dataset) {
+        options.push(dataset);
       }
     } else if (capabilities?.type === imageryDataType.Enum.wmts && _capabilities) {
       const datasets = getWmtsFlatLayers(_capabilities);
@@ -301,7 +300,6 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
     if (activeStep === 0) {
       if (!externalUrl) return;
       const urlCapabilities = findExternalDatasetType(externalUrl);
-      console.log(urlCapabilities);
       if (urlCapabilities) {
         setCapabilities(urlCapabilities);
         const homeFolder = folders?.find((folder) => folder.name === "home");
@@ -372,8 +370,6 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
         setValue("name", selectedDatasets[0].Title || selectedDatasets[0].Name || "");
         setValue("description", selectedDatasets[0].Abstract || "");
       }
-
-      console.log(selectedDatasets);
     } else if (activeStep === 2) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
@@ -442,6 +438,9 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
           type: "raster",
           data_type: capabilities.type,
           url,
+          properties: {
+            visibility: true,
+          },
           other_properties: {
             ...(layers && { layers }),
           },
@@ -450,8 +449,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
       }
 
       toast.success(t("success_adding_external_dataset"));
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       toast.error(t("error_adding_external_dataset"));
     } finally {
       setIsBusy(false);
@@ -489,7 +487,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
 
   return (
     <>
-      <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth="sm">
+      <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth={activeStep === 1 ? "md" : "sm"}>
         <DialogTitle>
           {t("dataset_external")}
           <Box sx={{ width: "100%", pt: 6 }}>
@@ -514,7 +512,6 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
                   helperText={errorMessage}
                   placeholder={t("url")}
                   onChange={(e) => {
-                    console.log(e.target.value);
                     setErrorMessage(null);
                     setExternalUrl(e.target.value);
                     setCapabilities(null);

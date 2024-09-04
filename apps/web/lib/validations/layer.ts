@@ -223,6 +223,7 @@ export const createRasterLayerSchema = createLayerBaseSchema.extend({
   url: z.string().url(),
   data_type: dataType,
   extent: z.string().optional(),
+  properties: z.record(z.any()).optional(), // add validation for raster properties
   other_properties: otherPropertiesSchmea,
 })
 

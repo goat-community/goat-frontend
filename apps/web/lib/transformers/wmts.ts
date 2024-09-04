@@ -81,20 +81,28 @@ export const getWmtsFlatLayers = (capabilities) => {
       const tileMatrixSetLink = dataset.TileMatrixSetLink.find((link) =>
         link.TileMatrixSet.includes(webMercator.Identifier)
       );
-      const supportsPng = dataset.Format.includes("image/png");
-      const resourceUrl = dataset.ResourceURL.find((url) => url.format.includes("image/png"));
-      if (tileMatrixSetLink && supportsPng) {
+      const supportedFormats = ["image/png", "image/jpeg", "image/tiff", "image/png8"];
+      const resourceUrls = supportedFormats.map((format) => ({
+        format,
+        url: dataset.ResourceURL.find((url) => url.format.includes(format)),
+      }));
+
+      if (tileMatrixSetLink) {
         dataset.Style.forEach((style) => {
-          options.push({
-            Identifier: dataset.Identifier,
-            ResourceURL: resourceUrl.template,
-            Format: "image/png",
-            TileMatrixSet: tileMatrixSetLink.TileMatrixSet,
-            CRS: "EPSG:3857",
-            Style: style.Identifier,
-            Title: dataset.Title,
-            Abstract: dataset.Abstract,
-            WGS84BoundingBox: dataset.WGS84BoundingBox,
+          resourceUrls.forEach(({ format, url }) => {
+            if (url) {
+              options.push({
+                Identifier: dataset.Identifier,
+                ResourceURL: url.template,
+                Format: format,
+                TileMatrixSet: tileMatrixSetLink.TileMatrixSet,
+                CRS: "EPSG:3857",
+                Style: style.Identifier,
+                Title: dataset.Title,
+                Abstract: dataset.Abstract,
+                WGS84BoundingBox: dataset.WGS84BoundingBox,
+              });
+            }
           });
         });
       }

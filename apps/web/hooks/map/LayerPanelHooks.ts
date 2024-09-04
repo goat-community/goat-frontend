@@ -123,6 +123,38 @@ export const useLayerSettingsMoreMenu = () => {
 
       return tableOptions;
     }
+    if (layerType === "raster") {
+      const rasterOptions = [
+        {
+          id: MapLayerActions.PROPERTIES,
+          label: t("properties"),
+          icon: ICON_NAME.CIRCLEINFO,
+        },
+        {
+          id: MapLayerActions.ZOOM_TO,
+          label: t("zoom_to"),
+          icon: ICON_NAME.ZOOM_IN,
+        },
+        {
+          id: MapLayerActions.DUPLICATE,
+          label: t("duplicate"),
+          icon: ICON_NAME.COPY,
+        },
+        {
+          id: MapLayerActions.RENAME,
+          label: t("rename"),
+          icon: ICON_NAME.EDIT,
+        },
+        {
+          id: ContentActions.DELETE,
+          label: t("remove"),
+          icon: ICON_NAME.TRASH,
+          color: "error.main",
+        },
+      ];
+
+      return rasterOptions;
+    }
 
     return [];
   }
