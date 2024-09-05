@@ -634,7 +634,7 @@
   "organization_type_label": "Organization type",
   "organization_type_options": {
     "education": "Education",
-    "government": "Government",
+    "government": "Public sector",
     "non_profit": "Non-profit/NGO",
     "other": "Other",
     "private": "Private Business"

@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from "@hookform/resolvers/zod";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
   Checkbox,
+  Collapse,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   Radio,
   Stack,
   Step,
@@ -24,7 +28,8 @@ import {
 } from "@mui/material";
 import WMSCapabilities from "ol/format/WMSCapabilities";
 import WMTSCapabilities from "ol/format/WMTSCapabilities";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
@@ -36,7 +41,9 @@ import { useFolders } from "@/lib/api/folders";
 import { useJobs } from "@/lib/api/jobs";
 import { createFeatureLayer, createRasterLayer, layerFeatureUrlUpload } from "@/lib/api/layers";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
+import { generateLayerGetLegendGraphicUrl, generateWmsUrl } from "@/lib/transformers/wms";
 import { convertWmtsToXYZUrl, getWmtsFlatLayers } from "@/lib/transformers/wmts";
+import { getBaseUrl } from "@/lib/utils/helpers";
 import WFSCapabilities from "@/lib/utils/parser/ol/format/WFSCapabilities";
 import type { DataType, GetContentQueryParams } from "@/lib/validations/common";
 import { imageryDataType, vectorDataType } from "@/lib/validations/common";
@@ -101,6 +108,13 @@ const externalDatasetTypes: ExternalDatasetType[] = [
   },
 ];
 
+const columnsMap = {
+  wfs: ["Title", "Name", "Abstract"],
+  wms: ["Title", "Name", "Abstract"],
+  wmts: ["Title", "Identifier", "Style", "Format", "Abstract"],
+  xyz: ["Title", "Identifier"],
+};
+
 const findExternalDatasetType = (url: string): CapabilitiesType | null => {
   // XYZ pattern (Should contain {x}, {y}, {z} and shouldn't contain {TileRow} and {TileCol})
   const xyzPattern = /^(?=.*\{z\})(?=.*\{x\})(?=.*\{y\})(?!.*\{TileRow\})(?!.*\{TileCol\}).*$/;
@@ -124,14 +138,172 @@ const findExternalDatasetType = (url: string): CapabilitiesType | null => {
   return null;
 };
 
+const Row = ({ layer, depth, selectedLayers, handleSelectLayer, getColumns, type }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  const handleToggleExpand = useCallback(
+    (e) => {
+      e.stopPropagation();
+      setIsExpanded(!isExpanded);
+    },
+    [isExpanded]
+  );
+
+  const hasChildren = layer.Layer && layer.Layer.length > 0;
+  const isSelected = selectedLayers.includes(layer);
+
+  const handleRowClick = () => {
+    if (layer.Name && layer.Style) {
+      handleSelectLayer(layer);
+    } else {
+      if (layer.Layer.length === 0) return;
+      setIsExpanded(!isExpanded);
+    }
+  };
+
+  return (
+    <React.Fragment>
+      <TableRow
+        sx={{
+          px: 0,
+          cursor: "pointer",
+          width: "100%", // Ensure the row takes the full width
+        }}
+        selected={layer.Name && isSelected}
+        onClick={handleRowClick}>
+        <TableCell padding="checkbox">
+          <Stack direction="row" alignItems="center" sx={{ width: "100%" }}>
+            {hasChildren ? (
+              <>
+                <div style={{ width: depth * 10 }} />
+                <IconButton size="small" onClick={handleToggleExpand}>
+                  {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowRightIcon />}
+                </IconButton>
+              </>
+            ) : (
+              <div style={{ width: 34 + depth * 10 }} />
+            )}
+            {layer.Name && layer.Style && (
+              <Checkbox
+                size="small"
+                checked={isSelected}
+                onChange={() => handleSelectLayer(layer)}
+                onClick={(e) => e.stopPropagation()} // Prevent row click event
+              />
+            )}
+          </Stack>
+        </TableCell>
+        {getColumns(type).map((column) => (
+          <TableCell
+            key={column}
+            sx={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: 150,
+              width: `${95 / getColumns(type).length}%`, // Ensure the cell takes the full width except for the checkbox column
+            }}>
+            <OverflowTypograpy variant="body2" tooltipProps={{ placement: "top", arrow: true }}>
+              {layer[column]}
+            </OverflowTypograpy>
+          </TableCell>
+        ))}
+      </TableRow>
+      {hasChildren && (
+        <TableRow>
+          <TableCell sx={{ py: 0, px: 0 }} colSpan={6}>
+            <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+              {/* {Table Row need to be wrapped in a table tag} */}
+              <table style={{ border: "none", borderCollapse: "collapse", width: "100%" }}>
+                <tbody style={{ border: "none" }}>
+                  {getNestedLayerMultiSelectionTableBody(
+                    layer.Layer,
+                    depth + 1,
+                    selectedLayers,
+                    handleSelectLayer,
+                    getColumns,
+                    type
+                  )}
+                </tbody>
+              </table>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
+    </React.Fragment>
+  );
+};
+
+const getNestedLayerMultiSelectionTableBody = (
+  layers,
+  depth = 0,
+  selectedLayers,
+  handleSelectLayer,
+  getColumns,
+  type
+) => {
+  if (depth > 4) return null;
+
+  return (
+    <React.Fragment>
+      {layers.map((layer) => (
+        <Row
+          key={layer.Name || layer.Title}
+          layer={layer}
+          depth={depth}
+          selectedLayers={selectedLayers}
+          handleSelectLayer={handleSelectLayer}
+          getColumns={getColumns}
+          type={type}
+        />
+      ))}
+    </React.Fragment>
+  );
+};
+
+const getFlatLayerSingleSelectionTableBody = (
+  datasets,
+  selectedDatasets,
+  handleSelectDataset,
+  getColumns,
+  type
+) => {
+  return datasets.map((dataset) => (
+    <TableRow
+      key={dataset.Name || dataset.Identifier || dataset.Title}
+      sx={{
+        cursor: "pointer",
+      }}
+      selected={selectedDatasets.includes(dataset)}
+      onClick={() => handleSelectDataset(dataset)}>
+      <TableCell padding="checkbox">
+        <Radio
+          size="small"
+          checked={selectedDatasets.includes(dataset)}
+          onChange={() => handleSelectDataset(dataset)}
+          onClick={(e) => e.stopPropagation()} // Prevent row click event
+        />
+      </TableCell>
+      {getColumns(type).map((column) => (
+        <TableCell
+          key={column}
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: 150,
+          }}>
+          <OverflowTypograpy variant="body2" tooltipProps={{ placement: "top", arrow: true }}>
+            {dataset[column]}
+          </OverflowTypograpy>
+        </TableCell>
+      ))}
+    </TableRow>
+  ));
+};
+
 const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatasets }) => {
   const { t } = useTranslation("common");
-  const columnsMap = {
-    wfs: ["Title", "Name", "Abstract"],
-    wms: ["Title", "Name", "Abstract"],
-    wmts: ["Title", "Identifier", "Style", "Format", "Abstract"],
-    xyz: ["Title", "Identifier"],
-  };
 
   console.log(selectedDatasets);
 
@@ -144,6 +316,15 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
         return prevSelectedDatasets.filter((d) => d !== dataset);
       }
       return [...prevSelectedDatasets, dataset];
+    });
+  };
+
+  const handleSelectLayer = (layer) => {
+    setSelectedDatasets((prevSelectedLayers) => {
+      if (prevSelectedLayers.includes(layer)) {
+        return prevSelectedLayers.filter((l) => l !== layer);
+      }
+      return [...prevSelectedLayers, layer];
     });
   };
 
@@ -167,47 +348,22 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
           </TableRow>
         </TableHead>
         <TableBody>
-          {options.map((dataset) => (
-            <TableRow
-              key={dataset.Name || dataset.Identifier || dataset.Title}
-              sx={{
-                cursor: "pointer",
-              }}
-              selected={selectedDatasets.includes(dataset)}
-              onClick={() => handleSelectDataset(dataset)}>
-              <TableCell padding="checkbox">
-                {type === "wfs" || type === "wmts" ? (
-                  <Radio
-                    size="small"
-                    checked={selectedDatasets.includes(dataset)}
-                    onChange={() => handleSelectDataset(dataset)}
-                    onClick={(e) => e.stopPropagation()} // Prevent row click event
-                  />
-                ) : (
-                  <Checkbox
-                    size="small"
-                    checked={selectedDatasets.includes(dataset)}
-                    onChange={() => handleSelectDataset(dataset)}
-                    onClick={(e) => e.stopPropagation()} // Prevent row click event
-                  />
-                )}
-              </TableCell>
-              {getColumns(type).map((column) => (
-                <TableCell
-                  key={column}
-                  sx={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    maxWidth: 150,
-                  }}>
-                  <OverflowTypograpy variant="body2" tooltipProps={{ placement: "top", arrow: true }}>
-                    {dataset[column]}
-                  </OverflowTypograpy>
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
+          {type === imageryDataType.enum.wms
+            ? getNestedLayerMultiSelectionTableBody(
+                options,
+                0,
+                selectedDatasets,
+                handleSelectLayer,
+                getColumns,
+                type
+              )
+            : getFlatLayerSingleSelectionTableBody(
+                options,
+                selectedDatasets,
+                handleSelectDataset,
+                getColumns,
+                type
+              )}
         </TableBody>
       </Table>
       {options.length === 0 && (
@@ -227,6 +383,7 @@ const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatas
     </>
   );
 };
+
 const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projectId }) => {
   const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
@@ -364,11 +521,20 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
       }
       if (
         (capabilities?.type === vectorDataType.Enum.wfs ||
-          capabilities?.type === imageryDataType.enum.wmts) &&
+          capabilities?.type === imageryDataType.enum.wmts ||
+          capabilities?.type === imageryDataType.enum.wms) &&
         selectedDatasets.length
       ) {
-        setValue("name", selectedDatasets[0].Title || selectedDatasets[0].Name || "");
-        setValue("description", selectedDatasets[0].Abstract || "");
+        setValue(
+          "name",
+          selectedDatasets
+            .map((dataset) => dataset.Title || dataset.Name || "")
+            .filter((name) => name !== "")
+            .join("/")
+        );
+        if (selectedDatasets.length === 1) {
+          setValue("description", selectedDatasets[0].Abstract || "");
+        }
       }
     } else if (activeStep === 2) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -417,8 +583,18 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
       ) {
         let layers;
         let url = externalUrl;
+        let legendUrls = [] as string[];
         if (capabilities.type === imageryDataType.Enum.wms) {
           layers = selectedDatasets.map((d) => d.Name);
+          if (!externalUrl) return;
+          const baseUrl = getBaseUrl(externalUrl);
+          const version = capabilities.capabilities?.version;
+          url = generateWmsUrl(baseUrl, layers, version);
+          selectedDatasets.forEach((dataset) => {
+            const _layer = dataset.Name;
+            const legendGraphicUrl = generateLayerGetLegendGraphicUrl(baseUrl, _layer, "default", version);
+            legendUrls.push(legendGraphicUrl);
+          });
         } else if (capabilities.type === imageryDataType.Enum.wmts) {
           if (capabilities.directUrl) {
             url = convertWmtsToXYZUrl(capabilities.directUrl);
@@ -438,11 +614,9 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
           type: "raster",
           data_type: capabilities.type,
           url,
-          properties: {
-            visibility: true,
-          },
           other_properties: {
             ...(layers && { layers }),
+            ...(legendUrls.length && { legend_urls: legendUrls }),
           },
         });
         await createRasterLayer(payload);
