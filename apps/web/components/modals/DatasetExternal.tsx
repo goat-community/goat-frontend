@@ -583,7 +583,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
       ) {
         let layers;
         let url = externalUrl;
-        let legendUrls = [] as string[];
+        const legendUrls = [] as string[];
         if (capabilities.type === imageryDataType.Enum.wms) {
           layers = selectedDatasets.map((d) => d.Name);
           if (!externalUrl) return;

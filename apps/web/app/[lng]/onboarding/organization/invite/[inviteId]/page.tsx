@@ -52,7 +52,7 @@ export default function OrganizationInviteJoin({ params: { inviteId } }) {
       const registrationUrl = createRegistrationUrl(redirectUrl as string);
       router.replace(registrationUrl);
     }
-  }, [invitations, isLoading, router]);
+  }, [invitations, isLoading, router, isError]);
 
   async function handleAcceptInvite() {
     setIsBusy(true);
