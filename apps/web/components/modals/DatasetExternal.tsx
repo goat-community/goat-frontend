@@ -581,7 +581,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
         const legendUrls = [] as string[];
         if (capabilities.type === imageryDataType.Enum.wms) {
           if (!externalUrl) return;
-          let styles = [] as string[];
+          const styles = [] as string[];
           const version = capabilities.capabilities?.version;
           const baseUrl = getBaseUrl(externalUrl);
           selectedDatasets.forEach((dataset) => {
