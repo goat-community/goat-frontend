@@ -71,7 +71,6 @@ interface DatasetExternalProps {
 interface ExternalDatasetType {
   name: string;
   value: DataType;
-  urlPlaceholder: string;
   icon: ICON_NAME;
 }
 
@@ -85,25 +84,21 @@ const externalDatasetTypes: ExternalDatasetType[] = [
   {
     name: "Web Feature Service (WFS)",
     value: vectorDataType.Enum.wfs,
-    urlPlaceholder: "https://serviceurl.com",
     icon: ICON_NAME.WFS,
   },
   {
     name: "Web Map Service (WMS)",
     value: imageryDataType.Enum.wms,
-    urlPlaceholder: "https://serviceurl.com",
     icon: ICON_NAME.WMS,
   },
   {
     name: "Web Map Tile Service (WMTS)",
     value: imageryDataType.Enum.wmts,
-    urlPlaceholder: "https://serviceurl.com",
     icon: ICON_NAME.WMTS,
   },
   {
     name: "XYZ Tiles",
     value: "xyz",
-    urlPlaceholder: "https://serviceurl.com/{z}/{x}/{y}",
     icon: ICON_NAME.XYZ,
   },
 ];
@@ -243,7 +238,7 @@ const getNestedLayerMultiSelectionTableBody = (
   type
 ) => {
   if (depth > 4) return null;
-
+  console.log(layers);
   return (
     <React.Fragment>
       {layers.map((layer) => (
@@ -581,20 +576,24 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
         capabilities?.type === imageryDataType.Enum.wmts ||
         (capabilities?.type === imageryDataType.Enum.xyz && capabilities.directUrl)
       ) {
-        let layers;
+        let layers = [] as string[];
         let url = externalUrl;
         const legendUrls = [] as string[];
         if (capabilities.type === imageryDataType.Enum.wms) {
-          layers = selectedDatasets.map((d) => d.Name);
           if (!externalUrl) return;
-          const baseUrl = getBaseUrl(externalUrl);
+          let styles = [] as string[];
           const version = capabilities.capabilities?.version;
-          url = generateWmsUrl(baseUrl, layers, version);
+          const baseUrl = getBaseUrl(externalUrl);
           selectedDatasets.forEach((dataset) => {
             const _layer = dataset.Name;
-            const legendGraphicUrl = generateLayerGetLegendGraphicUrl(baseUrl, _layer, "default", version);
+            const styleName = dataset.Style[0]?.Name; //todo: WMS can have multiple styles. This has to be handled in the future.
+            if (!styleName || !_layer) return;
+            layers.push(_layer);
+            styles.push(styleName);
+            const legendGraphicUrl = generateLayerGetLegendGraphicUrl(baseUrl, _layer, styleName, version);
             legendUrls.push(legendGraphicUrl);
           });
+          url = generateWmsUrl(baseUrl, layers, styles, version);
         } else if (capabilities.type === imageryDataType.Enum.wmts) {
           if (capabilities.directUrl) {
             url = convertWmtsToXYZUrl(capabilities.directUrl);
