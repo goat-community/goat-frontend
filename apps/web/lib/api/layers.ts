@@ -275,7 +275,7 @@ export const useLayerUniqueValues = (
 };
 
 export const downloadDataset = async (payload: DatasetDownloadRequest) => {
-  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/internal/${payload.id}/export`, {
+  const response = await fetchWithAuth(`${LAYERS_API_BASE_URL}/${payload.id}/export`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers: {
