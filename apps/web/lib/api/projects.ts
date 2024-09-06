@@ -33,11 +33,13 @@ export const useProjects = (queryParams?: GetContentQueryParams) => {
   };
 };
 
-export const useProject = (projectId: string) => {
+export const useProject = (projectId?: string) => {
+
   const { data, isLoading, error, mutate, isValidating } = useSWR<Project>(
-    [`${PROJECTS_API_BASE_URL}/${projectId}`],
+    () => (projectId ? [`${PROJECTS_API_BASE_URL}/${projectId}`] : null),
     fetcher
   );
+
   return {
     project: data,
     isLoading: isLoading,
@@ -47,11 +49,13 @@ export const useProject = (projectId: string) => {
   };
 };
 
-export const useProjectLayers = (projectId: string) => {
+export const useProjectLayers = (projectId?: string) => {
+
   const { data, isLoading, error, mutate, isValidating } = useSWR<ProjectLayer[]>(
-    [`${PROJECTS_API_BASE_URL}/${projectId}/layer`],
+    () => (projectId ? [`${PROJECTS_API_BASE_URL}/${projectId}/layer`] : null),
     fetcher
   );
+
   return {
     layers: data,
     isLoading: isLoading,
@@ -78,7 +82,6 @@ export const useProjectScenarios = (projectId: string) => {
 export const useProjectScenarioFeatures = (projectId: string, scenarioId?: string | null) => {
   const { data, isLoading, error, mutate, isValidating } = useSWR<ScenarioFeatures>(
     () => (scenarioId ? [`${PROJECTS_API_BASE_URL}/${projectId}/scenario/${scenarioId}/features`] : null),
-
     fetcher
   );
   return {

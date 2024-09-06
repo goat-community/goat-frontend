@@ -40,6 +40,7 @@ import { useTranslation } from "@/i18n/client";
 import { useFolders } from "@/lib/api/folders";
 import { useJobs } from "@/lib/api/jobs";
 import { createFeatureLayer, createRasterLayer, layerFeatureUrlUpload } from "@/lib/api/layers";
+import { addProjectLayers, useProject, useProjectLayers } from "@/lib/api/projects";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { generateLayerGetLegendGraphicUrl, generateWmsUrl } from "@/lib/transformers/wms";
 import { convertWmtsToXYZUrl, getWmtsFlatLayers } from "@/lib/transformers/wmts";
@@ -238,7 +239,6 @@ const getNestedLayerMultiSelectionTableBody = (
   type
 ) => {
   if (depth > 4) return null;
-  console.log(layers);
   return (
     <React.Fragment>
       {layers.map((layer) => (
@@ -299,8 +299,6 @@ const getFlatLayerSingleSelectionTableBody = (
 
 const DatasetsSelectTable = ({ options, type, selectedDatasets, setSelectedDatasets }) => {
   const { t } = useTranslation("common");
-
-  console.log(selectedDatasets);
 
   const handleSelectDataset = (dataset) => {
     setSelectedDatasets((prevSelectedDatasets) => {
@@ -386,6 +384,8 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
   const { mutate } = useJobs({
     read: false,
   });
+  const { mutate: mutateProjectLayers } = useProjectLayers(projectId);
+  const { mutate: mutateProject } = useProject(projectId);
   // Step 0: Enter URL
   const steps = [t("enter_url"), t("select_dataset"), t("destination_and_metadata"), t("confirmation")];
 
@@ -448,6 +448,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   const handleNext = () => {
+    console.log(selectedDatasets);
     // STEP 0: Parse URL.
     if (activeStep === 0) {
       if (!externalUrl) return;
@@ -496,7 +497,6 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
           }
 
           const capabilities = parser.read(text);
-          console.log(capabilities);
           setCapabilities({ type, capabilities });
           setActiveStep((prevActiveStep) => prevActiveStep + 1);
         })
@@ -618,9 +618,13 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
             ...(legendUrls.length && { legend_urls: legendUrls }),
           },
         });
-        await createRasterLayer(payload);
+        const response = await createRasterLayer(payload, projectId);
+        if (projectId) {
+          await addProjectLayers(projectId, [response.id]);
+          mutateProjectLayers();
+          mutateProject();
+        }
       }
-
       toast.success(t("success_adding_external_dataset"));
     } catch (_error) {
       toast.error(t("error_adding_external_dataset"));

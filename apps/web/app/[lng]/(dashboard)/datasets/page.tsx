@@ -86,7 +86,7 @@ const Datasets = () => {
     },
     {
       sourceType: AddLayerSourceType.DataSourceExternal,
-      iconName: ICON_NAME.GLOBE,
+      iconName: ICON_NAME.LINK,
       label: t("dataset_external"),
     },
   ];

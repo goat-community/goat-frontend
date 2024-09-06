@@ -66,6 +66,7 @@ import Container from "@/components/map/panels/Container";
 import CatalogExplorerModal from "@/components/modals/CatalogExplorer";
 import ContentDialogWrapper from "@/components/modals/ContentDialogWrapper";
 import DatasetExplorerModal from "@/components/modals/DatasetExplorer";
+import DatasetExternalModal from "@/components/modals/DatasetExternal";
 import DatasetUploadModal from "@/components/modals/DatasetUpload";
 import MapLayerChartModal from "@/components/modals/MapLayerChart";
 
@@ -184,6 +185,11 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
       label: t("dataset_upload"),
     },
     {
+      sourceType: AddLayerSourceType.DataSourceExternal,
+      iconName: ICON_NAME.LINK,
+      label: t("dataset_external"),
+    },
+    {
       sourceType: AddLayerSourceType.CatalogExplorer,
       iconName: ICON_NAME.GLOBE,
       label: t("catalog_explorer"),
@@ -244,6 +250,9 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
       )}
       {addLayerSourceOpen === AddLayerSourceType.DatasourceUpload && (
         <DatasetUploadModal open={true} onClose={closeAddLayerSourceModal} projectId={projectId} />
+      )}
+      {addLayerSourceOpen === AddLayerSourceType.DataSourceExternal && (
+        <DatasetExternalModal open={true} onClose={closeAddLayerSourceModal} projectId={projectId} />
       )}
       {addLayerSourceOpen === AddLayerSourceType.CatalogExplorer && (
         <CatalogExplorerModal open={true} onClose={closeAddLayerSourceModal} projectId={projectId} />
