@@ -190,6 +190,7 @@ export const layerMetadataSchema = contentMetadataSchema.extend({
 });
 
 export const otherPropertiesSchmea = z.object({
+  url: z.string().optional(), // metadata url
   layers: z.array(z.string()).optional(),
   srs: z.string().optional(),
   width: z.number().optional(), // width of the image (only for external imagery)
@@ -240,7 +241,6 @@ export const createLayerFromDatasetSchema = createLayerBaseSchema.extend({
 });
 
 export const externalDatasetFeatureUrlSchema = z.object({
-  url: z.string().url(),
   data_type: dataType,
   other_properties: otherPropertiesSchmea,
 });

@@ -448,7 +448,6 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
   const handleNext = () => {
-    console.log(selectedDatasets);
     // STEP 0: Parse URL.
     if (activeStep === 0) {
       if (!externalUrl) return;
@@ -555,6 +554,7 @@ const DatasetExternal: React.FC<DatasetExternalProps> = ({ open, onClose, projec
           data_type: capabilities.type,
           url: externalUrl,
           other_properties: {
+            url: externalUrl,
             layers: [selectedDatasets[0].Name],
             srs: selectedDatasets[0].DefaultCRS,
           },
