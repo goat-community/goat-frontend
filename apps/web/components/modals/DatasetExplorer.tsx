@@ -82,8 +82,18 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({ open, onClose, p
                 <Paper elevation={0} sx={{ backgroundImage: "none" }}>
                   <FoldersTreeView
                     queryParams={datasetSchema}
-                    setQueryParams={setDatasetSchema}
-                    enableActions={false}
+                    setQueryParams={(params, teamId, organizationId) => {
+                      const newQueryParams = { ...queryParams, page: 1 };
+                      delete newQueryParams.team_id;
+                      delete newQueryParams.organization_id;
+                      if (teamId) {
+                        newQueryParams.team_id = teamId;
+                      } else if (organizationId) {
+                        newQueryParams.organization_id = organizationId;
+                      }
+                      setQueryParams(newQueryParams);
+                      setDatasetSchema(params);
+                    }}
                   />
                 </Paper>
               </Grid>
