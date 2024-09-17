@@ -1,14 +1,5 @@
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Link from "@mui/material/Link";
-import type { PageProps } from "keycloakify/login/pages/PageProps";
-import { useConstCallback } from "keycloakify/tools/useConstCallback";
-import { useStateRef } from "powerhooks/useStateRef";
-import type { MouseEvent } from "react";
-import { useState, type FormEventHandler } from "react";
-import { Icon, brandColors, ICON_NAME } from "@p4b/ui/components/Icon";
-import type { I18n } from "../i18n";
-import type { KcContext } from "../kcContext";
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
@@ -24,28 +15,24 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Link from "@mui/material/Link";
+import type { PageProps } from "keycloakify/login/pages/PageProps";
+import { useConstCallback } from "keycloakify/tools/useConstCallback";
+import { useStateRef } from "powerhooks/useStateRef";
+import type { MouseEvent } from "react";
+import { type FormEventHandler, useState } from "react";
 
-export default function Login(
-  props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>,
-) {
+import { ICON_NAME, Icon, brandColors } from "@p4b/ui/components/Icon";
+
+import type { I18n } from "../i18n";
+import type { KcContext } from "../kcContext";
+
+export default function Login(props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>) {
   const theme = useTheme();
-  const {
-    kcContext,
-    i18n,
-    doUseDefaultCss,
-    Template,
-    classes: classes_props,
-  } = props;
+  const { kcContext, i18n, doUseDefaultCss, Template, classes: classes_props } = props;
 
-  const {
-    social,
-    realm,
-    url,
-    usernameHidden,
-    login,
-    auth,
-    registrationDisabled,
-  } = kcContext;
+  const { social, realm, url, usernameHidden, login, auth, registrationDisabled } = kcContext;
 
   const { msg, msgStr } = i18n;
 
@@ -60,9 +47,7 @@ export default function Login(
 
     //NOTE: Even if we login with email Keycloak expect username and password in
     //the POST request.
-    formElement
-      .querySelector("input[name='email']")
-      ?.setAttribute("name", "username");
+    formElement.querySelector("input[name='email']")?.setAttribute("name", "username");
 
     formElement.submit();
   });
@@ -95,17 +80,18 @@ export default function Login(
                 alignItems: "center",
                 flexWrap: "wrap",
                 justifyContent: "center",
-              }}
-            >
+              }}>
               <Typography variant="body2">{msg("noAccount")}</Typography>
               <Typography variant="body2">
                 <Link href={url.registrationUrl}>{msg("doRegister")}</Link>
               </Typography>
             </Stack>
+            <Alert severity="info">
+              <span dangerouslySetInnerHTML={{ __html: msgStr("switchToV1") }} />
+            </Alert>
             {realm.password && social.providers !== undefined && (
               <>
                 <Divider sx={{ my: 5 }}>{msg("or")}</Divider>
-
                 <Stack
                   direction={social.providers.length > 3 ? "row" : "column"}
                   spacing={2}
@@ -113,23 +99,17 @@ export default function Login(
                     alignItems: "center",
                     flexWrap: "wrap",
                     justifyContent: "center",
-                  }}
-                >
+                  }}>
                   {social.providers.map((p) =>
                     social.providers && social.providers.length > 3 ? (
                       <Tooltip
                         key={p.providerId}
                         title={`Log in with ${p.displayName}`}
                         arrow
-                        placement="top"
-                      >
+                        placement="top">
                         <IconButton href={p.loginUrl} component="a">
                           <Icon
-                            htmlColor={
-                              p.providerId in brandColors
-                                ? brandColors[p.providerId]
-                                : "inherit"
-                            }
+                            htmlColor={p.providerId in brandColors ? brandColors[p.providerId] : "inherit"}
                             iconName={
                               p.providerId.toUpperCase() in ICON_NAME
                                 ? (p.providerId as ICON_NAME)
@@ -155,11 +135,7 @@ export default function Login(
                         }}
                         startIcon={
                           <Icon
-                            htmlColor={
-                              p.providerId in brandColors
-                                ? brandColors[p.providerId]
-                                : "inherit"
-                            }
+                            htmlColor={p.providerId in brandColors ? brandColors[p.providerId] : "inherit"}
                             iconName={
                               p.providerId.toUpperCase() in ICON_NAME
                                 ? (p.providerId as ICON_NAME)
@@ -167,27 +143,19 @@ export default function Login(
                             }
                             fontSize="inherit"
                           />
-                        }
-                      >
+                        }>
                         Log in with {p.displayName}
                       </Button>
-                    ),
+                    )
                   )}
                 </Stack>
               </>
             )}
           </Stack>
         )
-      }
-    >
+      }>
       {realm.password && (
-        <Box
-          id="kc-form-login"
-          component="form"
-          onSubmit={onSubmit}
-          action={url.loginAction}
-          method="post"
-        >
+        <Box id="kc-form-login" component="form" onSubmit={onSubmit} action={url.loginAction} method="post">
           <Stack spacing={theme.spacing(4)}>
             <TextField
               fullWidth
@@ -202,8 +170,8 @@ export default function Login(
                 !realm.loginWithEmailAllowed
                   ? msg("username")
                   : !realm.registrationEmailAsUsername
-                  ? msg("usernameOrEmail")
-                  : msg("email")
+                    ? msg("usernameOrEmail")
+                    : msg("email")
               }
               autoComplete="off"
             />
@@ -225,8 +193,7 @@ export default function Login(
                       onClick={() => setShowPassword(!showPassword)}
                       onMouseDown={handleMouseEvents}
                       onMouseUp={handleMouseEvents}
-                      aria-label="toggle password visibility"
-                    >
+                      aria-label="toggle password visibility">
                       {showPassword ? (
                         <Icon iconName={ICON_NAME.EYE_SLASH} />
                       ) : (
@@ -245,8 +212,7 @@ export default function Login(
               alignItems: "center",
               flexWrap: "wrap",
               justifyContent: "space-between",
-            }}
-          >
+            }}>
             {realm.rememberMe && !usernameHidden && (
               <FormControlLabel
                 control={
@@ -258,9 +224,7 @@ export default function Login(
                     color="primary"
                   />
                 }
-                label={
-                  <Typography variant="body2">{msg("rememberMe")}</Typography>
-                }
+                label={<Typography variant="body2">{msg("rememberMe")}</Typography>}
               />
             )}
 
@@ -276,8 +240,7 @@ export default function Login(
           <Box
             sx={{
               mt: theme.spacing(8),
-            }}
-          >
+            }}>
             <input
               type="hidden"
               name="credentialId"
@@ -292,8 +255,7 @@ export default function Login(
               ref={submitButtonRef}
               name="login"
               type="submit"
-              disabled={isLoginButtonDisabled}
-            >
+              disabled={isLoginButtonDisabled}>
               {msgStr("continue")}
             </Button>
           </Box>

@@ -63,7 +63,20 @@ const Projects = () => {
         </Grid>
         <Grid item xs={3}>
           <Paper elevation={3}>
-            <FoldersTreeView queryParams={queryParams} setQueryParams={setQueryParams} />
+            <FoldersTreeView
+              queryParams={queryParams}
+              setQueryParams={(params, teamId, organizationId) => {
+                const newQueryParams = { ...params, page: 1 };
+                delete newQueryParams?.["team_id"];
+                delete newQueryParams?.["organization_id"];
+                if (teamId) {
+                  newQueryParams["team_id"] = teamId;
+                } else if (organizationId) {
+                  newQueryParams["organization_id"] = organizationId;
+                }
+                setQueryParams(newQueryParams);
+              }}
+            />
           </Paper>
         </Grid>
         <Grid item xs={9}>

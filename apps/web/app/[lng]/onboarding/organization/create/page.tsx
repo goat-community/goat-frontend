@@ -188,6 +188,7 @@ export default function OrganizationOnBoarding() {
                           options={orgTypesOptions}
                           control={control}
                           name="type"
+                          required
                           label={t("common:organization_type_label")}
                         />
 
@@ -195,6 +196,7 @@ export default function OrganizationOnBoarding() {
                           options={orgSizeOptions}
                           control={control}
                           name="size"
+                          required
                           label={t("common:organization_size_label")}
                         />
 
@@ -202,6 +204,7 @@ export default function OrganizationOnBoarding() {
                           options={orgIndustryOptions}
                           control={control}
                           name="industry"
+                          required
                           label={t("common:organization_industry_label")}
                         />
 
@@ -218,6 +221,7 @@ export default function OrganizationOnBoarding() {
                           options={orgUseCaseOptions}
                           control={control}
                           name="use_case"
+                          required
                           label={t("common:organization_use_case_label")}
                         />
                       </>

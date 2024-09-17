@@ -1,81 +1,54 @@
-# Turborepo starter
+<div id="top"></div>
 
-This is an official starter Turborepo.
+<p align="center">
+<a href="https://plan4better.de/goat">
+<img width="120" alt="GOAT Frontend Alternative Logo" src="https://assets.plan4better.de/img/logo/goat_icon_standard.png">
+</a>
 
-## Using this example
+<h3 align="center">GOAT Frontend</h3>
 
-Run the following command:
+<p align="center">
+Intelligent software for modern web mapping and integrated planning
+<br />
+<a href="https://plan4better.de/goat">Website</a>
+</p>
+</p>
 
-```sh
-npx create-turbo@latest
-```
 
-## What's inside?
+<p align="center">
+   <a href="https://github.com/goat-community/goat-frontend/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-AGPL-purple" alt="License"></a>
+   <a href="https://github.com/goat-community/goat-frontend/pulse"><img src="https://img.shields.io/github/commit-activity/m/goat-community/goat-frontend" alt="Commits-per-month"></a>
+    <a href="https://github.com/goat-community/goat-frontend/issues?q=is:issue+is:open+label:%22%F0%9F%99%8B%F0%9F%8F%BB%E2%80%8D%E2%99%82%EF%B8%8Fhelp+wanted%22"><img src="https://img.shields.io/badge/Help%20Wanted-Contribute-blue"></a>
+</p>
 
-This Turborepo includes the following packages/apps:
 
-### Apps and Packages
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+<br/>
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## ✨ About GOAT Frontend
 
-### Utilities
+<img width="1527" alt="goat-sneak" src="https://assets.plan4better.de/img/goat_screenshot.png">
 
-This Turborepo has some additional tools already setup for you:
+GOAT is a free and open source WebGIS platform. It is an all-in-one solution for integrated planning, with powerful GIS tools, integrated data, and comprehensive accessibility  analyses for efficient planning and fact-based decision-making.
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+**Try it out in the cloud at [goat.plan4better.de](https://goat.plan4better.de)**
 
-### Build
+<br/>
 
-To build all apps and packages, run the following command:
+## 👨‍💻 Built on Open Source
 
-```
-cd my-turborepo
-pnpm build
-```
+- 💻 [Typescript](https://www.typescriptlang.org/)
 
-### Develop
+- 🚀 [Next.js](https://nextjs.org/)
 
-To develop all apps and packages, run the following command:
+- 🗺️ [Maplibre GL JS](https://maplibre.org/)
 
-```
-cd my-turborepo
-pnpm dev
-```
+- ⚛️ [React](https://reactjs.org/)
 
-### Remote Caching
+- 🎨 [MUI](https://mui.com/)
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+- 🔒 [Auth.js](https://authjs.dev/)
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+- 🧘‍♂️ [Zod](https://zod.dev/)
 
-```
-cd my-turborepo
-npx turbo login
-```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)

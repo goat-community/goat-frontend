@@ -308,3 +308,9 @@ export function getBaseUrl(url: string): string | null {
     return null;
   }
 }
+
+export const getNextMonthDate = () => {
+  const currentDate = new Date();
+  const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+  return nextMonth;
+};

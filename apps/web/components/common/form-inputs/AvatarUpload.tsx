@@ -11,10 +11,11 @@ interface RhfAvatarUploadProps<TField extends FieldValues> {
   control: Control<TField>;
   name: Path<TField>;
   avatar: string;
+  readOnly?: boolean;
 }
 
 export const RhfAvatar = <TField extends FieldValues>(props: RhfAvatarUploadProps<TField>) => {
-  const { control, name, avatar, title } = props;
+  const { control, name, avatar, title, readOnly } = props;
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
   const { t } = useTranslation("common");
 
@@ -58,26 +59,28 @@ export const RhfAvatar = <TField extends FieldValues>(props: RhfAvatarUploadProp
             />
             <Stack direction="column" spacing={2}>
               <Typography variant="body1">{title}</Typography>
-              <Stack direction="row" spacing={2}>
-                <Button
-                  variant="text"
-                  color="primary"
-                  onClick={() => {
-                    hiddenInputRef?.current?.click();
-                  }}>
-                  {t("upload")}
-                </Button>
-                {value && avatar !== value && (
+              {!readOnly && (
+                <Stack direction="row" spacing={2}>
                   <Button
                     variant="text"
-                    color="error"
+                    color="primary"
                     onClick={() => {
-                      onChange(avatar);
+                      hiddenInputRef?.current?.click();
                     }}>
-                    {t("cancel")}
+                    {t("upload")}
                   </Button>
-                )}
-              </Stack>
+                  {value && avatar !== value && (
+                    <Button
+                      variant="text"
+                      color="error"
+                      onClick={() => {
+                        onChange(avatar);
+                      }}>
+                      {t("cancel")}
+                    </Button>
+                  )}
+                </Stack>
+              )}
             </Stack>
           </Stack>
         );

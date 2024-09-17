@@ -5,6 +5,7 @@ import type {
   InvitationCreate,
   Organization,
   OrganizationMember,
+  OrganizationMemberQueryParams,
   OrganizationUpdate,
   PostOrganization,
 } from "@/lib/validations/organization";
@@ -12,9 +13,9 @@ import type {
 export const ORG_API_BASE_URL = new URL("api/v1/organizations", process.env.NEXT_PUBLIC_ACCOUNTS_API_URL)
   .href;
 
-export const useOrganizationMembers = (organizationId: string) => {
+export const useOrganizationMembers = (organizationId: string, queryParams?: OrganizationMemberQueryParams) => {
   const { data, isLoading, error, mutate, isValidating } = useSWR<OrganizationMember[]>(
-    () => (organizationId ? [`${ORG_API_BASE_URL}/${organizationId}/members`] : null),
+    () => (organizationId ? [`${ORG_API_BASE_URL}/${organizationId}/users`, queryParams] : null),
 
     fetcher
   );
@@ -26,6 +27,7 @@ export const useOrganizationMembers = (organizationId: string) => {
     isValidating,
   };
 };
+
 
 export const createOrganization = async (payload: PostOrganization): Promise<Organization> => {
   const response = await fetchWithAuth(`${ORG_API_BASE_URL}`, {
@@ -65,6 +67,17 @@ export const deleteMember = async (organization_id: string, user_id: string) => 
   const response = await fetchWithAuth(`${ORG_API_BASE_URL}/${organization_id}/users/${user_id}`, {
     method: "DELETE",
   });
+  if (!response.ok) throw await response.json();
+  return response;
+};
+
+export const deleteInvitation = async (organization_id: string, invitation_id: string) => {
+  const response = await fetchWithAuth(
+    `${ORG_API_BASE_URL}/${organization_id}/invitations/${invitation_id}`,
+    {
+      method: "DELETE",
+    }
+  );
   if (!response.ok) throw await response.json();
   return response;
 };

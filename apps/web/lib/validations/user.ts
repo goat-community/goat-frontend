@@ -11,8 +11,8 @@ export const getInvitationsQueryParamsSchema = z
 export const userSchemaBase = z.object({
   email: z.string().email(),
   avatar: z.string(),
-  first_name: z.string(),
-  last_name: z.string(),
+  firstname: z.string(),
+  lastname: z.string(),
   newsletter_subscribe: z.boolean().nullable().optional().default(false),
   roles: z.array(z.string()).optional().default([]),
 });
@@ -24,6 +24,13 @@ export const userSchema = userSchemaBase.extend({
   updated_at: z.string(),
   enabled: z.boolean(),
   topt: z.boolean(),
+});
+
+export const publicUserSchema = userSchemaBase.extend({
+  id: z.string(),
+  firstname: z.string(),
+  lastname: z.string(),
+  avatar: z.string(),
 });
 
 export const userSchemaUpdate = userSchemaBase.partial();

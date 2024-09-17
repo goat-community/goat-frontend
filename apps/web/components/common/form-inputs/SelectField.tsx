@@ -7,6 +7,7 @@ import { Controller } from "react-hook-form";
 interface RhfSelectFieldProps<O extends { value: string; label: string }, TField extends FieldValues> {
   control: Control<TField>;
   name: Path<TField>;
+  required?: boolean;
   options: O[];
   label?: string;
 }
@@ -14,7 +15,7 @@ interface RhfSelectFieldProps<O extends { value: string; label: string }, TField
 export const RhfSelectField = <O extends { value: string; label: string }, TField extends FieldValues>(
   props: RhfSelectFieldProps<O, TField>
 ) => {
-  const { control, options, name } = props;
+  const { control, options, name, required } = props;
   return (
     <Controller
       name={name}
@@ -31,6 +32,7 @@ export const RhfSelectField = <O extends { value: string; label: string }, TFiel
             onChange={(event) => onChange(event.target.value)}
             inputRef={ref}
             name={name}
+            required={required}
             size="medium"
             error={!!error}
             label={props.label}

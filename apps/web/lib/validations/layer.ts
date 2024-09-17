@@ -13,6 +13,31 @@ import {
   paginatedSchema,
 } from "@/lib/validations/common";
 import { responseSchema } from "@/lib/validations/response";
+import { publicUserSchema } from "@/lib/validations/user";
+
+export const layerRoleEnums = z.enum(["layer-owner", "layer-viewer", "layer-editor"]);
+
+export const layerRoles = {
+  OWNER: "layer-owner",
+  VIEWER: "layer-viewer",
+  EDITOR: "layer-editor",
+} as const;
+
+export const layerShareRoleEnum = z.enum(["layer-viewer", "layer-editor"]);
+
+export const shareLayerWithTeamOrOrganizationSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  avatar: z.string().optional(),
+  role: layerShareRoleEnum,
+})
+
+
+export const shareLayerSchema = z.object({
+  teams: z.array(shareLayerWithTeamOrOrganizationSchema).optional(),
+  organizations: z.array(shareLayerWithTeamOrOrganizationSchema).optional(),
+})
+
 
 const HexColor = z.string();
 const ColorMap = z.array(z.tuple([z.union([z.array(z.string()), z.null()]), HexColor]));
@@ -193,6 +218,8 @@ export const layerSchema = layerMetadataSchema.extend({
   data_type: dataType.optional(),
   legend_urls: z.array(z.string()).optional(),
   attribute_mapping: z.object({}).optional(),
+  shared_with: shareLayerSchema.optional(),
+  owned_by: publicUserSchema.optional(),
   updated_at: z.string(),
   created_at: z.string(),
 });
@@ -322,6 +349,9 @@ export const datasetMetadataAggregated = z.object({
   license: z.array(datasetMetadataValue),
 });
 
+
+
+
 export type DatasetCollectionItems = z.infer<typeof datasetCollectionItems>;
 export type GetCollectionItemsQueryParams = z.infer<typeof datasetCollectionItemsQueryParams>;
 export type GetDatasetSchema = z.infer<typeof getDatasetSchema>;
@@ -358,3 +388,4 @@ export type GetLayerUniqueValuesQueryParams = z.infer<typeof getLayerUniqueValue
 export type ExternalDatasetFeatureUrl = z.infer<typeof externalDatasetFeatureUrlSchema>;
 export type CreateLayerFromDataset = z.infer<typeof createLayerFromDatasetSchema>;
 export type CreateRasterLayer = z.infer<typeof createRasterLayerSchema>;
+export type LayerSharedWith = z.infer<typeof shareLayerSchema>;

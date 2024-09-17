@@ -1,11 +1,12 @@
 import { OrgMemberActions } from "@/types/common";
-import type { OrgMemberDialogBaseProps } from "@/types/dashboard/settings";
+import type { MemberDialogBaseProps } from "@/types/dashboard/settings";
 
-import DeleteOrgMemberModal from "@/components/modals/settings/DeleteOrgMember";
+import DeleteMemberModal from "@/components/modals/settings/DeleteMember";
 
-interface OrgMemberDialogProps extends Omit<OrgMemberDialogBaseProps, "open"> {
+interface OrgMemberDialogProps extends Omit<MemberDialogBaseProps, "open"> {
   action: OrgMemberActions;
   onMemberDelete?: () => void;
+  organizationId?: string;
 }
 
 export default function OrgMemberDialogWrapper(props: OrgMemberDialogProps) {
@@ -17,8 +18,12 @@ export default function OrgMemberDialogWrapper(props: OrgMemberDialogProps) {
 
   return (
     <>
-      {props.action === OrgMemberActions.DELETE && (
-        <DeleteOrgMemberModal onDelete={props.onMemberDelete} {...commonModalProps} />
+      {(props.action === OrgMemberActions.DELETE || props.action === OrgMemberActions.CANCEL_INVITATION) && (
+        <DeleteMemberModal
+          onDelete={props.onMemberDelete}
+          {...commonModalProps}
+          organizationId={props.organizationId}
+        />
       )}
     </>
   );

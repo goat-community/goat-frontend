@@ -9,20 +9,23 @@ import type { OrganizationMember } from "@/lib/validations/organization";
 import { OrgMemberActions } from "@/types/common";
 
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
+import type { TeamMember } from "@/lib/validations/team";
 
-export const useOrgMemberSettingsMoreMenu = () => {
+export const useMemberSettingsMoreMenu = (type: "organization" | "team") => {
   const { t } = useTranslation("common");
   const activeMemberMoreMenuOptions: PopperMenuItem[] = [
-    {
-      id: OrgMemberActions.EDIT,
-      label: t("edit"),
-      icon: ICON_NAME.EDIT,
-    },
-    {
-      id: OrgMemberActions.TRANSFER_OWNERSHIP,
-      label: t("transfer_ownership"),
-      icon: ICON_NAME.CROWN,
-    },
+    // only for organization at the moment. todo: enable it also for team
+    ...(type === "organization" ? [
+      {
+        id: OrgMemberActions.EDIT,
+        label: t("edit"),
+        icon: ICON_NAME.EDIT,
+      },
+      {
+        id: OrgMemberActions.TRANSFER_OWNERSHIP,
+        label: t("transfer_ownership"),
+        icon: ICON_NAME.CROWN,
+      }] : []),
     {
       id: OrgMemberActions.DELETE,
       label: t("remove"),
@@ -40,7 +43,7 @@ export const useOrgMemberSettingsMoreMenu = () => {
     },
   ];
 
-  const [activeMember, setActiveMember] = useState<OrganizationMember>();
+  const [activeMember, setActiveMember] = useState<OrganizationMember | TeamMember>();
   const [moreMenuState, setMoreMenuState] = useState<PopperMenuItem>();
 
   const closeMoreMenu = () => {
@@ -48,7 +51,7 @@ export const useOrgMemberSettingsMoreMenu = () => {
     setMoreMenuState(undefined);
   };
 
-  const openMoreMenu = (menuItem: PopperMenuItem, memberItem: OrganizationMember) => {
+  const openMoreMenu = (menuItem: PopperMenuItem, memberItem: OrganizationMember | TeamMember) => {
     setActiveMember(memberItem);
     setMoreMenuState(menuItem);
   };

@@ -66,7 +66,7 @@ export default function UserInfoMenu() {
                 {userProfile && (
                   <>
                     <Typography variant="body1" gutterBottom>
-                      {userProfile?.first_name} {userProfile?.last_name}
+                      {userProfile?.firstname} {userProfile?.lastname}
                     </Typography>
                     <Typography variant="caption">
                       {userProfile?.roles?.length > 0

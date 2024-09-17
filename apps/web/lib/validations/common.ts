@@ -7,6 +7,8 @@ export const paginatedSchema = z.object({
   order: orderByEnum.optional(),
   page: z.number().int().positive().optional(),
   size: z.number().int().positive().optional(),
+  team_id: z.string().uuid().optional(),
+  organization_id: z.string().uuid().optional(),
 });
 
 export const getContentQueryParamsSchema = paginatedSchema.extend({

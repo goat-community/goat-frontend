@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Avatar,
   Box,
   Card,
   CardContent,
@@ -108,13 +109,14 @@ const TileCard = (props: TileCard) => {
     <>
       {item?.updated_at && (
         <Stack direction="row" alignItems="center" spacing={1} sx={{ pb: 0 }}>
-          <Typography variant="caption" noWrap>
-            {t("last_updated")}:{" "}
-            {formatDistance(new Date(item.updated_at), new Date(), {
-              addSuffix: true,
-              locale: dateLocale,
-            })}
-          </Typography>
+          <Tooltip title={t("last_updated")} placement="top" arrow>
+            <Typography variant="caption" noWrap>
+              {formatDistance(new Date(item.updated_at), new Date(), {
+                addSuffix: true,
+                locale: dateLocale,
+              })}
+            </Typography>
+          </Tooltip>
         </Stack>
       )}
     </>
@@ -124,13 +126,14 @@ const TileCard = (props: TileCard) => {
     <>
       {item?.created_at && (
         <Stack direction="row" alignItems="center" spacing={1} sx={{ pb: 0 }}>
-          <Typography variant="caption" noWrap>
-            {t("created")}:{" "}
-            {formatDistance(new Date(item.created_at), new Date(), {
-              addSuffix: true,
-              locale: dateLocale,
-            })}
-          </Typography>
+          <Tooltip title={t("created")} placement="top" arrow>
+            <Typography variant="caption" noWrap>
+              {formatDistance(new Date(item.created_at), new Date(), {
+                addSuffix: true,
+                locale: dateLocale,
+              })}
+            </Typography>
+          </Tooltip>
         </Stack>
       )}
     </>
@@ -146,6 +149,23 @@ const TileCard = (props: TileCard) => {
     </>
   );
 
+  const ownedBy = (
+    <>
+      {item?.owned_by && (
+        <Tooltip
+          title={`${t("created_by")} ${item.owned_by.firstname} ${item.owned_by.lastname}`}
+          placement="top"
+          arrow>
+          <Avatar
+            sx={{ width: 25, height: 25 }}
+            alt={`${item.owned_by.firstname} ${item.owned_by.lastname}`}
+            src={item.owned_by.avatar}
+          />
+        </Tooltip>
+      )}
+    </>
+  );
+
   const gridContent = (
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pb: theme.spacing(2) }}>
@@ -153,7 +173,10 @@ const TileCard = (props: TileCard) => {
         {moreMenu}
       </Stack>
       {/* Created by info  */}
-      {updatedAtText}
+      <Stack direction="row" alignItems="center" spacing={2} sx={{ pb: 0 }}>
+        {ownedBy}
+        {updatedAtText}
+      </Stack>
       {/* Tags */}
       <Box sx={{ mt: theme.spacing(2) }} display="flex-start">
         <CardTags tags={item.tags} maxTags={3} />
@@ -178,7 +201,7 @@ const TileCard = (props: TileCard) => {
           "&:hover": {
             cursor: "pointer",
             boxShadow: cardType === "grid" ? 10 : 0,
-            "& img": {
+            "& .card-media": {
               ...(cardType === "grid" && {
                 transform: "scale(1.2)",
               }),
@@ -198,6 +221,7 @@ const TileCard = (props: TileCard) => {
             }}>
             <CardMedia
               component="img"
+              className="card-media"
               sx={{
                 height: 140,
                 transition: "transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
@@ -246,13 +270,21 @@ const TileCard = (props: TileCard) => {
             <Grid container alignItems="center" justifyContent="space-between">
               {enableActions && (
                 <>
-                  <Grid item xs={11} sm={5} md={4}>
+                  <Grid item xs={11} sm={5} md={6}>
                     {cardTitle}
+                  </Grid>
+                  <Grid item xs={1} sm={2} md={1}>
+                    <Box
+                      sx={{
+                        display: { xs: "none", sm: "block" },
+                      }}>
+                      {ownedBy}
+                    </Box>
                   </Grid>
                   <Grid
                     item
                     sm={4}
-                    md={3}
+                    md={2}
                     sx={{
                       display: { xs: "none", sm: "block" },
                     }}>
@@ -262,23 +294,12 @@ const TileCard = (props: TileCard) => {
                   </Grid>
                   <Grid
                     item
-                    md={3}
+                    md={2}
                     sx={{
                       display: { xs: "none", md: "block" },
                     }}>
                     <Box sx={{ px: 1, pb: 0 }} display="flex-start">
                       {createdAtText}
-                    </Box>
-                  </Grid>
-                  <Grid
-                    item
-                    md={1}
-                    sm={2}
-                    sx={{
-                      display: { xs: "none", sm: "block" },
-                    }}>
-                    <Box display="flex-start">
-                      <CardTags tags={item?.tags} maxTags={1} />
                     </Box>
                   </Grid>
                   <Grid item sm={1}>

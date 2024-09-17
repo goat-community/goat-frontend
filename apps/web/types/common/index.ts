@@ -43,6 +43,11 @@ export enum OrgMemberActions {
   CANCEL_INVITATION = "cancelInvitation",
 }
 
+export enum TeamMemberActions {
+  DELETE = "delete",
+  CANCEL_INVITATION = "cancelInvitation",
+}
+
 export type ResponseResult = {
   message: string;
   status?: "error" | "success";

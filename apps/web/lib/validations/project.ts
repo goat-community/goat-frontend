@@ -3,6 +3,30 @@ import * as z from "zod";
 import { contentMetadataSchema, getContentQueryParamsSchema } from "@/lib/validations/common";
 import { layerSchema } from "@/lib/validations/layer";
 import { responseSchema } from "@/lib/validations/response";
+import { publicUserSchema } from "@/lib/validations/user";
+
+export const projectRoleEnum = z.enum(["project-owner", "project-viewer", "project-editor"]);
+
+export const projectRoles = {
+  OWNER: "project-owner",
+  VIEWER: "project-viewer",
+  EDITOR: "project-editor",
+} as const;
+
+export const projectShareRoleEnum = z.enum(["project-viewer", "project-editor"]);
+
+export const shareProjectWithTeamOrOrganizationSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  avatar: z.string().optional(),
+  role: projectShareRoleEnum,
+})
+
+export const shareProjectSchema = z.object({
+  teams: z.array(shareProjectWithTeamOrOrganizationSchema).optional(),
+  organizations: z.array(shareProjectWithTeamOrOrganizationSchema).optional(),
+})
+
 
 export const projectSchema = contentMetadataSchema.extend({
   folder_id: z.string(),
@@ -11,6 +35,8 @@ export const projectSchema = contentMetadataSchema.extend({
   active_scenario_id: z.string().nullable(),
   updated_at: z.string(),
   created_at: z.string(),
+  shared_with: shareProjectSchema.optional(),
+  owned_by: publicUserSchema,
 });
 
 export const projectLayerSchema = layerSchema.extend({
@@ -61,3 +87,4 @@ export type PostProject = z.infer<typeof postProjectSchema>;
 export type ProjectViewState = z.infer<typeof projectViewStateSchema>;
 export type ProjectLayersPaginated = z.infer<typeof projectLayersResponseSchema>;
 export type GetProjectsQueryParams = z.infer<typeof getProjectsQueryParamsSchema>;
+export type ProjectSharedWith = z.infer<typeof shareProjectSchema>;

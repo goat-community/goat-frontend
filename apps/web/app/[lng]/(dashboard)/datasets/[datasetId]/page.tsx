@@ -10,37 +10,10 @@ import { useTranslation } from "@/i18n/client";
 
 import { useDataset } from "@/lib/api/layers";
 
+import { CustomTabPanel, a11yProps } from "@/components/common/CustomTabPanel";
 import DatasetMapPreview from "@/components/dashboard/dataset/DatasetMapPreview";
 import DatasetSummary from "@/components/dashboard/dataset/DatasetSummary";
 import DatasetTable from "@/components/dashboard/dataset/DatasetTable";
-
-function a11yProps(value: string) {
-  return {
-    id: `simple-tab-${value}`,
-    "aria-controls": `simple-tabpanel-${value}`,
-  };
-}
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`dataset-tabpanel-${index}`}
-      aria-labelledby={`dataset-tab-${index}`}
-      {...other}>
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
-}
 
 export default function DatasetDetailPage({ params: { datasetId } }) {
   const router = useRouter();
@@ -102,7 +75,10 @@ export default function DatasetDetailPage({ params: { datasetId } }) {
                 </Tabs>
               </Box>
               {tabItems.map((item) => (
-                <CustomTabPanel key={item.value} value={value} index={tabItems.findIndex(tab => tab.value === item.value)}>
+                <CustomTabPanel
+                  key={item.value}
+                  value={value}
+                  index={tabItems.findIndex((tab) => tab.value === item.value)}>
                   {item.value === "summary" && <DatasetSummary dataset={dataset} />}
                   {item.value === "data" && <DatasetTable dataset={dataset} />}
                   {item.value === "map" && <DatasetMapPreview dataset={dataset} />}

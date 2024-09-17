@@ -16,6 +16,8 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 
 import { useFolders } from "@/lib/api/folders";
+import { useTeams } from "@/lib/api/teams";
+import { useOrganization } from "@/lib/api/users";
 import type { GetDatasetSchema } from "@/lib/validations/layer";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
 
@@ -49,7 +51,11 @@ function getIconName(type: string, id: string): ICON_NAME {
 }
 
 interface FoldersTreeViewProps {
-  setQueryParams: (params: GetDatasetSchema | GetProjectsQueryParams) => void;
+  setQueryParams: (
+    params: GetDatasetSchema | GetProjectsQueryParams,
+    teamId: string | undefined,
+    organizationId: string | undefined
+  ) => void;
   queryParams: GetDatasetSchema | GetProjectsQueryParams;
   enableActions?: boolean;
 }
@@ -57,6 +63,8 @@ interface FoldersTreeViewProps {
 export default function FoldersTreeView(props: FoldersTreeViewProps) {
   const { setQueryParams, queryParams, enableActions = true } = props;
   const [open, setOpen] = useState<boolean[]>([true, false, false]);
+  const { organization } = useOrganization();
+  const { teams: teamsData } = useTeams();
   const { t } = useTranslation("common");
 
   const [editModal, setEditModal] = useState<EditModal>();
@@ -74,20 +82,28 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
     }
   }, [folders]);
 
-  const teams = [
-    {
-      id: "1",
-      name: "Team_1",
-      user_id: "1212",
-    },
-  ];
-  const organizations = [
-    {
-      id: "2",
-      name: "Plan4Better",
-      user_id: "1212",
-    },
-  ];
+  const organizations = useMemo(() => {
+    if (organization) {
+      return [
+        {
+          id: organization.id,
+          avatar: organization.avatar,
+          name: organization.name,
+        },
+      ];
+    } else {
+      return [];
+    }
+  }, [organization]);
+
+  const teams = useMemo(() => {
+    return teamsData?.map((team) => ({
+      id: team.id,
+      avatar: team.avatar,
+      name: team.name,
+    }));
+  }, [teamsData]);
+
   const theme = useTheme();
 
   const folderTypes = ["folder", "team", "organization"];
@@ -112,13 +128,20 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
     (_event: React.MouseEvent<HTMLDivElement, MouseEvent>, item: SelectedFolder) => {
       setSelectedFolder(item);
       if (item.id !== "0" && item.type === "folder") {
-        setQueryParams({
-          ...queryParams,
-          folder_id: item.id,
-        });
-      } else {
+        setQueryParams(
+          {
+            ...queryParams,
+            folder_id: item.id,
+          },
+          undefined,
+          undefined
+        );
+      } else if (item.type === "team") {
         const { folder_id: _, ...rest } = queryParams;
-        setQueryParams(rest);
+        setQueryParams(rest, item.id, undefined);
+      } else if (item.type === "organization") {
+        const { folder_id: _, ...rest } = queryParams;
+        setQueryParams(rest, undefined, item.id);
       }
     },
     [queryParams, setQueryParams]

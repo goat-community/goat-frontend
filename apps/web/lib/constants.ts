@@ -2,6 +2,7 @@ export const KEYCLOAK_CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID;
 export const KEYCLOAK_ISSUER = process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER;
 export const GEOAPI_BASE_URL = process.env.NEXT_PUBLIC_GEOAPI_URL;
 export const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL;
+export const CONTACT_US_URL = "https://plan4better.de/contact";
 
 export const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZWxpYXNwYWphcmVzIiwiYSI6ImNqOW1scnVyOTRxcWwzMm5yYWhta2N2cXcifQ.aDCgidtC9cjf_O75frn9lA";

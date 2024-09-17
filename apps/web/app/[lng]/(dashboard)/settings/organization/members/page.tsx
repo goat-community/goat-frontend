@@ -1,25 +1,9 @@
 "use client";
 
 import { LoadingButton } from "@mui/lab";
-import {
-  Avatar,
-  Box,
-  Divider,
-  IconButton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TextField,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { useSession } from "next-auth/react";
+import { Alert, Box, Divider, Grid, Link, Stack, Typography, useTheme } from "@mui/material";
 import { useMemo, useState } from "react";
+import { Trans } from "react-i18next";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
@@ -27,31 +11,26 @@ import { useTranslation } from "@/i18n/client";
 
 import { useOrganizationMembers } from "@/lib/api/organizations";
 import { useOrganization } from "@/lib/api/users";
-import type { Order } from "@/lib/utils/helpers";
-import { getComparator, stableSort } from "@/lib/utils/helpers";
 import type { OrganizationMember } from "@/lib/validations/organization";
+import { organizationRolesEnum } from "@/lib/validations/organization";
 
 import type { OrgMemberActions } from "@/types/common";
 
-import { useOrgMemberSettingsMoreMenu } from "@/hooks/dashboard/SettingsHooks";
+import { useMemberSettingsMoreMenu } from "@/hooks/dashboard/SettingsHooks";
 
-import type { PopperMenuItem } from "@/components/common/PopperMenu";
-import MoreMenu from "@/components/common/PopperMenu";
+import QuotaStatus from "@/components/common/QuotaStatus";
+import MembersTable from "@/components/dashboard/settings/MembersTable";
 import OrgMemberInviteModal from "@/components/modals/settings/InviteOrgMember";
 import OrgMemberDialogWrapper from "@/components/modals/settings/OrgMembersDialogWrapper";
 
 const OrganizationMembers = () => {
   const theme = useTheme();
-  const { organization } = useOrganization();
-  const { members } = useOrganizationMembers(organization?.id || "");
-  const { data: session } = useSession();
+  const { organization, mutate: mutateOrganization } = useOrganization();
+  const { members, mutate: mutateMembers } = useOrganizationMembers(organization?.id || "", {
+    include_invitations: true,
+  });
 
   const { t } = useTranslation("common");
-  const [page, setPage] = useState(0);
-  const [order, setOrder] = useState<Order>("asc");
-  const [orderBy, setOrderBy] = useState<keyof Omit<OrganizationMember, "roles">>("email");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchFilter, setSearchFilter] = useState<string>("");
 
   const {
     activeMemberMoreMenuOptions,
@@ -60,67 +39,54 @@ const OrganizationMembers = () => {
     moreMenuState,
     closeMoreMenu,
     openMoreMenu,
-  } = useOrgMemberSettingsMoreMenu();
+  } = useMemberSettingsMoreMenu("organization");
 
   const [openInviteModal, setOpenInviteModal] = useState(false);
 
-  const handleChangePage = (_event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
+  const isViewerQuotaFull = useMemo(() => {
+    if (!organization) return false;
+    return organization.used_viewers >= organization.total_viewers;
+  }, [organization]);
 
-  const handleSearchFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchFilter(event.target.value);
-  };
+  const isEditorQuotaFull = useMemo(() => {
+    if (!organization) return false;
+    return organization.used_editors >= organization.total_editors;
+  }, [organization]);
 
-  const _handleRequestSort = (
-    _event: React.MouseEvent<unknown>,
-    property: keyof Omit<OrganizationMember, "roles">
-  ) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
-  console.log(_handleRequestSort);
+  const quotaStatus = useMemo(() => {
+    if (!organization) return "";
+    const isViewerQuotaFull = organization.used_viewers >= organization.total_viewers;
+    const isEditorQuotaFull = organization.used_editors >= organization.total_editors;
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    const statuses = [] as string[];
+    if (isViewerQuotaFull) statuses.push("Viewers");
+    if (isEditorQuotaFull) statuses.push("Editors");
 
-  const emptyRows = useMemo(() => {
-    if (members) {
-      return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - members.length) : 0;
-    } else {
-      return 0;
-    }
-  }, [page, rowsPerPage, members]);
-
-  const filteredData = useMemo(() => {
-    if (!members) return [];
-    const comparator = getComparator(order, orderBy);
-    const sortedData = stableSort(members, comparator).slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
-    );
-    return sortedData.filter((row: OrganizationMember) => {
-      if (searchFilter === "") return true;
-      return row.email.toLowerCase().includes(searchFilter.toLowerCase());
-    });
-  }, [members, order, orderBy, page, rowsPerPage, searchFilter]);
+    return statuses.join(", ");
+  }, [organization]);
 
   return (
     <Box sx={{ p: 4 }}>
       {activeMember && moreMenuState && (
         <OrgMemberDialogWrapper
-          member={activeMember}
+          member={activeMember as OrganizationMember}
           action={moreMenuState.id as OrgMemberActions}
           onClose={closeMoreMenu}
-          onMemberDelete={closeMoreMenu}
+          organizationId={organization?.id}
+          onMemberDelete={() => {
+            mutateMembers();
+            mutateOrganization();
+            closeMoreMenu();
+          }}
         />
       )}
       <OrgMemberInviteModal
         open={openInviteModal}
-        onClose={() => setOpenInviteModal(false)}
+        onClose={() => {
+          setOpenInviteModal(false);
+          mutateOrganization();
+          mutateMembers();
+        }}
         onInvite={() => {}}
       />
       <Box>
@@ -134,125 +100,136 @@ const OrganizationMembers = () => {
               <Typography variant="caption">{t("organization_manage_users_description")}</Typography>
             </Box>
             <Divider />
-
-            <TableContainer>
-              <Stack
-                direction="row"
-                spacing={8}
-                justifyContent="space-between"
-                alignItems="center"
-                sx={{
-                  my: 4,
-                }}>
-                <TextField
-                  sx={{ width: "80%" }}
-                  placeholder={t("filter_by_email")}
-                  type="search"
-                  value={searchFilter}
-                  InputProps={{
-                    startAdornment: (
-                      <Icon
-                        iconName={ICON_NAME.SEARCH}
-                        style={{ fontSize: 17, marginLeft: 2, marginRight: 10 }}
-                      />
-                    ),
-                  }}
-                  onChange={handleSearchFilter}
-                />
-                <LoadingButton
-                  variant="contained"
-                  onClick={() => setOpenInviteModal(true)}
-                  startIcon={<Icon fontSize="small" iconName={ICON_NAME.PLUS} />}
-                  aria-label="send-invite"
-                  name="send-invite">
-                  {t("new_org_member")}
-                </LoadingButton>
-              </Stack>
-              <Table sx={{ minWidth: 650 }} aria-label="organization members table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell>{t("email")}</TableCell>
-                    <TableCell>{t("roles")}</TableCell>
-                    <TableCell align="right" />
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredData.map((row: OrganizationMember) => (
-                    <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                      <TableCell component="th" scope="row">
-                        <Avatar alt={row.email} src={row.avatar} />
-                      </TableCell>
-
-                      <TableCell component="th" scope="row">
-                        {row.email}
-                      </TableCell>
-                      {row.invitation_status === "pending" ? (
-                        <TableCell component="th" scope="row">
-                          <Typography variant="body1">{t("invitation_pending")}</Typography>
-                        </TableCell>
-                      ) : (
-                        <TableCell>{row.roles?.map((role) => t(role)).join(", ")}</TableCell>
-                      )}
-
-                      {row.invitation_status === "accepted" &&
-                        row.email !== session?.user?.email &&
-                        !row.roles.includes("owner") && (
-                          <TableCell align="right">
-                            <MoreMenu
-                              menuItems={activeMemberMoreMenuOptions}
-                              menuButton={
-                                <IconButton size="medium">
-                                  <Icon iconName={ICON_NAME.MORE_VERT} fontSize="small" />
-                                </IconButton>
-                              }
-                              onSelect={(menuItem: PopperMenuItem) => {
-                                openMoreMenu(menuItem, row);
-                              }}
-                            />
-                          </TableCell>
-                        )}
-                      {row.email === session?.user?.email && (
-                        <TableCell align="right">
-                          <Typography variant="body1" />
-                        </TableCell>
-                      )}
-                      {row.invitation_status === "pending" && (
-                        <TableCell align="right">
-                          <MoreMenu
-                            menuItems={pendingInvitationMoreMenuOptions}
-                            menuButton={
-                              <IconButton size="medium">
-                                <Icon iconName={ICON_NAME.MORE_VERT} fontSize="small" />
-                              </IconButton>
-                            }
-                            onSelect={(menuItem: PopperMenuItem) => {
-                              openMoreMenu(menuItem, row);
+            {members?.length && organization && (
+              <>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Grid
+                    container
+                    alignItems="center"
+                    spacing={0}
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}>
+                    <Grid item xs={12} md={4} sx={{ pl: 0, py: 4 }}>
+                      <QuotaStatus
+                        current={organization.used_viewers}
+                        total={organization.total_viewers}
+                        quotaLabel={
+                          <Trans
+                            i18nKey="common:viewers_quota_label"
+                            values={{
+                              current: organization.used_viewers,
+                              total: organization.total_viewers,
+                            }}
+                            components={{
+                              highlight: (
+                                <span
+                                  style={{
+                                    color: isViewerQuotaFull
+                                      ? theme.palette.warning.main
+                                      : theme.palette.primary.main,
+                                  }}
+                                />
+                              ),
                             }}
                           />
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))}
-                  {emptyRows > 0 && (
-                    <TableRow
-                      style={{
-                        height: 53 * emptyRows,
-                      }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              rowsPerPageOptions={[10, 25, 100]}
-              component="div"
-              count={members.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+                        }
+                        colorWhenFull={theme.palette.warning.main}
+                      />
+                    </Grid>
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{
+                        display: {
+                          sm: "none",
+                          md: "block",
+                        },
+                      }}
+                    />
+                    <Grid item xs={12} md={4} sx={{ pl: 0, py: 4 }}>
+                      <QuotaStatus
+                        current={organization.used_editors}
+                        total={organization.total_editors}
+                        quotaLabel={
+                          <Trans
+                            i18nKey="common:editors_quota_label"
+                            values={{
+                              current: organization.used_editors,
+                              total: organization.total_editors,
+                            }}
+                            components={{
+                              highlight: (
+                                <span
+                                  style={{
+                                    color: isEditorQuotaFull
+                                      ? theme.palette.warning.main
+                                      : theme.palette.primary.main,
+                                  }}
+                                />
+                              ),
+                            }}
+                          />
+                        }
+                        colorWhenFull={theme.palette.warning.main}
+                      />
+                    </Grid>
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{
+                        display: {
+                          sm: "none",
+                          md: "block",
+                        },
+                      }}
+                    />
+                    <Grid item xs={12} md="auto" sx={{ pl: 0, py: 4 }}>
+                      <Stack alignItems="flex-end">
+                        <LoadingButton
+                          disabled={isViewerQuotaFull && isEditorQuotaFull}
+                          variant="contained"
+                          sx={{ whiteSpace: "nowrap" }}
+                          onClick={() => setOpenInviteModal(true)}
+                          startIcon={<Icon fontSize="small" iconName={ICON_NAME.PLUS} />}
+                          aria-label="send-invite"
+                          name="send-invite">
+                          {t("new_org_member")}
+                        </LoadingButton>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                {(isViewerQuotaFull || isEditorQuotaFull) && (
+                  <Alert severity="warning" sx={{ mt: 4 }}>
+                    <Trans
+                      i18nKey="common:organization_users_quota_alert"
+                      values={{ role_type: quotaStatus }}
+                      components={{
+                        b: <b />,
+                        anchor: (
+                          <Link
+                            sx={{ fontWeight: "bold" }}
+                            target="_blank"
+                            href="https://plan4better.de/contact"
+                          />
+                        ),
+                      }}
+                    />
+                  </Alert>
+                )}
+              </>
+            )}
+
+            <MembersTable
+              members={members}
+              memberRoles={organizationRolesEnum.options}
+              activeMemberMoreMenuOptions={activeMemberMoreMenuOptions}
+              pendingInvitationMoreMenuOptions={pendingInvitationMoreMenuOptions}
+              onMoreMenuItemClick={openMoreMenu}
+              type="organization"
             />
           </Stack>
         )}

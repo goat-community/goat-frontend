@@ -139,20 +139,20 @@ const Profile = () => {
 
               <TextField
                 required
-                helperText={errors.first_name ? errors.first_name?.message : ""}
+                helperText={errors.firstname ? errors.firstname?.message : ""}
                 label={t("first_name")}
                 id="name"
-                {...registerUserProfile("first_name")}
-                error={errors.first_name ? true : false}
+                {...registerUserProfile("firstname")}
+                error={errors.firstname ? true : false}
               />
 
               <TextField
                 required
-                helperText={errors.last_name ? errors.last_name?.message : ""}
+                helperText={errors.lastname ? errors.lastname?.message : ""}
                 label={t("last_name")}
                 id="name"
-                {...registerUserProfile("last_name")}
-                error={errors.last_name ? true : false}
+                {...registerUserProfile("lastname")}
+                error={errors.lastname ? true : false}
               />
 
               <TextField

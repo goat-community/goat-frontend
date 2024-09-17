@@ -1,14 +1,18 @@
 "use client";
 
+import { Info } from "@mui/icons-material";
 import { Chip, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import Divider from "@mui/material/Divider";
-import { format, parseISO } from "date-fns";
+import { format, formatDistance, parseISO } from "date-fns";
+import { Trans } from "react-i18next";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
-import { useTranslation } from "@/i18n/client";
+import { useDateFnsLocale, useTranslation } from "@/i18n/client";
 
-import { DOCS_URL } from "@/lib/constants";
+import { useOrganization, useUserProfile } from "@/lib/api/users";
+import { CONTACT_US_URL, DOCS_URL } from "@/lib/constants";
+import { isOrgAdmin } from "@/lib/utils/auth";
 
 import UserInfoMenu from "@/components/UserInfoMenu";
 import JobsPopper from "@/components/jobs/JobsPopper";
@@ -28,7 +32,9 @@ export default function Header(props: HeaderProps) {
   const theme = useTheme();
   const { t } = useTranslation(["common"]);
   const { tags, title, lastSaved, onMenuIconClick, showHambugerMenu, height = 52 } = props;
-
+  const { organization } = useOrganization();
+  const { userProfile } = useUserProfile();
+  const dateLocale = useDateFnsLocale();
   return (
     <Toolbar
       showHambugerMenu={showHambugerMenu}
@@ -63,6 +69,35 @@ export default function Header(props: HeaderProps) {
       RightToolbarChild={
         <>
           <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+            <>
+              {organization && organization.on_trial && userProfile && isOrgAdmin(userProfile.roles) && (
+                <Chip
+                  icon={<Info />}
+                  variant="outlined"
+                  color="warning"
+                  size="small"
+                  label={
+                    <Trans
+                      i18nKey="common:your_trial_will_end_in"
+                      values={{
+                        expire_date: formatDistance(new Date(organization.plan_renewal_date), new Date(), {
+                          locale: dateLocale,
+                        }),
+                      }}
+                    />
+                  }
+                  sx={{
+                    "& .MuiChip-label": {
+                      fontWeight: "bold",
+                      fontStyle: "normal",
+                    },
+                  }}
+                  onClick={() => {
+                    window.open(CONTACT_US_URL, "_blank");
+                  }}
+                />
+              )}
+            </>
             <Tooltip title={t("common:open_documentation")}>
               <IconButton
                 size="small"

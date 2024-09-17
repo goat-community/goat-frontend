@@ -24,7 +24,7 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 
 import { useUserProfile } from "@/lib/api/users";
-import { isAdmin } from "@/lib/utils/auth";
+import { isOrgAdmin } from "@/lib/utils/auth";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -56,14 +56,21 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
         icon: ICON_NAME.ORGANIZATION,
         label: t("organization"),
         current: pathname?.includes("/organization"),
-        auth: isAdmin(userProfile?.roles),
+        auth: isOrgAdmin(userProfile?.roles),
       },
       {
-        link: "/settings/subscription",
+        link: "/settings/usage",
+        icon: ICON_NAME.CHART_PIE,
+        label: t("usage_and_quotas"),
+        current: pathname?.includes("/usage"),
+        auth: isOrgAdmin(userProfile?.roles),
+      },
+      {
+        link: "/settings/billing",
         icon: ICON_NAME.CREDIT_CARD,
-        label: t("subscription"),
-        current: pathname?.includes("/subscription"),
-        auth: isAdmin(userProfile?.roles),
+        label: t("billing"),
+        current: pathname?.includes("/billing"),
+        auth: isOrgAdmin(userProfile?.roles),
       },
     ],
     [pathname, t, userProfile?.roles]

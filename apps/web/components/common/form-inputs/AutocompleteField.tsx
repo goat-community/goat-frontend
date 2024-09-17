@@ -17,6 +17,7 @@ interface RhfAutocompleteFieldProps<
   startIcon?: ICON_NAME;
   label?: string;
   disabled?: boolean;
+  required?: boolean;
 }
 
 export const RhfAutocompleteField = <
@@ -66,6 +67,7 @@ export const RhfAutocompleteField = <
                     label={props.label}
                     inputRef={ref}
                     name={name}
+                    required={props.required}
                     InputProps={{
                       ...params.InputProps,
                       startAdornment: selectedOption?.icon && (

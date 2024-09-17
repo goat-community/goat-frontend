@@ -158,14 +158,28 @@ const Datasets = () => {
         </Grid>
         <Grid item xs={3}>
           <Paper elevation={3} sx={{ backgroundImage: "none" }}>
-            <FoldersTreeView queryParams={datasetSchema} setQueryParams={setDatasetSchema} />
+            <FoldersTreeView
+              queryParams={datasetSchema}
+              setQueryParams={(params, teamId, organizationId) => {
+                const newQueryParams = { ...queryParams, page: 1 };
+                delete newQueryParams.team_id;
+                delete newQueryParams.organization_id;
+                if (teamId) {
+                  newQueryParams.team_id = teamId;
+                } else if (organizationId) {
+                  newQueryParams.organization_id = organizationId;
+                }
+                setQueryParams(newQueryParams);
+                setDatasetSchema(params);
+              }}
+            />
           </Paper>
         </Grid>
         <Grid item xs={9}>
           <TileGrid
             view={view}
             items={datasets?.items ?? []}
-            isLoading={isDatasetLoading || !datasetSchema.folder_id}
+            isLoading={isDatasetLoading}
             type="layer"
             onClick={(item) => {
               if (item && item.id) {

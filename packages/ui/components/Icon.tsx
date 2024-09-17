@@ -29,6 +29,7 @@ import {
   faChartBar,
   faChartColumn,
   faChartLine,
+  faChartPie,
   faChartSimple,
   faChevronDown,
   faChevronLeft,
@@ -107,6 +108,7 @@ import {
   faTrash,
   faUpload,
   faUser,
+  faUserPlus,
   faUsers,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -209,6 +211,8 @@ export enum ICON_NAME {
   CROWN = "crown",
   BULLSEYE = "bullsey",
   COPY = "copy",
+  CHART_PIE = "chart-pie",
+  ADD_USER = "add-user",
 
   SLIDERS = "sliders",
   ZOOM_IN = "zoom-in",
@@ -364,6 +368,8 @@ const nameToIcon: { [k in ICON_NAME]: IconDefinition } = {
   [ICON_NAME.SUBWAY]: faSubway,
   [ICON_NAME.FERRY]: faFerry,
   [ICON_NAME.CABLE_CAR]: faCableCar,
+  [ICON_NAME.CHART_PIE]: faChartPie,
+  [ICON_NAME.ADD_USER]: faUserPlus,
   // Brand icons
   [ICON_NAME.GOOGLE]: faGoogle,
   [ICON_NAME.MICROSOFT]: faMicrosoft,

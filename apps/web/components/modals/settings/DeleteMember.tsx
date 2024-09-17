@@ -13,31 +13,45 @@ import { toast } from "react-toastify";
 
 import { useTranslation } from "@/i18n/client";
 
-import { deleteMember } from "@/lib/api/organizations";
-import { useOrganization } from "@/lib/api/users";
+import {
+  deleteInvitation as deleteOrganizationInvitation,
+  deleteMember as deleteOrganizationMember,
+} from "@/lib/api/organizations";
+import { deleteMember as deleteTeamMember } from "@/lib/api/teams";
+import { invitationStatusEnum } from "@/lib/validations/invitation";
 
-import type { OrgMemberDialogBaseProps } from "@/types/dashboard/settings";
+import type { MemberDialogBaseProps } from "@/types/dashboard/settings";
 
-interface DeleteOrgMemberDialogProps extends OrgMemberDialogBaseProps {
+interface DeleteMemberDialogProps extends MemberDialogBaseProps {
   disabled?: boolean;
   onDelete?: () => void;
+  teamId?: string;
+  organizationId?: string;
 }
 
-const DeleteOrgMemberModal: React.FC<DeleteOrgMemberDialogProps> = ({
+const DeleteMemberModal: React.FC<DeleteMemberDialogProps> = ({
   open,
   disabled,
   onClose,
   onDelete,
   member,
+  organizationId,
+  teamId,
 }) => {
   const { t } = useTranslation("common");
-  const { organization } = useOrganization();
   const [isBusy, setIsBusy] = useState(false);
   const handleDelete = async () => {
     try {
       setIsBusy(true);
-      if (!member || !organization) return;
-      await deleteMember(organization.id, member.id);
+      if (organizationId) {
+        if (member.invitation_status === invitationStatusEnum.Enum.accepted) {
+          await deleteOrganizationMember(organizationId, member.id);
+        } else {
+          await deleteOrganizationInvitation(organizationId, member.id);
+        }
+      } else if (teamId) {
+        await deleteTeamMember(teamId, member.id);
+      }
       toast.success(t("member_deleted_success"));
     } catch {
       toast.error(t("member_delete_error"));
@@ -76,7 +90,7 @@ const DeleteOrgMemberModal: React.FC<DeleteOrgMemberDialogProps> = ({
           disabled={disabled}
           sx={{ borderRadius: 0 }}>
           <Typography variant="body2" fontWeight="bold" color="inherit">
-            {t("delete")}
+            {t("remove")}
           </Typography>
         </LoadingButton>
       </DialogActions>
@@ -84,4 +98,4 @@ const DeleteOrgMemberModal: React.FC<DeleteOrgMemberDialogProps> = ({
   );
 };
 
-export default DeleteOrgMemberModal;
+export default DeleteMemberModal;

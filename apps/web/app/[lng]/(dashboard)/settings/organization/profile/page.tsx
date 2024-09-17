@@ -142,12 +142,9 @@ const OrganizationProfile = () => {
           )}
         </Stack>
       </Box>
-
       <Box sx={{ mt: 16 }}>
         <Stack spacing={theme.spacing(6)}>
           <Divider />
-
-          {/* Delete Organization Confirmation */}
           <ConfirmModal
             open={confirmDeleteOrganizationDialogOpen}
             title={t("delete_organization")}
@@ -180,7 +177,7 @@ const OrganizationProfile = () => {
           <Divider />
           <Stack>
             <Typography variant="body1">
-              <Trans i18nKey="common:danger_zone_organization_body" components={{ b: <b /> }} />
+              <Trans i18nKey="common:danger_zone_organization_body" components={{ b: <b />, a: <b /> }} />
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" justifyContent="flex-end">

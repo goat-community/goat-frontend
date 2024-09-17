@@ -27,7 +27,7 @@ const OrganizationLayout = (props: OrganizationLayoutProps) => {
     },
     {
       link: "/members",
-      icon: ICON_NAME.USERS,
+      icon: ICON_NAME.ADD_USER,
       label: t("members"),
       current: pathname?.includes("/members"),
     },
