@@ -159,7 +159,7 @@
   "created_by": "Created by: ",
   "created_successfully": "Folder created successfully",
   "credits": "Credits",
-  "credits_quota_information": "Credit quota units are consumed each time a user interacts with the GOAT Platform,  including activities such as toolbox usage, data processing, and other features. The usage  quota resets at the beginning of each month.",
+  "credits_quota_information": "Credit quota units are consumed each time a user is using tools or performs map load. The usage quota resets at the beginning of each month.",
   "csv": "CSV",
   "current_credits_out_of_total_quota": "<highlight>{{current}}</highlight> out of {{total}} credits / month",
   "current_plan": "Current plan",
