@@ -58,6 +58,7 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
 
       if (pendingInvitations.ok) {
         const invitations: InvitationPaginated = await pendingInvitations.json();
+        console.log(invitations);
         if (invitations?.items?.length > 0) {
           const invitationId = invitations.items[0].id;
           const invitationUrl = new URL(`${lngPath}/onboarding/organization/invite/${invitationId}`, origin);
