@@ -16,16 +16,7 @@ export const useMemberSettingsMoreMenu = (type: "organization" | "team") => {
   const activeMemberMoreMenuOptions: PopperMenuItem[] = [
     // only for organization at the moment. todo: enable it also for team
     ...(type === "organization" ? [
-      {
-        id: OrgMemberActions.EDIT,
-        label: t("edit"),
-        icon: ICON_NAME.EDIT,
-      },
-      {
-        id: OrgMemberActions.TRANSFER_OWNERSHIP,
-        label: t("transfer_ownership"),
-        icon: ICON_NAME.CROWN,
-      }] : []),
+    ] : []),
     {
       id: OrgMemberActions.DELETE,
       label: t("remove"),
