@@ -109,6 +109,9 @@ export const catchmentAreaBaseSchema = z.object({
   starting_points: startingPointSchema,
   polygon_difference: z.boolean().optional(),
   scenario_id: z.string().optional(),
+  street_network: z.object({
+    edge_layer_project_id: z.string().optional(),
+  }).optional(),
 });
 
 export const activeMobilityAndCarCatchmentAreaSchema = catchmentAreaBaseSchema.extend({
@@ -235,6 +238,9 @@ export const nearbyStationsSchema = z.object({
   mode: z.array(PTRoutingModes),
   time_window: ptTimeWindow,
   scenario_id: z.string().optional(),
+  street_network: z.object({
+    edge_layer_project_id: z.string().optional(),
+  }).optional(),
 });
 
 export type PostNearbyStations = z.infer<typeof nearbyStationsSchema>;

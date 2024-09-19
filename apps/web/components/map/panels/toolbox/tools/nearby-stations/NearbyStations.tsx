@@ -9,6 +9,7 @@ import { useTranslation } from "@/i18n/client";
 
 import { useJobs } from "@/lib/api/jobs";
 import { computeNearbyStations } from "@/lib/api/tools";
+import { STREET_NETWORK_LAYER_ID } from "@/lib/constants";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { setIsMapGetInfoActive, setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
@@ -135,6 +136,12 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     };
     if (selectedScenario) {
       payload["scenario_id"] = selectedScenario.value;
+      // todo: Set street network layer for scenario.
+      // At the moment this is hardcoded.
+      // Eventually, users should be able to upload their own street network layer which can be used for scenarios.
+      payload["street_network"] = {
+        edge_layer_project_id: STREET_NETWORK_LAYER_ID,
+      };
     }
     if (startingPointMethod.value === "map") {
       const longitude = startingPoints?.map((point) => point[0]);

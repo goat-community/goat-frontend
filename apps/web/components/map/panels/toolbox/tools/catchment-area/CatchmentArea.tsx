@@ -13,6 +13,7 @@ import {
   computePTCatchmentArea,
 } from "@/lib/api/catchmentArea";
 import { useJobs } from "@/lib/api/jobs";
+import { STREET_NETWORK_LAYER_ID } from "@/lib/constants";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import {
   setIsMapGetInfoActive,
@@ -232,6 +233,12 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
 
     if (selectedScenario?.value) {
       payload["scenario_id"] = selectedScenario?.value;
+      // todo: Set street network layer for scenario.
+      // At the moment this is hardcoded.
+      // Eventually, users should be able to upload their own street network layer which can be used for scenarios.
+      payload["street_network"] = {
+        edge_layer_project_id: STREET_NETWORK_LAYER_ID,
+      };
     }
 
     if (isPolygonDifference) {
