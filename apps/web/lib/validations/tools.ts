@@ -25,9 +25,10 @@ export const PTDay = z.enum(["weekday", "saturday", "sunday"]);
 export const PTAccessModes = z.enum(["walk"]);
 export const PTEgressModes = z.enum(["walk"]);
 
-export const catchmentAreaMaskLayerNames = {
-  active_mobility: "user_data.aadde6e924f84fa3b9d03fd1a71e4ab9",
-  pt: "user_data.6792ca7c9b5e4845bae8c2d4c8b1de1e",
+export const toolboxMaskLayerNames = {
+  active_mobility: "geofence_street",
+  pt: "geofence_gtfs",
+  heatmap: "geofence_heatmap",
 };
 export const catchmentAreaConfigDefaults: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -110,7 +111,7 @@ export const catchmentAreaBaseSchema = z.object({
   polygon_difference: z.boolean().optional(),
   scenario_id: z.string().optional(),
   street_network: z.object({
-    edge_layer_project_id: z.string().optional(),
+    edge_layer_project_id: z.number().optional(),
   }).optional(),
 });
 
@@ -239,7 +240,7 @@ export const nearbyStationsSchema = z.object({
   time_window: ptTimeWindow,
   scenario_id: z.string().optional(),
   street_network: z.object({
-    edge_layer_project_id: z.string().optional(),
+    edge_layer_project_id: z.number().optional(),
   }).optional(),
 });
 

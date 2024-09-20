@@ -4,15 +4,21 @@ import { LoadingButton } from "@mui/lab";
 import { Alert, Box, Divider, Grid, Link, Stack, Typography, useTheme } from "@mui/material";
 import { useMemo, useState } from "react";
 import { Trans } from "react-i18next";
+import { toast } from "react-toastify";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
-import { useOrganizationMembers } from "@/lib/api/organizations";
+import {
+  updateOrganizationInvitationRole,
+  updateOrganizationMemberRole,
+  useOrganizationMembers,
+} from "@/lib/api/organizations";
 import { useOrganization } from "@/lib/api/users";
+import { invitationStatusEnum } from "@/lib/validations/invitation";
 import type { OrganizationMember } from "@/lib/validations/organization";
-import { organizationRolesEnum } from "@/lib/validations/organization";
+import { organizationRoles, organizationRolesEnum } from "@/lib/validations/organization";
 
 import type { OrgMemberActions } from "@/types/common";
 
@@ -29,6 +35,7 @@ const OrganizationMembers = () => {
   const { members, mutate: mutateMembers } = useOrganizationMembers(organization?.id || "", {
     include_invitations: true,
   });
+  const [isBusy, setIsBusy] = useState(false);
 
   const { t } = useTranslation("common");
 
@@ -64,6 +71,34 @@ const OrganizationMembers = () => {
 
     return statuses.join(", ");
   }, [organization]);
+
+  const disabledRoles = useMemo(() => {
+    const roles = [] as string[];
+    if (isViewerQuotaFull) roles.push(organizationRoles.VIEWER);
+    if (isEditorQuotaFull) roles.push(organizationRoles.EDITOR, organizationRoles.ADMIN);
+    return roles;
+  }, [isViewerQuotaFull, isEditorQuotaFull]);
+
+  const onRoleChange = async (memberId: string, role: string) => {
+    setIsBusy(true);
+    if (!organization) return;
+    try {
+      // Find if invitation_status is pending
+      const member = members?.find((m) => m.id === memberId);
+      if (member?.invitation_status === invitationStatusEnum.Enum.pending) {
+        await updateOrganizationInvitationRole(organization?.id, memberId, role);
+      } else {
+        await updateOrganizationMemberRole(organization?.id, memberId, role);
+      }
+      mutateMembers();
+      mutateOrganization();
+      toast.success(t("member_role_updated_success"));
+    } catch (error) {
+      toast.error(t("member_role_update_error"));
+    } finally {
+      setIsBusy(false);
+    }
+  };
 
   return (
     <Box sx={{ p: 4 }}>
@@ -229,6 +264,9 @@ const OrganizationMembers = () => {
               activeMemberMoreMenuOptions={activeMemberMoreMenuOptions}
               pendingInvitationMoreMenuOptions={pendingInvitationMoreMenuOptions}
               onMoreMenuItemClick={openMoreMenu}
+              disabledRoles={disabledRoles}
+              onRoleChange={onRoleChange}
+              isBusy={isBusy}
               type="organization"
             />
           </Stack>

@@ -11,7 +11,7 @@ import { useTranslation } from "@/i18n/client";
 import { useJobs } from "@/lib/api/jobs";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { setMaskLayer } from "@/lib/store/map/slice";
-import { HeatmapRoutingTypeEnum, catchmentAreaMaskLayerNames } from "@/lib/validations/tools";
+import { HeatmapRoutingTypeEnum, toolboxMaskLayerNames } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
@@ -173,14 +173,7 @@ const HeatmapContainer = ({
                     setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       const routing = item as SelectorItem;
                       setSelectedRouting(routing);
-                      if (routing.value === HeatmapRoutingTypeEnum.Enum.public_transport) {
-                        dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
-                      }
-                      if (routing.value !== HeatmapRoutingTypeEnum.Enum.public_transport) {
-                        // same mask layer for active mobility and car.
-                        // it can be changed in the future
-                        dispatch(setMaskLayer(catchmentAreaMaskLayerNames.active_mobility));
-                      }
+                      dispatch(setMaskLayer(toolboxMaskLayerNames.heatmap));
                     }}
                     items={routingTypes}
                     label={t("routing_type")}

@@ -13,7 +13,7 @@ import { accessibilityIndicatorsStaticPayload } from "@/lib/constants/payloads";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { setMaskLayer } from "@/lib/store/map/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
-import { catchmentAreaMaskLayerNames, tripCountSchema } from "@/lib/validations/tools";
+import { toolboxMaskLayerNames, tripCountSchema } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
@@ -43,7 +43,7 @@ const TripCount = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { filteredLayers } = useLayerByGeomType(["feature"], ["polygon"], projectId as string);
   const [referenceLayer, setReferenceLayer] = useState<SelectorItem | undefined>(undefined);
 
-  dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
+  dispatch(setMaskLayer(toolboxMaskLayerNames.pt));
   const {
     // ptModes,
     ptDays,

@@ -71,6 +71,42 @@ export const deleteMember = async (organization_id: string, user_id: string) => 
   return response;
 };
 
+export const updateOrganizationMemberRole = async (
+  organization_id: string,
+  user_id: string,
+  role: string
+) => {
+  const response = await fetchWithAuth(`${ORG_API_BASE_URL}/${organization_id}/users/${user_id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ role }),
+  });
+  if (!response.ok) throw await response.json();
+  return response;
+}
+
+
+export const updateOrganizationInvitationRole = async (
+  organization_id: string,
+  invitation_id: string,
+  role: string
+) => {
+  const response = await fetchWithAuth(
+    `${ORG_API_BASE_URL}/${organization_id}/invitations/${invitation_id}/role`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ role }),
+    }
+  );
+  if (!response.ok) throw await response.json();
+  return response;
+}
+
 export const deleteInvitation = async (organization_id: string, invitation_id: string) => {
   const response = await fetchWithAuth(
     `${ORG_API_BASE_URL}/${organization_id}/invitations/${invitation_id}`,

@@ -1,6 +1,11 @@
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {
   Avatar,
+  Button,
   IconButton,
+  Menu,
+  MenuItem,
+  MenuList,
   Stack,
   Table,
   TableBody,
@@ -13,7 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
@@ -21,8 +26,8 @@ import { useTranslation } from "@/i18n/client";
 
 import type { Order } from "@/lib/utils/helpers";
 import { getComparator, stableSort } from "@/lib/utils/helpers";
-import type { OrganizationMember } from "@/lib/validations/organization";
-import type { TeamMember } from "@/lib/validations/team";
+import { type OrganizationMember, organizationRolesEnum } from "@/lib/validations/organization";
+import { type TeamMember, teamRoleEnum } from "@/lib/validations/team";
 
 import type { PopperMenuItem } from "@/components/common/PopperMenu";
 import MoreMenu from "@/components/common/PopperMenu";
@@ -32,21 +37,27 @@ type Member = OrganizationMember | TeamMember;
 export interface MembersTableProps {
   members: Member[];
   memberRoles: string[];
+  disabledRoles?: string[]; // When running out of resources, we can disable some roles
   activeMemberMoreMenuOptions: PopperMenuItem[];
   pendingInvitationMoreMenuOptions: PopperMenuItem[];
   onMoreMenuItemClick: (menuItem: PopperMenuItem, memberItem: Member) => void;
   type: "organization" | "team";
   viewOnly?: boolean;
+  onRoleChange?: (id: string, role: string) => void;
+  isBusy?: boolean;
 }
 
 const MembersTable = ({
   members,
   memberRoles,
+  disabledRoles = [],
   activeMemberMoreMenuOptions,
   pendingInvitationMoreMenuOptions,
   onMoreMenuItemClick,
   type,
   viewOnly,
+  onRoleChange,
+  isBusy,
 }: MembersTableProps) => {
   const { data: session } = useSession();
   const { t } = useTranslation("common");
@@ -61,6 +72,11 @@ const MembersTable = ({
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+
+  const open = Boolean(anchorEl);
+
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
@@ -85,6 +101,53 @@ const MembersTable = ({
       return row.email.toLowerCase().includes(searchFilter.toLowerCase());
     });
   }, [members, order, orderBy, page, rowsPerPage, searchFilter]);
+
+  const getRoleTranslation = (role: string) => {
+    if (role.includes("editor")) {
+      return t("editor");
+    } else if (role.includes("admin")) {
+      return t("admin");
+    } else if (role.includes("viewer")) {
+      return t("viewer");
+    }
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>, itemId: string) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedItemId(itemId);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedItemId(null);
+  };
+  const handleRoleChange = (role: string) => {
+    if (selectedItemId) {
+      onRoleChange && onRoleChange(selectedItemId, role);
+      handleClose();
+    }
+  };
+
+  const getMemberOrganizationRoles = useCallback(
+    (member: Member) => {
+      if (!member || !member["roles"]) {
+        return [];
+      }
+      return member["roles"].filter((role) => memberRoles.includes(role as string));
+    },
+    [memberRoles]
+  );
+
+  const memberRolesWithoutOwner = useMemo(() => {
+    return memberRoles.filter((role) => !role.includes("owner"));
+  }, [memberRoles]);
+
+  const selectedRole = useMemo(() => {
+    if (!selectedItemId) return "";
+    const member = members.find((member) => member.id === selectedItemId);
+    if (!member) return "";
+    return getMemberOrganizationRoles(member)[0];
+  }, [selectedItemId, members, getMemberOrganizationRoles]);
 
   return (
     <Stack>
@@ -135,11 +198,46 @@ const MembersTable = ({
                   </Stack>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row?.["roles"]
-                    ?.filter((role) => memberRoles.includes(role as string))
-                    .map((role) => t(role))
-                    .join(", ")}
-                  {row?.["role"] ? t(row?.["role"]) : ""}
+                  {type === "organization" && (
+                    <Button
+                      variant="text"
+                      sx={{ borderRadius: "4px" }}
+                      size="small"
+                      color="secondary"
+                      disabled={
+                        viewOnly ||
+                        row["roles"].includes(organizationRolesEnum.Enum["organization-owner"] || isBusy)
+                      }
+                      onClick={(event) => handleClick(event, row.id)}
+                      endIcon={
+                        row["roles"].includes(organizationRolesEnum.Enum["organization-owner"]) ? (
+                          <Icon iconName={ICON_NAME.CROWN} fontSize="small" />
+                        ) : (
+                          <KeyboardArrowDownIcon color="inherit" />
+                        )
+                      }>
+                      <>
+                        {getMemberOrganizationRoles(row).map((role) => (
+                          <Typography key={role} variant="body1">
+                            {t(role)}
+                          </Typography>
+                        ))}
+                      </>
+                    </Button>
+                  )}
+                  {type === "team" && (
+                    <Button
+                      variant="text"
+                      color="secondary"
+                      disabled
+                      endIcon={
+                        row["role"]?.includes(teamRoleEnum.Enum["team-owner"]) ? (
+                          <Icon iconName={ICON_NAME.CROWN} fontSize="small" />
+                        ) : undefined
+                      }>
+                      <Typography variant="body1">{t(row["role"])} </Typography>
+                    </Button>
+                  )}
                 </TableCell>
                 {type === "organization" && row.invitation_status === "pending" ? (
                   <TableCell component="th" scope="row">
@@ -176,7 +274,7 @@ const MembersTable = ({
                     <MoreMenu
                       menuItems={pendingInvitationMoreMenuOptions}
                       menuButton={
-                        <IconButton size="medium">
+                        <IconButton size="medium" disabled={isBusy}>
                           <Icon iconName={ICON_NAME.MORE_VERT} fontSize="small" />
                         </IconButton>
                       }
@@ -199,6 +297,27 @@ const MembersTable = ({
           </TableBody>
         </Table>
       </TableContainer>
+      <Menu
+        id="role-select-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "role-select-button",
+        }}>
+        <MenuList>
+          {memberRolesWithoutOwner.map((role) => (
+            <MenuItem
+              sx={{ width: "110px" }}
+              selected={role === selectedRole}
+              disabled={disabledRoles.includes(role)}
+              key={role}
+              onClick={() => handleRoleChange(role)}>
+              <Typography variant="body1">{getRoleTranslation(role)}</Typography>
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"

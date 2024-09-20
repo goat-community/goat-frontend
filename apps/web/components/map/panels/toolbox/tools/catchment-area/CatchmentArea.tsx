@@ -29,9 +29,9 @@ import {
   PTAccessModes,
   PTEgressModes,
   activeMobilityAndCarCatchmentAreaSchema,
-  catchmentAreaMaskLayerNames,
   catchmentAreaShapeEnum,
   ptCatchmentAreaSchema,
+  toolboxMaskLayerNames,
 } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
@@ -415,12 +415,12 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                       setSelectedRouting(routing);
                       if (routing.value === CatchmentAreaRoutingTypeEnum.Enum.pt) {
                         dispatch(setToolboxStartingPoints(undefined));
-                        dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
+                        dispatch(setMaskLayer(toolboxMaskLayerNames.pt));
                       }
                       if (routing.value !== CatchmentAreaRoutingTypeEnum.Enum.pt) {
                         // same mask layer for active mobility and car.
                         // it can be changed in the future
-                        dispatch(setMaskLayer(catchmentAreaMaskLayerNames.active_mobility));
+                        dispatch(setMaskLayer(toolboxMaskLayerNames.active_mobility));
                       }
                     }}
                     items={routingTypes}

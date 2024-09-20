@@ -87,6 +87,11 @@ export default function Teams() {
                       <ListItemSecondaryAction>
                         <Chip
                           label={t(team.role)}
+                          icon={
+                            team.role.includes("owner") ? (
+                              <Icon iconName={ICON_NAME.CROWN} style={{ fontSize: "12px" }} color="inherit" />
+                            ) : undefined
+                          }
                           size="small"
                           sx={{
                             "& .MuiChip-label": {

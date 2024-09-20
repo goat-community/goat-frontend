@@ -464,6 +464,8 @@
   "member_deleted_success": "Member removed",
   "member_invite_error": "Error inviting member",
   "member_invited_success": "Member invited",
+  "member_role_update_error": "Error updating member role",
+  "member_role_updated_success": "Member role updated successfully",
   "members": "Members",
   "metadata": {
     "data_category": {

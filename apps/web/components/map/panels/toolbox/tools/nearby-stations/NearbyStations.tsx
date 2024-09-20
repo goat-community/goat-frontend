@@ -15,7 +15,7 @@ import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { setIsMapGetInfoActive, setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { CatchmentAreaRoutingWithoutPTType } from "@/lib/validations/tools";
-import { catchmentAreaMaskLayerNames, nearbyStationsSchema } from "@/lib/validations/tools";
+import { nearbyStationsSchema, toolboxMaskLayerNames } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
@@ -57,7 +57,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   useEffect(() => {
     if (projectId) {
-      dispatch(setMaskLayer(catchmentAreaMaskLayerNames.pt));
+      dispatch(setMaskLayer(toolboxMaskLayerNames.pt));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);

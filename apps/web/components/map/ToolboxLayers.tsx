@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
-import { GEOAPI_BASE_URL } from "@/lib/constants";
+import { GEOFENCE_LAYERS_PATH } from "@/lib/constants";
 
 import { useAppSelector } from "@/hooks/store/ContextHooks";
 
@@ -16,7 +16,7 @@ const ToolboxLayers = () => {
   const theme = useTheme();
   const maskLayerUrl = useMemo(() => {
     if (maskLayer) {
-      return `${GEOAPI_BASE_URL}/collections/${maskLayer}/items?limit=10&f=geojson`;
+      return `${GEOFENCE_LAYERS_PATH}/${maskLayer}.geojson`;
     }
     return null;
   }, [maskLayer]);

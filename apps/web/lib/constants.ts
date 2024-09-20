@@ -15,3 +15,4 @@ export const ORG_DEFAULT_AVATAR = "https://assets.plan4better.de/img/no-org-thum
 export const STREET_NETWORK_LAYER_ID = "903ecdca-b717-48db-bbce-0219e41439cf"
 export const SYSTEM_LAYERS_IDS = [STREET_NETWORK_LAYER_ID];
 
+export const GEOFENCE_LAYERS_PATH = "https://assets.plan4better.de/other/geofence";
