@@ -8,6 +8,7 @@ import { ICON_NAME } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 
 import { useJobs } from "@/lib/api/jobs";
+import { useProjectLayers } from "@/lib/api/projects";
 import { computeNearbyStations } from "@/lib/api/tools";
 import { STREET_NETWORK_LAYER_ID } from "@/lib/constants";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
@@ -52,6 +53,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
   const startingPoints = useAppSelector((state) => state.map.toolboxStartingPoints);
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const { projectId } = useParams();
+  const { layers: projectLayers } = useProjectLayers((projectId as string) || "");
 
   useEffect(() => {
     if (projectId) {
@@ -121,6 +123,12 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
   // Scenario
   const { scenarioItems } = useScenarioItems(projectId as string);
   const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
+  const scenarioNetworkSystemLayer = useMemo(() => {
+    if (projectLayers) {
+      return projectLayers.find((layer) => layer.layer_id === STREET_NETWORK_LAYER_ID);
+    }
+    return undefined;
+  }, [projectLayers]);
 
   const handleRun = async () => {
     const payload = {
@@ -140,7 +148,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
       // At the moment this is hardcoded.
       // Eventually, users should be able to upload their own street network layer which can be used for scenarios.
       payload["street_network"] = {
-        edge_layer_project_id: STREET_NETWORK_LAYER_ID,
+        edge_layer_project_id: scenarioNetworkSystemLayer?.id,
       };
     }
     if (startingPointMethod.value === "map") {
@@ -321,7 +329,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
 
               {/* SCENARIO */}
               <SectionHeader
-                active={isValid}
+                active={isValid && !!scenarioNetworkSystemLayer}
                 alwaysActive={true}
                 label={t("scenario")}
                 icon={ICON_NAME.SCENARIO}
@@ -333,6 +341,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
                   <>
                     <Selector
                       selectedItems={selectedScenario}
+                      disabled={!scenarioNetworkSystemLayer}
                       setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                         setSelectedScenario(item as SelectorItem);
                       }}

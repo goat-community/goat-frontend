@@ -13,6 +13,7 @@ import {
   computePTCatchmentArea,
 } from "@/lib/api/catchmentArea";
 import { useJobs } from "@/lib/api/jobs";
+import { useProjectLayers } from "@/lib/api/projects";
 import { STREET_NETWORK_LAYER_ID } from "@/lib/constants";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import {
@@ -70,6 +71,8 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const [isBusy, setIsBusy] = useState(false);
+
+  const { layers: projectLayers } = useProjectLayers((projectId as string) || "");
 
   // Routing
   const { routingTypes, selectedRouting, setSelectedRouting } = useRoutingTypes();
@@ -216,6 +219,12 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   // Scenario
   const { scenarioItems } = useScenarioItems(projectId as string);
   const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
+  const scenarioNetworkSystemLayer = useMemo(() => {
+    if (projectLayers) {
+      return projectLayers.find((layer) => layer.layer_id === STREET_NETWORK_LAYER_ID);
+    }
+    return undefined;
+  }, [projectLayers]);
 
   const handleReset = () => {
     dispatch(setMaskLayer(undefined));
@@ -230,14 +239,13 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     const payload = {
       catchment_area_type: catchmentAreaShapeType.value,
     };
-
     if (selectedScenario?.value) {
       payload["scenario_id"] = selectedScenario?.value;
       // todo: Set street network layer for scenario.
       // At the moment this is hardcoded.
       // Eventually, users should be able to upload their own street network layer which can be used for scenarios.
       payload["street_network"] = {
-        edge_layer_project_id: STREET_NETWORK_LAYER_ID,
+        edge_layer_project_id: scenarioNetworkSystemLayer?.id,
       };
     }
 
@@ -555,7 +563,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
             />
             {/* SCENARIO */}
             <SectionHeader
-              active={isRoutingValid}
+              active={isRoutingValid && !!scenarioNetworkSystemLayer}
               alwaysActive={true}
               label={t("scenario")}
               icon={ICON_NAME.SCENARIO}
@@ -566,6 +574,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
               baseOptions={
                 <>
                   <Selector
+                    disabled={!scenarioNetworkSystemLayer}
                     selectedItems={selectedScenario}
                     setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                       setSelectedScenario(item as SelectorItem);
