@@ -39,8 +39,6 @@ const AccountPreferences = ({ params: { lng } }) => {
 
   const { changeColorMode } = useContext(ColorModeContext);
   const themeModes = ["dark", "light"] as const;
-  // const units = ["metric", "imperial"] as const;
-
   const {
     register: registerSystemSettings,
     handleSubmit: handleSystemSettingsSubmit,
@@ -103,6 +101,7 @@ const AccountPreferences = ({ params: { lng } }) => {
                 <Link
                   sx={{ p: 2, width: "100%" }}
                   component={NextLink}
+                  locale={lng}
                   href={`/${lng}/settings/account/preferences`}
                   style={{ textDecoration: "none", color: "inherit" }}>
                   {t(lng)}
@@ -134,27 +133,6 @@ const AccountPreferences = ({ params: { lng } }) => {
               </MenuItem>
             ))}
           </TextField>
-          {/* <TextField
-            select
-            defaultValue="metric"
-            label={t("measurement_unit")}
-            size="medium"
-            disabled={isBusy}
-            {...registerSystemSettings("unit")}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Icon iconName={ICON_NAME.RULES_COMBINED} fontSize="small" />
-                </InputAdornment>
-              ),
-            }}
-          >
-            {units.map((unit) => (
-              <MenuItem key={unit} value={unit}>
-                {t(unit)}
-              </MenuItem>
-            ))}
-          </TextField> */}
         </Stack>
       </Box>
     </Box>

@@ -45,8 +45,7 @@ const DashboardSidebar = (props: Props) => {
   const theme = useTheme();
   const pathname = usePathname();
 
-  const { t } = useTranslation("common");
-
+  const { t, i18n } = useTranslation("common");
   const MobileDrawerProps = {
     open: navVisible,
     onOpen: () => setNavVisible(true),
@@ -132,6 +131,7 @@ const DashboardSidebar = (props: Props) => {
             href={item.link}
             component={NextLink}
             passHref
+            locale={i18n.language || "en"}
             style={{ textDecoration: "none" }}>
             <ListItem
               disablePadding

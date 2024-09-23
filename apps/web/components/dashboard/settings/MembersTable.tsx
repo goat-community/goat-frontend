@@ -206,7 +206,8 @@ const MembersTable = ({
                       color="secondary"
                       disabled={
                         viewOnly ||
-                        row["roles"].includes(organizationRolesEnum.Enum["organization-owner"] || isBusy)
+                        row["roles"].includes(organizationRolesEnum.Enum["organization-owner"]) ||
+                        isBusy
                       }
                       onClick={(event) => handleClick(event, row.id)}
                       endIcon={
