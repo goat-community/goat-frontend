@@ -29,10 +29,13 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
     });
     if (!token) return await next(request, _next);
     try {
-      const refreshedToken = await refreshAccessToken(token);
+      let _token = token;
+      if (Date.now() >= token.expires_at * 1000) {
+        _token = await refreshAccessToken(token);
+      }
       const checkOrganization = await fetch(`${USERS_API_BASE_URL}/organization`, {
         headers: {
-          Authorization: `Bearer ${refreshedToken.access_token}`,
+          Authorization: `Bearer ${_token.access_token}`,
         },
       });
       if (checkOrganization.ok) {
@@ -51,7 +54,7 @@ export const withOrganization: MiddlewareFactory = (next: NextMiddleware) => {
         `${USERS_API_BASE_URL}/invitations?type=organization&status=pending`,
         {
           headers: {
-            Authorization: `Bearer ${refreshedToken.access_token}`,
+            Authorization: `Bearer ${_token.access_token}`,
           },
         }
       );

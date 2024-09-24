@@ -44,7 +44,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
 
     const expiresAt = Math.floor(Date.now() / 1000 + tokens.expires_in);
     console.log(
-      `Token was refreshed. New token expires in ${tokens.expires_in} sec at ${expiresAt}, refresh token expires in ${tokens.refresh_expires_in} sec`
+      `Token was refreshed. New token expires in ${tokens.expires_in} sec at ${expiresAt}`
     );
     const newToken: JWT = {
       ...token,

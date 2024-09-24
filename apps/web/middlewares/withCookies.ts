@@ -27,12 +27,15 @@ export const withCookies: MiddlewareFactory = (next: NextMiddleware) => {
       });
       const isAuthorized = !!token;
       if (isAuthorized) {
-        const refreshedToken = await refreshAccessToken(token);
+        let _token = token;
+        if (Date.now() >= token.expires_at * 1000) {
+          _token = await refreshAccessToken(token);
+        }
         try {
           // System Preferences cookies
           const systemPreferences = await fetch(`${SYSTEM_API_BASE_URL}/settings`, {
             headers: {
-              Authorization: `Bearer ${refreshedToken.access_token}`,
+              Authorization: `Bearer ${_token.access_token}`,
             },
           });
           if (systemPreferences.ok) {
