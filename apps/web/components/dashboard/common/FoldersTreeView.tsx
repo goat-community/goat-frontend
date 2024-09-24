@@ -164,13 +164,13 @@ export default function FoldersTreeView(props: FoldersTreeViewProps) {
     if (!selectedFolder && folders && homeFolder && !hideMyContent) {
       handleListItemClick({} as React.MouseEvent<HTMLDivElement, MouseEvent>, homeFolder);
     }
-  }, [folders, handleListItemClick, homeFolder, selectedFolder]);
+  }, [folders, handleListItemClick, homeFolder, selectedFolder, hideMyContent]);
 
   useEffect(() => {
     if (!selectedFolder && organizationFolder && hideMyContent) {
       handleListItemClick({} as React.MouseEvent<HTMLDivElement, MouseEvent>, organizationFolder);
     }
-  }, [organizationFolder, selectedFolder, handleListItemClick]);
+  }, [organizationFolder, selectedFolder, handleListItemClick, hideMyContent]);
 
   return (
     <>

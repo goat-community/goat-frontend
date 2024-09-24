@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { useUserProfile } from "@/lib/api/users";
 import { organizationRoles } from "@/lib/validations/organization";
-import { Team, teamRoles } from "@/lib/validations/team";
+import { teamRoles, type Team } from "@/lib/validations/team";
 
 interface Options {
   team?: Team;
@@ -27,7 +27,7 @@ export function useAuthZ(options: Options = {}) {
     const { team } = options;
     if (!team || !roles) return false;
     return team.role === teamRoles.OWNER
-  }, [roles]);
+  }, [roles, options]);
 
   const isProjectEditor = useMemo(() => {
     return isOrgEditor;
