@@ -23,6 +23,7 @@ import { setHighlightedFeature, setPopupInfo } from "@/lib/store/map/slice";
 import { addOrUpdateMarkerImages, addPatternImages } from "@/lib/transformers/map-image";
 import type { FeatureLayerPointProperties } from "@/lib/validations/layer";
 
+import { useAuthZ } from "@/hooks/auth/AuthZ";
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
 import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
@@ -37,8 +38,6 @@ import MapPopoverInfo from "@/components/map/controls/PopoverInfo";
 import { DrawControl } from "@/components/map/controls/draw/Draw";
 import ProjectNavigation from "@/components/map/panels/ProjectNavigation";
 
-const sidebarWidth = 52;
-const toolbarHeight = 52;
 const UPDATE_VIEW_STATE_DEBOUNCE_TIME = 3000;
 
 export default function MapPage({ params: { projectId } }) {
@@ -72,7 +71,8 @@ export default function MapPage({ params: { projectId } }) {
     mutate: mutateProjectLayers,
   } = useFilteredProjectLayers(projectId, ["table"], []);
 
-  //todo: fix this. Should save selectedScenarioEditLayer as ProjectLayer type instead
+  const { isProjectEditor, isLoading: isAuthZLoading } = useAuthZ();
+
   const _selectedScenarioEditLayer = useAppSelector((state) => state.map.selectedScenarioLayer);
   const selectedScenarioEditLayer = useMemo(() => {
     return projectLayers?.find((layer) => layer.id === _selectedScenarioEditLayer?.value);
@@ -81,8 +81,8 @@ export default function MapPage({ params: { projectId } }) {
   const { scenarioFeatures } = useProjectScenarioFeatures(projectId, project?.active_scenario_id);
 
   const isLoading = useMemo(
-    () => isProjectLoading || isInitialViewLoading || areProjectLayersLoading,
-    [isProjectLoading, isInitialViewLoading, areProjectLayersLoading]
+    () => isProjectLoading || isInitialViewLoading || areProjectLayersLoading || isAuthZLoading,
+    [isProjectLoading, isInitialViewLoading, areProjectLayersLoading, isAuthZLoading]
   );
 
   const hasError = useMemo(
@@ -225,8 +225,7 @@ export default function MapPage({ params: { projectId } }) {
               sx={{
                 display: "flex",
                 height: "100vh",
-                width: `calc(100% - ${2 * sidebarWidth}px)`,
-                marginLeft: `${sidebarWidth}px`,
+                width: "100%",
                 [theme.breakpoints.down("sm")]: {
                   marginLeft: "0",
                   width: `100%`,
@@ -235,13 +234,14 @@ export default function MapPage({ params: { projectId } }) {
               <Box>
                 <ProjectNavigation projectId={projectId} />
               </Box>
+
               <Box
                 sx={{
                   width: "100%",
                   ".maplibregl-ctrl .maplibregl-ctrl-logo": {
                     display: "none",
                   },
-                  height: `calc(100% - ${toolbarHeight}px)`,
+                  height: `100%`,
                   ".maplibregl-popup-content": {
                     padding: 0,
                     borderRadius: "6px",
@@ -281,15 +281,17 @@ export default function MapPage({ params: { projectId } }) {
                   interactiveLayerIds={interactiveLayerIds}
                   dragRotate={false}
                   touchZoomRotate={false}
-                  onMoveEnd={updateViewState}
+                  {...(isProjectEditor ? { onMoveEnd: updateViewState } : {})}
                   onClick={handleMapClick}
                   onMouseMove={handleMapOverImmediate}
                   onLoad={handleMapLoad}>
-                  <DrawControl
-                    position="top-right"
-                    displayControlsDefault={false}
-                    defaultMode={MapboxDraw.constants.modes.SIMPLE_SELECT}
-                  />
+                  {isProjectEditor && (
+                    <DrawControl
+                      position="top-right"
+                      displayControlsDefault={false}
+                      defaultMode={MapboxDraw.constants.modes.SIMPLE_SELECT}
+                    />
+                  )}
                   <Layers
                     layers={projectLayers}
                     highlightFeature={highlightedFeature}
@@ -299,7 +301,7 @@ export default function MapPage({ params: { projectId } }) {
                   <ScenarioLayer scenarioLayerData={scenarioFeatures} projectLayers={projectLayers} />
                   <ToolboxLayers />
                   {popupInfo && <MapPopoverInfo key={highlightedFeature?.id ?? v4()} {...popupInfo} />}
-                  {popupEditor && (
+                  {popupEditor && isProjectEditor && (
                     <MapPopoverEditor
                       key={popupEditor.feature?.id || popupEditor.feature?.properties?.id || v4()}
                       {...popupEditor}

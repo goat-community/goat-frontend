@@ -28,6 +28,7 @@ import type { GetDatasetSchema } from "@/lib/validations/layer";
 
 import { AddLayerSourceType } from "@/types/common";
 
+import { useAuthZ } from "@/hooks/auth/AuthZ";
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
 
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
@@ -55,6 +56,7 @@ const Datasets = () => {
     isError: _isDatasetError,
   } = useLayers(queryParams, datasetSchema);
 
+  const { isOrgEditor } = useAuthZ();
   useJobStatus(mutate);
 
   const [addDatasetModal, setAddDatasetModal] = useState<AddLayerSourceType | null>(null);
@@ -107,12 +109,14 @@ const Datasets = () => {
           mb: 8,
         }}>
         <Typography variant="h6">{t("datasets")}</Typography>
-        <Button
-          disableElevation={true}
-          startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />}
-          onClick={handleAddDatasetClick}>
-          {t("add_dataset")}
-        </Button>
+        {isOrgEditor && (
+          <Button
+            disableElevation={true}
+            startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />}
+            onClick={handleAddDatasetClick}>
+            {t("add_dataset")}
+          </Button>
+        )}
         <Menu
           anchorEl={addDatasetAnchorEl}
           sx={{
@@ -160,6 +164,8 @@ const Datasets = () => {
           <Paper elevation={3} sx={{ backgroundImage: "none" }}>
             <FoldersTreeView
               queryParams={datasetSchema}
+              enableActions={isOrgEditor}
+              hideMyContent={!isOrgEditor}
               setQueryParams={(params, teamId, organizationId) => {
                 const newQueryParams = { ...queryParams, page: 1 };
                 delete newQueryParams.team_id;
@@ -181,6 +187,7 @@ const Datasets = () => {
             items={datasets?.items ?? []}
             isLoading={isDatasetLoading}
             type="layer"
+            enableActions={isOrgEditor}
             onClick={(item) => {
               if (item && item.id) {
                 router.push(`/datasets/${item.id}`);

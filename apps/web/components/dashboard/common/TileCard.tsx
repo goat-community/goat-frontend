@@ -170,7 +170,7 @@ const TileCard = (props: TileCard) => {
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pb: theme.spacing(2) }}>
         {cardTitle}
-        {moreMenu}
+        {enableActions && moreMenu}
       </Stack>
       {/* Created by info  */}
       <Stack direction="row" alignItems="center" spacing={2} sx={{ pb: 0 }}>
@@ -268,52 +268,47 @@ const TileCard = (props: TileCard) => {
           {cardType === "grid" && gridContent}
           {cardType === "list" && (
             <Grid container alignItems="center" justifyContent="space-between">
-              {enableActions && (
-                <>
-                  <Grid item xs={11} sm={5} md={6}>
-                    {cardTitle}
-                  </Grid>
-                  <Grid item xs={1} sm={2} md={1}>
-                    <Box
-                      sx={{
-                        display: { xs: "none", sm: "block" },
-                      }}>
-                      {ownedBy}
-                    </Box>
-                  </Grid>
-                  <Grid
-                    item
-                    sm={4}
-                    md={2}
+              <>
+                <Grid item xs={11} sm={5} md={6}>
+                  {cardTitle}
+                </Grid>
+                <Grid item xs={1} sm={2} md={1}>
+                  <Box
                     sx={{
                       display: { xs: "none", sm: "block" },
                     }}>
-                    <Box sx={{ px: 1, pb: 0 }} display="flex-start">
-                      {updatedAtText}
-                    </Box>
-                  </Grid>
-                  <Grid
-                    item
-                    md={2}
-                    sx={{
-                      display: { xs: "none", md: "block" },
-                    }}>
-                    <Box sx={{ px: 1, pb: 0 }} display="flex-start">
-                      {createdAtText}
-                    </Box>
-                  </Grid>
+                    {ownedBy}
+                  </Box>
+                </Grid>
+                <Grid
+                  item
+                  sm={4}
+                  md={2}
+                  sx={{
+                    display: { xs: "none", sm: "block" },
+                  }}>
+                  <Box sx={{ px: 1, pb: 0 }} display="flex-start">
+                    {updatedAtText}
+                  </Box>
+                </Grid>
+                <Grid
+                  item
+                  md={2}
+                  sx={{
+                    display: { xs: "none", md: "block" },
+                  }}>
+                  <Box sx={{ px: 1, pb: 0 }} display="flex-start">
+                    {createdAtText}
+                  </Box>
+                </Grid>
+                {enableActions && (
                   <Grid item sm={1}>
                     <Box display="flex" justifyContent="flex-end">
                       {moreMenu}
                     </Box>
                   </Grid>
-                </>
-              )}
-              {!enableActions && (
-                <Grid item xs={12}>
-                  {cardTitle}
-                </Grid>
-              )}
+                )}
+              </>
             </Grid>
           )}
         </CardContent>

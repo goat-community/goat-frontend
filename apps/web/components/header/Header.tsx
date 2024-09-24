@@ -10,9 +10,10 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import { useDateFnsLocale, useTranslation } from "@/i18n/client";
 
-import { useOrganization, useUserProfile } from "@/lib/api/users";
+import { useOrganization } from "@/lib/api/users";
 import { CONTACT_US_URL, DOCS_URL } from "@/lib/constants";
-import { isOrgAdmin } from "@/lib/utils/auth";
+
+import { useAuthZ } from "@/hooks/auth/AuthZ";
 
 import UserInfoMenu from "@/components/UserInfoMenu";
 import JobsPopper from "@/components/jobs/JobsPopper";
@@ -33,7 +34,7 @@ export default function Header(props: HeaderProps) {
   const { t } = useTranslation(["common"]);
   const { tags, title, lastSaved, onMenuIconClick, showHambugerMenu, height = 52 } = props;
   const { organization } = useOrganization();
-  const { userProfile } = useUserProfile();
+  const { isOrgAdmin } = useAuthZ();
   const dateLocale = useDateFnsLocale();
   return (
     <Toolbar
@@ -70,7 +71,7 @@ export default function Header(props: HeaderProps) {
         <>
           <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
             <>
-              {organization && organization.on_trial && userProfile && isOrgAdmin(userProfile.roles) && (
+              {organization && organization.on_trial && isOrgAdmin && (
                 <Chip
                   icon={<Info />}
                   variant="outlined"

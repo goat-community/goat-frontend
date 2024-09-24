@@ -28,8 +28,8 @@ const DatasetTableModal: React.FC<DatasetTableDialogProps> = ({ open, onClose, d
     limit: 50,
     offset: 0,
   };
-  if (dataset["query"]) {
-    defaultParams["filter"] = JSON.stringify(dataset["query"]);
+  if (dataset["query"]?.["cql"]) {
+    defaultParams["filter"] = JSON.stringify(dataset["query"]["cql"]);
   }
   const [dataQueryParams, setDataQueryParams] = useState<GetCollectionItemsQueryParams>(defaultParams);
   const { data } = useDatasetCollectionItems(dataset["layer_id"] || dataset["id"] || "", dataQueryParams);

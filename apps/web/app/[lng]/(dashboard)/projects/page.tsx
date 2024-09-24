@@ -11,6 +11,8 @@ import { useTranslation } from "@/i18n/client";
 import { useProjects } from "@/lib/api/projects";
 import type { GetProjectsQueryParams } from "@/lib/validations/project";
 
+import { useAuthZ } from "@/hooks/auth/AuthZ";
+
 import ContentSearchBar from "@/components/dashboard/common/ContentSearchbar";
 import FoldersTreeView from "@/components/dashboard/common/FoldersTreeView";
 import TileGrid from "@/components/dashboard/common/TileGrid";
@@ -30,6 +32,7 @@ const Projects = () => {
   const { projects, isLoading: isProjectLoading, isError: _isProjectError } = useProjects(queryParams);
 
   const [openProjectModal, setOpenProjectModal] = useState(false);
+  const { isOrgEditor } = useAuthZ();
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
@@ -42,14 +45,16 @@ const Projects = () => {
           mb: 8,
         }}>
         <Typography variant="h6">{t("projects")}</Typography>
-        <Button
-          disableElevation={true}
-          startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />}
-          onClick={() => {
-            setOpenProjectModal(true);
-          }}>
-          {t("new_project")}
-        </Button>
+        {isOrgEditor && (
+          <Button
+            disableElevation={true}
+            startIcon={<Icon iconName={ICON_NAME.PLUS} style={{ fontSize: 12 }} />}
+            onClick={() => {
+              setOpenProjectModal(true);
+            }}>
+            {t("new_project")}
+          </Button>
+        )}
       </Box>
       <Grid container justifyContent="space-between" spacing={4}>
         <Grid item xs={12}>
@@ -65,6 +70,8 @@ const Projects = () => {
           <Paper elevation={3}>
             <FoldersTreeView
               queryParams={queryParams}
+              enableActions={isOrgEditor}
+              hideMyContent={!isOrgEditor}
               setQueryParams={(params, teamId, organizationId) => {
                 const newQueryParams = { ...params, page: 1 };
                 delete newQueryParams?.["team_id"];
@@ -83,6 +90,7 @@ const Projects = () => {
           <TileGrid
             view={view}
             items={projects?.items ?? []}
+            enableActions={isOrgEditor}
             isLoading={isProjectLoading}
             type="project"
             onClick={(item) => {

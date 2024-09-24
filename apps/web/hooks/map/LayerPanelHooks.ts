@@ -181,6 +181,30 @@ export const useLayerSettingsMoreMenu = () => {
   };
 };
 
+export const useLayerActions = (projectLayers: ProjectLayer[]) => {
+  function toggleLayerVisibility(layer: ProjectLayer) {
+    const layers = JSON.parse(JSON.stringify(projectLayers));
+    const index = layers.findIndex((l) => l.id === layer.id);
+    const layerToUpdate = layers[index];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let properties = layerToUpdate.properties as any;
+    if (!properties) {
+      properties = {};
+    }
+
+    properties.visibility = !properties.visibility;
+
+    layerToUpdate.properties = properties;
+    return { layers, layerToUpdate };
+  }
+
+  return {
+    toggleLayerVisibility,
+  }
+
+};
+
+
 export const useActiveLayer = (projectId: string) => {
   const { layers: projectLayers, mutate } = useProjectLayers(projectId);
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);

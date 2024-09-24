@@ -24,17 +24,17 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useTranslation } from "@/i18n/client";
 
 import { useTeams } from "@/lib/api/teams";
-import { useUserProfile } from "@/lib/api/users";
-import { isOrgEditor } from "@/lib/utils/auth";
+
+import { useAuthZ } from "@/hooks/auth/AuthZ";
 
 import TeamCreateModal from "@/components/modals/settings/TeamCreateModal";
 
 export default function Teams() {
   const { t } = useTranslation("common");
   const theme = useTheme();
-  const { userProfile, isLoading: isUserProfileLoading } = useUserProfile();
   const [openTeamCreateModal, setOpenTeamCreateModal] = useState(false);
   const { teams, mutate: mutateTeams, isLoading } = useTeams();
+  const { isOrgEditor, isLoading: isUserProfileLoading } = useAuthZ();
   const router = useRouter();
   return (
     <>
@@ -55,7 +55,7 @@ export default function Teams() {
               mutateTeams();
             }}
           />
-          {isOrgEditor(userProfile?.roles) && (
+          {isOrgEditor && (
             <Stack alignItems="flex-end">
               <LoadingButton
                 variant="contained"

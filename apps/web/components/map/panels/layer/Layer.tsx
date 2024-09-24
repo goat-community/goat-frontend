@@ -261,10 +261,45 @@ const AddLayerSection = ({ projectId }: { projectId: string }) => {
   );
 };
 
+export const LayerVisibilityToggle = ({ layer, toggleLayerVisibility }) => {
+  const { t } = useTranslation("common");
+  const theme = useTheme();
+  if (layer.type === "table") {
+    return null;
+  }
+
+  return (
+    <Tooltip
+      key={layer.id}
+      title={layer.properties?.visibility ? t("hide_layer") : t("show_layer")}
+      arrow
+      placement="top">
+      <IconButton
+        size="small"
+        onClick={(event) => {
+          event.stopPropagation();
+          toggleLayerVisibility(layer);
+        }}
+        sx={{
+          transition: theme.transitions.create(["opacity"], {
+            duration: theme.transitions.duration.standard,
+          }),
+          opacity: !layer.properties?.visibility ? 1 : 0,
+        }}>
+        <Icon
+          iconName={!layer.properties?.visibility ? ICON_NAME.EYE_SLASH : ICON_NAME.EYE}
+          style={{
+            fontSize: 15,
+          }}
+        />
+      </IconButton>
+    </Tooltip>
+  );
+};
+
 const LayerPanel = ({ projectId }: PanelProps) => {
   const { t } = useTranslation("common");
   const { map } = useMap();
-  const theme = useTheme();
   const dispatch = useAppDispatch();
   const [previousRightPanel, setPreviousRightPanel] = useState<MapSidebarItemID | undefined>(undefined);
   const activeLayerId = useAppSelector((state) => state.layers.activeLayerId);
@@ -529,35 +564,10 @@ const LayerPanel = ({ projectId }: PanelProps) => {
                       }
                       actions={
                         <Stack direction="row" justifyContent="flex-end" sx={{ pr: 2 }}>
-                          {layer.type === "table" ? null : (
-                            <Tooltip
-                              key={layer.id}
-                              title={layer.properties?.visibility ? t("show_layer") : t("hide_layer")}
-                              arrow
-                              placement="top">
-                              <IconButton
-                                size="small"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  toggleLayerVisibility(layer);
-                                }}
-                                sx={{
-                                  transition: theme.transitions.create(["opacity"], {
-                                    duration: theme.transitions.duration.standard,
-                                  }),
-                                  opacity: !layer.properties?.visibility ? 1 : 0,
-                                }}>
-                                <Icon
-                                  iconName={
-                                    !layer.properties?.visibility ? ICON_NAME.EYE_SLASH : ICON_NAME.EYE
-                                  }
-                                  style={{
-                                    fontSize: 15,
-                                  }}
-                                />
-                              </IconButton>
-                            </Tooltip>
-                          )}
+                          <LayerVisibilityToggle
+                            layer={layer}
+                            toggleLayerVisibility={toggleLayerVisibility}
+                          />
 
                           {scenarioFeaturesCount && scenarioFeaturesCount[layer.id] && (
                             <Tooltip

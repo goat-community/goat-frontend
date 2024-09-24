@@ -4,32 +4,54 @@ import { useTranslation } from "@/i18n/client";
 
 import { setActiveLeftPanel } from "@/lib/store/map/slice";
 
-import type { PanelProps } from "@/types/map/sidebar";
-
-import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
+import { useFilteredProjectLayers, useLayerActions } from "@/hooks/map/LayerPanelHooks";
 import { useAppDispatch } from "@/hooks/store/ContextHooks";
 
-import { Legend } from "@/components/map/controls/Legend";
+import { Legend, LegendMapContainer } from "@/components/map/controls/Legend";
 import Container from "@/components/map/panels/Container";
 
-const LegendPanel = ({ projectId }: PanelProps) => {
+interface PanelProps {
+  projectId: string;
+  isFloating?: boolean;
+  showAllLayers?: boolean;
+}
+
+const LegendPanel = ({ projectId, isFloating = false, showAllLayers = false }: PanelProps) => {
   const { t } = useTranslation("common");
   const dispatch = useAppDispatch();
-  const { layers: projectLayers } = useFilteredProjectLayers(projectId);
-  const visibleLayers = useMemo(
+  const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
+  const { toggleLayerVisibility } = useLayerActions(projectLayers);
+  const _layers = useMemo(
     () =>
-      projectLayers?.filter((layer) => {
-        return layer.properties?.visibility;
-      }),
-    [projectLayers]
+      showAllLayers
+        ? projectLayers
+        : projectLayers?.filter((layer) => {
+            return layer.properties?.visibility;
+          }),
+    [projectLayers, showAllLayers]
   );
   return (
-    <Container
-      title={t("legend")}
-      close={() => dispatch(setActiveLeftPanel(undefined))}
-      direction="left"
-      body={projectLayers && <Legend layers={visibleLayers} hideZoomLevel />}
-    />
+    <>
+      {!isFloating && (
+        <Container
+          title={t("legend")}
+          close={() => dispatch(setActiveLeftPanel(undefined))}
+          direction="left"
+          body={projectLayers && <Legend layers={_layers} hideZoomLevel />}
+        />
+      )}
+      {isFloating && (
+        <LegendMapContainer
+          layers={_layers}
+          enableActions={showAllLayers}
+          hideZoomLevel
+          onVisibilityChange={async (layer) => {
+            const { layers: _layers, layerToUpdate: _layerToUpdate } = toggleLayerVisibility(layer);
+            await mutateProjectLayers(_layers, false);
+          }}
+        />
+      )}
+    </>
   );
 };
 

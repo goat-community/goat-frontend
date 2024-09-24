@@ -3,6 +3,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { Box, Collapse, IconButton, Skeleton } from "@mui/material";
 import { Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
+import { v4 } from "uuid";
 
 import type { DatasetCollectionItems } from "@/lib/validations/layer";
 
@@ -111,8 +112,8 @@ const DatasetTable: React.FC<DatasetTableProps> = ({ areFieldsLoading, displayDa
               {fields.some((field) => field.type === "object") && <TableCell />}
               {fields
                 .filter((field) => field.type !== "object")
-                .map((field, index) => (
-                  <TableCell key={index}>
+                .map((field) => (
+                  <TableCell key={field.name}>
                     <Stack direction="column" spacing={1} sx={{ py: 1 }}>
                       <Typography variant="body2" fontWeight="bold">
                         {field.name}
@@ -132,7 +133,7 @@ const DatasetTable: React.FC<DatasetTableProps> = ({ areFieldsLoading, displayDa
               </TableRow>
             )}
             {displayData.features?.length &&
-              displayData.features.map((row) => <Row key={row.id} row={row} fields={fields} />)}
+              displayData.features.map((row) => <Row key={row.id || v4()} row={row} fields={fields} />)}
           </TableBody>
         </Table>
       )}

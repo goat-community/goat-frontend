@@ -14,12 +14,12 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useOrganizationMembers } from "@/lib/api/organizations";
 import { deleteTeam, updateTeam, useTeam, useTeamMembers } from "@/lib/api/teams";
 import { useOrganization } from "@/lib/api/users";
-import { isTeamOwner } from "@/lib/utils/auth";
 import type { Team, TeamMember, TeamUpdate } from "@/lib/validations/team";
 import { teamRoleEnum, teamUpdateSchema } from "@/lib/validations/team";
 
 import type { TeamMemberActions } from "@/types/common";
 
+import { useAuthZ } from "@/hooks/auth/AuthZ";
 import { useMemberSettingsMoreMenu } from "@/hooks/dashboard/SettingsHooks";
 
 import { CustomTabPanel, a11yProps } from "@/components/common/CustomTabPanel";
@@ -36,6 +36,9 @@ function TeamProfile({ team }: { team: Team }) {
   const [isTeamUpdateBusy, setIsTeamUpdateBusy] = useState<boolean>(false);
   const [confirmDeleteOrLeaveTeamDialogOpen, setConfirmDeleteOrLeaveTeamDialogOpen] = useState(false);
   const router = useRouter();
+  const { isTeamOwner } = useAuthZ({
+    team,
+  });
 
   const {
     register: registerTeamUpdate,
@@ -104,7 +107,7 @@ function TeamProfile({ team }: { team: Team }) {
               {t("team_information")}
             </Typography>
             <Typography variant="caption">
-              {isTeamOwner(team.role)
+              {isTeamOwner
                 ? t("update_team_information_description")
                 : t("overview_team_information_description")}
             </Typography>
@@ -116,12 +119,12 @@ function TeamProfile({ team }: { team: Team }) {
               control={control}
               title={t("team_avatar")}
               avatar={team?.avatar ?? ""}
-              readOnly={!isTeamOwner(team.role)}
+              readOnly={!isTeamOwner}
             />
 
             <TextField
               required
-              InputProps={{ readOnly: !isTeamOwner(team.role) }}
+              InputProps={{ readOnly: !isTeamOwner }}
               helperText={errors.name ? errors.name?.message : ""}
               label={t("team_name")}
               id="name"
@@ -130,7 +133,7 @@ function TeamProfile({ team }: { team: Team }) {
             />
 
             <TextField
-              InputProps={{ readOnly: !isTeamOwner(team.role) }}
+              InputProps={{ readOnly: !isTeamOwner }}
               helperText={errors.description ? errors.description?.message : ""}
               label={t("team_description")}
               id="description"
@@ -138,7 +141,7 @@ function TeamProfile({ team }: { team: Team }) {
               error={errors.description ? true : false}
             />
 
-            {isTeamOwner(team.role) && (
+            {isTeamOwner && (
               <Stack direction="row" alignItems="center" justifyContent="flex-end">
                 <LoadingButton
                   loading={isTeamUpdateBusy}
@@ -160,13 +163,11 @@ function TeamProfile({ team }: { team: Team }) {
           <Divider />
           <ConfirmModal
             open={confirmDeleteOrLeaveTeamDialogOpen}
-            title={isTeamOwner(team.role) ? t("delete_team") : t("leave_team")}
+            title={isTeamOwner ? t("delete_team") : t("leave_team")}
             body={
               <Trans
                 i18nKey={
-                  isTeamOwner(team.role)
-                    ? "common:delete_team_confirmation_body"
-                    : "common:leave_team_confirmation_body"
+                  isTeamOwner ? "common:delete_team_confirmation_body" : "common:leave_team_confirmation_body"
                 }
                 components={{ b: <b />, ul: <ul />, li: <li /> }}
               />
@@ -179,14 +180,14 @@ function TeamProfile({ team }: { team: Team }) {
               await _deleteOrLeaveTeam();
             }}
             closeText={t("close")}
-            confirmText={isTeamOwner(team.role) ? t("delete_team") : t("leave_team")}
+            confirmText={isTeamOwner ? t("delete_team") : t("leave_team")}
           />
           <Box>
             <Typography variant="body1" fontWeight="bold" color={theme.palette.error.main}>
               {t("danger_zone")}
             </Typography>
             <Typography variant="caption">
-              {isTeamOwner(team.role) ? t("danger_zone_delete_team_description") : t("leave_team")}
+              {isTeamOwner ? t("danger_zone_delete_team_description") : t("leave_team")}
             </Typography>
           </Box>
           <Divider />
@@ -194,9 +195,7 @@ function TeamProfile({ team }: { team: Team }) {
             <Typography variant="body1">
               <Trans
                 i18nKey={
-                  isTeamOwner(team.role)
-                    ? "common:danger_zone_delete_team_body"
-                    : "common:danger_zone_leave_team_body"
+                  isTeamOwner ? "common:danger_zone_delete_team_body" : "common:danger_zone_leave_team_body"
                 }
                 components={{ b: <b />, a: <b /> }}
               />
@@ -206,10 +205,7 @@ function TeamProfile({ team }: { team: Team }) {
             <LoadingButton
               size="large"
               startIcon={
-                <Icon
-                  fontSize="small"
-                  iconName={isTeamOwner(team.role) ? ICON_NAME.TRASH : ICON_NAME.SIGNOUT}
-                />
+                <Icon fontSize="small" iconName={isTeamOwner ? ICON_NAME.TRASH : ICON_NAME.SIGNOUT} />
               }
               variant="outlined"
               color="error"
@@ -221,7 +217,7 @@ function TeamProfile({ team }: { team: Team }) {
                 setConfirmDeleteOrLeaveTeamDialogOpen(true);
               }}>
               <Typography variant="body1" fontWeight="bold" color="inherit">
-                {isTeamOwner(team.role) ? t("delete_team") : t("leave_team")}
+                {isTeamOwner ? t("delete_team") : t("leave_team")}
               </Typography>
             </LoadingButton>
           </Stack>
@@ -244,7 +240,9 @@ function TeamMembers({ team }: { team: Team }) {
     const teamMemberIds = new Set((teamMembers || []).map((member) => member.id));
     return (organizationMembers || []).filter((member) => !teamMemberIds.has(member.id));
   }, [teamMembers, organizationMembers]);
-
+  const { isTeamOwner } = useAuthZ({
+    team,
+  });
   const {
     activeMemberMoreMenuOptions,
     pendingInvitationMoreMenuOptions,
@@ -269,7 +267,7 @@ function TeamMembers({ team }: { team: Team }) {
             }}
           />
         )}
-        {organizationMembers && teamMembers && isTeamOwner(team.role) && (
+        {organizationMembers && teamMembers && isTeamOwner && (
           <TeamMemberInviteModal
             open={openInviteModal}
             onClose={() => {
@@ -285,15 +283,15 @@ function TeamMembers({ team }: { team: Team }) {
         <Divider />
         <Box>
           <Typography variant="body1" fontWeight="bold">
-            {isTeamOwner(team.role) ? t("team_manage_members") : t("members")}
+            {isTeamOwner ? t("team_manage_members") : t("members")}
           </Typography>
           <Typography variant="caption">
-            {isTeamOwner(team.role) ? t("team_manage_members_description") : t("team_members_description")}
+            {isTeamOwner ? t("team_manage_members_description") : t("team_members_description")}
           </Typography>
         </Box>
         <Divider />
 
-        {isTeamOwner(team.role) && (
+        {isTeamOwner && (
           <Stack alignItems="flex-end">
             <LoadingButton
               variant="contained"
@@ -316,7 +314,7 @@ function TeamMembers({ team }: { team: Team }) {
           pendingInvitationMoreMenuOptions={pendingInvitationMoreMenuOptions}
           onMoreMenuItemClick={openMoreMenu}
           type="team"
-          viewOnly={!isTeamOwner(team.role)}
+          viewOnly={!isTeamOwner}
         />
       </Stack>
     </>

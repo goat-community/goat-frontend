@@ -23,8 +23,7 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
 import { useTranslation } from "@/i18n/client";
 
-import { useUserProfile } from "@/lib/api/users";
-import { isOrgAdmin } from "@/lib/utils/auth";
+import { useAuthZ } from "@/hooks/auth/AuthZ";
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
@@ -34,9 +33,8 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
   const { children } = props;
   const pathname = usePathname();
   const theme = useTheme();
-  const { userProfile, isLoading: isUserProfileLoading } = useUserProfile();
   const { t, i18n } = useTranslation("common");
-
+  const { isOrgAdmin, isLoading: isUserProfileLoading } = useAuthZ();
   const navigation = useMemo(
     () => [
       {
@@ -56,24 +54,24 @@ const SettingsLayout = (props: SettingsLayoutProps) => {
         icon: ICON_NAME.ORGANIZATION,
         label: t("organization"),
         current: pathname?.includes("/organization"),
-        auth: isOrgAdmin(userProfile?.roles),
+        auth: isOrgAdmin,
       },
       {
         link: "/settings/usage",
         icon: ICON_NAME.CHART_PIE,
         label: t("usage_and_quotas"),
         current: pathname?.includes("/usage"),
-        auth: isOrgAdmin(userProfile?.roles),
+        auth: isOrgAdmin,
       },
       {
         link: "/settings/billing",
         icon: ICON_NAME.CREDIT_CARD,
         label: t("billing"),
         current: pathname?.includes("/billing"),
-        auth: isOrgAdmin(userProfile?.roles),
+        auth: isOrgAdmin,
       },
     ],
-    [pathname, t, userProfile?.roles]
+    [pathname, t, isOrgAdmin]
   );
 
   return (

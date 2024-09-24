@@ -1,4 +1,4 @@
-import { Stack, Tooltip, Typography } from "@mui/material";
+import { Divider, Paper, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { useMemo } from "react";
 
 import { ICON_NAME } from "@p4b/ui/components/Icon";
@@ -16,6 +16,7 @@ import type { ProjectLayer } from "@/lib/validations/project";
 import type { RGBColor } from "@/types/map/color";
 
 import EmptySection from "@/components/common/EmptySection";
+import { LayerVisibilityToggle } from "@/components/map/panels/layer/Layer";
 import { MaskedImageIcon } from "@/components/map/panels/style/other/MaskedImageIcon";
 
 const DEFAULT_COLOR = "#000000";
@@ -23,6 +24,8 @@ export interface LegendProps {
   layers: ProjectLayer[];
   hideLayerName?: boolean;
   hideZoomLevel?: boolean;
+  enableActions?: boolean;
+  onVisibilityChange?: (layer: ProjectLayer) => void;
 }
 
 type ColorMapItem = {
@@ -380,12 +383,29 @@ export function Legend(props: LegendProps) {
   return (
     props.layers && (
       <>
-        {props.layers.map((layer) => (
-          <Stack key={layer.id} spacing={1} direction="column" sx={{ my: 3 }} style={{ cursor: "default" }}>
+        {props.layers.map((layer, index) => (
+          <Stack
+            key={layer.id}
+            spacing={1}
+            direction="column"
+            sx={{
+              my: 3,
+              ":hover": {
+                "& div, & button": {
+                  opacity: 1,
+                },
+              },
+            }}
+            style={{ cursor: "default" }}>
             {!props.hideLayerName && (
-              <Typography variant="body2" fontWeight="bold">
-                {layer.name}
-              </Typography>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" fontWeight="bold">
+                  {layer.name}
+                </Typography>
+                {props.enableActions && (
+                  <LayerVisibilityToggle layer={layer} toggleLayerVisibility={props?.onVisibilityChange} />
+                )}
+              </Stack>
             )}
             {!props.hideZoomLevel && (
               <Tooltip title={t("zoom_level_legend_tooltip")} placement="top" arrow>
@@ -415,11 +435,30 @@ export function Legend(props: LegendProps) {
                 </>
               )}
             </Stack>
+            {index < props.layers.length - 1 && <Divider />}
           </Stack>
         ))}
 
         {props.layers?.length === 0 && <EmptySection label={t("no_active_layers")} icon={ICON_NAME.LAYERS} />}
       </>
     )
+  );
+}
+
+export function LegendMapContainer(props: LegendProps) {
+  const theme = useTheme();
+  return (
+    <Stack
+      direction="column"
+      sx={{
+        maxHeight: "calc(100vh - 300px)",
+        alignItems: "flex-end",
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+      }}>
+      <Paper sx={{ width: 360, p: 3, overflow: "auto" }}>
+        <Legend {...props} />
+      </Paper>
+    </Stack>
   );
 }
