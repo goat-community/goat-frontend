@@ -27,26 +27,20 @@ const blogPosts: BlogPost[] = [
   {
     title: "GOAT as a cross-stakeholder planning platform in the MRN",
     date: "August 22, 2023",
-    thumbnail: "https://plan4better.de/images/blog/mrn/thumbnail.webp",
-    url: "https://plan4better.de/en/posts/2023-08-07-mrn/",
+    thumbnail: "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b56beac81eec44c6c21e_banner%20(1).webp",
+    url: "https://www.plan4better.de/en/post/goat-as-a-cross-stakeholder-planning-platform-in-the-mrn/",
   },
   {
     title: "Mobility concepts for parking space reduction: Innovative approaches and tools",
     date: "August 1, 2023",
-    thumbnail: "https://plan4better.de/images/blog/parking/thumbnail.webp",
-    url: "https://plan4better.de/en/posts/2023-08-01-parking/",
+    thumbnail: "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b1ea6eb4e8f5c1ae5624_banner-p-1080.webp",
+    url: "https://www.plan4better.de/en/post/mobility-concepts-for-parking-space-reduction-innovative-approaches-and-tools",
   },
   {
     title: "Green Spaces in Urban Areas: The Key to Resilient Cities",
     date: "May 30, 2023",
-    thumbnail: "https://plan4better.de/images/blog/green-spaces-resilient-cities/thumbnail.webp",
-    url: "https://plan4better.de/en/posts/2023-05-01-accessibility-to-green-spaces/",
-  },
-  {
-    title: "GOAT Anwendungsbeispiel: Stadtplanung",
-    date: "April 17, 2023",
-    thumbnail: "https://plan4better.de/images/blog/use-cases-development-concepts/stadtplanung_900450.webp",
-    url: "https://plan4better.de/posts/2023-03-01-goat-anwendungsbeispiel-stadtplanung/",
+    thumbnail: "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b05fbeebb602470e235c_top_image_50-p-1080.webp",
+    url: "https://www.plan4better.de/en/post/green-spaces-in-urban-areas-the-key-to-resilient-cities",
   },
 ];
 
