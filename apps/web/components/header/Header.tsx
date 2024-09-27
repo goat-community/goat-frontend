@@ -11,7 +11,7 @@ import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 import { useDateFnsLocale, useTranslation } from "@/i18n/client";
 
 import { useOrganization } from "@/lib/api/users";
-import { CONTACT_US_URL, DOCS_URL } from "@/lib/constants";
+import { CONTACT_US_URL, DOCS_URL, DOCS_VERSION } from "@/lib/constants";
 
 import { useAuthZ } from "@/hooks/auth/AuthZ";
 
@@ -31,11 +31,13 @@ export type HeaderProps = {
 
 export default function Header(props: HeaderProps) {
   const theme = useTheme();
-  const { t } = useTranslation(["common"]);
+  const { t, i18n } = useTranslation(["common"]);
   const { tags, title, lastSaved, onMenuIconClick, showHambugerMenu, height = 52 } = props;
   const { organization } = useOrganization();
   const { isOrgAdmin } = useAuthZ();
   const dateLocale = useDateFnsLocale();
+  const lng = i18n.language === "de" ? "/de" : "";
+  const docsVersion = `/${DOCS_VERSION}`;
   return (
     <Toolbar
       showHambugerMenu={showHambugerMenu}
@@ -103,7 +105,7 @@ export default function Header(props: HeaderProps) {
               <IconButton
                 size="small"
                 onClick={() => {
-                  window.open(DOCS_URL, "_blank");
+                  window.open(`${DOCS_URL}${lng}${docsVersion}`, "_blank");
                 }}>
                 <Icon iconName={ICON_NAME.BOOK} fontSize="inherit" />
               </IconButton>

@@ -1,7 +1,8 @@
 export const KEYCLOAK_CLIENT_ID = process.env.NEXT_PUBLIC_KEYCLOAK_CLIENT_ID;
 export const KEYCLOAK_ISSUER = process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER;
 export const GEOAPI_BASE_URL = process.env.NEXT_PUBLIC_GEOAPI_URL;
-export const DOCS_URL = process.env.NEXT_PUBLIC_DOCS_URL;
+export const DOCS_URL = "https://goat.plan4better.de/docs";
+export const DOCS_VERSION = "2.0";
 export const CONTACT_US_URL = "https://plan4better.de/contact";
 
 export const MAPBOX_TOKEN =
