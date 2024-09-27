@@ -23,31 +23,58 @@ type BlogPost = {
   url: string;
 };
 
-const blogPosts: BlogPost[] = [
+const blogPostsEnglish: BlogPost[] = [
   {
-    title: "GOAT as a cross-stakeholder planning platform in the MRN",
-    date: "August 22, 2023",
-    thumbnail: "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b56beac81eec44c6c21e_banner%20(1).webp",
-    url: "https://www.plan4better.de/en/post/goat-as-a-cross-stakeholder-planning-platform-in-the-mrn/",
+    title: "GOAT v2 is here!",
+    date: "September 19, 2024",
+    thumbnail:
+      "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/66eaa2b28eb3db409d799756_Blogpost_17.09.2024.%20GOAT%20v2%20announcement.png",
+    url: "https://www.plan4better.de/en/post/goat-v2-is-here",
+  },
+  {
+    title: "The 15-minute city: an analysis from the perspective of different user groups",
+    date: "November 29, 2023",
+    thumbnail:
+      "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b62b9df36f2de663d2c6_banner%20(2)-p-2000.webp",
+    url: "https://www.plan4better.de/en/post/the-15-minute-city-an-analysis-from-the-perspective-of-different-user-groups",
   },
   {
     title: "Mobility concepts for parking space reduction: Innovative approaches and tools",
-    date: "August 1, 2023",
-    thumbnail: "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b1ea6eb4e8f5c1ae5624_banner-p-1080.webp",
+    date: "August 22, 2023",
+    thumbnail:
+      "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b1ea6eb4e8f5c1ae5624_banner-p-1080.webp",
     url: "https://www.plan4better.de/en/post/mobility-concepts-for-parking-space-reduction-innovative-approaches-and-tools",
   },
+];
+
+const blogPostsGerman: BlogPost[] = [
   {
-    title: "Green Spaces in Urban Areas: The Key to Resilient Cities",
-    date: "May 30, 2023",
-    thumbnail: "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b05fbeebb602470e235c_top_image_50-p-1080.webp",
-    url: "https://www.plan4better.de/en/post/green-spaces-in-urban-areas-the-key-to-resilient-cities",
+    title: "GOAT v2 ist da!",
+    date: "19. September 2024",
+    thumbnail:
+      "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/66eaa2b28eb3db409d799756_Blogpost_17.09.2024.%20GOAT%20v2%20announcement.png",
+    url: "https://www.plan4better.de/de/post/goat-v2-is-here",
+  },
+  {
+    title: "Die 15-Minuten-Stadt: Eine Analyse aus Sicht der verschiedenen Nutzergruppen",
+    date: "29. November 2023",
+    thumbnail:
+      "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b62b9df36f2de663d2c6_banner%20(2)-p-2000.webp",
+    url: "https://www.plan4better.de/de/post/the-15-minute-city-an-analysis-from-the-perspective-of-different-user-groups",
+  },
+  {
+    title: "GOAT als akteursübergreifende Planungsplattform in der MRN",
+    date: "22. August 2023",
+    thumbnail:
+      "https://cdn.prod.website-files.com/6554ce5f672475c1f40445af/65e5b1ea6eb4e8f5c1ae5624_banner-p-1080.webp",
+    url: "https://www.plan4better.de/de/post/mobility-concepts-for-parking-space-reduction-innovative-approaches-and-tools",
   },
 ];
 
 const BlogSection = () => {
   const isLoading = false;
   const theme = useTheme();
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
 
   return (
     <Box>
@@ -63,7 +90,14 @@ const BlogSection = () => {
           variant="text"
           size="small"
           endIcon={<Icon iconName={ICON_NAME.EXTERNAL_LINK} style={{ fontSize: 12 }} />}
-          onClick={() => window.open("https://plan4better.de/en/blog/", "_blank")}
+          onClick={() =>
+            window.open(
+              i18n.language === "de"
+                ? "https://www.plan4better.de/de/blog"
+                : "https://www.plan4better.de/blog",
+              "_blank"
+            )
+          }
           sx={{
             borderRadius: 0,
           }}>
@@ -72,7 +106,12 @@ const BlogSection = () => {
       </Box>
       <Divider sx={{ mb: 4 }} />
       <Grid container spacing={5}>
-        {(isLoading ? Array.from(new Array(3)) : blogPosts ?? []).map((item: BlogPost, index: number) => (
+        {(isLoading
+          ? Array.from(new Array(3))
+          : i18n.language === "de"
+            ? blogPostsGerman
+            : (blogPostsEnglish ?? [])
+        ).map((item: BlogPost, index: number) => (
           <Grid
             item
             key={item?.title ?? index}
