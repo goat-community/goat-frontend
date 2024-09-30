@@ -28,6 +28,14 @@ export const planNames = {
   ENTERPRISE: "goat_enterprise"
 } as const;
 
+export enum FeatureName {
+  SCENARIO = "SCENARIO",
+}
+
+export const featureToPlanMap = {
+  [FeatureName.SCENARIO]: [planNames.PRO, planNames.ENTERPRISE],
+};
+
 
 export const organizationRolesEnum = z.enum([
   "organization-owner",

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 
-import { useUserProfile } from "@/lib/api/users";
-import { organizationRoles } from "@/lib/validations/organization";
-import { teamRoles, type Team } from "@/lib/validations/team";
+import { useOrganization, useUserProfile } from "@/lib/api/users";
+import { FeatureName, featureToPlanMap, organizationRoles } from "@/lib/validations/organization";
+import { type Team, teamRoles } from "@/lib/validations/team";
 
 interface Options {
   team?: Team;
@@ -10,7 +10,7 @@ interface Options {
 
 export function useAuthZ(options: Options = {}) {
   const { userProfile, isLoading: isUserProfileLoading } = useUserProfile();
-
+  const { organization } = useOrganization();
   const roles = userProfile?.roles;
 
   const isOrgAdmin = useMemo(() => {
@@ -26,7 +26,7 @@ export function useAuthZ(options: Options = {}) {
   const isTeamOwner = useMemo(() => {
     const { team } = options;
     if (!team || !roles) return false;
-    return team.role === teamRoles.OWNER
+    return team.role === teamRoles.OWNER;
   }, [roles, options]);
 
   const isProjectEditor = useMemo(() => {
@@ -37,11 +37,22 @@ export function useAuthZ(options: Options = {}) {
     return isUserProfileLoading;
   }, [isUserProfileLoading]);
 
+  const isAppFeatureEnabled = (feature: FeatureName) => {
+    const organizationPlan = organization?.plan_name;
+    const plansEnabled = featureToPlanMap[feature];
+    if (organizationPlan && plansEnabled && plansEnabled.includes(organizationPlan as any)) {
+      return true;
+    }
+
+    return false;
+  }
+
   return {
     isLoading,
     isOrgAdmin,
     isOrgEditor,
     isTeamOwner,
     isProjectEditor,
+    isAppFeatureEnabled,
   };
 }

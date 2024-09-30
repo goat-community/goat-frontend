@@ -8,6 +8,7 @@ import { useTranslation } from "@/i18n/client";
 import { MAPBOX_TOKEN } from "@/lib/constants";
 import { setActiveBasemap, setActiveLeftPanel, setActiveRightPanel } from "@/lib/store/map/slice";
 import { layerType } from "@/lib/validations/common";
+import { FeatureName } from "@/lib/validations/organization";
 
 import { MapSidebarItemID } from "@/types/map/common";
 
@@ -45,7 +46,7 @@ const ProjectNavigation = ({ projectId }) => {
 
   const prevActiveLeftRef = useRef<MapSidebarItemID | undefined>(undefined);
   const prevActiveRightRef = useRef<MapSidebarItemID | undefined>(undefined);
-  const { isProjectEditor } = useAuthZ();
+  const { isProjectEditor, isAppFeatureEnabled } = useAuthZ();
 
   const leftSidebar: MapSidebarProps = {
     topItems: [
@@ -113,6 +114,7 @@ const ProjectNavigation = ({ projectId }) => {
         icon: ICON_NAME.SCENARIO,
         name: t("scenario"),
         component: <Scenario projectId={projectId} />,
+        disabled: !isAppFeatureEnabled(FeatureName.SCENARIO),
       },
     ],
     width: sidebarWidth,
