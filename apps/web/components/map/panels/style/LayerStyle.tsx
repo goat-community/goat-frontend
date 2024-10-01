@@ -396,7 +396,11 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                           if (!map) return;
                           await updateOrdinalValues("marker", newStyle);
                           updateLayerStyle(newStyle);
-                          addOrUpdateMarkerImages(newStyle as FeatureLayerPointProperties, map);
+                          addOrUpdateMarkerImages(
+                            activeLayer.id,
+                            newStyle as FeatureLayerPointProperties,
+                            map
+                          );
                         }}
                         layerFields={layerFields}
                         selectedField={activeLayer?.properties["marker_field"]}
@@ -427,7 +431,11 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                             onStyleChange={(newStyle: FeatureLayerProperties) => {
                               if (!map) return;
                               updateLayerStyle(newStyle);
-                              addOrUpdateMarkerImages(newStyle as FeatureLayerPointProperties, map);
+                              addOrUpdateMarkerImages(
+                                activeLayer.id,
+                                newStyle as FeatureLayerPointProperties,
+                                map
+                              );
                             }}
                             layerFields={layerFields}
                             selectedField={activeLayer?.properties["marker_size_field"]}

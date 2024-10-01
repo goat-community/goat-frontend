@@ -5,7 +5,6 @@ import type { PatternImage } from "@/lib/constants/pattern-images";
 
 // Image prefix for marker images is needed to avoid
 // name conflicts with other images from mapbox basemaps
-export const MARKER_IMAGE_PREFIX = "goat-marker-";
 export const PATTERN_IMAGE_PREFIX = "goat-pattern-";
 
 /**
@@ -73,7 +72,7 @@ export const loadImage = (map: MapRef, url: string, marker_name: string, width?:
  * @param map MapRef
  * @returns void
  */
-export function addOrUpdateMarkerImages(properties: FeatureLayerPointProperties, map: MapRef | null) {
+export function addOrUpdateMarkerImages(id: number, properties: FeatureLayerPointProperties, map: MapRef | null) {
   if (map && properties.custom_marker) {
     const markers = [properties.marker];
     const size = properties.marker_size;
@@ -82,7 +81,7 @@ export function addOrUpdateMarkerImages(properties: FeatureLayerPointProperties,
     });
     markers.forEach((marker) => {
       if (marker && marker.url && marker.name) {
-        const name = `${MARKER_IMAGE_PREFIX}${marker.name}`;
+        const name = `${id}-${marker.name}`;
         loadImage(map, marker.url, name, size, size);
       }
     });

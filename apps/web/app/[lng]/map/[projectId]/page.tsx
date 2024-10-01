@@ -165,7 +165,7 @@ export default function MapPage({ params: { projectId } }) {
       projectLayers?.forEach((layer) => {
         if (layer.type === "feature" && layer.feature_layer_geometry_type === "point") {
           const pointFeatureProperties = layer.properties as FeatureLayerPointProperties;
-          addOrUpdateMarkerImages(pointFeatureProperties, mapRef.current);
+          addOrUpdateMarkerImages(layer.id, pointFeatureProperties, mapRef.current);
         }
       });
 
