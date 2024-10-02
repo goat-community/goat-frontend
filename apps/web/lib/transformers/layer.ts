@@ -1,6 +1,5 @@
 import type { MapGeoJSONFeature } from "react-map-gl/maplibre";
 
-import { MARKER_IMAGE_PREFIX } from "@/lib/transformers/map-image";
 import { rgbToHex } from "@/lib/utils/helpers";
 import type { FeatureLayerLineProperties, FeatureLayerPointProperties, Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
@@ -130,7 +129,7 @@ export function getMapboxStyleMarker(data: ProjectLayer | Layer) {
   const markerMaps = properties.marker_mapping;
   const fieldName = properties.marker_field?.name;
   const fieldType = properties.marker_field?.type;
-  const marker = `${MARKER_IMAGE_PREFIX}${properties.marker?.name}`;
+  const marker = `${data.id}-${properties.marker?.name}`;
   if (markerMaps && fieldName) {
     const valuesAndIcons = [] as (string | number)[];
     markerMaps.forEach((markerMap) => {
@@ -144,7 +143,7 @@ export function getMapboxStyleMarker(data: ProjectLayer | Layer) {
           } else {
             valuesAndIcons.push(value);
           }
-          valuesAndIcons.push(`${MARKER_IMAGE_PREFIX}${markerMapIcon.name}`);
+          valuesAndIcons.push(`${data.id}-${markerMapIcon.name}`);
         });
       } else {
         if (fieldType === "number" && markerMapValue !== null) {
@@ -152,7 +151,7 @@ export function getMapboxStyleMarker(data: ProjectLayer | Layer) {
         } else {
           valuesAndIcons.push(markerMapValue);
         }
-        valuesAndIcons.push(`${MARKER_IMAGE_PREFIX}${markerMapIcon.name}`);
+        valuesAndIcons.push(`${data.id}-${markerMapIcon.name}`);
       }
     });
 

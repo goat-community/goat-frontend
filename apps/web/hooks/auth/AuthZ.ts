@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 
 import { useOrganization, useUserProfile } from "@/lib/api/users";
-import { FeatureName, featureToPlanMap, organizationRoles } from "@/lib/validations/organization";
+import type { FeatureName } from "@/lib/validations/organization";
+import { featureToPlanMap, organizationRoles } from "@/lib/validations/organization";
 import { type Team, teamRoles } from "@/lib/validations/team";
 
 interface Options {
@@ -40,6 +41,7 @@ export function useAuthZ(options: Options = {}) {
   const isAppFeatureEnabled = (feature: FeatureName) => {
     const organizationPlan = organization?.plan_name;
     const plansEnabled = featureToPlanMap[feature];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (organizationPlan && plansEnabled && plansEnabled.includes(organizationPlan as any)) {
       return true;
     }
