@@ -107,7 +107,6 @@ const MapPopoverInfo: React.FC<MapPopoverInfoProps> = ({
   onClose,
 }) => {
   const [detailsView, setDetailsView] = useState<DetailsViewType | undefined>(undefined);
-
   return (
     <Popup
       onClose={onClose}
@@ -189,15 +188,16 @@ const MapPopoverInfo: React.FC<MapPopoverInfoProps> = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {detailsView.data.map((item, index) => (
-                      <tr key={index}>
-                        {Object.entries(item).map(([key, value]) => (
-                          <td style={{ paddingRight: 10 }} key={key}>
-                            {value}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
+                    {detailsView.data.length > 0 &&
+                      detailsView.data.map((item, index) => (
+                        <tr key={index}>
+                          {Object.entries(item).map(([key, value]) => (
+                            <td style={{ paddingRight: 10 }} key={key}>
+                              {value}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </Stack>
