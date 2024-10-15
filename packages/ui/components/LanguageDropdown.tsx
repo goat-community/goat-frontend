@@ -1,6 +1,7 @@
 import type { TooltipProps } from "@mui/material";
-import { Button, Menu, MenuItem, Tooltip } from "@mui/material";
+import { Button, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import React from "react";
+
 import { ICON_NAME, Icon } from "./Icon";
 
 export type LanguageSelectProps<Language extends string = string> = {
@@ -14,22 +15,17 @@ export type LanguageSelectProps<Language extends string = string> = {
 };
 
 export default function LanguageSelect<Language extends string = string>(
-  props: LanguageSelectProps<Language>,
+  props: LanguageSelectProps<Language>
 ) {
   const { languages, selected, onLanguageChange, toolTipProps } = props;
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | undefined>(
-    undefined,
-  );
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | undefined>(undefined);
   const open = Boolean(anchorEl);
   const handleClose = () => {
     setAnchorEl(undefined);
   };
   return (
     <>
-      <Tooltip
-        title={toolTipProps?.title ? toolTipProps.title : null}
-        {...toolTipProps}
-      >
+      <Tooltip title={toolTipProps?.title ? toolTipProps.title : null} {...toolTipProps}>
         <Button
           color="secondary"
           variant="text"
@@ -42,18 +38,11 @@ export default function LanguageSelect<Language extends string = string>(
           data-ga-event-action="language"
           aria-haspopup="true"
           aria-owns={open ? "language-menu" : undefined}
-          aria-expanded={open ? "true" : undefined}
-        >
+          aria-expanded={open ? "true" : undefined}>
           {languages[selected]}
         </Button>
       </Tooltip>
-      <Menu
-        id="language-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-      >
+      <Menu id="language-menu" anchorEl={anchorEl} open={open} onClose={handleClose} onClick={handleClose}>
         {Object.entries(languages).map(([language, languageName]) => (
           <MenuItem
             component="a"
@@ -63,9 +52,8 @@ export default function LanguageSelect<Language extends string = string>(
             onClick={() => {
               onLanguageChange(language as Language);
             }}
-            lang={language}
-          >
-            {languageName as string}
+            lang={language}>
+            <Typography fontFamily="'Mulish', sans-serif">{languageName as string}</Typography>
           </MenuItem>
         ))}
       </Menu>
