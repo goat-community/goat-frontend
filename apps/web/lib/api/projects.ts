@@ -107,9 +107,9 @@ export const useProjectInitialViewState = (projectId: string) => {
   };
 };
 
-export const useProjectLayerChartData = (projectId: string, layerId: number) => {
+export const useProjectLayerChartData = (projectId: string, layerId: number, cumSum: boolean = false) => {
   const { data, isLoading, error, mutate, isValidating } = useSWR(
-    [`${PROJECTS_API_BASE_URL}/${projectId}/layer/${layerId}/chart-data`],
+    [`${PROJECTS_API_BASE_URL}/${projectId}/layer/${layerId}/chart-data?cumsum=${cumSum}`],
     fetcher
   );
   return {

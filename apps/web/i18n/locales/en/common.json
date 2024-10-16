@@ -161,6 +161,7 @@
   "credits": "Credits",
   "credits_quota_information": "Credit quota units are consumed each time a user is using tools or performs map load. The usage quota resets at the beginning of each month.",
   "csv": "CSV",
+  "cumsum": "Cumulative sum",
   "current_credits_out_of_total_quota": "<highlight>{{current}}</highlight> out of {{total}} credits / month",
   "current_plan": "Current plan",
   "current_projects_out_of_total_quota": "<highlight>{{current}}</highlight> out of {{total}} projects",

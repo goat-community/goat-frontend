@@ -161,6 +161,7 @@
   "credits": "Credits",
   "credits_quota_information": "Credits werden jedes Mal verbraucht, wenn ein Benutzer Werkzeuge aus dem Werkzeugkasten nutzt oder Karten lädt. \nDie genutzten Credits werden zu Beginn jedes Monats zurückgesetzt.",
   "csv": "CSV",
+  "cumsum": "Kumulative Summe",
   "current_credits_out_of_total_quota": "{{current}} von {{total}} Credits / pro Monat",
   "current_plan": "Aktuelles Lizenzmodell",
   "current_projects_out_of_total_quota": "{{current}} von {{total}} Projekten",

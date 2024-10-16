@@ -1,11 +1,13 @@
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
+  FormControlLabel,
   Stack,
   Typography,
   useTheme,
@@ -26,6 +28,7 @@ import type { SelectorItem } from "@/types/map/common";
 import useLayerFields from "@/hooks/map/CommonHooks";
 
 import EmptySection from "@/components/common/EmptySection";
+import FormLabelHelper from "@/components/common/FormLabelHelper";
 import { Plot } from "@/components/common/PlotlyPlot";
 import Selector from "@/components/map/panels/common/Selector";
 
@@ -40,7 +43,8 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({ open, onClose,
   const { t } = useTranslation("common");
   const theme = useTheme();
   const params = useParams();
-  const { chartData, isLoading, isError } = useProjectLayerChartData(projectId, layer.id);
+  const [cumSum, setCumSum] = useState(false);
+  const { chartData, isLoading, isError } = useProjectLayerChartData(projectId, layer.id, cumSum);
   const { layerFields: fields, isLoading: areFieldsLoading } = useLayerFields(layer.layer_id, undefined);
 
   const chartTypes: SelectorItem[] = useMemo(() => {
@@ -73,28 +77,31 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({ open, onClose,
     if (!layer.charts || !chartData) return {};
     let x = layer.charts["x_label"];
     let y = layer.charts["y_label"];
+    let xTitle = x;
+    let yTitle = cumSum ? `${y} (cumsum)` : y;
     const grouped = chartData["group"];
     if (chartType === "bar" && orientation === "h") {
       [x, y] = [y, x];
+      [xTitle, yTitle] = [yTitle, xTitle];
     }
     const xFieldType = fields.find((field) => field.name === x)?.type;
     const yFieldType = fields.find((field) => field.name === y)?.type;
     const config = {
       xaxis: {
         type: xFieldType === "string" ? "category" : undefined,
-        title: x,
+        title: xTitle,
       },
       yaxis: {
         type: yFieldType === "string" ? "category" : undefined,
-        title: y,
+        title: yTitle,
       },
-      title: `${x} vs ${y}`,
+      title: `${xTitle} vs ${yTitle}`,
     };
     if (grouped) {
       config["barmode"] = "stack";
     }
     return config;
-  }, [chartData, chartType, fields, layer.charts, orientation]);
+  }, [chartData, chartType, cumSum, fields, layer.charts, orientation]);
 
   const chartDataConfig = useMemo(() => {
     if (!chartData) return [];
@@ -133,7 +140,7 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({ open, onClose,
       <DialogContent sx={{ px: 2, pt: 0, mt: 0, pb: 0 }}>
         <Box>
           {chartData && fields && layer.charts && (
-            <Stack direction="row" sx={{ p: 2 }}>
+            <Stack sx={{ p: 2 }}>
               <Selector
                 selectedItems={selectedChartType}
                 setSelectedItems={(item: SelectorItem) => {
@@ -154,6 +161,24 @@ const MapLayerChartModal: React.FC<MapLayerChartDialogProps> = ({ open, onClose,
                 label={t("select_chart_type")}
                 placeholder="Test"
               />
+              <Divider />
+              <FormLabelHelper label={t("settings")} color="inherit" />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={cumSum}
+                    onChange={(e) => setCumSum(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2" fontWeight="bold">
+                    {t("cumsum")}
+                  </Typography>
+                }
+              />
+              <Divider />
             </Stack>
           )}
           {isError && <EmptySection icon={ICON_NAME.CIRCLEINFO} label={t("error_loading_chart_data")} />}{" "}
