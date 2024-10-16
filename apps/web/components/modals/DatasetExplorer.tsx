@@ -102,9 +102,20 @@ const DatasetExplorerModal: React.FC<DatasetExplorerProps> = ({ open, onClose, p
                   contentType="layer"
                   view="list"
                   queryParams={queryParams}
-                  setQueryParams={setQueryParams}
+                  setQueryParams={(queryParams) => {
+                    setQueryParams({
+                      ...queryParams,
+                      page: 1,
+                    });
+                  }}
                   datasetSchema={datasetSchema}
-                  setDatasetSchema={setDatasetSchema}
+                  setDatasetSchema={(datasetSchema) => {
+                    setDatasetSchema(datasetSchema);
+                    setQueryParams({
+                      ...queryParams,
+                      page: 1,
+                    });
+                  }}
                 />
                 <Stack direction="column">
                   <TileGrid

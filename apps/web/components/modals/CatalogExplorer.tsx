@@ -13,7 +13,7 @@ import {
   debounce,
   useTheme,
 } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 
 import { Loading } from "@p4b/ui/components/Loading";
@@ -60,7 +60,16 @@ const CatalogExplorerModal: React.FC<CatalogExplorerProps> = ({ open, onClose, p
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
   const [selectedDataset, setSelectedDataset] = useState<Layer>();
+
+  const resetPage = useCallback(() => {
+    setQueryParams({
+      ...queryParams,
+      page: 1,
+    });
+  }, [queryParams]);
+
   const debouncedSetSearchText = debounce((value) => {
+    resetPage();
     setSearchText(value || null);
     const newDatasetSchema = { ...datasetSchema };
     if (value) {

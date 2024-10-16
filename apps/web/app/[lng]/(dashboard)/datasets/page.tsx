@@ -155,9 +155,20 @@ const Datasets = () => {
             view={view}
             setView={setView}
             queryParams={queryParams}
-            setQueryParams={setQueryParams}
+            setQueryParams={(queryParams) => {
+              setQueryParams({
+                ...queryParams,
+                page: 1,
+              });
+            }}
             datasetSchema={datasetSchema}
-            setDatasetSchema={setDatasetSchema}
+            setDatasetSchema={(datasetSchema) => {
+              setDatasetSchema(datasetSchema);
+              setQueryParams({
+                ...queryParams,
+                page: 1,
+              });
+            }}
           />
         </Grid>
         <Grid item xs={3}>

@@ -112,8 +112,17 @@ const Catalog = () => {
   const { metadata, isLoading: filtersLoading } = useMetadataAggregated(datasetSchema);
   const { layers: datasets, isLoading: datasetsLoading } = useCatalogLayers(queryParams, datasetSchema);
 
+  const resetPage = useCallback(() => {
+    setQueryParamPage(1);
+    setQueryParams({
+      ...queryParams,
+      page: 1,
+    });
+  }, [queryParams, setQueryParamPage]);
+
   const handleToggle = useCallback(
     (filterType: string, value: string) => {
+      resetPage();
       const setFilterValues = filterOptions[filterType].setValue;
       const filterValues = filterOptions[filterType].value || [];
       const currentIndex = filterValues.indexOf(value);
@@ -132,10 +141,11 @@ const Catalog = () => {
       }
       setDatasetSchema(newDatasetSchema);
     },
-    [datasetSchema, filterOptions]
+    [datasetSchema, filterOptions, resetPage]
   );
 
   const debouncedSetSearchText = debounce((value) => {
+    resetPage();
     setSearchText(value || null);
     const newDatasetSchema = { ...datasetSchema };
     if (value) {
