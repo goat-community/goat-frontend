@@ -39,9 +39,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
   });
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
-  const isValid = useMemo(() => {
-    return true;
-  }, []);
+
   const [bufferLayer, setBufferLayer] = useState<SelectorItem | undefined>(undefined);
   const [distance, setDistance] = useState<number>(bufferDefaults.default_distance);
   const [steps, setSteps] = useState<SelectorItem | undefined>({
@@ -55,6 +53,10 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
   // Scenario
   const { scenarioItems } = useScenarioItems(projectId as string);
   const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
+
+  const isValid = useMemo(() => {
+    return !!bufferLayer && distance > 0;
+  }, [bufferLayer, distance]);
 
   useEffect(() => {
     if (!isPolygonUnion) {
