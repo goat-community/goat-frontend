@@ -10,6 +10,7 @@ import { useTranslation } from "@/i18n/client";
 
 import { getLayerClassBreaks, getLayerUniqueValues, updateDataset, useDataset } from "@/lib/api/layers";
 import { updateProjectLayer } from "@/lib/api/projects";
+import { useUserProfile } from "@/lib/api/users";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { addOrUpdateMarkerImages } from "@/lib/transformers/map-image";
 import {
@@ -43,9 +44,8 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { activeLayer } = useActiveLayer(projectId);
   const { dataset, mutate: mutateDataset } = useDataset(activeLayer?.layer_id || "");
   const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
-
   const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
-
+  const { userProfile } = useUserProfile();
   const updateLayerStyle = useCallback(
     async (newStyle: FeatureLayerProperties) => {
       if (!activeLayer) return;
@@ -205,11 +205,16 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
   const layerStyleMoreMenuOptions = useMemo(() => {
     const layerStyleMoreMenuOptions: PopperMenuItem[] = [
-      {
-        id: LayerStyleActions.SAVE_AS_DEFAULT,
-        label: t("save_as_default"),
-        icon: ICON_NAME.SAVE,
-      },
+      // Save as default is only available to the user who owns the dataset
+      ...(userProfile?.id === dataset?.user_id
+        ? [
+            {
+              id: LayerStyleActions.SAVE_AS_DEFAULT,
+              label: t("save_as_default"),
+              icon: ICON_NAME.SAVE,
+            },
+          ]
+        : []),
       {
         id: LayerStyleActions.RESET,
         label: t("reset"),
@@ -218,7 +223,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     ];
 
     return layerStyleMoreMenuOptions;
-  }, [t]);
+  }, [t, userProfile, dataset]);
 
   const markerExists = useMemo(() => {
     return (
