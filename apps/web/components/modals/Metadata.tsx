@@ -45,7 +45,8 @@ const Metadata: React.FC<MetadataDialogProps> = ({ open, onClose, content, type 
     defaultValues: { ...content },
   });
 
-  const { dataCategoryOptions, geographicalCodeOptions, licenseOptions } = useContentMetadataHooks();
+  const { dataCategoryOptions, geographicalCodeOptions, licenseOptions, languageCodeOptions } =
+    useContentMetadataHooks();
 
   const onSubmit = async (data: LayerMetadata) => {
     try {
@@ -116,12 +117,12 @@ const Metadata: React.FC<MetadataDialogProps> = ({ open, onClose, content, type 
                   name="geographical_code"
                   label={t("common:metadata.headings.geographical_code")}
                 />
-                {/* <RhfAutocompleteField
-                  options={geographicalCodeOptions}
+                <RhfAutocompleteField
+                  options={languageCodeOptions}
                   control={control}
                   name="language_code"
                   label={t("common:metadata.headings.language_code")}
-                /> */}
+                />
                 <TextField
                   fullWidth
                   label={t("common:metadata.headings.data_reference_year")}

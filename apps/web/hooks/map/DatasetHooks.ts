@@ -16,6 +16,9 @@ export const useGetMetadataValueTranslation = () => {
       if (key === "geographical_code") {
         translationPath = `countries:${value.toUpperCase()}`;
       }
+      if (key === "language_code") {
+        translationPath = `languages:${value}`;
+      }
 
       return i18n.exists(translationPath) ? t(translationPath) : value;
     },

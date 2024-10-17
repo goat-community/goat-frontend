@@ -7,8 +7,7 @@ import { useTranslation } from "@/i18n/client";
 import { dataCategory, dataLicense } from "@/lib/validations/common";
 
 export const useContentMetadataHooks = () => {
-  const { t } = useTranslation(["common", "countries"]);
-
+  const { t, i18n } = useTranslation(["common", "countries", "languages"]);
   const dataCategoryOptions = useMemo(() => {
     return dataCategory.options.map((dataCategory) => {
       return {
@@ -28,6 +27,16 @@ export const useContentMetadataHooks = () => {
     });
   }, [t]);
 
+  const languageCodeOptions = useMemo(() => {
+    const resourceBundle = i18n.getResourceBundle(i18n.language, "languages");
+    return Object.entries(resourceBundle).map(([languageCode, label]) => {
+      return {
+        value: languageCode as string,
+        label: label as string,
+      };
+    });
+  }, [i18n]);
+
   const licenseOptions = useMemo(() => {
     return dataLicense.options.map((license) => {
       return {
@@ -42,5 +51,6 @@ export const useContentMetadataHooks = () => {
     dataCategoryOptions,
     geographicalCodeOptions,
     licenseOptions,
+    languageCodeOptions,
   };
 };

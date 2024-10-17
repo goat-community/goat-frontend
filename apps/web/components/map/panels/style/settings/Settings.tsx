@@ -46,7 +46,7 @@ const Settings = ({
       newStyle[`${type}`] = value;
       onStyleChange && onStyleChange(newStyle);
     },
-    [layerStyle, type, onStyleChange]
+    [layerStyle, onStyleChange]
   );
 
   return (

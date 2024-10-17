@@ -50,7 +50,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   icon,
   onToggle,
 }) => {
-  const { t, i18n } = useTranslation("common");
+  const { t, i18n } = useTranslation(["common", "countries", "languages"]);
   const theme = useTheme();
   const [searchText, setSearchText] = useState("");
   const handleClearText = () => {
@@ -62,6 +62,16 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       return value.value.toLowerCase().includes(searchText.toLowerCase());
     });
   }, [values, searchText]);
+
+  const getItemLabel = (filterType: string, item: { value: string }) => {
+    let key = `common:metadata.${filterType}.${item.value}`;
+    if (filterType === "language_code") {
+      key = `languages:${item.value}`;
+    } else if (filterType === "geographical_code") {
+      key = `countries:${item.value}`;
+    }
+    return i18n.exists(key) ? t(key) : item.value;
+  };
 
   return (
     <Accordion elevation={0} disableGutters defaultExpanded>
@@ -90,7 +100,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             autoFocus
             fullWidth
             disabled={isLoading}
-            placeholder={t("search")}
+            placeholder={t("common:search")}
             value={searchText}
             InputProps={{
               sx: { pr: 1 },
@@ -168,9 +178,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                                 fontWeight={
                                   !!filterValues && filterValues.includes(item.value) ? "bold" : "regular"
                                 }>
-                                {i18n.exists(`common:metadata.${filterType}.${item.value}`)
-                                  ? t(`metadata.${filterType}.${item.value}`)
-                                  : item.value}
+                                {getItemLabel(filterType, item)}
                               </Typography>
                             }
                           />
@@ -209,7 +217,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
           )}
           {!isLoading && filteredValues && filteredValues.length === 0 && (
             <Box sx={{ py: 6 }}>
-              <NoValuesFound text={t("no_options_for_this_filter")} />
+              <NoValuesFound text={t("common:no_options_for_this_filter")} />
             </Box>
           )}
         </Box>
