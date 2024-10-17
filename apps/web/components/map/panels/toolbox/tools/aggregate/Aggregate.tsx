@@ -62,7 +62,6 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     sourceLayer?.value as number | undefined,
     projectId as string
   );
-  const { layerFields: allSourceLayerFields } = useLayerFields(sourceLayerDatasetId || "");
 
   const [areaType, setAreaType] = useState<SelectorItem | undefined>();
   const [selectedAreaLayer, setSelectedAreaLayer] = useState<SelectorItem | undefined>(undefined);
@@ -107,9 +106,20 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     setStatisticField,
   } = useStatisticValues();
 
+  const { layerFields: allSourceLayerFields } = useLayerFields(
+    sourceLayerDatasetId || "",
+    statisticMethodSelected?.value === "count" ? undefined : "number"
+  );
+
   const isValid = useMemo(() => {
+    if (
+      (areaType?.value === areaTypeEnum.Enum.feature && !selectedAreaLayer) ||
+      (areaType?.value === areaTypeEnum.Enum.h3_grid && !selectedAreaH3Grid)
+    ) {
+      return false;
+    }
     return !!sourceLayer && !!areaType && !!statisticMethodSelected && !!statisticField;
-  }, [sourceLayer, areaType, statisticMethodSelected, statisticField]);
+  }, [sourceLayer, areaType, statisticMethodSelected, statisticField, selectedAreaLayer, selectedAreaH3Grid]);
 
   const handleRun = async () => {
     const payload = {
