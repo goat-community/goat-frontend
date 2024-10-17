@@ -135,6 +135,8 @@ export const marker = z.object({
 
 const MarkerMap = z.array(z.tuple([z.union([z.array(z.string()), z.null()]), marker]));
 
+export const markerBackgroundType = z.enum(["circle", "marker"]);
+
 export const markerSchema = z.object({
   custom_marker: z.boolean().default(false),
   marker: marker.optional(),
@@ -143,6 +145,8 @@ export const markerSchema = z.object({
   marker_size: z.number().min(0).max(100).default(10),
   marker_size_range: z.array(z.number().min(0).max(500)).default([0, 10]),
   marker_size_field: layerFieldType.optional(),
+  marker_background_type: markerBackgroundType.optional().default("marker"),
+  marker_allow_overlap: z.boolean().optional().default(false),
 });
 
 export const featureLayerBasePropertiesSchema = z

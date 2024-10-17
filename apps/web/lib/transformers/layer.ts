@@ -171,7 +171,8 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer | Layer) {
         layout: {
           visibility: data.properties.visibility ? "visible" : "none",
           "icon-image": getMapboxStyleMarker(data),
-          "icon-size": 1, // This is a scale factor not in px
+          "icon-size": 1, // This is a scale factor not in px,
+          "icon-allow-overlap": data.properties["marker_allow_overlap"] || false,
         },
         paint: {
           "icon-opacity": pointProperties.filled ? pointProperties.opacity : 1,
@@ -288,7 +289,7 @@ export function scenarioLayerStyleSpec(data: ProjectLayer | Layer) {
         type: "symbol",
         layout: {
           "icon-image": getMapboxStyleMarker(data),
-          'icon-allow-overlap': true,
+          'icon-allow-overlap': data.properties["marker_allow_overlap"] || false,
           "icon-size": 1,
         },
         paint: {

@@ -1,14 +1,16 @@
+import { Checkbox, FormControlLabel, Stack, Typography } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 
 import { useTranslation } from "@/i18n/client";
 
 import type { FeatureLayerProperties, LayerFieldType } from "@/lib/validations/layer";
 
+import FormLabelHelper from "@/components/common/FormLabelHelper";
 import LayerFieldSelector from "@/components/map/common/LayerFieldSelector";
 import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import SliderInput from "@/components/map/panels/common/SliderInput";
 
-const SizeOptions = ({
+const Settings = ({
   type,
   layerStyle,
   active,
@@ -34,13 +36,14 @@ const SizeOptions = ({
   const isRange = useMemo(() => (layerStyle?.[`${type}_field`] ? true : false), [layerStyle, type]);
 
   const _onStyleChange = useCallback(
-    (value) => {
+    (value, type) => {
       const newStyle = JSON.parse(JSON.stringify(layerStyle)) || {};
-      if (isRange) {
-        newStyle[`${type}_range`] = value;
-      } else {
-        newStyle[`${type}`] = value;
-      }
+      // if (isRange) {
+      //   newStyle[`${type}_range`] = value;
+      // } else {
+      //   newStyle[`${type}`] = value;
+      // }
+      newStyle[`${type}`] = value;
       onStyleChange && onStyleChange(newStyle);
     },
     [layerStyle, isRange, type, onStyleChange]
@@ -52,16 +55,40 @@ const SizeOptions = ({
         active={!!active}
         collapsed={collapsed}
         baseOptions={
-          <SliderInput
-            value={value}
-            onChange={setValue}
-            onChangeCommitted={_onStyleChange}
-            isRange={isRange}
-            rootSx={{
-              pl: 3,
-              pr: 2,
-            }}
-          />
+          <Stack direction="column" spacing={4}>
+            <Stack>
+              <FormLabelHelper label={t("size")} color="inherit" />
+              <SliderInput
+                value={value}
+                onChange={setValue}
+                onChangeCommitted={(value) => _onStyleChange(value, type)}
+                isRange={isRange}
+                rootSx={{
+                  pl: 3,
+                  pr: 2,
+                }}
+              />
+            </Stack>
+            {type === "marker_size" && (
+              <Stack>
+                <FormLabelHelper label={t("placement")} color="inherit" />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      color="primary"
+                      checked={layerStyle?.["marker_allow_overlap"] || false}
+                      onChange={(e) => {
+                        const allowOverlap = e.target.checked;
+                        _onStyleChange(allowOverlap, "marker_allow_overlap");
+                      }}
+                    />
+                  }
+                  label={<Typography variant="body2">{t("allow_overlap")}</Typography>}
+                />
+              </Stack>
+            )}
+          </Stack>
         }
         advancedOptions={
           <>
@@ -85,4 +112,4 @@ const SizeOptions = ({
   );
 };
 
-export default SizeOptions;
+export default Settings;

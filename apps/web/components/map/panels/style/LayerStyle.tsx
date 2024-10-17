@@ -34,7 +34,7 @@ import ProjectLayerDropdown from "@/components/map/panels/ProjectLayerDropdown";
 import SectionHeader from "@/components/map/panels/common/SectionHeader";
 import ColorOptions from "@/components/map/panels/style/color/ColorOptions";
 import MarkerOptions from "@/components/map/panels/style/marker/MarkerOptions";
-import SizeOptions from "@/components/map/panels/style/size/SizeOptions";
+import Settings from "@/components/map/panels/style/settings/Settings";
 
 const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { t } = useTranslation("common");
@@ -357,7 +357,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                         disableAdvanceOptions={true}
                       />
 
-                      <SizeOptions
+                      <Settings
                         type="stroke_width"
                         layerStyle={activeLayer?.properties}
                         active={!!activeLayer?.properties.stroked}
@@ -417,13 +417,13 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                           <SectionHeader
                             active={markerExists}
                             alwaysActive={true}
-                            label={t("marker_size")}
+                            label={t("marker_settings")}
                             collapsed={collapseRadiusOptions}
                             setCollapsed={setCollapseRadiusOptions}
                             disableAdvanceOptions={true}
                           />
 
-                          <SizeOptions
+                          <Settings
                             type="marker_size"
                             layerStyle={activeLayer?.properties}
                             active={markerExists}
@@ -448,13 +448,13 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                           <SectionHeader
                             active={true}
                             alwaysActive={true}
-                            label={t("radius")}
+                            label={t("point_settings")}
                             collapsed={collapseStrokeWidthOptions}
                             setCollapsed={setCollapseStrokeWidthOptions}
                             disableAdvanceOptions={true}
                           />
 
-                          <SizeOptions
+                          <Settings
                             type="radius"
                             layerStyle={activeLayer?.properties}
                             active={true}
