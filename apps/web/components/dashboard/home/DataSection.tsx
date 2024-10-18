@@ -20,6 +20,7 @@ import DatasetUploadModal from "@/components/modals/DatasetUpload";
 interface DataSectionProps {
   layers: Layer[];
   isLoading: boolean;
+  hideCreate?: boolean;
 }
 
 const DataSection = (props: DataSectionProps) => {
@@ -65,7 +66,7 @@ const DataSection = (props: DataSectionProps) => {
       </Box>
       <Divider sx={{ mb: 4 }} />
       <Grid container spacing={5}>
-        {(isLoading ? Array.from(new Array(4)) : layers ?? []).map((item: Layer, index: number) => (
+        {(isLoading ? Array.from(new Array(4)) : (layers ?? [])).map((item: Layer, index: number) => (
           <Grid
             item
             key={item?.id ?? index}
@@ -99,11 +100,13 @@ const DataSection = (props: DataSectionProps) => {
           {isLoading ? (
             <Skeleton variant="rectangular" height={200} />
           ) : (
-            <EmptyCard
-              onClick={() => setOpenDatasetUploadModal(true)}
-              tooltip={t("create_new_dataset")}
-              backgroundImage="https://assets.plan4better.de/img/grid_thumbnail.png"
-            />
+            !props.hideCreate && (
+              <EmptyCard
+                onClick={() => setOpenDatasetUploadModal(true)}
+                tooltip={t("create_new_dataset")}
+                backgroundImage="https://assets.plan4better.de/img/grid_thumbnail.png"
+              />
+            )
           )}
         </Grid>
       </Grid>

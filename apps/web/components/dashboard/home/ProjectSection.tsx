@@ -18,6 +18,7 @@ import ProjectModal from "@/components/modals/Project";
 interface ProjectSectionProps {
   projects: Project[];
   isLoading: boolean;
+  hideCreate?: boolean;
 }
 
 const ProjectSection = (props: ProjectSectionProps) => {
@@ -43,7 +44,7 @@ const ProjectSection = (props: ProjectSectionProps) => {
         </>
       )}
       <Grid container spacing={5}>
-        {(isLoading ? Array.from(new Array(3)) : projects ?? []).map((item: Project, index: number) => (
+        {(isLoading ? Array.from(new Array(3)) : (projects ?? [])).map((item: Project, index: number) => (
           <Grid
             item
             key={item?.id ?? index}
@@ -77,13 +78,15 @@ const ProjectSection = (props: ProjectSectionProps) => {
           {isLoading ? (
             <Skeleton variant="rectangular" height={200} />
           ) : (
-            <EmptyCard
-              onClick={() => {
-                setOpenProjectModal(true);
-              }}
-              tooltip={t("create_new_project")}
-              backgroundImage="https://assets.plan4better.de/img/goat_new_project_artwork.png"
-            />
+            !props.hideCreate && (
+              <EmptyCard
+                onClick={() => {
+                  setOpenProjectModal(true);
+                }}
+                tooltip={t("create_new_project")}
+                backgroundImage="https://assets.plan4better.de/img/goat_new_project_artwork.png"
+              />
+            )
           )}
         </Grid>
       </Grid>

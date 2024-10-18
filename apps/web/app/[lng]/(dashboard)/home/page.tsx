@@ -12,6 +12,7 @@ import { useProjects } from "@/lib/api/projects";
 import type { PaginatedQueryParams } from "@/lib/validations/common";
 import type { Layer } from "@/lib/validations/layer";
 
+import { useAuthZ } from "@/hooks/auth/AuthZ";
 import { useJobStatus } from "@/hooks/jobs/JobStatus";
 
 import BlogSection from "@/components/dashboard/home/BlogSection";
@@ -44,6 +45,8 @@ const Home = () => {
 
   useJobStatus(mutate);
 
+  const { isOrgEditor } = useAuthZ();
+
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
       <Stack direction="column" spacing={24}>
@@ -67,9 +70,17 @@ const Home = () => {
             </Button>
           </Box>
           <Divider sx={{ mb: 4 }} />
-          <ProjectSection projects={projects?.items ?? []} isLoading={isProjectLoading} />
+          <ProjectSection
+            projects={projects?.items ?? []}
+            isLoading={isProjectLoading}
+            hideCreate={!isOrgEditor}
+          />
         </Stack>
-        <DataSection layers={(layers?.items as Layer[]) ?? []} isLoading={isLayerLoading} />
+        <DataSection
+          layers={(layers?.items as Layer[]) ?? []}
+          isLoading={isLayerLoading}
+          hideCreate={!isOrgEditor}
+        />
         <BlogSection />
       </Stack>
     </Container>
