@@ -106,10 +106,12 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     setStatisticField,
   } = useStatisticValues();
 
-  const { layerFields: allSourceLayerFields } = useLayerFields(
+  const { layerFields: statisticLayerFields } = useLayerFields(
     sourceLayerDatasetId || "",
     statisticMethodSelected?.value === "count" ? undefined : "number"
   );
+
+  const { layerFields: allSourceLayerFields } = useLayerFields(sourceLayerDatasetId || "");
 
   const isValid = useMemo(() => {
     if (
@@ -322,7 +324,7 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                       tooltip={t("select_statistic_method_tooltip")}
                     />
                     <LayerFieldSelector
-                      fields={allSourceLayerFields}
+                      fields={statisticLayerFields}
                       selectedField={statisticField}
                       disabled={!statisticMethodSelected}
                       setSelectedField={(field) => {
