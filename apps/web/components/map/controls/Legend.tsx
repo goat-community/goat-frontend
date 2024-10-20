@@ -420,7 +420,13 @@ export function Legend(props: LegendProps) {
                   {geometryTypes.map(
                     (type) =>
                       layer.feature_layer_geometry_type === type &&
-                      layer.properties && <LegendRows key={type} properties={layer.properties} type={type} />
+                      layer.properties && (
+                        <LegendRows
+                          key={type}
+                          properties={layer.properties as FeatureLayerProperties}
+                          type={type}
+                        />
+                      )
                   )}
                 </>
               )}

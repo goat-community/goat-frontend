@@ -13,6 +13,7 @@ import { updateProjectLayer } from "@/lib/api/projects";
 import { useUserProfile } from "@/lib/api/users";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { addOrUpdateMarkerImages } from "@/lib/transformers/map-image";
+import { layerType } from "@/lib/validations/common";
 import {
   type ColorMap,
   type FeatureLayerPointProperties,
@@ -46,6 +47,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   const { layers: projectLayers, mutate: mutateProjectLayers } = useFilteredProjectLayers(projectId);
   const { layerFields } = useLayerFields(activeLayer?.layer_id || "");
   const { userProfile } = useUserProfile();
+  const layerProperties = activeLayer?.properties as FeatureLayerProperties;
   const updateLayerStyle = useCallback(
     async (newStyle: FeatureLayerProperties) => {
       if (!activeLayer) return;
@@ -77,10 +79,10 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       if (!activeLayer) return;
       if (!newStyle[`${updateType}_field`]?.name) return;
       let classBreakType = newStyle[`${updateType}_scale`];
-      const existingBreaks = activeLayer.properties[`${updateType}_scale_breaks`];
+      const existingBreaks = layerProperties[`${updateType}_scale_breaks`];
       if (classBreakType === classBreaks.Enum.custom_breaks && existingBreaks) {
         const breakValues = [] as string[];
-        if (classBreakType === activeLayer.properties[`${updateType}_scale`]) {
+        if (classBreakType === layerProperties[`${updateType}_scale`]) {
           const colorMap = newStyle[`${updateType}_range`]?.color_map;
           if (colorMap) {
             colorMap.forEach((colorMapItem) => {
@@ -102,10 +104,10 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
         return;
       }
       if (
-        newStyle[`${updateType}_scale`] !== activeLayer.properties[`${updateType}_scale`] ||
-        newStyle[`${updateType}_field`]?.name !== activeLayer.properties[`${updateType}_field`]?.name ||
+        newStyle[`${updateType}_scale`] !== layerProperties[`${updateType}_scale`] ||
+        newStyle[`${updateType}_field`]?.name !== layerProperties[`${updateType}_field`]?.name ||
         newStyle[`${updateType}_range`]?.colors?.length !==
-          activeLayer.properties[`${updateType}_range`]?.colors?.length
+          layerProperties[`${updateType}_range`]?.colors?.length
       ) {
         if (classBreakType === classBreaks.Enum.custom_breaks) {
           classBreakType = classBreaks.Enum.equal_interval;
@@ -127,7 +129,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
     async (updateType: "color" | "stroke_color" | "marker", newStyle: FeatureLayerProperties) => {
       if (!activeLayer) return;
       if (!newStyle[`${updateType}_field`]?.name) return;
-      const oldFieldName = activeLayer.properties[`${updateType}_field`]?.name;
+      const oldFieldName = layerProperties[`${updateType}_field`]?.name;
       const newFieldName = newStyle[`${updateType}_field`]?.name;
       if (updateType === "marker" && oldFieldName !== newFieldName) {
         const uniqueValues = await getLayerUniqueValues(
@@ -144,7 +146,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       } else if (updateType !== "marker") {
         if (
           (newStyle[`${updateType}_scale`] === "ordinal" &&
-            newStyle[`${updateType}_range`]?.name !== activeLayer.properties[`${updateType}_range`]?.name) ||
+            newStyle[`${updateType}_range`]?.name !== layerProperties[`${updateType}_range`]?.name) ||
           !newStyle[`${updateType}_range`]?.color_map ||
           oldFieldName !== newFieldName
         ) {
@@ -169,12 +171,12 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
   const onToggleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>, property: string) => {
-      const newStyle = JSON.parse(JSON.stringify(activeLayer?.properties)) || {};
+      const newStyle = JSON.parse(JSON.stringify(layerProperties)) || {};
       newStyle[property] = event.target.checked;
-      if (property === "stroked" && activeLayer?.properties?.["custom_marker"]) {
+      if (property === "stroked" && layerProperties?.["custom_marker"]) {
         newStyle["custom_marker"] = false;
       }
-      if (property === "custom_marker" && activeLayer?.properties?.["stroked"]) {
+      if (property === "custom_marker" && layerProperties?.["stroked"]) {
         newStyle["stroked"] = false;
       }
 
@@ -191,8 +193,8 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
   }, [dataset, updateLayerStyle]);
 
   const saveStyleAsDatasetDefault = useCallback(async () => {
-    if (dataset?.properties && activeLayer?.properties) {
-      dataset.properties = JSON.parse(JSON.stringify(activeLayer.properties));
+    if (dataset?.properties && layerProperties) {
+      dataset.properties = JSON.parse(JSON.stringify(layerProperties));
       try {
         await updateDataset(dataset.id, dataset);
         await mutateDataset(dataset, false);
@@ -201,7 +203,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
         toast.error(t("style_saved_as_dataset_default_error"));
       }
     }
-  }, [dataset, activeLayer?.properties, mutateDataset, t]);
+  }, [dataset, layerProperties, mutateDataset, t]);
 
   const layerStyleMoreMenuOptions = useMemo(() => {
     const layerStyleMoreMenuOptions: PopperMenuItem[] = [
@@ -227,9 +229,9 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
   const markerExists = useMemo(() => {
     return (
-      activeLayer?.properties["custom_marker"] &&
-      (activeLayer?.properties["marker"]?.name ||
-        (activeLayer?.properties["marker_field"] && activeLayer?.properties["marker_mapping"]?.length > 0))
+      layerProperties["custom_marker"] &&
+      (layerProperties["marker"]?.name ||
+        (layerProperties["marker_field"] && layerProperties["marker_mapping"]?.length > 0))
     );
   }, [activeLayer]);
 
@@ -247,7 +249,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       close={() => dispatch(setActiveRightPanel(undefined))}
       body={
         <>
-          {activeLayer && (
+          {activeLayer?.type === layerType.Values.feature && (
             <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
               <ProjectLayerDropdown projectId={projectId} layerTypes={["feature"]} />
               <MoreMenu
@@ -281,7 +283,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   ["polygon", "point"].includes(activeLayer.feature_layer_geometry_type) && (
                     <>
                       <SectionHeader
-                        active={activeLayer?.properties.filled}
+                        active={layerProperties.filled}
                         onToggleChange={(event) => {
                           onToggleChange(event, "filled");
                         }}
@@ -293,11 +295,11 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                       />
                       <ColorOptions
                         type="color"
-                        layerStyle={activeLayer?.properties}
-                        active={!!activeLayer?.properties.filled}
+                        layerStyle={layerProperties}
+                        active={!!layerProperties.filled}
                         layerFields={layerFields}
                         collapsed={collapseFillOptions}
-                        selectedField={activeLayer?.properties.color_field}
+                        selectedField={layerProperties.color_field}
                         onStyleChange={async (newStyle: FeatureLayerProperties) => {
                           if (newStyle.color_field?.type === "number" && newStyle.color_scale !== "ordinal") {
                             await updateColorClassificationBreaks("color", newStyle);
@@ -314,7 +316,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
                 {/* {STROKE} */}
                 <SectionHeader
-                  active={!!activeLayer?.properties.stroked}
+                  active={!!layerProperties.stroked}
                   onToggleChange={(event) => {
                     onToggleChange(event, "stroked");
                   }}
@@ -326,11 +328,11 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
                 <ColorOptions
                   type="stroke_color"
-                  layerStyle={activeLayer?.properties}
-                  active={!!activeLayer?.properties.stroked}
+                  layerStyle={layerProperties}
+                  active={!!layerProperties.stroked}
                   layerFields={layerFields}
                   collapsed={collapseStrokeColorOptions}
-                  selectedField={activeLayer?.properties.stroke_color_field}
+                  selectedField={layerProperties.stroke_color_field}
                   onStyleChange={async (newStyle: FeatureLayerProperties) => {
                     if (
                       newStyle.stroke_color_field?.type === "number" &&
@@ -351,7 +353,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   ["line"].includes(activeLayer.feature_layer_geometry_type) && (
                     <>
                       <SectionHeader
-                        active={!!activeLayer?.properties.stroked}
+                        active={!!layerProperties.stroked}
                         onToggleChange={(event) => {
                           onToggleChange(event, "stroked");
                         }}
@@ -364,14 +366,14 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
                       <Settings
                         type="stroke_width"
-                        layerStyle={activeLayer?.properties}
-                        active={!!activeLayer?.properties.stroked}
+                        layerStyle={layerProperties}
+                        active={!!layerProperties.stroked}
                         collapsed={collapseStrokeWidthOptions}
                         onStyleChange={(newStyle: FeatureLayerProperties) => {
                           updateLayerStyle(newStyle);
                         }}
                         layerFields={layerFields}
-                        selectedField={activeLayer?.properties["stroke_width_field"]}
+                        selectedField={layerProperties["stroke_width_field"]}
                       />
                     </>
                   )}
@@ -381,7 +383,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                   activeLayer.feature_layer_geometry_type === "point" && (
                     <>
                       <SectionHeader
-                        active={activeLayer?.properties["custom_marker"]}
+                        active={layerProperties["custom_marker"]}
                         alwaysActive={false}
                         onToggleChange={(event) => {
                           onToggleChange(event, "custom_marker");
@@ -393,9 +395,9 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
                       <MarkerOptions
                         type="marker"
-                        layerStyle={activeLayer?.properties}
+                        layerStyle={layerProperties}
                         layerId={activeLayer?.layer_id}
-                        active={!!activeLayer?.properties["custom_marker"]}
+                        active={!!layerProperties["custom_marker"]}
                         collapsed={collapsedMarkerIconOptions}
                         onStyleChange={async (newStyle: FeatureLayerProperties) => {
                           if (!map) return;
@@ -408,7 +410,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                           );
                         }}
                         layerFields={layerFields}
-                        selectedField={activeLayer?.properties["marker_field"]}
+                        selectedField={layerProperties["marker_field"]}
                       />
                     </>
                   )}
@@ -417,7 +419,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                 {activeLayer?.feature_layer_geometry_type &&
                   activeLayer.feature_layer_geometry_type === "point" && (
                     <>
-                      {activeLayer?.properties["custom_marker"] && (
+                      {layerProperties["custom_marker"] && (
                         <>
                           <SectionHeader
                             active={markerExists}
@@ -430,7 +432,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
                           <Settings
                             type="marker_size"
-                            layerStyle={activeLayer?.properties}
+                            layerStyle={layerProperties}
                             active={markerExists}
                             collapsed={collapseRadiusOptions}
                             onStyleChange={(newStyle: FeatureLayerProperties) => {
@@ -443,12 +445,12 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                               );
                             }}
                             layerFields={layerFields}
-                            selectedField={activeLayer?.properties["marker_size_field"]}
+                            selectedField={layerProperties["marker_size_field"]}
                           />
                         </>
                       )}
 
-                      {!activeLayer?.properties["custom_marker"] && (
+                      {!layerProperties["custom_marker"] && (
                         <>
                           <SectionHeader
                             active={true}
@@ -461,14 +463,14 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
                           <Settings
                             type="radius"
-                            layerStyle={activeLayer?.properties}
+                            layerStyle={layerProperties}
                             active={true}
                             collapsed={collapseRadiusOptions}
                             onStyleChange={(newStyle: FeatureLayerProperties) => {
                               updateLayerStyle(newStyle);
                             }}
                             layerFields={layerFields}
-                            selectedField={activeLayer?.properties["radius_field"]}
+                            selectedField={layerProperties["radius_field"]}
                           />
                         </>
                       )}

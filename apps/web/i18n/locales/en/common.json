@@ -530,7 +530,8 @@
     },
     "type": {
       "feature": "Feature",
-      "table": "Table"
+      "table": "Table",
+      "raster": "Raster"
     }
   },
   "metadata_updated_error": "Error updating metadata",
@@ -750,6 +751,7 @@
   "radius": "Radius",
   "radius_based_on": "Radius based on",
   "radius_based_on_desc": "Apply a radius based on a field value",
+  "raster": "Raster",
   "recent_datasets": "Recent Datasets",
   "recent_project": "Recent Projects",
   "recenter_map": "Recenter Map",

@@ -211,8 +211,7 @@ export const useActiveLayer = (projectId: string) => {
   const activeLayer = useMemo(() => {
     const activeLayer = projectLayers?.find((layer) => layer.id === activeLayerId);
     if (!activeLayer) return undefined;
-    const properties = activeLayer?.properties;
-    if (!properties) return undefined;
+    const properties = activeLayer.properties;
     const parsedActiveLayer = projectLayerSchema.parse(activeLayer);
     if (parsedActiveLayer.feature_layer_geometry_type === "point") {
       parsedActiveLayer.properties = featureLayerPointPropertiesSchema.parse(properties);

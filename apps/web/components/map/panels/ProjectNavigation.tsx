@@ -79,7 +79,6 @@ const ProjectNavigation = ({ projectId }) => {
         : t(basemap.subtitle),
     }));
   }, [basemaps, i18n, t]);
-
   const rightSidebar: MapSidebarProps = {
     topItems: [
       {
@@ -94,7 +93,9 @@ const ProjectNavigation = ({ projectId }) => {
         icon: ICON_NAME.FILTER,
         name: t("filter"),
         component: <Filter projectId={projectId} />,
-        disabled: !activeLayer || activeLayer?.type !== layerType.Values.feature,
+        disabled:
+          !activeLayer ||
+          (activeLayer?.type !== layerType.Values.feature && activeLayer?.type !== layerType.Values.table),
       },
       {
         id: MapSidebarItemID.STYLE,
@@ -123,7 +124,7 @@ const ProjectNavigation = ({ projectId }) => {
 
   const activeRightComponent = useMemo(() => {
     if (activeRight) {
-      return rightSidebar.topItems?.find((item) => item.id === activeRight)?.component;
+      return rightSidebar.topItems?.find((item) => item.id === activeRight && !item.disabled)?.component;
     } else if (prevActiveRightRef.current) {
       return rightSidebar.topItems?.find((item) => item.id === prevActiveRightRef.current)?.component;
     }

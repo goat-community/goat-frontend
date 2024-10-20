@@ -22,6 +22,7 @@ import { useTranslation } from "@/i18n/client";
 import { updateProjectLayer } from "@/lib/api/projects";
 import { setActiveRightPanel } from "@/lib/store/map/slice";
 import { createTheCQLBasedOnExpression, parseCQLQueryToObject } from "@/lib/transformers/filter";
+import { layerType } from "@/lib/validations/common";
 import { type Expression as ExpressionType, FilterType } from "@/lib/validations/filter";
 
 import type { SelectorItem } from "@/types/map/common";
@@ -46,7 +47,11 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
   // Add filter expression
   const [addExpressionAnchorEl, setAddExpressionAnchorEl] = React.useState<null | HTMLElement>(null);
   const handleAddExpressionClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAddExpressionAnchorEl(event.currentTarget);
+    if (activeLayer?.type === layerType.Values.feature) {
+      setAddExpressionAnchorEl(event.currentTarget);
+    } else {
+      createExpression(FilterType.Logical);
+    }
   };
   const handleAddExpressionClose = () => {
     setAddExpressionAnchorEl(null);
@@ -235,44 +240,46 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
                   {t("common:add_expression")}
                 </Typography>
               </Button>
-              <Menu
-                anchorEl={addExpressionAnchorEl}
-                sx={{
-                  "& .MuiPaper-root": {
-                    boxShadow: "0px 0px 10px 0px rgba(58, 53, 65, 0.1)",
-                  },
-                }}
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                transformOrigin={{ vertical: "bottom", horizontal: "center" }}
-                open={open}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                  sx: {
-                    width: addExpressionAnchorEl && addExpressionAnchorEl.offsetWidth - 10,
-                    p: 0,
-                  },
-                }}
-                onClose={handleAddExpressionClose}>
-                <Box>
-                  <ClickAwayListener onClickAway={handleAddExpressionClose}>
-                    <MenuList>
-                      {addExpressionItems.map((item, index) => (
-                        <MenuItem
-                          key={index}
-                          onClick={() => {
-                            createExpression(item.sourceType);
-                            handleAddExpressionClose();
-                          }}>
-                          <ListItemIcon>
-                            <Icon iconName={item.iconName} style={{ fontSize: "15px" }} />
-                          </ListItemIcon>
-                          <Typography variant="body2">{item.label}</Typography>
-                        </MenuItem>
-                      ))}
-                    </MenuList>
-                  </ClickAwayListener>
-                </Box>
-              </Menu>
+              {activeLayer.type === layerType.Values.feature && (
+                <Menu
+                  anchorEl={addExpressionAnchorEl}
+                  sx={{
+                    "& .MuiPaper-root": {
+                      boxShadow: "0px 0px 10px 0px rgba(58, 53, 65, 0.1)",
+                    },
+                  }}
+                  anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                  transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+                  open={open}
+                  MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                    sx: {
+                      width: addExpressionAnchorEl && addExpressionAnchorEl.offsetWidth - 10,
+                      p: 0,
+                    },
+                  }}
+                  onClose={handleAddExpressionClose}>
+                  <Box>
+                    <ClickAwayListener onClickAway={handleAddExpressionClose}>
+                      <MenuList>
+                        {addExpressionItems.map((item, index) => (
+                          <MenuItem
+                            key={index}
+                            onClick={() => {
+                              createExpression(item.sourceType);
+                              handleAddExpressionClose();
+                            }}>
+                            <ListItemIcon>
+                              <Icon iconName={item.iconName} style={{ fontSize: "15px" }} />
+                            </ListItemIcon>
+                            <Typography variant="body2">{item.label}</Typography>
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </ClickAwayListener>
+                  </Box>
+                </Menu>
+              )}
               {/* CLEAR FILTER */}
               <Button
                 variant="outlined"

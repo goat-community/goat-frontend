@@ -96,7 +96,9 @@ const PropertiesPanel = ({ projectId }: { projectId: string }) => {
             <>
               <ProjectLayerDropdown projectId={projectId} />
               <LayerInfo layer={activeLayer} />
-              <Symbology layer={activeLayer} />
+              {(activeLayer.type === "feature" || activeLayer.type === "raster") && (
+                <Symbology layer={activeLayer} />
+              )}
             </>
           )}
         </>

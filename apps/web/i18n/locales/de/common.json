@@ -530,7 +530,8 @@
     },
     "type": {
       "feature": "Feature",
-      "table": "Table"
+      "table": "Table",
+      "raster": "Raster"
     }
   },
   "metadata_updated_error": "Fehler beim aktualisieren der Metadaten",
@@ -750,6 +751,7 @@
   "radius": "Radius",
   "radius_based_on": "Radius basierend auf",
   "radius_based_on_desc": "Wenden Sie einen Radius basierend auf einem Feldwert an",
+  "raster": "Raster",
   "recent_datasets": "Aktuelle Datensätze",
   "recent_project": "Letzte Projekte",
   "recenter_map": "Karte zentrieren",

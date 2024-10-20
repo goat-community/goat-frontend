@@ -14,6 +14,7 @@ import {
 } from "@/lib/validations/common";
 import { responseSchema } from "@/lib/validations/response";
 import { publicUserSchema } from "@/lib/validations/user";
+import { DEFAULT_WKT_EXTENT } from "@/lib/constants";
 
 export const layerRoleEnums = z.enum(["layer-owner", "layer-viewer", "layer-editor"]);
 
@@ -207,9 +208,9 @@ export const otherPropertiesSchmea = z.object({
 
 export const layerSchema = layerMetadataSchema.extend({
   id: z.string(),
-  properties: featureLayerProperties,
+  properties: featureLayerProperties.or(z.record(z.any())).default({}),
   total_count: z.number().optional(),
-  extent: z.string(),
+  extent: z.string().default(DEFAULT_WKT_EXTENT),
   folder_id: z.string(),
   user_id: z.string().uuid(),
   type: layerType,
