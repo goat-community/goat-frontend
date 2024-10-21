@@ -3,14 +3,14 @@ import bbox from "@turf/bbox";
 import "maplibre-gl/dist/maplibre-gl.css";
 import React, { useMemo, useRef, useState } from "react";
 import type { MapRef } from "react-map-gl/maplibre";
-import { Map, MapProvider } from "react-map-gl/maplibre";
+import { MapProvider } from "react-map-gl/maplibre";
 
 import { MAPTILER_KEY } from "@/lib/constants";
 import { globalExtent, wktToGeoJSON } from "@/lib/utils/map/wkt";
 import type { Layer } from "@/lib/validations/layer";
 import type { ProjectLayer } from "@/lib/validations/project";
 
-import Layers from "@/components/map/Layers";
+import MapViewer from "@/components/map/MapViewer";
 import { Legend } from "@/components/map/controls/Legend";
 import { Recenter } from "@/components/map/controls/Recenter";
 
@@ -36,43 +36,37 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
   return (
     <>
       <MapProvider>
-        <Box
-          sx={{
+        <MapViewer
+          mapRef={mapRef}
+          layers={[dataset]}
+          initialViewState={{
+            bounds: boundingBox as [number, number, number, number],
+            fitBoundsOptions: { padding: 10 },
+          }}
+          onMove={(e) => {
+            setCurrentViewState({
+              longitude: e.viewState.longitude.toFixed(4),
+              latitude: e.viewState.latitude.toFixed(4),
+            });
+          }}
+          onLoad={() => {
+            const center = mapRef.current?.getMap().getCenter();
+            if (center) {
+              setInitialViewState({
+                longitude: center.lng.toFixed(4),
+                latitude: center.lat.toFixed(4),
+              });
+            }
+          }}
+          mapStyle={`https://api.maptiler.com/maps/dataviz-light/style.json?key=${MAPTILER_KEY}`}
+          dragRotate={false}
+          touchZoomRotate={false}
+          containerSx={{
             position: "relative",
             display: "flex",
-            width: "100%",
             height: `calc(100vh - 380px)`,
             overflow: "hidden",
           }}>
-          <Map
-            id="map"
-            ref={mapRef}
-            initialViewState={{
-              bounds: boundingBox as [number, number, number, number],
-              fitBoundsOptions: { padding: 10 },
-            }}
-            onMove={(e) => {
-              setCurrentViewState({
-                longitude: e.viewState.longitude.toFixed(4),
-                latitude: e.viewState.latitude.toFixed(4),
-              });
-            }}
-            onLoad={() => {
-              const center = mapRef.current?.getMap().getCenter();
-              if (center) {
-                setInitialViewState({
-                  longitude: center.lng.toFixed(4),
-                  latitude: center.lat.toFixed(4),
-                });
-              }
-            }}
-            style={{ width: "100%", height: "100%" }}
-            mapStyle={`https://api.maptiler.com/maps/dataviz-light/style.json?key=${MAPTILER_KEY}`}
-            dragRotate={false}
-            touchZoomRotate={false}>
-            <Layers layers={[dataset]} />
-          </Map>
-
           {!!hasMoved && (
             <Box
               sx={{
@@ -98,7 +92,7 @@ const DatasetMapPreview: React.FC<DatasetMapPreviewProps> = ({ dataset }) => {
               <Legend layers={[dataset] as unknown as ProjectLayer[]} hideZoomLevel hideLayerName />
             </Paper>
           </Box>
-        </Box>
+        </MapViewer>
       </MapProvider>
     </>
   );

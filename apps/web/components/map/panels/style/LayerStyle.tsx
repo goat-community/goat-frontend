@@ -122,7 +122,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
           newStyle[`${updateType}_scale_breaks`] = breaks;
       }
     },
-    [activeLayer, createColorMapFromClassBreaks]
+    [activeLayer, createColorMapFromClassBreaks, layerProperties]
   );
 
   const updateOrdinalValues = useCallback(
@@ -166,7 +166,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       }
       updateLayerStyle(newStyle);
     },
-    [activeLayer, updateLayerStyle]
+    [activeLayer, updateLayerStyle, layerProperties]
   );
 
   const onToggleChange = useCallback(
@@ -182,7 +182,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
 
       updateLayerStyle(newStyle);
     },
-    [activeLayer, updateLayerStyle]
+    [updateLayerStyle, layerProperties]
   );
 
   const resetStyle = useCallback(async () => {
@@ -233,7 +233,7 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       (layerProperties["marker"]?.name ||
         (layerProperties["marker_field"] && layerProperties["marker_mapping"]?.length > 0))
     );
-  }, [activeLayer]);
+  }, [layerProperties]);
 
   const [collapseFillOptions, setCollapseFillOptions] = useState(true);
   const [collapseStrokeColorOptions, setCollapseStrokeColorOptions] = useState(true);
