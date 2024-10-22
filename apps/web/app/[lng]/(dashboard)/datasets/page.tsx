@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
@@ -92,6 +92,15 @@ const Datasets = () => {
       label: t("dataset_external"),
     },
   ];
+
+  useEffect(() => {
+    if (datasets?.pages && queryParams?.page && datasets?.pages < queryParams?.page) {
+      setQueryParams({
+        ...queryParams,
+        page: datasets.pages,
+      });
+    }
+  }, [datasets, queryParams]);
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">

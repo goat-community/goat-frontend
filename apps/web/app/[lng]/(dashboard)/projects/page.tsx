@@ -2,7 +2,7 @@
 
 import { Box, Button, Container, Grid, Pagination, Paper, Stack, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ICON_NAME, Icon } from "@p4b/ui/components/Icon";
 
@@ -33,6 +33,15 @@ const Projects = () => {
 
   const [openProjectModal, setOpenProjectModal] = useState(false);
   const { isOrgEditor } = useAuthZ();
+
+  useEffect(() => {
+    if (projects?.pages && queryParams?.page && projects?.pages < queryParams?.page) {
+      setQueryParams({
+        ...queryParams,
+        page: projects.pages,
+      });
+    }
+  }, [projects, queryParams]);
 
   return (
     <Container sx={{ py: 10, px: 10 }} maxWidth="xl">
