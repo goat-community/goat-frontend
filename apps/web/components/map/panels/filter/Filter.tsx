@@ -127,7 +127,16 @@ const FilterPanel = ({ projectId }: { projectId: string }) => {
 
   const validateExpressions = (expressions) => {
     return expressions.every((expression) => {
-      return expression.attribute && expression.expression && !!expression.value.toString();
+      let hasValue = !!expression.value.toString();
+      if (
+        expression.expression === "is_empty_string" ||
+        expression.expression === "is_not_empty_string" ||
+        expression.expression === "is_blank" ||
+        expression.expression === "is_not_blank"
+      ) {
+        hasValue = true;
+      }
+      return expression.attribute && expression.expression && hasValue;
     });
   };
 

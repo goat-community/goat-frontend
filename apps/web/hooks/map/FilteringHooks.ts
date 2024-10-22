@@ -26,6 +26,14 @@ const useLogicalExpressionOperations = (
         label: t("filter_expressions.excludes"),
         value: "excludes",
       },
+      {
+        label: t("filter_expressions.is_blank"),
+        value: "is_blank",
+      },
+      {
+        label: t("filter_expressions.is_not_blank"),
+        value: "is_not_blank",
+      },
     ];
     if (selectedField === "number") {
       return [

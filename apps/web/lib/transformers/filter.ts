@@ -21,12 +21,11 @@ function createComparisonCondition(op: string, key: string, value: string | numb
 
 function createNestedCondition(outerOp: string, key: string, value: string, innerOp?: string) {
   return `{"op": "${outerOp}","args": [
-      ${
-        innerOp
-          ? `{"op":"${innerOp}","args":[{"property":"${key}"},"${value}"]}`
-          : `{ "property":"${key}"},
+      ${innerOp
+      ? `{"op":"${innerOp}","args":[{"property":"${key}"},"${value}"]}`
+      : `{ "property":"${key}"},
       "${value}"`
-      }]}`;
+    }]}`;
 }
 
 export function is(key: string, value: string | number) {
@@ -66,9 +65,7 @@ export function does_not_contains_the_text(key: string, value: string) {
 export function is_blank(key: string) {
   return `{
     "op": "isNull",
-    "args": [
-      { "property": "${key}" }
-    ]
+    "args": { "property": "${key}" }
   }`;
 }
 
@@ -78,9 +75,7 @@ export function is_not_blank(key: string) {
     "args": [
       {
         "op": "isNull",
-        "args": [
-          { "property": "${key}" }
-        ]
+        "args": { "property": "${key}" }
       }
     ]
   }`;
@@ -126,13 +121,14 @@ export function or_operator(args: string[]) {
   return `{"op":"or","args": [${args.map((arg) => `${arg}`)}]}`;
 }
 
+
 export function createTheCQLBasedOnExpression(
   expressions,
   layerFields: { name: string; type: string }[],
   logicalOperator?: "and" | "or"
 ) {
   const queries = expressions
-    .filter((exp) => exp.value && exp.expression && exp.attribute)
+    .filter((exp) => exp.expression && exp.attribute)
     .map((expression) => {
       const attributeType = layerFields.filter((field) => field.name === expression.attribute).length
         ? layerFields.filter((field) => field.name === expression.attribute)[0].type
@@ -167,6 +163,10 @@ export function createTheCQLBasedOnExpression(
           } else {
             return excludes(expression.attribute, expression.value.map(Number));
           }
+        case "is_blank":
+          return is_blank(expression.attribute);
+        case "is_not_blank":
+          return is_not_blank(expression.attribute);
         case "starts_with":
           return starts_with(expression.attribute, expression.value);
         case "ends_with":
@@ -175,10 +175,6 @@ export function createTheCQLBasedOnExpression(
           return contains_the_text(expression.attribute, expression.value);
         case "does_not_contains_the_text":
           return does_not_contains_the_text(expression.attribute, expression.value);
-        case "is_blank":
-          return is_blank(expression.attribute);
-        case "is_not_blank":
-          return is_not_blank(expression.attribute);
         case "is_between":
           return is_between(
             expression.attribute,
@@ -226,15 +222,18 @@ function toExpressionObject(expressionsInsideLogicalOperator): Expression[] {
       }
       expression.attribute = expressionToBeProcessed.args[0].property;
       expression.value = value.replace(/%/g, "");
-    } else if (expressionToBeProcessed.args.length === 1) {
-      switch (true) {
-        case expressionToBeProcessed.op === "isNull":
-          expression.expression = "is_blank";
-        case expressionToBeProcessed.op === "not":
-          expression.expression = "is_not_blank";
-      }
+    } else if (expressionToBeProcessed.op === "isNull") {
+      expression.expression = "is_blank";
+      expression.attribute = expressionToBeProcessed.args?.property;
+    } else if (expressionToBeProcessed.op === "not" && expressionToBeProcessed.args[0].op === "isNull") {
+      expression.expression = "is_not_blank";
+      expression.attribute = expressionToBeProcessed.args[0].args.property;
+    } else if (expressionToBeProcessed.op === "=" && value === "") {
+      expression.expression = "is_empty_string";
       expression.attribute = expressionToBeProcessed.args[0].property;
-      expression.attribute = value;
+    } else if (expressionToBeProcessed.op === "!=" && value === "") {
+      expression.expression = "is_not_empty_string";
+      expression.attribute = expressionToBeProcessed.args[0].property;
     } else if (["and", "or"].includes(expressionToBeProcessed.op)) {
       switch (expressionToBeProcessed.op) {
         case "and":
