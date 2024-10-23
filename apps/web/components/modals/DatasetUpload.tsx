@@ -150,7 +150,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({ open, onClose,
       let response;
       if (datasetType === "table") {
         response = await createTableLayer(payload, projectId);
-       } else if (datasetType === "feature_layer") {
+      } else if (datasetType === "feature_layer") {
         response = await createFeatureLayer(payload, projectId);
       }
       const jobId = response?.job_id;
@@ -279,7 +279,7 @@ const DatasetUploadModal: React.FC<DatasetUploadDialogProps> = ({ open, onClose,
           {activeStep < steps.length - 1 && (
             <Button
               disabled={
-                (activeStep === 0 && fileValue === null) ||
+                (activeStep === 0 && !fileValue) ||
                 (activeStep === 1 && (isValid !== true || selectedFolder === null))
               }
               onClick={handleNext}
