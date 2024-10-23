@@ -136,7 +136,8 @@ export type PostActiveMobilityAndCarCatchmentArea = z.infer<typeof activeMobilit
 export type PostPTCatchmentArea = z.infer<typeof ptCatchmentAreaSchema>;
 
 //**=== OEV-GUETEKLASSEN + TRIP COUNT === */
-const stationConfigSchema = z.object({
+export const oevGueteklassenCatchmentType = z.enum(["buffer", "network"]);
+export const stationConfigSchema = z.object({
   groups: z.record(z.string()),
   time_frequency: z.array(z.number()),
   categories: z.array(z.record(z.number())),
@@ -150,7 +151,9 @@ export const tripCountSchema = z.object({
   scenario_id: z.string().optional(),
 });
 
-export const oevGueteklassenSchema = tripCountSchema.extend({});
+export const oevGueteklassenSchema = tripCountSchema.extend({
+  catchment_type: oevGueteklassenCatchmentType.default("buffer")
+});
 
 export type PostTripCount = z.infer<typeof tripCountSchema>;
 export type PostOevGueteKlassen = z.infer<typeof oevGueteklassenSchema>;

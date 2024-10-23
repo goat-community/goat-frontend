@@ -326,14 +326,14 @@
     "is_at_most": "Ist höchstens",
     "is_before": "Ist vorher",
     "is_between": "Liegt zwischen",
-    "is_empty_string": "Ist leer",
     "is_blank": "Is blank",
+    "is_empty_string": "Ist leer",
     "is_greater_than": "Ist größer als",
     "is_less_than": "Ist weniger als",
     "is_not": "Ist nicht",
     "is_not_between": "Liegt nicht dazwischen",
-    "is_not_empty_string": "Ist nicht leer",
     "is_not_blank": "Is not blank",
+    "is_not_empty_string": "Ist nicht leer",
     "is_not_on": "Ist nicht eingeschaltet",
     "is_on": "Ist eingeschaltet",
     "not_in_the_last": "Nicht im letzten",
@@ -532,8 +532,8 @@
     },
     "type": {
       "feature": "Feature",
-      "table": "Table",
-      "raster": "Raster"
+      "raster": "Raster",
+      "table": "Table"
     }
   },
   "metadata_updated_error": "Fehler beim aktualisieren der Metadaten",
@@ -599,6 +599,8 @@
   "oev_gueteklasse": "ÖV-Güteklassen",
   "oev_gueteklasse_description": "ÖV-Güteklassen zeigen die Attraktivität des öffentlichen Verkehrs in einem bestimmten Gebiet an.",
   "oev_gueteklasse_header": "ÖV-Güteklassen",
+  "oev_gueteklassen_catchement_area": "Einzugsgebietstyp",
+  "oev_gueteklassen_catchment_area_tooltip": "Erreichbarkeit von Bahnhöfen über Pufferstrecke oder Straßennetzrouting",
   "oev_gueteklassen_computation_started": "Berechnung der ÖV-Güteklassen gestartet",
   "oev_guteklassen": "ÖV-Güteklassen",
   "ok": "OK",

@@ -326,14 +326,14 @@
     "is_at_most": "Is at most",
     "is_before": "Is before",
     "is_between": "Is between",
-    "is_empty_string": "Is empty string",
     "is_blank": "Is blank",
+    "is_empty_string": "Is empty string",
     "is_greater_than": "Is greater than",
     "is_less_than": "Is less than",
     "is_not": "Is not",
     "is_not_between": "Is not between",
-    "is_not_empty_string": "Is not empty string",
     "is_not_blank": "Is not blank",
+    "is_not_empty_string": "Is not empty string",
     "is_not_on": "Is not on",
     "is_on": "Is on",
     "not_in_the_last": "Not in the last",
@@ -532,8 +532,8 @@
     },
     "type": {
       "feature": "Feature",
-      "table": "Table",
-      "raster": "Raster"
+      "raster": "Raster",
+      "table": "Table"
     }
   },
   "metadata_updated_error": "Error updating metadata",
@@ -599,6 +599,8 @@
   "oev_gueteklasse": "ÖV-Güteklassen",
   "oev_gueteklasse_description": "The Public Transport Quality Classes (German: ÖV-Güteklassen) show the attractiveness of public transport services for a selected area.",
   "oev_gueteklasse_header": "ÖV-Güteklassen",
+  "oev_gueteklassen_catchement_area": "Catchment area type",
+  "oev_gueteklassen_catchment_area_tooltip": "Accessiblity to stations using buffer distance or street network routing",
   "oev_gueteklassen_computation_started": "ÖV-Güteklassen computation started",
   "oev_guteklassen": "ÖV-Güteklassen",
   "ok": "ok",

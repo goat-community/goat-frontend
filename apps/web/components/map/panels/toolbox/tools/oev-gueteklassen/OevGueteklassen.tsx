@@ -13,7 +13,11 @@ import { accessibilityIndicatorsStaticPayload } from "@/lib/constants/payloads";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { setMaskLayer } from "@/lib/store/map/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
-import { oevGueteklassenSchema, toolboxMaskLayerNames } from "@/lib/validations/tools";
+import {
+  oevGueteklassenCatchmentType,
+  oevGueteklassenSchema,
+  toolboxMaskLayerNames,
+} from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
@@ -43,6 +47,22 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { filteredLayers } = useLayerByGeomType(["feature"], ["polygon"], projectId as string);
   const [referenceLayer, setReferenceLayer] = useState<SelectorItem | undefined>(undefined);
 
+  const catchmentAreaTypes: SelectorItem[] = useMemo(() => {
+    return [
+      {
+        value: oevGueteklassenCatchmentType.Enum.buffer,
+        label: t("buffer"),
+        icon: ICON_NAME.BULLSEYE,
+      },
+      {
+        value: oevGueteklassenCatchmentType.Enum.network,
+        label: t("network"),
+        icon: ICON_NAME.STREET_NETWORK,
+      },
+    ];
+  }, [t]);
+  const [catchmentArea, setCatchmentArea] = useState<SelectorItem | undefined>(catchmentAreaTypes[0]);
+
   dispatch(setMaskLayer(toolboxMaskLayerNames.pt));
 
   const {
@@ -67,6 +87,7 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   const handleRun = async () => {
     const payload = {
+      catchment_type: catchmentArea?.value,
       reference_area_layer_project_id: referenceLayer?.value,
       station_config: accessibilityIndicatorsStaticPayload,
       time_window: {
@@ -96,6 +117,7 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   const handleReset = () => {
     setReferenceLayer(undefined);
+    setCatchmentArea(catchmentAreaTypes[0]);
     resetPTConfiguration();
   };
 
@@ -167,6 +189,32 @@ const OevGueteklassen = ({ onBack, onClose }: IndicatorBaseProps) => {
                       label={t("select_reference_layer")}
                       placeholder={t("select_reference_layer_placeholder")}
                       tooltip={t("select_reference_layer_tooltip")}
+                    />
+                  </>
+                }
+              />
+
+              {/* CONFIGURATION  */}
+              <SectionHeader
+                active={!!referenceLayer && isPTValid}
+                alwaysActive={true}
+                label={t("configuration")}
+                icon={ICON_NAME.SETTINGS}
+                disableAdvanceOptions={true}
+              />
+
+              <SectionOptions
+                active={!!referenceLayer && isPTValid}
+                baseOptions={
+                  <>
+                    <Selector
+                      selectedItems={catchmentArea}
+                      setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
+                        setCatchmentArea(item as SelectorItem);
+                      }}
+                      items={catchmentAreaTypes}
+                      label={t("oev_gueteklassen_catchement_area")}
+                      tooltip={t("oev_gueteklassen_catchment_area_tooltip")}
                     />
                   </>
                 }
