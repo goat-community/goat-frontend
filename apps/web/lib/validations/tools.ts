@@ -247,7 +247,7 @@ export const nearbyStationsSchema = z.object({
 export type PostNearbyStations = z.infer<typeof nearbyStationsSchema>;
 
 //**=== HEATMAP GRAVITY === */
-export const heatmapImpedanceFunctionEnum = z.enum(["gaussian"]); // todo: add "linear", "exponential", "power"
+export const heatmapImpedanceFunctionEnum = z.enum(["gaussian", "linear", "exponential", "power"]);
 export const heatmapGravitySchema = z.object({
   impedance_function: heatmapImpedanceFunctionEnum,
   opportunities: z.array(
