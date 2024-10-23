@@ -53,11 +53,11 @@ const Expression: React.FC<ExpressionProps> = (props) => {
         label: t("map_extent"),
         icon: ICON_NAME.BOUNDING_BOX,
       },
-      {
-        value: SpatialIntersectionGeomType.BOUNDARY,
-        label: t("boundary"),
-        icon: ICON_NAME.DRAW_POLYGON,
-      },
+      // {
+      //   value: SpatialIntersectionGeomType.BOUNDARY,
+      //   label: t("boundary"),
+      //   icon: ICON_NAME.DRAW_POLYGON,
+      // },
     ],
     [t]
   );
