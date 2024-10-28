@@ -588,7 +588,7 @@
   "no_teams_found_subtitle": "Here, you can create your own teams or view the teams you’ve been invited to collaborate with",
   "no_values_found": "No values found",
   "number_of_destinations": "Number of destinations",
-  "number_of_destinations_tooltip": "Number of destinations tooltip",
+  "number_of_destinations_tooltip": "Number of destinations",
   "od_configuration": "Configuration",
   "od_geometries_layer": "Geometries Layer",
   "od_geometries_layer_tooltip": "Select the layer containing the origin-destination geometries",

@@ -104,6 +104,25 @@ const Layers = (props: LayersProps) => {
                       }
                       source-layer="default"
                     />
+                    {layer.feature_layer_geometry_type === "polygon" && (
+                      <MapLayer
+                        key={`stroke-${layer.id.toString()}`}
+                        id={`stroke-${layer.id.toString()}`}
+                        beforeId={
+                          index === 0 || !useDataLayers ? undefined : useDataLayers[index - 1].id.toString()
+                        }
+                        {...(transformToMapboxLayerStyleSpec({
+                          ...layer,
+                          feature_layer_geometry_type: "line",
+                          properties: {
+                            ...layer.properties,
+                            opacity: 1, // todo: add stroke_opacity to the layer properties
+                            visibility: layer.properties.visibility && layer.properties.stroked,
+                          },
+                        }) as LayerProps)}
+                        source-layer="default"
+                      />
+                    )}
 
                     {/* HighlightLayer */}
                     {props.highlightFeature &&

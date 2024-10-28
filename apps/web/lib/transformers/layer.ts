@@ -205,7 +205,7 @@ export function transformToMapboxLayerStyleSpec(data: ProjectLayer | Layer) {
         "fill-color": getMapboxStyleColor(data, "color"),
         "fill-opacity": polygonProperties.filled ? polygonProperties.opacity : 0,
         "fill-outline-color": getMapboxStyleColor(data, "stroke_color"),
-        "fill-antialias": polygonProperties.stroked,
+        "fill-antialias": false,
       },
     };
   } else if (type === "line") {
