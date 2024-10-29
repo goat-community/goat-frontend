@@ -348,9 +348,8 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
                 />
 
                 {/* {LINE STROKE} */}
-                {/* {fix: only for point and line. stroke_width doesn't yet work with polygon due to webgl limitation} */}
                 {activeLayer.feature_layer_geometry_type &&
-                  ["line", "polygon"].includes(activeLayer.feature_layer_geometry_type) && (
+                  ["line", "polygon", "point"].includes(activeLayer.feature_layer_geometry_type) && (
                     <>
                       <SectionHeader
                         active={!!layerProperties.stroked}
