@@ -10,11 +10,12 @@ import { useTranslation } from "@/i18n/client";
 import { useJobs } from "@/lib/api/jobs";
 import { computeBuffer } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
-import { bufferDefaults, bufferSchema } from "@/lib/validations/tools";
+import { bufferDefaults, bufferSchema, maxFeatureCnt } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useLayerByGeomType, useScenarioItems } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
@@ -26,6 +27,7 @@ import Selector from "@/components/map/panels/common/Selector";
 import SliderInput from "@/components/map/panels/common/SliderInput";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import LayerNumberOfFeaturesAlert from "@/components/map/panels/toolbox/common/LayerNumberOfFeaturesAlert";
 import LearnMore from "@/components/map/panels/toolbox/common/LearnMore";
 import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools/catchment-area/utils";
 
@@ -40,7 +42,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
 
-  const [bufferLayer, setBufferLayer] = useState<SelectorItem | undefined>(undefined);
+  const [bufferLayerItem, setBufferLayerItem] = useState<SelectorItem | undefined>(undefined);
   const [distance, setDistance] = useState<number>(bufferDefaults.default_distance);
   const [steps, setSteps] = useState<SelectorItem | undefined>({
     value: bufferDefaults.default_steps,
@@ -54,10 +56,6 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { scenarioItems } = useScenarioItems(projectId as string);
   const [selectedScenario, setSelectedScenario] = useState<SelectorItem | undefined>(undefined);
 
-  const isValid = useMemo(() => {
-    return !!bufferLayer && distance > 0;
-  }, [bufferLayer, distance]);
-
   useEffect(() => {
     if (!isPolygonUnion) {
       setIsPolygonDifference(false);
@@ -66,9 +64,27 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   const { filteredLayers } = useLayerByGeomType(["feature"], undefined, projectId as string);
 
+  const { layers: projectLayers } = useFilteredProjectLayers(projectId as string);
+
+  const bufferLayer = useMemo(() => {
+    return projectLayers?.find((layer) => layer.id === bufferLayerItem?.value);
+  }, [bufferLayerItem, projectLayers]);
+
+  const isValid = useMemo(() => {
+    if (
+      !!bufferLayerItem &&
+      distance > 0 &&
+      bufferLayer?.filtered_count &&
+      bufferLayer?.filtered_count < maxFeatureCnt.buffer
+    ) {
+      return true;
+    }
+    return false;
+  }, [bufferLayerItem, distance]);
+
   const handleRun = async () => {
     const payload = {
-      source_layer_project_id: bufferLayer?.value,
+      source_layer_project_id: bufferLayerItem?.value,
       max_distance: distance,
       distance_step: steps?.value,
       polygon_union: isPolygonUnion,
@@ -97,7 +113,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
   };
   const handleReset = () => {
-    setBufferLayer(undefined);
+    setBufferLayerItem(undefined);
     setDistance(bufferDefaults.default_distance);
     setIsPolygonUnion(true);
     setIsPolygonDifference(false);
@@ -135,9 +151,9 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
               baseOptions={
                 <>
                   <Selector
-                    selectedItems={bufferLayer}
+                    selectedItems={bufferLayerItem}
                     setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
-                      setBufferLayer(item as SelectorItem);
+                      setBufferLayerItem(item as SelectorItem);
                     }}
                     items={filteredLayers}
                     emptyMessage={t("no_layers_found")}
@@ -146,18 +162,30 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
                     placeholder={t("select_buffer_layer_placeholder")}
                     tooltip={t("select_buffer_layer_tooltip")}
                   />
+                  {!!maxFeatureCnt.buffer &&
+                    !!bufferLayer?.filtered_count &&
+                    bufferLayer.filtered_count > maxFeatureCnt.buffer && (
+                      <LayerNumberOfFeaturesAlert
+                        currentFeatures={bufferLayer.filtered_count}
+                        maxFeatures={maxFeatureCnt.buffer}
+                        texts={{
+                          maxFeaturesText: t("maximum_number_of_features"),
+                          filterLayerFeaturesActionText: t("please_filter_layer_features"),
+                        }}
+                      />
+                    )}
                 </>
               }
             />
             <SectionHeader
-              active={!!bufferLayer}
+              active={!!bufferLayerItem}
               alwaysActive={true}
               label={t("buffer_settings")}
               icon={ICON_NAME.SETTINGS}
               disableAdvanceOptions={true}
             />
             <SectionOptions
-              active={!!bufferLayer}
+              active={!!bufferLayerItem}
               baseOptions={
                 <>
                   <Stack>
@@ -209,14 +237,14 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
 
             {/* SCENARIO */}
             <SectionHeader
-              active={isValid && !!bufferLayer}
+              active={isValid && !!bufferLayerItem}
               alwaysActive={true}
               label={t("scenario")}
               icon={ICON_NAME.SCENARIO}
               disableAdvanceOptions={true}
             />
             <SectionOptions
-              active={isValid && !!bufferLayer}
+              active={isValid && !!bufferLayerItem}
               baseOptions={
                 <>
                   <Selector

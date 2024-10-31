@@ -51,6 +51,7 @@ export const projectLayerSchema = layerSchema.extend({
     .optional(),
   layer_id: z.string().uuid(),
   charts: z.object({}).optional(),
+  filtered_count: z.number().optional(),
   legend_urls: z.array(z.string()).optional(),
 });
 

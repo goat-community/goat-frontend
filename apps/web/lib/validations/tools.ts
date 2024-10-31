@@ -1,5 +1,6 @@
 import * as z from "zod";
 
+
 //**=== CATCHMENT AREA === */
 export const CatchmentAreaRoutingTypeEnum = z.enum(["walking", "bicycle", "pedelec", "car", "pt"]);
 
@@ -291,3 +292,26 @@ export const heatmapConnectivitySchema = z.object({
 });
 
 export type PostHeatmapConnectivity = z.infer<typeof heatmapConnectivitySchema>;
+
+
+//**=== MAX FEATURE COUNT === */
+export const maxFeatureCnt = {
+  area_statistics: 100000,
+  join: 100000,
+  catchment_area_active_mobility: 1000,
+  catchment_area_pt: 5,
+  catchment_area_car: 50,
+  catchment_area_nearby_station_access: 1000,
+  oev_gueteklasse: 10000,
+  aggregate_point: 1000000,
+  aggregate_polygon: 100000,
+  buffer: 10000,
+  trip_count_station: 10000,
+  origin_destination: 12500,
+  heatmap_gravity_active_mobility: 1000000,
+  heatmap_gravity_motorized_mobility: 1000000,
+  heatmap_closest_average_active_mobility: 1000000,
+  heatmap_closest_average_motorized_mobility: 1000000,
+  heatmap_connectivity_active_mobility: 1000000,
+  heatmap_connectivity_motorized_mobility: 1000000,
+};

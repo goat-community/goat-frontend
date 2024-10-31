@@ -15,7 +15,7 @@ import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { setIsMapGetInfoActive, setMaskLayer, setToolboxStartingPoints } from "@/lib/store/map/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { CatchmentAreaRoutingWithoutPTType } from "@/lib/validations/tools";
-import { nearbyStationsSchema, toolboxMaskLayerNames } from "@/lib/validations/tools";
+import { maxFeatureCnt, nearbyStationsSchema, toolboxMaskLayerNames } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
@@ -110,15 +110,33 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
   // Starting Points
   const { startingPointMethods } = useStartingPointMethods();
   const [startingPointMethod, setStartingPointMethod] = useState<SelectorItem>(startingPointMethods[0]);
-  const [startingPointLayer, setStartingPointLayer] = useState<SelectorItem | undefined>(undefined);
+  const [startingPointLayerItem, setSelectecStartingPointLayerItem] = useState<SelectorItem | undefined>(
+    undefined
+  );
+
+  const startingPointLayer = useMemo(() => {
+    return projectLayers?.find((layer) => layer.id === startingPointLayerItem?.value);
+  }, [projectLayers, startingPointLayerItem?.value]);
+
+  const maxStartingPoints = maxFeatureCnt.catchment_area_nearby_station_access;
 
   const isValid = useMemo(() => {
-    if (startingPointMethod.value === "browser_layer" && !startingPointLayer?.value) return false;
+    if (startingPointMethod.value === "browser_layer" && !startingPointLayerItem?.value) return false;
 
     if (startingPointMethod.value === "map" && (!startingPoints || startingPoints.length === 0)) return false;
 
+    const startingPointCount = startingPoints?.length || startingPointLayer?.filtered_count || 0;
+    if (startingPointCount > maxStartingPoints) return false;
+
     return isRoutingValid;
-  }, [isRoutingValid, startingPointLayer?.value, startingPointMethod.value, startingPoints]);
+  }, [
+    isRoutingValid,
+    maxStartingPoints,
+    startingPointLayer?.filtered_count,
+    startingPointLayerItem?.value,
+    startingPointMethod.value,
+    startingPoints,
+  ]);
 
   // Scenario
   const { scenarioItems } = useScenarioItems(projectId as string);
@@ -161,7 +179,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
     if (startingPointMethod.value === "browser_layer") {
       payload["starting_points"] = {
-        layer_project_id: startingPointLayer?.value,
+        layer_project_id: startingPointLayerItem?.value,
       };
     }
     try {
@@ -187,7 +205,7 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
     setMaxTravelTime(undefined);
     setSpeed(undefined);
     setStartingPointMethod(startingPointMethods[0]);
-    setStartingPointLayer(undefined);
+    setSelectecStartingPointLayerItem(undefined);
     setSelectedScenario(undefined);
     dispatch(setToolboxStartingPoints(undefined));
     dispatch(setIsMapGetInfoActive(true));
@@ -320,8 +338,12 @@ const NearbyStations = ({ onBack, onClose }: IndicatorBaseProps) => {
                       startingPointMethod={startingPointMethod}
                       setStartingPointMethod={setStartingPointMethod}
                       startingPointMethods={startingPointMethods}
-                      startingPointLayer={startingPointLayer}
-                      setStartingPointLayer={setStartingPointLayer}
+                      startingPointLayer={startingPointLayerItem}
+                      setStartingPointLayer={setSelectecStartingPointLayerItem}
+                      currentStartingPoints={
+                        startingPoints?.length || startingPointLayer?.filtered_count || 0
+                      }
+                      maxStartingPoints={maxStartingPoints}
                     />
                   </>
                 }

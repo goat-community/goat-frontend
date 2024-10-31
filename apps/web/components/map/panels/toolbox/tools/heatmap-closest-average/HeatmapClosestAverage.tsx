@@ -1,5 +1,5 @@
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useTranslation } from "@/i18n/client";
 
@@ -33,6 +33,13 @@ const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
     },
   ];
   const [opportunities, setOpportunities] = useState<Opportunity[]>(defaultOpportunities);
+  const numberOfSelectedOpportunityFeatures = useMemo(() => {
+    return opportunities.reduce((acc, opportunity) => {
+      if (!opportunity.layer) return acc;
+      const layer = layers?.find((layer) => layer.id === opportunity.layer?.value);
+      return acc + (layer?.filtered_count || 0);
+    }, 0);
+  }, [opportunities, layers]);
 
   const handleReset = () => {
     setOpportunities(defaultOpportunities);
@@ -58,9 +65,12 @@ const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
     };
   };
 
-  const isValid = true;
+  const isValid = useMemo(() => {
+    return opportunities.every((opportunity) => opportunity.layer !== undefined);
+  }, [opportunities]);
   return (
     <HeatmapContainer
+      type="closest_average"
       title={t("heatmap_closest_average")}
       description={t("heatmap_closest_average_description")}
       docsPath="/toolbox/accessibility_indicators/closest_average"
@@ -68,7 +78,8 @@ const HeatmapClosestAverage = ({ onBack, onClose }: IndicatorBaseProps) => {
       onClose={onClose}
       handleReset={handleReset}
       handleRun={handleRun}
-      isValid={isValid}
+      isOpportunitiesValid={isValid}
+      currentNumberOfFeatures={numberOfSelectedOpportunityFeatures}
       opportunitiesChildren={
         <HeatmapOpportunitiesSelector
           opportunities={opportunities}

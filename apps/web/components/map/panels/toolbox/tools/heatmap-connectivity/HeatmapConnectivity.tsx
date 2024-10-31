@@ -1,5 +1,5 @@
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { ICON_NAME } from "@p4b/ui/components/Icon";
 
@@ -11,6 +11,7 @@ import { heatmapConnectivitySchema } from "@/lib/validations/tools";
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
 
 import Selector from "@/components/map/panels/common/Selector";
@@ -20,19 +21,26 @@ import { getTravelCostConfigValues } from "@/components/map/panels/toolbox/tools
 const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
   const { t } = useTranslation("common");
   const { projectId } = useParams();
-
+  const { layers: projectLayers } = useFilteredProjectLayers(projectId as string);
   const defaultMaxTravelTime = {
     value: 20,
     label: "20 (Min)",
   };
   const [maxTravelTime, setMaxTravelTime] = useState<SelectorItem | undefined>(defaultMaxTravelTime);
   const { filteredLayers } = useLayerByGeomType(["feature"], ["polygon"], projectId as string);
-  const [referenceLayer, setReferenceLayer] = useState<SelectorItem | undefined>(undefined);
+  const [referenceLayerItem, setReferenceLayerItem] = useState<SelectorItem | undefined>(undefined);
 
-  const isValid = true;
+  const referenceLayer = useMemo(() => {
+    return projectLayers?.find((layer) => layer.id === referenceLayerItem?.value);
+  }, [projectLayers, referenceLayerItem?.value]);
+
+  const isValid = useMemo(() => {
+    return maxTravelTime !== undefined && referenceLayerItem !== undefined;
+  }, [maxTravelTime, referenceLayerItem]);
+
   const handleRun = () => {
     const payload = {
-      reference_area_layer_project_id: referenceLayer?.value,
+      reference_area_layer_project_id: referenceLayerItem?.value,
       max_traveltime: maxTravelTime?.value,
     };
 
@@ -45,11 +53,12 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
   };
   const handleReset = () => {
     setMaxTravelTime(defaultMaxTravelTime);
-    setReferenceLayer(undefined);
+    setReferenceLayerItem(undefined);
   };
 
   return (
     <HeatmapContainer
+      type="connectivity"
       title={t("heatmap_connectivity")}
       description={t("heatmap_connectivity_description")}
       docsPath="/toolbox/accessibility_indicators/connectivity"
@@ -57,8 +66,9 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
       onClose={onClose}
       handleReset={handleReset}
       handleRun={handleRun}
-      isValid={isValid}
+      isConfigurationValid={isValid}
       disableScenario
+      currentNumberOfFeatures={referenceLayer?.filtered_count}
       configChildren={
         <>
           {/* MAX TRAVEL TIME */}
@@ -72,9 +82,9 @@ const HeatmapConnectivity = ({ onBack, onClose }: IndicatorBaseProps) => {
             tooltip={t("travel_time_limit_tooltip")}
           />
           <Selector
-            selectedItems={referenceLayer}
+            selectedItems={referenceLayerItem}
             setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
-              setReferenceLayer(item as SelectorItem);
+              setReferenceLayerItem(item as SelectorItem);
             }}
             items={filteredLayers}
             emptyMessage={t("no_polygon_layer_found")}

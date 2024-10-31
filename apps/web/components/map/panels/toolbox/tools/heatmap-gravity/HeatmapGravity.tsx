@@ -57,9 +57,22 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
   ];
   const [opportunities, setOpportunities] = useState<Opportunity[]>(defaultOpportunities);
 
+  const numberOfSelectedOpportunityFeatures = useMemo(() => {
+    return opportunities.reduce((acc, opportunity) => {
+      if (!opportunity.layer) return acc;
+      const layer = layers?.find((layer) => layer.id === opportunity.layer?.value);
+      return acc + (layer?.filtered_count || 0);
+    }, 0);
+  }, [opportunities, layers]);
+
   const isValid = useMemo(() => {
-    return true;
-  }, []);
+    return (
+      impedanceFunction !== undefined &&
+      opportunities.every((opportunity) => {
+        return opportunity.layer !== undefined && opportunity.maxTravelTime !== undefined;
+      })
+    );
+  }, [impedanceFunction, opportunities]);
 
   const handleRun = () => {
     const payload = {
@@ -89,6 +102,7 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   return (
     <HeatmapContainer
+      type="gravity"
       title={t("heatmap_gravity")}
       description={t("heatmap_gravity_description")}
       docsPath="/toolbox/accessibility_indicators/gravity"
@@ -96,7 +110,8 @@ const HeatmapGravity = ({ onBack, onClose }: IndicatorBaseProps) => {
       onClose={onClose}
       handleReset={handleReset}
       handleRun={handleRun}
-      isValid={isValid}
+      isOpportunitiesValid={isValid}
+      currentNumberOfFeatures={numberOfSelectedOpportunityFeatures}
       configChildren={
         <>
           <Selector

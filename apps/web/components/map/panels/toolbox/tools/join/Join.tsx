@@ -12,12 +12,13 @@ import { computeJoin } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import { jobTypeEnum } from "@/lib/validations/jobs";
 import type { LayerFieldType } from "@/lib/validations/layer";
-import { joinSchema, statisticOperationEnum } from "@/lib/validations/tools";
+import { joinSchema, maxFeatureCnt, statisticOperationEnum } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
 import useLayerFields from "@/hooks/map/CommonHooks";
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useLayerByGeomType, useLayerDatasetId, useStatisticValues } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
@@ -28,6 +29,7 @@ import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import LayerNumberOfFeaturesAlert from "@/components/map/panels/toolbox/common/LayerNumberOfFeaturesAlert";
 import LearnMore from "@/components/map/panels/toolbox/common/LearnMore";
 
 const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
@@ -41,25 +43,35 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
   const dispatch = useAppDispatch();
   const runningJobIds = useAppSelector((state) => state.jobs.runningJobIds);
   const { filteredLayers } = useLayerByGeomType(["feature", "table"], undefined, projectId as string);
-
+  const { layers: projectLayers } = useFilteredProjectLayers(projectId as string);
   // Target
-  const [targetLayer, setTargetLayer] = useState<SelectorItem | undefined>(undefined);
+  const [targetLayerItem, setTargetLayerItem] = useState<SelectorItem | undefined>(undefined);
+
+  const targetLayer = useMemo(() => {
+    return projectLayers.find((layer) => layer.id === targetLayerItem?.value);
+  }, [targetLayerItem, filteredLayers]);
+
   const [targetSelectedField, setTargetSelectedField] = useState<LayerFieldType | undefined>(undefined);
 
   const targetLayerDatasetId = useLayerDatasetId(
-    targetLayer?.value as number | undefined,
+    targetLayerItem?.value as number | undefined,
     projectId as string
   );
 
   // Join
-  const [joinLayer, setJoinLayer] = useState<SelectorItem | undefined>(undefined);
+  const [joinLayerItem, setJoinLayerItem] = useState<SelectorItem | undefined>(undefined);
+
+  const joinLayer = useMemo(() => {
+    return projectLayers.find((layer) => layer.id === joinLayerItem?.value);
+  }, [joinLayerItem, filteredLayers]);
+
   const [joinSelectedField, setJoinSelectedField] = useState<LayerFieldType | undefined>(undefined);
 
   useEffect(() => {
-    if (targetLayer) {
+    if (targetLayerItem) {
       setTargetSelectedField(undefined);
     }
-  }, [targetLayer]);
+  }, [targetLayerItem]);
 
   const {
     statisticMethods,
@@ -70,13 +82,16 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
   } = useStatisticValues();
 
   useEffect(() => {
-    if (joinLayer) {
+    if (joinLayerItem) {
       setJoinSelectedField(undefined);
       setStatisticField(undefined);
     }
-  }, [joinLayer, setStatisticField]);
+  }, [joinLayerItem, setStatisticField]);
 
-  const joinLayerDatasetId = useLayerDatasetId(joinLayer?.value as number | undefined, projectId as string);
+  const joinLayerDatasetId = useLayerDatasetId(
+    joinLayerItem?.value as number | undefined,
+    projectId as string
+  );
 
   // Fields have to be the same type
   const { layerFields: targetFields } = useLayerFields(
@@ -91,18 +106,18 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   // List of target and join layer
   const targetLayers = useMemo(() => {
-    if (!joinLayer) {
+    if (!joinLayerItem) {
       return filteredLayers;
     }
-    return filteredLayers.filter((layer) => layer.value !== joinLayer.value);
-  }, [joinLayer, filteredLayers]);
+    return filteredLayers.filter((layer) => layer.value !== joinLayerItem.value);
+  }, [joinLayerItem, filteredLayers]);
 
   const joinLayers = useMemo(() => {
-    if (!targetLayer) {
+    if (!targetLayerItem) {
       return filteredLayers;
     }
-    return filteredLayers.filter((layer) => layer.value !== targetLayer.value);
-  }, [targetLayer, filteredLayers]);
+    return filteredLayers.filter((layer) => layer.value !== targetLayerItem.value);
+  }, [targetLayerItem, filteredLayers]);
 
   // Filters the join layer fields based on the selected statistic method
   const filteredStatisticFields = useMemo(() => {
@@ -117,22 +132,33 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
   // Validation
   const isValid = useMemo(() => {
     if (
-      !targetLayer ||
-      !joinLayer ||
+      !targetLayerItem ||
+      !joinLayerItem ||
       !targetSelectedField ||
       !joinSelectedField ||
       !statisticMethodSelected
     ) {
       return false;
     }
+    if (
+      maxFeatureCnt.join &&
+      targetLayer?.filtered_count &&
+      targetLayer.filtered_count > maxFeatureCnt.join
+    ) {
+      return false;
+    }
+    if (maxFeatureCnt.join && joinLayer?.filtered_count && joinLayer.filtered_count > maxFeatureCnt.join) {
+      return false;
+    }
+
     return true;
-  }, [targetLayer, joinLayer, targetSelectedField, joinSelectedField, statisticMethodSelected]);
+  }, [targetLayerItem, joinLayerItem, targetSelectedField, joinSelectedField, statisticMethodSelected]);
 
   const handleRun = async () => {
     const payload = {
-      target_layer_project_id: targetLayer?.value,
+      target_layer_project_id: targetLayerItem?.value,
       target_field: targetSelectedField?.name,
-      join_layer_project_id: joinLayer?.value,
+      join_layer_project_id: joinLayerItem?.value,
       join_field: joinSelectedField?.name,
       column_statistics: {
         operation: statisticMethodSelected?.value,
@@ -157,8 +183,8 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
   };
   const handleReset = () => {
-    setTargetLayer(undefined);
-    setJoinLayer(undefined);
+    setTargetLayerItem(undefined);
+    setJoinLayerItem(undefined);
     setTargetSelectedField(undefined);
     setJoinSelectedField(undefined);
     setStatisticMethodSelected(undefined);
@@ -194,9 +220,9 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
               baseOptions={
                 <>
                   <Selector
-                    selectedItems={targetLayer}
+                    selectedItems={targetLayerItem}
                     setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
-                      setTargetLayer(item as SelectorItem);
+                      setTargetLayerItem(item as SelectorItem);
                     }}
                     items={targetLayers}
                     emptyMessage={t("no_layers_found")}
@@ -206,10 +232,22 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
                     tooltip={t("select_target_layer_tooltip")}
                   />
 
+                  {!!maxFeatureCnt.join &&
+                    !!targetLayer?.filtered_count &&
+                    targetLayer.filtered_count > maxFeatureCnt.join && (
+                      <LayerNumberOfFeaturesAlert
+                        currentFeatures={targetLayer.filtered_count}
+                        maxFeatures={maxFeatureCnt.join}
+                        texts={{
+                          maxFeaturesText: t("maximum_number_of_features"),
+                          filterLayerFeaturesActionText: t("please_filter_layer_features"),
+                        }}
+                      />
+                    )}
                   <Selector
-                    selectedItems={joinLayer}
+                    selectedItems={joinLayerItem}
                     setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
-                      setJoinLayer(item as SelectorItem);
+                      setJoinLayerItem(item as SelectorItem);
                     }}
                     items={joinLayers}
                     emptyMessage={t("no_layers_found")}
@@ -218,25 +256,38 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
                     placeholder={t("select_join_layer_placeholder")}
                     tooltip={t("select_join_layer_tooltip")}
                   />
+
+                  {!!maxFeatureCnt.join &&
+                    !!joinLayer?.filtered_count &&
+                    joinLayer.filtered_count > maxFeatureCnt.join && (
+                      <LayerNumberOfFeaturesAlert
+                        currentFeatures={joinLayer.filtered_count}
+                        maxFeatures={maxFeatureCnt.join}
+                        texts={{
+                          maxFeaturesText: t("maximum_number_of_features"),
+                          filterLayerFeaturesActionText: t("please_filter_layer_features"),
+                        }}
+                      />
+                    )}
                 </>
               }
             />
             <SectionHeader
-              active={!!targetLayer && !!joinLayer}
+              active={!!targetLayerItem && !!joinLayerItem}
               alwaysActive={true}
               label={t("fields_to_match")}
               icon={ICON_NAME.TABLE}
               disableAdvanceOptions={true}
             />
             <SectionOptions
-              active={!!targetLayer && !!joinLayer}
+              active={!!targetLayerItem && !!joinLayerItem}
               baseOptions={
                 <>
-                  {targetLayer && (
+                  {targetLayerItem && (
                     <LayerFieldSelector
                       fields={targetFields}
                       selectedField={targetSelectedField}
-                      disabled={!targetLayer}
+                      disabled={!targetLayerItem}
                       setSelectedField={(field) => {
                         setTargetSelectedField(field);
                       }}
@@ -245,11 +296,11 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
                     />
                   )}
 
-                  {joinLayer && (
+                  {joinLayerItem && (
                     <LayerFieldSelector
                       fields={joinFields}
                       selectedField={joinSelectedField}
-                      disabled={!joinLayer}
+                      disabled={!joinLayerItem}
                       setSelectedField={(field) => {
                         setJoinSelectedField(field);
                       }}

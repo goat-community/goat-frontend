@@ -115,7 +115,6 @@ const MapViewer: React.FC<MapProps> = ({
           }
         }
       }
-      console.log(layerName);
       dispatch(
         setPopupInfo({
           lngLat,

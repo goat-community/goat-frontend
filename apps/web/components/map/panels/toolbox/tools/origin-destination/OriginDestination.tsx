@@ -11,12 +11,13 @@ import { useJobs } from "@/lib/api/jobs";
 import { computeOriginDestination } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import type { LayerFieldType } from "@/lib/validations/layer";
-import { originDestinationMatrixSchema } from "@/lib/validations/tools";
+import { maxFeatureCnt, originDestinationMatrixSchema } from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
 import useLayerFields from "@/hooks/map/CommonHooks";
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import { useLayerByGeomType, useLayerDatasetId } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
@@ -27,6 +28,7 @@ import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import LayerNumberOfFeaturesAlert from "@/components/map/panels/toolbox/common/LayerNumberOfFeaturesAlert";
 import LearnMore from "@/components/map/panels/toolbox/common/LearnMore";
 
 const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
@@ -50,16 +52,23 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
     undefined,
     projectId as string
   );
+
+  const { layers: projectLayers } = useFilteredProjectLayers(projectId as string);
   // OD Layer
-  const [ODLayer, setODLayer] = useState<SelectorItem | undefined>(undefined);
-  const odLayerDatasetId = useLayerDatasetId(ODLayer?.value as number | undefined, projectId as string);
+  const [ODLayerItem, setODLayerItem] = useState<SelectorItem | undefined>(undefined);
+
+  const ODLayer = useMemo(() => {
+    return projectLayers.find((layer) => layer.id === ODLayerItem?.value);
+  }, [ODLayerItem, projectLayers]);
+
+  const odLayerDatasetId = useLayerDatasetId(ODLayerItem?.value as number | undefined, projectId as string);
   const { layerFields: ODLayerFields } = useLayerFields(odLayerDatasetId || "");
   const [uniqueIdField, setUniqueIdField] = useState<LayerFieldType | undefined>(undefined);
 
   // reset OdLayerFields when ODLayer changes
   useEffect(() => {
     setUniqueIdField(undefined);
-  }, [ODLayer]);
+  }, [ODLayerItem]);
 
   // OD Matrix
   const [ODMatrix, setODMatrix] = useState<SelectorItem | undefined>(undefined);
@@ -113,15 +122,18 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
   );
 
   const isValid = useMemo(() => {
-    if (!ODLayer || !ODMatrix || !uniqueIdField || !originField || !destinationField || !weightField) {
+    if (!ODLayerItem || !ODMatrix || !uniqueIdField || !originField || !destinationField || !weightField) {
+      return false;
+    }
+    if (!ODLayer?.filtered_count || ODLayer.filtered_count > maxFeatureCnt.origin_destination) {
       return false;
     }
     return true;
-  }, [ODLayer, ODMatrix, destinationField, originField, uniqueIdField, weightField]);
+  }, [ODLayerItem, ODMatrix, destinationField, originField, uniqueIdField, weightField]);
 
   const handleRun = async () => {
     const payload = {
-      geometry_layer_project_id: ODLayer?.value,
+      geometry_layer_project_id: ODLayerItem?.value,
       origin_destination_matrix_layer_project_id: ODMatrix?.value,
       unique_id_column: uniqueIdField?.name,
       origin_column: originField?.name,
@@ -151,7 +163,7 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
     setOriginField(undefined);
     setDestinationField(undefined);
     setWeightField(undefined);
-    setODLayer(undefined);
+    setODLayerItem(undefined);
     setODMatrix(undefined);
   };
 
@@ -187,9 +199,9 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
                 baseOptions={
                   <>
                     <Selector
-                      selectedItems={ODLayer}
+                      selectedItems={ODLayerItem}
                       setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
-                        setODLayer(item as SelectorItem);
+                        setODLayerItem(item as SelectorItem);
                       }}
                       items={filteredODLayers}
                       emptyMessage={t("no_polygon_or_point_layers")}
@@ -199,10 +211,23 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
                       tooltip={t("od_geometries_layer_tooltip")}
                     />
 
+                    {!!maxFeatureCnt.origin_destination &&
+                      !!ODLayer?.filtered_count &&
+                      ODLayer.filtered_count > maxFeatureCnt.origin_destination && (
+                        <LayerNumberOfFeaturesAlert
+                          currentFeatures={ODLayer.filtered_count}
+                          maxFeatures={maxFeatureCnt.origin_destination}
+                          texts={{
+                            maxFeaturesText: t("maximum_number_of_features"),
+                            filterLayerFeaturesActionText: t("please_filter_layer_features"),
+                          }}
+                        />
+                      )}
+
                     <LayerFieldSelector
                       fields={ODLayerFields}
                       selectedField={uniqueIdField}
-                      disabled={!ODLayer}
+                      disabled={!ODLayerItem}
                       setSelectedField={(field) => {
                         setUniqueIdField(field);
                       }}

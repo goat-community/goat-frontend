@@ -1,4 +1,4 @@
-import { IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
+import { Alert, IconButton, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -22,6 +22,7 @@ import { useLayerByGeomType } from "@/hooks/map/ToolsHooks";
 import { useAppDispatch, useAppSelector } from "@/hooks/store/ContextHooks";
 
 import Selector from "@/components/map/panels/common/Selector";
+import LayerNumberOfFeaturesAlert from "@/components/map/panels/toolbox/common/LayerNumberOfFeaturesAlert";
 
 const StartingPoints = ({ maxStartingPoints }: { maxStartingPoints: number | undefined }) => {
   const { map } = useMap();
@@ -157,6 +158,7 @@ interface StartingPointOptionsProps {
   startingPointMethods: SelectorItem[];
   startingPointLayer: SelectorItem | undefined;
   setStartingPointLayer: (item: SelectorItem | undefined) => void;
+  currentStartingPoints?: number;
   maxStartingPoints?: number;
 }
 
@@ -167,6 +169,7 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
   startingPointMethods,
   startingPointLayer,
   setStartingPointLayer,
+  currentStartingPoints,
   maxStartingPoints,
 }) => {
   const dispatch = useAppDispatch();
@@ -217,11 +220,21 @@ const StartingPointSelectors: React.FC<StartingPointOptionsProps> = ({
       {startingPointMethod.value === "map" && isActive && (
         <StartingPoints maxStartingPoints={maxStartingPoints} />
       )}
-      {maxStartingPoints && (
-        <Typography variant="caption" color="textSecondary">
-          {`${t("starting_point_max_points")} ${maxStartingPoints}`}
-        </Typography>
-      )}
+      <>
+        {!!maxStartingPoints && !!currentStartingPoints && currentStartingPoints > maxStartingPoints && (
+          <LayerNumberOfFeaturesAlert
+            currentFeatures={currentStartingPoints}
+            maxFeatures={maxStartingPoints}
+            texts={{
+              maxFeaturesText: t("starting_point_max_points"),
+              filterLayerFeaturesActionText:
+                startingPointMethod.value === "browser_layer"
+                  ? t("please_filter_layer_features")
+                  : t("please_delete_starting_points"),
+            }}
+          />
+        )}
+      </>
     </>
   );
 };

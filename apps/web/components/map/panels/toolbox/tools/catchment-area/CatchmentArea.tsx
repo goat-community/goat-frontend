@@ -38,6 +38,7 @@ import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
 import {
+  useCatchmeMaxStartingPoints,
   useCatchmentAreaShapeTypes,
   usePTTimeSelectorValues,
   useRoutingTypes,
@@ -182,7 +183,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
 
     // Reset starting method
     setStartingPointMethod(startingPointMethods[0]);
-    setStartingPointLayer(undefined);
+    setSelectedStartingPointLayerItem(undefined);
 
     // Reset scenario
     setSelectedScenario(undefined);
@@ -195,14 +196,25 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
   // Starting point
   const [startingPointMethod, setStartingPointMethod] = useState<SelectorItem>(startingPointMethods[0]);
 
-  const [startingPointLayer, setStartingPointLayer] = useState<SelectorItem | undefined>(undefined);
+  const [startingPointLayerItem, setSelectedStartingPointLayerItem] = useState<SelectorItem | undefined>(
+    undefined
+  );
+
+  const startingPointLayer = useMemo(() => {
+    return projectLayers?.find((layer) => layer.id === startingPointLayerItem?.value);
+  }, [projectLayers, startingPointLayerItem?.value]);
+
+  const { maxStartingPoints } = useCatchmeMaxStartingPoints(selectedRouting);
 
   const isValid = useMemo(() => {
     if (!isRoutingValid || (!areStepsValid && catchmentAreaType === "time")) return false;
     if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt && !isPTValid) return false;
-    if (startingPointMethod.value === "browser_layer" && !startingPointLayer?.value) return false;
+    if (startingPointMethod.value === "browser_layer" && !startingPointLayerItem?.value) return false;
 
     if (startingPointMethod.value === "map" && (!startingPoints || startingPoints.length === 0)) return false;
+
+    const startingPointCount = startingPoints?.length || startingPointLayer?.filtered_count || 0;
+    if (startingPointCount > maxStartingPoints) return false;
 
     return true;
   }, [
@@ -210,8 +222,10 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     catchmentAreaType,
     isPTValid,
     isRoutingValid,
+    maxStartingPoints,
     selectedRouting?.value,
-    startingPointLayer?.value,
+    startingPointLayer?.filtered_count,
+    startingPointLayerItem?.value,
     startingPointMethod.value,
     startingPoints,
   ]);
@@ -268,7 +282,7 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
     if (startingPointMethod.value === "browser_layer") {
       payload["starting_points"] = {
-        layer_project_id: startingPointLayer?.value,
+        layer_project_id: startingPointLayerItem?.value,
       };
     }
 
@@ -551,12 +565,10 @@ const CatchmentArea = ({ onBack, onClose }: IndicatorBaseProps) => {
                     startingPointMethod={startingPointMethod}
                     setStartingPointMethod={setStartingPointMethod}
                     startingPointMethods={startingPointMethods}
-                    startingPointLayer={startingPointLayer}
-                    setStartingPointLayer={setStartingPointLayer}
-                    // For PT routing only one starting point is allowed at the moment
-                    maxStartingPoints={
-                      selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt ? 1 : undefined
-                    }
+                    startingPointLayer={startingPointLayerItem}
+                    setStartingPointLayer={setSelectedStartingPointLayerItem}
+                    currentStartingPoints={startingPoints?.length || startingPointLayer?.filtered_count || 0}
+                    maxStartingPoints={maxStartingPoints}
                   />
                 </>
               }

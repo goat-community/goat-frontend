@@ -12,6 +12,7 @@ import {
   PTRoutingModes,
   catchmentAreaConfigDefaults,
   catchmentAreaShapeEnum,
+  maxFeatureCnt,
   statisticOperationEnum,
 } from "@/lib/validations/tools";
 
@@ -161,6 +162,25 @@ export const useStartingPointMethods = () => {
     startingPointMethods,
   };
 };
+
+
+
+export const useCatchmeMaxStartingPoints = (selectedRouting: SelectorItem | undefined) => {
+  const maxStartingPoints = useMemo(() => {
+    if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.pt) {
+      return maxFeatureCnt.catchment_area_pt;
+    } else if (selectedRouting?.value === CatchmentAreaRoutingTypeEnum.Enum.car) {
+      return maxFeatureCnt.catchment_area_car;
+    } else {
+      return maxFeatureCnt.catchment_area_active_mobility;
+    }
+  }, [selectedRouting?.value]);
+
+  return {
+    maxStartingPoints,
+  }
+};
+
 
 export const useRoutingTypes = () => {
   const { t } = useTranslation("common");

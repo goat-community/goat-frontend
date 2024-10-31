@@ -204,7 +204,6 @@ const LayerStylePanel = ({ projectId }: { projectId: string }) => {
       }
     }
   }, [dataset, layerProperties, mutateDataset, t]);
-
   const layerStyleMoreMenuOptions = useMemo(() => {
     const layerStyleMoreMenuOptions: PopperMenuItem[] = [
       // Save as default is only available to the user who owns the dataset
