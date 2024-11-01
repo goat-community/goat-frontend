@@ -11,12 +11,18 @@ import { useJobs } from "@/lib/api/jobs";
 import { computeAggregatePoint, computeAggregatePolygon } from "@/lib/api/tools";
 import { setRunningJobIds } from "@/lib/store/jobs/slice";
 import type { LayerFieldType } from "@/lib/validations/layer";
-import { aggregatePointSchema, aggregatePolygonSchema, areaTypeEnum } from "@/lib/validations/tools";
+import {
+  aggregatePointSchema,
+  aggregatePolygonSchema,
+  areaTypeEnum,
+  maxFeatureCnt,
+} from "@/lib/validations/tools";
 
 import type { SelectorItem } from "@/types/map/common";
 import type { IndicatorBaseProps } from "@/types/map/toolbox";
 
 import useLayerFields from "@/hooks/map/CommonHooks";
+import { useFilteredProjectLayers } from "@/hooks/map/LayerPanelHooks";
 import {
   useLayerByGeomType,
   useLayerDatasetId,
@@ -33,6 +39,7 @@ import SectionOptions from "@/components/map/panels/common/SectionOptions";
 import Selector from "@/components/map/panels/common/Selector";
 import ToolboxActionButtons from "@/components/map/panels/common/ToolboxActionButtons";
 import ToolsHeader from "@/components/map/panels/common/ToolsHeader";
+import LayerNumberOfFeaturesAlert from "@/components/map/panels/toolbox/common/LayerNumberOfFeaturesAlert";
 import LearnMore from "@/components/map/panels/toolbox/common/LearnMore";
 
 type AggregateProps = IndicatorBaseProps & {
@@ -56,15 +63,26 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     ["polygon"],
     projectId as string
   );
+  const { layers: projectLayers } = useFilteredProjectLayers(projectId as string);
 
-  const [sourceLayer, setSourceLayer] = useState<SelectorItem | undefined>();
+  const aggregateMaxFeatureCnt =
+    type === "point" ? maxFeatureCnt.aggregate_point : maxFeatureCnt.aggregate_polygon;
+
+  const [sourceLayerItem, setSourceLayerItem] = useState<SelectorItem | undefined>();
   const sourceLayerDatasetId = useLayerDatasetId(
-    sourceLayer?.value as number | undefined,
+    sourceLayerItem?.value as number | undefined,
     projectId as string
   );
 
+  const sourceLayer = useMemo(() => {
+    return projectLayers?.find((layer) => layer.id === sourceLayerItem?.value);
+  }, [sourceLayerItem, projectLayers]);
+
   const [areaType, setAreaType] = useState<SelectorItem | undefined>();
-  const [selectedAreaLayer, setSelectedAreaLayer] = useState<SelectorItem | undefined>(undefined);
+  const [selectedAreaLayerItem, setSelectedAreaLayerItem] = useState<SelectorItem | undefined>(undefined);
+  const selectedAreaLayer = useMemo(() => {
+    return projectLayers?.find((layer) => layer.id === selectedAreaLayerItem?.value);
+  }, [selectedAreaLayerItem, projectLayers]);
   const [selectedAreaH3Grid, setSelectedAreaH3Grid] = useState<SelectorItem | undefined>(undefined);
   const [statisticAdvancedOptions, setStatisticAdvancedOptions] = useState(true);
 
@@ -115,22 +133,40 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
 
   const isValid = useMemo(() => {
     if (
-      (areaType?.value === areaTypeEnum.Enum.feature && !selectedAreaLayer) ||
+      (areaType?.value === areaTypeEnum.Enum.feature && !selectedAreaLayerItem) ||
       (areaType?.value === areaTypeEnum.Enum.h3_grid && !selectedAreaH3Grid)
     ) {
       return false;
     }
-    return !!sourceLayer && !!areaType && !!statisticMethodSelected && !!statisticField;
-  }, [sourceLayer, areaType, statisticMethodSelected, statisticField, selectedAreaLayer, selectedAreaH3Grid]);
+    if (sourceLayer?.filtered_count && sourceLayer.filtered_count > aggregateMaxFeatureCnt) {
+      return false;
+    }
+    if (
+      areaType?.value === areaTypeEnum.Enum.feature &&
+      selectedAreaLayer?.filtered_count &&
+      selectedAreaLayer.filtered_count > aggregateMaxFeatureCnt
+    ) {
+      return false;
+    }
+
+    return !!sourceLayerItem && !!areaType && !!statisticMethodSelected && !!statisticField;
+  }, [
+    sourceLayerItem,
+    areaType,
+    statisticMethodSelected,
+    statisticField,
+    selectedAreaLayerItem,
+    selectedAreaH3Grid,
+  ]);
 
   const handleRun = async () => {
     const payload = {
-      source_layer_project_id: sourceLayer?.value,
+      source_layer_project_id: sourceLayerItem?.value,
       area_type: areaType?.value,
       ...(areaType?.value === areaTypeEnum.Enum.h3_grid && selectedAreaH3Grid?.value
         ? { h3_resolution: parseInt(selectedAreaH3Grid?.value as string) }
         : {
-            aggregation_layer_project_id: selectedAreaLayer?.value,
+            aggregation_layer_project_id: selectedAreaLayerItem?.value,
             weigthed_by_intersecting_area: weightPolygonByIntersectingArea,
           }),
       column_statistics: {
@@ -167,9 +203,9 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
   };
 
   const handleReset = () => {
-    setSourceLayer(undefined);
+    setSourceLayerItem(undefined);
     setAreaType(undefined);
-    setSelectedAreaLayer(undefined);
+    setSelectedAreaLayerItem(undefined);
     setSelectedAreaH3Grid(undefined);
     setStatisticMethodSelected(undefined);
     setStatisticField(undefined);
@@ -225,9 +261,9 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                 baseOptions={
                   <>
                     <Selector
-                      selectedItems={sourceLayer}
+                      selectedItems={sourceLayerItem}
                       setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
-                        setSourceLayer(item as SelectorItem);
+                        setSourceLayerItem(item as SelectorItem);
                       }}
                       items={sourceLayers}
                       emptyMessage={t("no_layers_found")}
@@ -236,20 +272,32 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                       placeholder={t("select_source_layer_placeholder")}
                       tooltip={t("select_source_layer_tooltip")}
                     />
+                    {!!aggregateMaxFeatureCnt &&
+                      !!sourceLayer?.filtered_count &&
+                      sourceLayer.filtered_count > aggregateMaxFeatureCnt && (
+                        <LayerNumberOfFeaturesAlert
+                          currentFeatures={sourceLayer.filtered_count}
+                          maxFeatures={aggregateMaxFeatureCnt}
+                          texts={{
+                            maxFeaturesText: t("maximum_number_of_features"),
+                            filterLayerFeaturesActionText: t("please_filter_layer_features"),
+                          }}
+                        />
+                      )}
                   </>
                 }
               />
 
               {/* SELECT AREA TYPE */}
               <SectionHeader
-                active={!!sourceLayer}
+                active={!!sourceLayerItem}
                 alwaysActive={true}
                 label={t("summary_areas")}
                 icon={ICON_NAME.AGGREGATE}
                 disableAdvanceOptions={true}
               />
               <SectionOptions
-                active={!!sourceLayer}
+                active={!!sourceLayerItem}
                 baseOptions={
                   <>
                     <Selector
@@ -267,12 +315,12 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                         selectedItems={
                           areaType?.value === areaTypeEnum.Enum.h3_grid
                             ? selectedAreaH3Grid
-                            : selectedAreaLayer
+                            : selectedAreaLayerItem
                         }
                         setSelectedItems={(item: SelectorItem[] | SelectorItem | undefined) => {
                           areaType?.value === areaTypeEnum.Enum.h3_grid
                             ? setSelectedAreaH3Grid(item as SelectorItem)
-                            : setSelectedAreaLayer(item as SelectorItem);
+                            : setSelectedAreaLayerItem(item as SelectorItem);
                         }}
                         items={
                           areaType?.value === areaTypeEnum.Enum.h3_grid ? h3GridValues : polygonAreaLayers
@@ -296,12 +344,26 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                         }
                       />
                     )}
+
+                    {areaType?.value === areaTypeEnum.Enum.feature &&
+                      !!aggregateMaxFeatureCnt &&
+                      !!selectedAreaLayer?.filtered_count &&
+                      selectedAreaLayer.filtered_count > aggregateMaxFeatureCnt && (
+                        <LayerNumberOfFeaturesAlert
+                          currentFeatures={selectedAreaLayer.filtered_count}
+                          maxFeatures={aggregateMaxFeatureCnt}
+                          texts={{
+                            maxFeaturesText: t("maximum_number_of_features"),
+                            filterLayerFeaturesActionText: t("please_filter_layer_features"),
+                          }}
+                        />
+                      )}
                   </>
                 }
               />
 
               <SectionHeader
-                active={!!sourceLayer && !!areaType}
+                active={!!sourceLayerItem && !!areaType}
                 alwaysActive={true}
                 label={t("statistics")}
                 icon={ICON_NAME.CHART}
@@ -310,7 +372,7 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
                 setCollapsed={setStatisticAdvancedOptions}
               />
               <SectionOptions
-                active={!!sourceLayer && !!areaType}
+                active={!!sourceLayerItem && !!areaType}
                 baseOptions={
                   <>
                     <Selector

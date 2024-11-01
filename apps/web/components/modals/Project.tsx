@@ -101,7 +101,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={handleOnClose} fullWidth maxWidth="sm">
-      <DialogTitle>Create Project</DialogTitle>
+      <DialogTitle>{t("create_project")}</DialogTitle>
       <Box sx={{ px: 4, pb: 2 }}>
         <Box sx={{ width: "100%" }} component="form" onSubmit={handleSubmit(onSubmit)}>
           <Stack direction="column" spacing={4} sx={{ my: 1 }}>
@@ -117,14 +117,14 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
               required
               {...register("name")}
               error={errors.name ? true : false}
-              label="Name"
+              label={t("name")}
               helperText={errors.name?.message}
             />
             <TextField
               fullWidth
               multiline
               rows={4}
-              label="Description"
+              label={t("description")}
               {...register("description")}
               error={!!errors.description}
               helperText={errors.description?.message}
@@ -133,7 +133,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
           <Stack direction="row" justifyContent="flex-end" spacing={1} sx={{ mt: 4 }}>
             <Button onClick={handleOnClose} variant="text" sx={{ borderRadius: 0 }}>
               <Typography variant="body2" fontWeight="bold">
-                Cancel
+                {t("cancel")}
               </Typography>
             </Button>
             <LoadingButton
@@ -143,7 +143,7 @@ const ProjectModal: React.FC<ProjectDialogProps> = ({ open, onClose }) => {
               variant="contained"
               color="primary">
               <Typography variant="body2" fontWeight="bold" color="inherit">
-                Create
+                {t("create")}
               </Typography>
             </LoadingButton>
           </Stack>
