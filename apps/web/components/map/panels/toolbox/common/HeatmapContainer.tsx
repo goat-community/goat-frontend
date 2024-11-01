@@ -161,7 +161,13 @@ const HeatmapContainer = ({
     }
 
     return true;
-  }, [isConfigurationValid, isOpportunitiesValid, selectedRouting]);
+  }, [
+    isConfigurationValid,
+    isOpportunitiesValid,
+    selectedRouting,
+    currentNumberOfFeatures,
+    maxNumberOfFeatures,
+  ]);
 
   return (
     <Container

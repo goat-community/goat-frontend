@@ -157,6 +157,9 @@ const Aggregate = ({ onBack, onClose, type }: AggregateProps) => {
     statisticField,
     selectedAreaLayerItem,
     selectedAreaH3Grid,
+    sourceLayer,
+    selectedAreaLayer?.filtered_count,
+    aggregateMaxFeatureCnt,
   ]);
 
   const handleRun = async () => {

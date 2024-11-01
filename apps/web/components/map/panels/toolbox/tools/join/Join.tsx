@@ -49,7 +49,7 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   const targetLayer = useMemo(() => {
     return projectLayers.find((layer) => layer.id === targetLayerItem?.value);
-  }, [targetLayerItem, filteredLayers]);
+  }, [targetLayerItem, projectLayers]);
 
   const [targetSelectedField, setTargetSelectedField] = useState<LayerFieldType | undefined>(undefined);
 
@@ -63,7 +63,7 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
 
   const joinLayer = useMemo(() => {
     return projectLayers.find((layer) => layer.id === joinLayerItem?.value);
-  }, [joinLayerItem, filteredLayers]);
+  }, [joinLayerItem, projectLayers]);
 
   const [joinSelectedField, setJoinSelectedField] = useState<LayerFieldType | undefined>(undefined);
 
@@ -152,7 +152,15 @@ const Join = ({ onBack, onClose }: IndicatorBaseProps) => {
     }
 
     return true;
-  }, [targetLayerItem, joinLayerItem, targetSelectedField, joinSelectedField, statisticMethodSelected]);
+  }, [
+    targetLayerItem,
+    joinLayerItem,
+    targetSelectedField,
+    joinSelectedField,
+    statisticMethodSelected,
+    joinLayer?.filtered_count,
+    targetLayer?.filtered_count,
+  ]);
 
   const handleRun = async () => {
     const payload = {

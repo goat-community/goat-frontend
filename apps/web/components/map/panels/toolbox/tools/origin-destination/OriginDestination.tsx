@@ -129,7 +129,15 @@ const OriginDestination = ({ onBack, onClose }: IndicatorBaseProps) => {
       return false;
     }
     return true;
-  }, [ODLayerItem, ODMatrix, destinationField, originField, uniqueIdField, weightField]);
+  }, [
+    ODLayerItem,
+    ODMatrix,
+    destinationField,
+    originField,
+    uniqueIdField,
+    weightField,
+    ODLayer?.filtered_count,
+  ]);
 
   const handleRun = async () => {
     const payload = {

@@ -80,7 +80,7 @@ const Buffer = ({ onBack, onClose }: IndicatorBaseProps) => {
       return true;
     }
     return false;
-  }, [bufferLayerItem, distance]);
+  }, [bufferLayerItem, distance, bufferLayer?.filtered_count]);
 
   const handleRun = async () => {
     const payload = {
